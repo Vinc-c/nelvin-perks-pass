@@ -39,9 +39,9 @@ export default function AppDownloadCta() {
             whileInView={{ opacity: 1, rotate: -6, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="not-pill relative w-64 overflow-hidden rounded-[2.5rem] border-[6px] border-slate-900 bg-slate-900 shadow-2xl sm:w-72"
+            className="not-pill relative w-64 overflow-hidden rounded-[2.5rem] border-[6px] border-brand bg-brand shadow-2xl sm:w-72"
           >
-            <div className="absolute left-1/2 top-2 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-slate-900" />
+            <div className="absolute left-1/2 top-2 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-brand" />
             <Image src={phoneMockup} fittingType="fill" className="h-[480px] w-full object-cover sm:h-[520px]" />
           </motion.div>
         </div>

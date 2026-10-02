@@ -61,7 +61,7 @@ export default function AccessGate({ children }) {
               <CreditCard className="h-4 w-4" /> {t("access.reactivate.membership")}
             </Link>
           ) : (
-            <Link to="/app" className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800">
+            <Link to="/app" className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand">
               <Home className="h-4 w-4" /> {t("access.backHome")}
             </Link>
           )}

@@ -52,7 +52,7 @@ export default function SubscriptionManagement() {
       <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <div className="flex items-center justify-between">
           <h3 className="font-semibold text-slate-900">Payment methods</h3>
-          <button onClick={() => setAdded(true)} className="flex items-center gap-1.5 rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"><Plus className="h-4 w-4" /> Add method</button>
+          <button onClick={() => setAdded(true)} className="flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand"><Plus className="h-4 w-4" /> Add method</button>
         </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">

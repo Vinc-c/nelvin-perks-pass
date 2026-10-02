@@ -20,7 +20,7 @@ const GooglePlayMark = ({ className = "h-6 w-6" }) => (
 const Badge = ({ mark, line1, line2, href = "#" }) => (
   <a
     href={href}
-    className="not-pill inline-flex items-center gap-3 rounded-xl bg-slate-900 px-4 py-2.5 text-white shadow-md transition hover:bg-slate-800"
+    className="not-pill inline-flex items-center gap-3 rounded-xl bg-brand px-4 py-2.5 text-white shadow-md transition hover:bg-brand"
   >
     {mark}
     <span className="flex flex-col leading-tight">

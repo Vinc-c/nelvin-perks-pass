@@ -21,6 +21,8 @@
     --accent-foreground: 0 0% 100%;
     --gold: 46 64% 52%;
     --gold-foreground: 222 47% 11%;
+    --brand: 189 100% 38%;
+    --brand-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
     --border: 214 32% 91%;
@@ -79,6 +81,8 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --brand: 189 100% 38%;
+    --brand-foreground: 0 0% 100%;
   }
 }
 

@@ -108,7 +108,7 @@ export default function MonthlyReports() {
               </div>
               <div className="flex items-center gap-2">
                 <button onClick={() => setActive(r)} className={`rounded-full px-4 py-2 text-xs font-medium ${active.key === r.key ? "bg-emerald-500 text-white" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>View</button>
-                <button onClick={() => generate(r)} className="flex items-center gap-1 rounded-full bg-slate-900 px-4 py-2 text-xs font-medium text-white hover:bg-slate-800"><Download className="h-3.5 w-3.5" /> PDF</button>
+                <button onClick={() => generate(r)} className="flex items-center gap-1 rounded-full bg-brand px-4 py-2 text-xs font-medium text-white hover:bg-brand"><Download className="h-3.5 w-3.5" /> PDF</button>
               </div>
             </div>
           ))}

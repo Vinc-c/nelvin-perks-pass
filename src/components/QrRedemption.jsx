@@ -142,7 +142,7 @@ export default function QrRedemption({ offer, onClose }) {
             </>
           ) : (
             <>
-              <div className="mb-3 rounded-xl bg-slate-900 px-6 py-4">
+              <div className="mb-3 rounded-xl bg-brand px-6 py-4">
                 <p className="font-mono text-3xl font-bold tracking-widest text-emerald-400">{code}</p>
               </div>
               <p className="text-center text-xs text-slate-500">Présentez ce code au marchand</p>

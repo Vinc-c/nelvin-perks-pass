@@ -64,7 +64,7 @@ export default function NelvinSupportWidget() {
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             className="fixed bottom-24 right-6 z-50 flex h-[520px] max-h-[80vh] w-[calc(100vw-3rem)] max-w-sm flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
           >
-            <div className="flex items-center gap-3 bg-gradient-to-r from-slate-900 to-slate-800 px-4 py-3 text-white">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-brand to-brand px-4 py-3 text-white">
               <Image src={NELVIN_ICON} alt="Nelvin" fittingType="fit" className="h-9 w-9" />
               <div>
                 <p className="text-sm font-bold">Nelvin Support</p>

@@ -55,6 +55,20 @@ module.exports = {
   				DEFAULT: 'hsl(var(--gold))',
   				foreground: 'hsl(var(--gold-foreground))'
   			},
+  			brand: {
+  				DEFAULT: 'hsl(var(--brand))',
+  				foreground: 'hsl(var(--brand-foreground))'
+  			},
+  			blue: {
+  				500: '#14B8D2',
+  				600: '#00A7C4',
+  				700: '#0089A3',
+  				800: '#006B82',
+  				900: '#005568'
+  			},
+  			indigo: {
+  				800: '#0089A3'
+  			},
   			destructive: {
   				DEFAULT: 'hsl(var(--destructive))',
   				foreground: 'hsl(var(--destructive-foreground))'

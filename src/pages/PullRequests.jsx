@@ -48,7 +48,7 @@ export default function PullRequests() {
         <button
           onClick={fetchData}
           disabled={loading}
-          className="not-pill flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 active:scale-95 disabled:opacity-50"
+          className="not-pill flex items-center gap-2 rounded-xl bg-brand px-4 py-2 text-sm font-medium text-white transition hover:bg-brand active:scale-95 disabled:opacity-50"
         >
           <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           Rafraîchir
@@ -60,7 +60,7 @@ export default function PullRequests() {
         <div className="mb-4 flex flex-wrap items-center gap-2">
           <button
             onClick={() => setRepo("")}
-            className={`not-pill rounded-full px-3 py-1.5 text-xs font-medium transition ${!repo ? "bg-slate-900 text-white" : "bg-white text-slate-600 border border-slate-200 hover:border-slate-300"}`}
+            className={`not-pill rounded-full px-3 py-1.5 text-xs font-medium transition ${!repo ? "bg-brand text-white" : "bg-white text-slate-600 border border-slate-200 hover:border-slate-300"}`}
           >
             Tous les dépôts
           </button>
@@ -68,7 +68,7 @@ export default function PullRequests() {
             <button
               key={r.name}
               onClick={() => setRepo(r.name)}
-              className={`not-pill flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition ${repo === r.name ? "bg-slate-900 text-white" : "bg-white text-slate-600 border border-slate-200 hover:border-slate-300"}`}
+              className={`not-pill flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition ${repo === r.name ? "bg-brand text-white" : "bg-white text-slate-600 border border-slate-200 hover:border-slate-300"}`}
             >
               <GitBranch className="h-3.5 w-3.5" />
               {r.name}

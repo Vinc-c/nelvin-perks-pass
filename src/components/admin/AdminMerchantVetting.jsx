@@ -35,7 +35,7 @@ export default function AdminMerchantVetting() {
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mt-6 space-y-4">
       <div className="flex flex-wrap gap-2">
         {FILTERS.map((f) => (
-          <button key={f.k} onClick={() => setFilter(f.k)} className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${filter === f.k ? "bg-slate-900 text-white" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
+          <button key={f.k} onClick={() => setFilter(f.k)} className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${filter === f.k ? "bg-brand text-white" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
             {f.l} <span className="ml-1 opacity-60">{count(f.k)}</span>
           </button>
         ))}

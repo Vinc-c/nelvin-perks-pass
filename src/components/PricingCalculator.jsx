@@ -74,13 +74,13 @@ export default function PricingCalculator() {
         <div className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white p-1 shadow-sm">
           <button
             onClick={() => setView("hr")}
-            className={`rounded-full px-6 py-2.5 text-sm font-semibold transition ${view === "hr" ? "bg-slate-900 text-white" : "text-slate-600 hover:text-slate-900"}`}
+            className={`rounded-full px-6 py-2.5 text-sm font-semibold transition ${view === "hr" ? "bg-brand text-white" : "text-slate-600 hover:text-slate-900"}`}
           >
             HR & Corporate
           </button>
           <button
             onClick={() => setView("b2c")}
-            className={`rounded-full px-6 py-2.5 text-sm font-semibold transition ${view === "b2c" ? "bg-slate-900 text-white" : "text-slate-600 hover:text-slate-900"}`}
+            className={`rounded-full px-6 py-2.5 text-sm font-semibold transition ${view === "b2c" ? "bg-brand text-white" : "text-slate-600 hover:text-slate-900"}`}
           >
             B2C Member Passes
           </button>

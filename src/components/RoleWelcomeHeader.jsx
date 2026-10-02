@@ -11,8 +11,8 @@ const PROFILES = {
   EMPLOYEE: { gradient: "from-blue-500 to-blue-700", icon: Gift, labelKey: "welcome.employee.label", taglineKey: "welcome.employee.tagline" },
   HR_ADMIN: { gradient: "from-amber-500 to-amber-700", icon: Users, labelKey: "welcome.hr.label", taglineKey: "welcome.hr.tagline" },
   MERCHANT: { gradient: "from-teal-500 to-emerald-700", icon: Store, labelKey: "welcome.merchant.label", taglineKey: "welcome.merchant.tagline" },
-  SUPER_ADMIN: { gradient: "from-slate-700 to-indigo-800", icon: ShieldCheck, labelKey: "welcome.admin.label", taglineKey: "welcome.admin.tagline" },
-  admin: { gradient: "from-slate-700 to-indigo-800", icon: ShieldCheck, labelKey: "welcome.admin.label", taglineKey: "welcome.admin.tagline" },
+  SUPER_ADMIN: { gradient: "from-brand to-brand/70", icon: ShieldCheck, labelKey: "welcome.admin.label", taglineKey: "welcome.admin.tagline" },
+  admin: { gradient: "from-brand to-brand/70", icon: ShieldCheck, labelKey: "welcome.admin.label", taglineKey: "welcome.admin.tagline" },
 };
 
 export default function RoleWelcomeHeader() {

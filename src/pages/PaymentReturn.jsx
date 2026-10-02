@@ -83,7 +83,7 @@ export default function PaymentReturn() {
             </div>
             <p className="mt-4 text-xl font-bold text-slate-900">Paiement non abouti</p>
             <p className="mt-1 text-sm text-slate-500">Le paiement n’a pas pu être confirmé. Vous pouvez réessayer.</p>
-            <Link to={homeFor(user)} className="mt-6 inline-block rounded-full bg-slate-900 px-6 py-2.5 text-sm font-semibold text-white hover:bg-slate-800">
+            <Link to={homeFor(user)} className="mt-6 inline-block rounded-full bg-brand px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand">
               Retour à mon espace
             </Link>
           </>
