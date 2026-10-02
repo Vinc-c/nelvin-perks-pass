@@ -1,23 +1,59 @@
 import React from "react";
 import NelvinLogo from "@/components/NelvinLogo";
+import { Image } from "@/components/ui/image";
 
-// Centered auth shell. The brand logo replaces the previous generic
-// generated background image; the surface stays clean and on-brand.
+// Lifestyle imagery reused from the public hero assets (no generation needed).
+const SAVANNA = "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/1a09b4fa8_generated_image.png";
+const FOOD = "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/6a31eb0f6_generated_image.png";
+const FITNESS = "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/cba30820d_generated_image.png";
+const BEAUTY = "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/542a93280_generated_image.png";
+
 export default function AuthLayout({ icon: Icon, title, subtitle, footer, children }) {
   return (
-    <div className="relative flex min-h-screen items-center justify-center px-4 py-12 bg-[radial-gradient(ellipse_at_top,_#eef4ff_0%,_#f8fafc_45%,_#ffffff_100%)]">
-      <div className="w-full max-w-md">
-        <div className="mb-8 flex justify-center">
-          <NelvinLogo className="h-12" />
+    <div className="relative flex min-h-screen items-stretch justify-center bg-[radial-gradient(ellipse_at_top,_#e0f7fa_0%,_#f4f9fc_45%,_#ffffff_100%)]">
+      <div className="grid w-full max-w-6xl min-h-screen lg:grid-cols-2">
+        {/* Image panel — desktop only */}
+        <div className="relative hidden overflow-hidden lg:block">
+          <Image src={SAVANNA} fittingType="fill" className="absolute inset-0 h-full w-full animate-kenburns" />
+          <div className="absolute inset-0 bg-gradient-to-br from-brand/75 via-brand/45 to-slate-900/70" />
+          <div className="relative flex h-full flex-col justify-between p-10">
+            <div className="flex justify-center">
+              <NelvinLogo className="h-12" />
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="overflow-hidden rounded-2xl shadow-xl ring-1 ring-white/30">
+                <Image src={FOOD} fittingType="fill" className="h-40 w-full" />
+              </div>
+              <div className="mt-8 overflow-hidden rounded-2xl shadow-xl ring-1 ring-white/30">
+                <Image src={FITNESS} fittingType="fill" className="h-40 w-full" />
+              </div>
+              <div className="overflow-hidden rounded-2xl shadow-xl ring-1 ring-white/30">
+                <Image src={BEAUTY} fittingType="fill" className="h-40 w-full" />
+              </div>
+            </div>
+            <div className="max-w-sm text-white">
+              <h2 className="text-2xl font-bold leading-tight">Perks & savings, built for everyone across Africa & MENA.</h2>
+              <p className="mt-3 text-sm text-white/80">Dining, hotels, spas, fitness & more — save thousands every year with your Nelvin membership.</p>
+            </div>
+          </div>
         </div>
-        <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">{title}</h1>
-          {subtitle && <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>}
+
+        {/* Form panel */}
+        <div className="flex items-center justify-center px-4 py-12">
+          <div className="w-full max-w-md">
+            <div className="mb-8 flex justify-center lg:hidden">
+              <NelvinLogo className="h-12" />
+            </div>
+            <div className="mb-8 text-center">
+              <h1 className="text-2xl font-bold tracking-tight text-foreground">{title}</h1>
+              {subtitle && <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>}
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-card p-8 shadow-2xl shadow-slate-400/20">
+              {children}
+            </div>
+            {footer && <p className="mt-6 text-center text-sm text-muted-foreground">{footer}</p>}
+          </div>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-card p-8 shadow-2xl shadow-slate-400/20">
-          {children}
-        </div>
-        {footer && <p className="mt-6 text-center text-sm text-muted-foreground">{footer}</p>}
       </div>
     </div>
   );

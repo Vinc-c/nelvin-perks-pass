@@ -24,7 +24,7 @@ const keys = Object.keys(categoryLabels);
 
 function MiniCard({ k }) {
   return (
-    <div className="w-40 flex-shrink-0 overflow-hidden rounded-2xl bg-white shadow-lg shadow-slate-300/40 ring-1 ring-slate-100">
+    <div className="w-full flex-shrink-0 overflow-hidden rounded-2xl bg-white shadow-lg shadow-slate-300/40 ring-1 ring-slate-100">
       <div className="relative h-24 w-full">
         <Image src={categoryImages[k]} fittingType="fill" className="h-full w-full" />
         <span className="absolute left-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-sm shadow">
@@ -58,12 +58,13 @@ function Column({ items, duration }) {
 }
 
 export default function HeroFallingCards() {
-  const mid = Math.ceil(keys.length / 2);
+  const third = Math.ceil(keys.length / 3);
   return (
-    <div className="relative mx-auto h-[460px] w-full max-w-sm">
+    <div className="relative mx-auto h-[460px] w-full max-w-md">
       <div className="flex h-full gap-3">
-        <Column items={keys.slice(0, mid)} duration={26} />
-        <Column items={keys.slice(mid)} duration={32} />
+        <Column items={keys.slice(0, third)} duration={24} />
+        <Column items={keys.slice(third, third * 2)} duration={30} />
+        <Column items={keys.slice(third * 2)} duration={36} />
       </div>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-white/70 to-transparent" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white/70 to-transparent" />
