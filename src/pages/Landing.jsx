@@ -11,6 +11,7 @@ import Testimonials from "@/components/landing/Testimonials";
 import FaqSection from "@/components/landing/FaqSection";
 import AppDownloadCta from "@/components/landing/AppDownloadCta";
 import HeroFallingCards from "@/components/landing/HeroFallingCards";
+import HeroLifestyleStrip from "@/components/landing/HeroLifestyleStrip";
 import SiteFooter from "@/components/landing/SiteFooter";
 import NelvinLogo from "@/components/NelvinLogo";
 import { useAuth } from "@/lib/AuthContext";
@@ -51,15 +52,15 @@ export default function Landing() {
             <NelvinLogo className="h-12" />
           </div>
           <nav className="hidden items-center gap-7 text-sm font-medium text-slate-600 lg:flex">
-            <Link to="/merchant-directory" className="hover:text-blue-600">Offers</Link>
-            <Link to="/merchant-map" className="hover:text-blue-600">Near me</Link>
-            <Link to="/pricing" className="hover:text-blue-600">Pricing</Link>
-            <Link to="/merchant" className="hover:text-blue-600">For businesses</Link>
+            <Link to="/merchant-directory" className="hover:text-brand">Offers</Link>
+            <Link to="/merchant-map" className="hover:text-brand">Near me</Link>
+            <Link to="/pricing" className="hover:text-brand">Pricing</Link>
+            <Link to="/merchant" className="hover:text-brand">For businesses</Link>
           </nav>
           <div className="flex items-center gap-2">
             <div className="hidden lg:block"><LanguageSwitcher compact variant="light" /></div>
             {isAuthenticated ? (
-              <Link to="/app" className="hidden rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-blue-600/30 transition hover:bg-blue-700 sm:inline-flex">
+              <Link to="/app" className="hidden rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-brand/30 transition hover:bg-brand/90 sm:inline-flex">
                 Dashboard
               </Link>
             ) : (
@@ -67,7 +68,7 @@ export default function Landing() {
                 <Link to="/login" className="hidden rounded-full px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 sm:inline-flex">
                   Log in
                 </Link>
-                <Link to="/register" className="hidden rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-blue-600/30 transition hover:bg-blue-700 sm:inline-flex">
+                <Link to="/register" className="hidden rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-brand/30 transition hover:bg-brand/90 sm:inline-flex">
                   {t("cta.getStarted")}
                 </Link>
               </>
@@ -89,11 +90,11 @@ export default function Landing() {
               <Link to="/pricing" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-slate-50">Pricing</Link>
               <Link to="/merchant" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-slate-50">For businesses</Link>
               {isAuthenticated ? (
-                <Link to="/app" onClick={() => setMenuOpen(false)} className="mt-2 rounded-full bg-blue-600 px-4 py-2.5 text-center font-semibold text-white">Dashboard</Link>
+                <Link to="/app" onClick={() => setMenuOpen(false)} className="mt-2 rounded-full bg-brand px-4 py-2.5 text-center font-semibold text-white">Dashboard</Link>
               ) : (
                 <>
                   <Link to="/login" onClick={() => setMenuOpen(false)} className="mt-2 rounded-full border border-slate-200 px-4 py-2.5 text-center font-semibold text-slate-800">Log in</Link>
-                  <Link to="/register" onClick={() => setMenuOpen(false)} className="rounded-full bg-blue-600 px-4 py-2.5 text-center font-semibold text-white">{t("cta.getStarted")}</Link>
+                  <Link to="/register" onClick={() => setMenuOpen(false)} className="rounded-full bg-brand px-4 py-2.5 text-center font-semibold text-white">{t("cta.getStarted")}</Link>
                 </>
               )}
             </nav>
@@ -118,7 +119,7 @@ export default function Landing() {
         </div>
         <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:py-20">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-sm font-medium text-blue-700">
+            <span className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1.5 text-sm font-medium text-brand">
               <Sparkles className="h-4 w-4" /> {heroBadge}
             </span>
             <h1 className="mt-5 text-4xl font-bold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
@@ -128,7 +129,7 @@ export default function Landing() {
               {heroSubtitle}
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link to="/pricing" className="flex items-center justify-center gap-2 rounded-full bg-blue-600 px-7 py-3.5 font-semibold text-white shadow-lg shadow-blue-600/30 transition hover:bg-blue-700">
+              <Link to="/pricing" className="flex items-center justify-center gap-2 rounded-full bg-brand px-7 py-3.5 font-semibold text-white shadow-lg shadow-brand/30 transition hover:bg-brand/90">
                 View memberships <ArrowRight className="h-4 w-4" />
               </Link>
               <a href="#app-download" className="flex items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-7 py-3.5 font-semibold text-slate-800 transition hover:bg-slate-50">
@@ -142,6 +143,14 @@ export default function Landing() {
             <HeroFallingCards />
           </motion.div>
         </div>
+      </section>
+
+      {/* Lifestyle collections marquee — image-rich hero extension */}
+      <section className="relative py-10">
+        <div className="mx-auto mb-4 max-w-7xl px-4 sm:px-6">
+          <p className="text-xs font-semibold uppercase tracking-widest text-brand">Lifestyle collections</p>
+        </div>
+        <HeroLifestyleStrip />
       </section>
 
       {/* Partner logos marquee — right below the hero */}
@@ -172,7 +181,7 @@ export default function Landing() {
         <div className="absolute inset-0 flex items-center">
           <div className="mx-auto w-full max-w-7xl px-6">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-              <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">Built for the continent</p>
+              <p className="text-sm font-semibold uppercase tracking-widest text-brand">Built for the continent</p>
               <h2 className="mt-2 max-w-xl text-3xl font-bold text-slate-900 sm:text-4xl">From savanna sunsets to city skylines — savings everywhere you go.</h2>
             </motion.div>
           </div>

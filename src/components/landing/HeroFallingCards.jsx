@@ -30,7 +30,7 @@ function MiniCard({ k }) {
         <span className="absolute left-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-sm shadow">
           {categoryIcons[k]}
         </span>
-        <span className="absolute bottom-2 left-2 rounded-full bg-blue-600 px-2 py-0.5 text-[10px] font-bold text-white shadow">
+        <span className="absolute bottom-2 left-2 rounded-full bg-brand px-2 py-0.5 text-[10px] font-bold text-white shadow">
           Buy 1 Get 1
         </span>
       </div>
