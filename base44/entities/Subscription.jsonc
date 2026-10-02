@@ -1,0 +1,132 @@
+{
+  "name": "Subscription",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "company_id": {
+      "type": "string"
+    },
+    "plan_type": {
+      "type": "string",
+      "enum": [
+        "PASS_BASIC",
+        "PASS_PREMIUM",
+        "PASS_VIP",
+        "STARTER",
+        "GROWTH",
+        "ENTERPRISE",
+        "MERCHANT_BASIC",
+        "MERCHANT_PRO"
+      ]
+    },
+    "billing_cycle": {
+      "type": "string",
+      "enum": [
+        "MONTHLY",
+        "ANNUAL"
+      ],
+      "default": "MONTHLY"
+    },
+    "psp_used": {
+      "type": "string",
+      "enum": [
+        "PADDLE",
+        "STRIPE",
+        "PAYSTACK",
+        "FLUTTERWAVE",
+        "PAYUNIT",
+        "CAMPAY"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "TRIALING",
+        "PAST_DUE",
+        "CANCELLED"
+      ],
+      "default": "ACTIVE"
+    },
+    "amount": {
+      "type": "number"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "plan_type",
+    "billing_cycle",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "$and": [
+            {
+              "user_condition": {
+                "role": "HR_ADMIN"
+              }
+            },
+            {
+              "data.company_id": "{{user.data.company_id}}"
+            }
+          ]
+        }
+      ]
+    },
+    "create": {
+      "data.company_id": "{{user.data.company_id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "$and": [
+            {
+              "user_condition": {
+                "role": "HR_ADMIN"
+              }
+            },
+            {
+              "data.company_id": "{{user.data.company_id}}"
+            }
+          ]
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "$and": [
+            {
+              "user_condition": {
+                "role": "HR_ADMIN"
+              }
+            },
+            {
+              "data.company_id": "{{user.data.company_id}}"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

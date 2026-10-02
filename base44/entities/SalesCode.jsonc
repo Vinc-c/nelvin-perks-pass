@@ -1,0 +1,80 @@
+{
+  "name": "SalesCode",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string"
+    },
+    "agent_name": {
+      "type": "string"
+    },
+    "agent_email": {
+      "type": "string"
+    },
+    "agent_phone": {
+      "type": "string"
+    },
+    "region": {
+      "type": "string"
+    },
+    "company_id": {
+      "type": "string"
+    },
+    "commission_rate": {
+      "type": "number",
+      "default": 0.05
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "PAUSED",
+        "EXPIRED"
+      ],
+      "default": "ACTIVE"
+    },
+    "sales_count": {
+      "type": "number",
+      "default": 0
+    },
+    "total_revenue": {
+      "type": "number",
+      "default": 0
+    },
+    "total_commission": {
+      "type": "number",
+      "default": 0
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "code",
+    "agent_name",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

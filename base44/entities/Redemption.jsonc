@@ -1,0 +1,123 @@
+{
+  "name": "Redemption",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "company_id": {
+      "type": "string"
+    },
+    "offer_id": {
+      "type": "string"
+    },
+    "merchant_id": {
+      "type": "string"
+    },
+    "code_used": {
+      "type": "string"
+    },
+    "code_type": {
+      "type": "string",
+      "enum": [
+        "QR",
+        "TOTP"
+      ],
+      "default": "QR"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "GENERATED",
+        "REDEEMED",
+        "EXPIRED",
+        "INVALID"
+      ],
+      "default": "GENERATED"
+    },
+    "discount_applied": {
+      "type": "number",
+      "default": 0
+    },
+    "cashback_credited": {
+      "type": "number",
+      "default": 0
+    },
+    "redeemed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "user_id",
+    "offer_id",
+    "code_used",
+    "status"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "$and": [
+            {
+              "user_condition": {
+                "role": "HR_ADMIN"
+              }
+            },
+            {
+              "data.company_id": "{{user.data.company_id}}"
+            }
+          ]
+        }
+      ]
+    },
+    "create": {
+      "data.company_id": "{{user.data.company_id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "$and": [
+            {
+              "user_condition": {
+                "role": "HR_ADMIN"
+              }
+            },
+            {
+              "data.company_id": "{{user.data.company_id}}"
+            }
+          ]
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "$and": [
+            {
+              "user_condition": {
+                "role": "HR_ADMIN"
+              }
+            },
+            {
+              "data.company_id": "{{user.data.company_id}}"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

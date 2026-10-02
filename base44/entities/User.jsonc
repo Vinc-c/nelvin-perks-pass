@@ -1,0 +1,57 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "phone": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "EMPLOYEE",
+        "MEMBER",
+        "HR_ADMIN",
+        "MERCHANT",
+        "SUPER_ADMIN",
+        "admin",
+        "user"
+      ],
+      "default": "MEMBER"
+    },
+    "account_type": {
+      "type": "string",
+      "enum": [
+        "particulier",
+        "marchand",
+        "entreprise"
+      ]
+    },
+    "onboarded": {
+      "type": "boolean",
+      "default": false
+    },
+    "company_id": {
+      "type": "string"
+    },
+    "merchant_id": {
+      "type": "string"
+    },
+    "wallet_balance": {
+      "type": "number",
+      "default": 0
+    },
+    "wallet_currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "avatar_url": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    }
+  }
+}

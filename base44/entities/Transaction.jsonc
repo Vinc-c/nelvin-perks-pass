@@ -1,0 +1,131 @@
+{
+  "name": "Transaction",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "company_id": {
+      "type": "string"
+    },
+    "merchant_id": {
+      "type": "string"
+    },
+    "offer_id": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number"
+    },
+    "cashback_amount": {
+      "type": "number",
+      "default": 0
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "psp_reference": {
+      "type": "string"
+    },
+    "payment_method": {
+      "type": "string",
+      "enum": [
+        "CARD",
+        "MOBILE_MONEY",
+        "BANK_TRANSFER",
+        "WALLET",
+        "APPLE_PAY",
+        "GOOGLE_PAY"
+      ]
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "REDEMPTION",
+        "RECHARGE",
+        "WITHDRAWAL",
+        "SUBSCRIPTION",
+        "PAYOUT"
+      ],
+      "default": "REDEMPTION"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "COMPLETED",
+        "FAILED",
+        "REFUNDED"
+      ],
+      "default": "COMPLETED"
+    }
+  },
+  "required": [
+    "user_id",
+    "amount",
+    "type"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "$and": [
+            {
+              "user_condition": {
+                "role": "HR_ADMIN"
+              }
+            },
+            {
+              "data.company_id": "{{user.data.company_id}}"
+            }
+          ]
+        }
+      ]
+    },
+    "create": {
+      "data.company_id": "{{user.data.company_id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "$and": [
+            {
+              "user_condition": {
+                "role": "HR_ADMIN"
+              }
+            },
+            {
+              "data.company_id": "{{user.data.company_id}}"
+            }
+          ]
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "$and": [
+            {
+              "user_condition": {
+                "role": "HR_ADMIN"
+              }
+            },
+            {
+              "data.company_id": "{{user.data.company_id}}"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

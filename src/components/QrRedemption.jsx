@@ -1,0 +1,184 @@
+import React, { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { QRCodeSVG } from "qrcode.react";
+import { Wifi, WifiOff, Copy, Check, Clock, RefreshCw, Loader2 } from "lucide-react";
+import { base44 } from "@/api/base44Client";
+import { useAuth } from "@/lib/AuthContext";
+
+const DEFAULT_TTL = 180; // 3 minutes
+
+export default function QrRedemption({ offer, onClose }) {
+  const { user } = useAuth();
+  const [online, setOnline] = useState(navigator.onLine);
+  const [code, setCode] = useState("");
+  const [redemptionId, setRedemptionId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [expired, setExpired] = useState(false);
+  const [error, setError] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState(DEFAULT_TTL);
+  const [ttl, setTtl] = useState(DEFAULT_TTL);
+  const mounted = useRef(true);
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
+
+  useEffect(() => {
+    const update = () => setOnline(navigator.onLine);
+    window.addEventListener("online", update);
+    window.addEventListener("offline", update);
+    return () => {
+      window.removeEventListener("online", update);
+      window.removeEventListener("offline", update);
+    };
+  }, []);
+
+  const createRedemption = async () => {
+    if (!user?.id || !offer?.id) return;
+    setLoading(true);
+    setExpired(false);
+    setError("");
+    try {
+      const res = await base44.functions.invoke("GenerateRedemption", { offer_id: offer.id });
+      const d = res.data || {};
+      if (!d.ok || !d.code) throw new Error(d.error || "Échec de génération");
+      if (!mounted.current) return;
+      setCode(d.code);
+      setRedemptionId(d.redemption_id);
+      setTtl(d.ttl || DEFAULT_TTL);
+      setSecondsLeft(d.ttl || DEFAULT_TTL);
+    } catch (e) {
+      if (mounted.current) setError(e.message || "Échec de génération du code");
+    } finally {
+      if (mounted.current) setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    createRedemption();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, offer?.id]);
+
+  useEffect(() => {
+    if (!code || loading) return;
+    const interval = setInterval(() => {
+      setSecondsLeft((s) => {
+        if (s <= 1) {
+          setExpired(true);
+          if (redemptionId) {
+            base44.entities.Redemption.update(redemptionId, { status: "EXPIRED" }).catch(() => {});
+          }
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [code, loading, redemptionId]);
+
+  const copyCode = () => {
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const minutes = Math.floor(secondsLeft / 60);
+  const secs = secondsLeft % 60;
+  const minsLabel = (ttl / 60) | 0;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, y: 20 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.9, y: 20 }}
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-sm rounded-2xl bg-white p-6 text-slate-900 shadow-2xl"
+      >
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-lg font-bold">{offer.title}</h3>
+          <button onClick={onClose} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100">✕</button>
+        </div>
+
+        <div className="mb-4 flex items-center gap-2 text-sm">
+          {online ? (
+            <span className="flex items-center gap-1.5 text-emerald-600"><Wifi className="h-4 w-4" /> En ligne</span>
+          ) : (
+            <span className="flex items-center gap-1.5 text-amber-600"><WifiOff className="h-4 w-4" /> Mode hors-ligne</span>
+          )}
+          <span className={`ml-auto flex items-center gap-1 ${expired ? "text-rose-500" : "text-slate-500"}`}>
+            <Clock className="h-4 w-4" /> {expired ? "Expiré" : `${minutes}:${secs.toString().padStart(2, "0")}`}
+          </span>
+        </div>
+
+        <div className="mb-4 flex flex-col items-center rounded-xl bg-slate-50 p-6">
+          {loading ? (
+            <div className="flex h-40 w-40 items-center justify-center">
+              <Loader2 className="h-8 w-8 animate-spin text-slate-300" />
+            </div>
+          ) : error ? (
+            <div className="flex h-40 w-40 flex-col items-center justify-center text-center">
+              <p className="px-4 text-sm text-rose-500">{error}</p>
+            </div>
+          ) : expired ? (
+            <div className="flex h-40 w-40 flex-col items-center justify-center text-center">
+              <Clock className="h-10 w-10 text-rose-400" />
+              <p className="mt-2 text-sm text-slate-500">Code expiré</p>
+            </div>
+          ) : online ? (
+            <>
+              <div className="relative mb-3 flex h-40 w-40 items-center justify-center rounded-xl bg-white p-2 shadow-sm">
+                <QRCodeSVG value={code} size={144} level="M" includeMargin={false} bgColor="#ffffff" fgColor="#0F172A" />
+              </div>
+              <p className="text-center font-mono text-xs text-slate-400 break-all">{code}</p>
+            </>
+          ) : (
+            <>
+              <div className="mb-3 rounded-xl bg-slate-900 px-6 py-4">
+                <p className="font-mono text-3xl font-bold tracking-widest text-emerald-400">{code}</p>
+              </div>
+              <p className="text-center text-xs text-slate-500">Présentez ce code au marchand</p>
+            </>
+          )}
+        </div>
+
+        {error ? (
+          <button
+            onClick={createRedemption}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white transition hover:bg-emerald-600 active:scale-95"
+          >
+            <RefreshCw className="h-4 w-4" /> Réessayer
+          </button>
+        ) : expired ? (
+          <button
+            onClick={createRedemption}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white transition hover:bg-emerald-600 active:scale-95"
+          >
+            <RefreshCw className="h-4 w-4" /> Générer un nouveau code
+          </button>
+        ) : (
+          <button
+            onClick={copyCode}
+            disabled={loading || !code}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white transition hover:bg-emerald-600 active:scale-95 disabled:opacity-50"
+          >
+            {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+            {copied ? "Copié !" : "Copier le code"}
+          </button>
+        )}
+
+        <p className="mt-3 text-center text-xs text-slate-400">
+          {online ? `QR dynamique • valide ${minsLabel} minutes` : `Code hors-ligne • valide ${minsLabel} minutes`}
+        </p>
+      </motion.div>
+    </motion.div>
+  );
+}

@@ -1,0 +1,177 @@
+{
+  "name": "Merchant",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "FOOD_DINING",
+        "TRAVEL_HOLIDAYS",
+        "HOTELS_HOSPITALITY",
+        "FITNESS_SPORTS",
+        "WELLNESS_MENTAL",
+        "HEALTHCARE",
+        "FINANCIAL_WELLNESS",
+        "SHOPPING_RETAIL",
+        "TECHNOLOGY",
+        "FAMILY_PARENTING",
+        "EDUCATION_LEARNING",
+        "HOME_LIVING",
+        "AUTOMOTIVE_MOBILITY",
+        "BEAUTY_CARE",
+        "ENTERTAINMENT"
+      ],
+      "default": "FOOD_DINING"
+    },
+    "city": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "lat": {
+      "type": "number"
+    },
+    "lng": {
+      "type": "number"
+    },
+    "verified_status": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "VERIFIED",
+        "REJECTED"
+      ],
+      "default": "PENDING"
+    },
+    "logo_url": {
+      "type": "string"
+    },
+    "rating": {
+      "type": "number",
+      "default": 4.5
+    },
+    "payout_balance": {
+      "type": "number",
+      "default": 0
+    },
+    "contact_email": {
+      "type": "string"
+    },
+    "contact_name": {
+      "type": "string"
+    },
+    "contact_phone": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "website": {
+      "type": "string"
+    },
+    "instagram": {
+      "type": "string"
+    },
+    "facebook": {
+      "type": "string"
+    },
+    "whatsapp": {
+      "type": "string"
+    },
+    "cover_image_url": {
+      "type": "string"
+    },
+    "offer_headline": {
+      "type": "string"
+    },
+    "offer_how_to_use": {
+      "type": "string"
+    },
+    "product_image_url": {
+      "type": "string"
+    },
+    "offer_redeemable": {
+      "type": "string",
+      "enum": [
+        "ONLINE",
+        "OFFLINE",
+        "BOTH"
+      ],
+      "default": "BOTH"
+    },
+    "offer_terms": {
+      "type": "string"
+    },
+    "offer_expiry": {
+      "type": "string",
+      "format": "date"
+    },
+    "offer_countries": {
+      "type": "string"
+    },
+    "application_notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "category",
+    "city",
+    "country"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "SUPER_ADMIN"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "SUPER_ADMIN"
+          }
+        },
+        {
+          "id": "{{user.data.merchant_id}}"
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "SUPER_ADMIN"
+          }
+        }
+      ]
+    }
+  }
+}
