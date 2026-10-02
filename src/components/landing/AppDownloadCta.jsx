@@ -46,10 +46,9 @@ export default function AppDownloadCta() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="not-pill relative w-60 overflow-hidden rounded-[2.5rem] border-[6px] border-brand bg-brand shadow-2xl"
+          className="relative w-60 drop-shadow-2xl"
         >
-          <div className="absolute left-1/2 top-2 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-brand" />
-          <Image src={phoneMockup} fittingType="fill" className="h-[420px] w-full object-cover" />
+          <Image src={phoneMockup} fittingType="fit" className="h-[420px] w-full object-contain" />
         </motion.div>
       </div>
 
@@ -59,10 +58,9 @@ export default function AppDownloadCta() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="not-pill pointer-events-none absolute bottom-0 right-4 hidden h-[460px] w-72 overflow-hidden rounded-[2.5rem] border-[6px] border-brand bg-brand shadow-2xl md:block lg:right-10 lg:h-[480px] lg:w-80"
+        className="pointer-events-none absolute bottom-0 right-4 hidden h-[460px] w-72 drop-shadow-2xl md:block lg:right-10 lg:h-[480px] lg:w-80"
       >
-        <div className="absolute left-1/2 top-2 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-brand" />
-        <Image src={phoneMockup} fittingType="fill" className="h-full w-full object-cover" />
+        <Image src={phoneMockup} fittingType="fit" className="h-full w-full object-contain" />
       </motion.div>
     </section>
   );

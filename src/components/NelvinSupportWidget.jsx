@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
-import { Sparkles, X, Send, Loader2 } from "lucide-react";
+import { X, Send, Loader2 } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import { NELVIN_ICON } from "@/components/NelvinLogo";
 
@@ -50,10 +50,17 @@ export default function NelvinSupportWidget() {
     <>
       <button
         onClick={() => setOpen((o) => !o)}
-        aria-label="Nelvin Support"
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-xl shadow-amber-600/30 transition hover:scale-105 active:scale-95"
+        aria-label="Nelvin AI Assistant"
+        className="fixed bottom-6 right-6 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 text-white shadow-2xl shadow-amber-600/40 ring-2 ring-amber-300/50 transition hover:scale-105 active:scale-95"
       >
-        {open ? <X className="h-6 w-6" /> : <Sparkles className="h-6 w-6" />}
+        {open ? (
+          <X className="h-6 w-6" />
+        ) : (
+          <>
+            <Image src={NELVIN_ICON} alt="Nelvin AI" fittingType="fit" className="h-9 w-9 drop-shadow" />
+            <span className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full border-2 border-white bg-emerald-500" />
+          </>
+        )}
       </button>
 
       <AnimatePresence>
@@ -64,11 +71,15 @@ export default function NelvinSupportWidget() {
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             className="fixed bottom-24 right-6 z-50 flex h-[520px] max-h-[80vh] w-[calc(100vw-3rem)] max-w-sm flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
           >
-            <div className="flex items-center gap-3 bg-gradient-to-r from-brand to-brand px-4 py-3 text-white">
-              <Image src={NELVIN_ICON} alt="Nelvin" fittingType="fit" className="h-9 w-9" />
-              <div>
-                <p className="text-sm font-bold">Nelvin Support</p>
-                <p className="text-xs text-slate-300">Assistant IA · Gemini</p>
+            <div className="flex items-center gap-3 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-4 py-3.5 text-white">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-amber-600 ring-2 ring-amber-300/40">
+                <Image src={NELVIN_ICON} alt="Nelvin AI" fittingType="fit" className="h-7 w-7" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-bold tracking-tight">Nelvin AI Assistant</p>
+                <p className="flex items-center gap-1.5 text-xs text-amber-300/90">
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" /> En ligne · Premium
+                </p>
               </div>
             </div>
 
