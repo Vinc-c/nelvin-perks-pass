@@ -5,7 +5,8 @@ import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { useI18n } from "@/i18n/I18nContext";
-import { OFFER_CATEGORIES, DISCOUNT_TYPES, AUDIENCES, categoryMeta } from "@/data/offerCategories";
+import { DISCOUNT_TYPES, AUDIENCES } from "@/data/offerCategories";
+import { useCategories } from "@/hooks/useCategories";
 import { Image as ImageIcon, Plus, Pencil, Trash2, X, Loader2, Star, Tag, Upload, TrendingUp } from "lucide-react";
 import { EmptyState } from "@/components/UiFeedback";
 import RoleWelcomeHeader from "@/components/RoleWelcomeHeader";
@@ -28,6 +29,7 @@ export default function CampaignEditor() {
   const { user } = useAuth();
   const { toast } = useToast();
   const merchantId = user?.merchant_id;
+  const { categories, meta } = useCategories();
 
   const [offers, setOffers] = useState([]);
   const [redemptions, setRedemptions] = useState([]);
@@ -157,7 +159,7 @@ export default function CampaignEditor() {
       ) : (
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {offers.map((o, i) => {
-            const meta = categoryMeta(o.category);
+            const cmeta = meta(o.category);
             const reds = (redemptions || []).filter((r) => r.offer_id === o.id);
             const redeemed = reds.filter((r) => r.status === "REDEEMED").length;
             const active = !o.expires_at || new Date(o.expires_at) >= new Date();
@@ -169,7 +171,7 @@ export default function CampaignEditor() {
                   ) : (
                     <div className="flex h-full items-center justify-center text-slate-300"><ImageIcon className="h-8 w-8" /></div>
                   )}
-                  <span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-slate-700">{meta.emoji} {meta.label}</span>
+                  <span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-slate-700">{cmeta.emoji} {cmeta.label}</span>
                   {o.is_featured && <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-amber-500 px-2 py-0.5 text-xs font-bold text-white"><Star className="h-3 w-3" /> À la une</span>}
                   <span className={`absolute bottom-3 right-3 rounded-full px-2 py-0.5 text-xs font-medium ${active ? "bg-emerald-500 text-white" : "bg-slate-500 text-white"}`}>{active ? "Active" : "Expirée"}</span>
                 </div>
@@ -246,7 +248,7 @@ export default function CampaignEditor() {
                 <div>
                   <span className="text-sm text-slate-500">Catégorie</span>
                   <div className="mt-1.5 flex flex-wrap gap-2">
-                    {OFFER_CATEGORIES.map((c) => (
+                    {categories.map((c) => (
                       <button key={c.value} type="button" onClick={() => setForm({ ...form, category: c.value })} className={`not-pill rounded-full px-3 py-1.5 text-xs font-medium transition ${form.category === c.value ? "bg-emerald-500 text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
                         {c.emoji} {c.label}
                       </button>

@@ -5,24 +5,7 @@ import {
   User, Building2, Tag, Globe, Shield, FileText, Upload, Check, Plus, X, Star, Sparkles, Loader2,
 } from "lucide-react";
 import AfricanCountrySelect from "./AfricanCountrySelect";
-
-const CATEGORIES = [
-  { v: "FOOD_DINING", l: "Restauration" },
-  { v: "TRAVEL_HOLIDAYS", l: "Voyages & vacances" },
-  { v: "HOTELS_HOSPITALITY", l: "Hôtels & hospitalité" },
-  { v: "FITNESS_SPORTS", l: "Fitness & sport" },
-  { v: "WELLNESS_MENTAL", l: "Bien-être & santé mentale" },
-  { v: "HEALTHCARE", l: "Santé" },
-  { v: "FINANCIAL_WELLNESS", l: "Bien-être financier" },
-  { v: "SHOPPING_RETAIL", l: "Shopping & retail" },
-  { v: "TECHNOLOGY", l: "Technologie" },
-  { v: "FAMILY_PARENTING", l: "Famille & parentalité" },
-  { v: "EDUCATION_LEARNING", l: "Éducation & apprentissage" },
-  { v: "HOME_LIVING", l: "Maison & habitat" },
-  { v: "AUTOMOTIVE_MOBILITY", l: "Automobile & mobilité" },
-  { v: "BEAUTY_CARE", l: "Beauté & soins" },
-  { v: "ENTERTAINMENT", l: "Divertissement" },
-];
+import { useCategories } from "@/hooks/useCategories";
 
 const REDEEM = [
   { v: "ONLINE", l: "Online via my website" },
@@ -105,6 +88,7 @@ export default function PartnerApplicationForm({ onSubmitted }) {
   const [uploading, setUploading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const { categories } = useCategories();
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const toggleCountry = (c) =>
@@ -272,11 +256,11 @@ export default function PartnerApplicationForm({ onSubmitted }) {
         <div className="p-6">
           <p className="text-sm font-medium text-slate-700">Sélectionnez votre catégorie principale <span className="text-rose-500">*</span></p>
           <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {CATEGORIES.map((c) => {
-              const active = form.category === c.v;
+            {categories.map((c) => {
+              const active = form.category === c.value;
               return (
-                <button type="button" key={c.v} onClick={() => set("category", c.v)} className={`not-pill rounded-lg border px-3.5 py-2.5 text-left text-sm font-medium transition ${active ? "border-blue-500 bg-blue-50 text-blue-700" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
-                  {c.l}
+                <button type="button" key={c.value} onClick={() => set("category", c.value)} className={`not-pill rounded-lg border px-3.5 py-2.5 text-left text-sm font-medium transition ${active ? "border-blue-500 bg-blue-50 text-blue-700" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
+                  {c.emoji} {c.label}
                 </button>
               );
             })}

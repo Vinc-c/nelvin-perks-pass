@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import PortalLayout from "@/components/PortalLayout";
 import QrRedemption from "@/components/QrRedemption";
-import { mockOffers, mockMerchants, categoryIcons } from "@/data/mockData";
+import { mockOffers, mockMerchants } from "@/data/mockData";
+import { useCategories } from "@/hooks/useCategories";
 import { MapPin, Star, Percent, Clock, ShieldCheck, ArrowLeft, Tag, Wallet } from "lucide-react";
 
 export default function OfferDetails() {
@@ -12,6 +13,7 @@ export default function OfferDetails() {
   const offer = useMemo(() => mockOffers.find((o) => o.id === id) || mockOffers[0], [id]);
   const merchant = useMemo(() => mockMerchants.find((m) => m.id === offer.merchant_id), [offer]);
   const [redeem, setRedeem] = useState(false);
+  const { meta } = useCategories();
 
   const terms = [
     "Valid for one redemption per visit, per user.",
@@ -35,7 +37,7 @@ export default function OfferDetails() {
         >
           <div className="relative h-48 bg-gradient-to-br from-emerald-100 via-blue-50 to-slate-100 p-6">
             <span className="absolute right-5 top-5 rounded-full bg-amber-500 px-3 py-1 text-xs font-bold text-white">
-              {categoryIcons[offer.category]} {offer.category}
+              {meta(offer.category).emoji} {meta(offer.category).label}
             </span>
             <div className="flex h-full items-end">
               <h1 className="text-2xl font-bold text-slate-900">{offer.title}</h1>

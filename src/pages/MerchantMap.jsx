@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import PortalLayout from "@/components/PortalLayout";
 import DealsMap from "@/components/DealsMap";
-import { mockMerchants, mockOffers, categoryIcons } from "@/data/mockData";
+import { mockMerchants, mockOffers } from "@/data/mockData";
+import { useCategories } from "@/hooks/useCategories";
 import { Navigation, Star, MapPin, ShieldCheck } from "lucide-react";
 
 export default function MerchantMap() {
   const [selected, setSelected] = useState(null);
+  const { meta } = useCategories();
 
   return (
     <PortalLayout title="Partner Store Map" theme="light">
@@ -34,7 +36,7 @@ export default function MerchantMap() {
                 onClick={() => setSelected(m)}
                 className={`flex w-full items-start gap-3 rounded-2xl border p-4 text-left transition ${active ? "border-emerald-500/40 bg-emerald-50" : "border-slate-200 bg-white hover:bg-slate-50"}`}
               >
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100 text-xl">{categoryIcons[m.category]}</div>
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100 text-xl">{meta(m.category).emoji}</div>
                 <div className="flex-1">
                   <p className="font-medium text-slate-900">{m.name}</p>
                   <p className="flex items-center gap-1 text-xs text-slate-500"><MapPin className="h-3 w-3" /> {m.city}, {m.country}</p>

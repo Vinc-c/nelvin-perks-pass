@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import PortalLayout from "@/components/PortalLayout";
 import { Image } from "@/components/ui/image";
-import { mockMerchants, categoryIcons, categoryLabels } from "@/data/mockData";
+import { mockMerchants } from "@/data/mockData";
+import { useCategories } from "@/hooks/useCategories";
 import { Search, Star, MapPin, ShieldCheck, SlidersHorizontal } from "lucide-react";
 
 const categoryImages = {
@@ -24,9 +25,9 @@ const categoryImages = {
   ENTERTAINMENT: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/e88afbb65_generated_image.png",
 };
 
-const categories = ["ALL", "FOOD_DINING", "TRAVEL_HOLIDAYS", "HOTELS_HOSPITALITY", "FITNESS_SPORTS", "WELLNESS_MENTAL", "HEALTHCARE", "FINANCIAL_WELLNESS", "SHOPPING_RETAIL", "TECHNOLOGY", "FAMILY_PARENTING", "EDUCATION_LEARNING", "HOME_LIVING", "AUTOMOTIVE_MOBILITY", "BEAUTY_CARE", "ENTERTAINMENT"];
-
 export default function MerchantDirectory() {
+  const { categories, meta } = useCategories();
+  const catList = ["ALL", ...categories.map((c) => c.value)];
   const params = new URLSearchParams(window.location.search);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState(params.get("category") || "ALL");
@@ -69,13 +70,13 @@ export default function MerchantDirectory() {
           </div>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
-          {categories.map((c) => (
+          {catList.map((c) => (
             <button
               key={c}
               onClick={() => setCategory(c)}
               className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${category === c ? "bg-emerald-500 text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}
             >
-              {c === "ALL" ? "All" : `${categoryIcons[c] || ""} ${categoryLabels[c] || c}`}
+              {c === "ALL" ? "All" : `${meta(c).emoji} ${meta(c).label}`}
             </button>
           ))}
         </div>
@@ -94,9 +95,9 @@ export default function MerchantDirectory() {
             className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
           >
             <div className="relative h-36 overflow-hidden">
-              <Image src={categoryImages[m.category]} fittingType="fill" className="h-full w-full transition duration-500 hover:scale-105" />
+              <Image src={meta(m.category).image_url || categoryImages[m.category]} fittingType="fill" className="h-full w-full transition duration-500 hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent" />
-              <span className="absolute left-3 top-3 rounded-full bg-white/85 px-2.5 py-1 text-xs font-medium text-slate-700 backdrop-blur-sm">{categoryIcons[m.category]} {categoryLabels[m.category] || m.category}</span>
+              <span className="absolute left-3 top-3 rounded-full bg-white/85 px-2.5 py-1 text-xs font-medium text-slate-700 backdrop-blur-sm">{meta(m.category).emoji} {meta(m.category).label}</span>
             </div>
             <div className="p-4">
               <div className="flex items-center justify-between">
@@ -106,7 +107,7 @@ export default function MerchantDirectory() {
               <p className="mt-1 flex items-center gap-1 text-sm text-slate-500"><MapPin className="h-3.5 w-3.5" /> {m.city}, {m.country}</p>
               <div className="mt-2 flex items-center justify-between">
                 <span className="flex items-center gap-1 text-sm text-amber-500"><Star className="h-4 w-4" /> {m.rating}</span>
-                <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-600">{categoryLabels[m.category] || m.category}</span>
+                <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-600">{meta(m.category).label}</span>
               </div>
               <Link
                 to={`/offer-details?id=o${m.id.replace("m", "")}`}

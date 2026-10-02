@@ -8,7 +8,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { base44 } from "@/api/base44Client";
 import { mockCurrencies } from "@/data/mockData";
 import { ScanLine, Tag, Wallet, TrendingUp, Plus, Check, Loader2, Star } from "lucide-react";
-import { categoryMeta } from "@/data/offerCategories";
+import { useCategories } from "@/hooks/useCategories";
 import RoleWelcomeHeader from "@/components/RoleWelcomeHeader";
 import StatCard from "@/components/dashboard/StatCard";
 import SectionCard from "@/components/dashboard/SectionCard";
@@ -21,6 +21,7 @@ export default function MerchantPortal() {
   const { toast } = useToast();
   const merchantId = user?.merchant_id;
   const currency = user?.wallet_currency || "USD";
+  const { meta } = useCategories();
 
   const [merchant, setMerchant] = useState(null);
   const [offers, setOffers] = useState([]);
@@ -186,7 +187,7 @@ export default function MerchantPortal() {
           ) : (
             <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {offers.map((c) => {
-                const meta = categoryMeta(c.category);
+                const cmeta = meta(c.category);
                 const reds = (redemptions || []).filter((r) => r.offer_id === c.id).length;
                 const active = !c.expires_at || new Date(c.expires_at) >= new Date();
                 return (
@@ -197,7 +198,7 @@ export default function MerchantPortal() {
                       ) : (
                         <div className="flex h-full items-center justify-center text-slate-300"><Tag className="h-5 w-5" /></div>
                       )}
-                      <span className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-medium text-slate-700">{meta.emoji} {meta.label}</span>
+                      <span className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-medium text-slate-700">{cmeta.emoji} {cmeta.label}</span>
                       {c.is_featured && <span className="absolute right-2 top-2 rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-bold text-white"><Star className="inline h-2.5 w-2.5" /></span>}
                       <span className={`absolute bottom-2 right-2 rounded-full px-2 py-0.5 text-[10px] font-medium ${active ? "bg-emerald-500 text-white" : "bg-slate-500 text-white"}`}>{active ? "active" : "expirée"}</span>
                     </div>

@@ -15,6 +15,7 @@ import AdminOverview from "@/components/admin/AdminOverview";
 import AdminCmsLogos from "@/components/admin/AdminCmsLogos";
 import AdminCmsImages from "@/components/admin/AdminCmsImages";
 import AdminCmsCopy from "@/components/admin/AdminCmsCopy";
+import AdminCmsCategories from "@/components/admin/AdminCmsCategories";
 import RoleWelcomeHeader from "@/components/RoleWelcomeHeader";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -37,6 +38,7 @@ export default function AdminPortal() {
       {tab === "cms_logos" && <AdminCmsLogos />}
       {tab === "cms_images" && <AdminCmsImages />}
       {tab === "cms_copy" && <AdminCmsCopy />}
+      {tab === "cms_categories" && <AdminCmsCategories />}
 
       {/* Company management */}
       {tab === "companies" && <AdminCompanyManagement />}
