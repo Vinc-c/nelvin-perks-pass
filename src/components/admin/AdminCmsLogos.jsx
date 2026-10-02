@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import { useToast } from "@/components/ui/use-toast";
 import ImageUploader from "./ImageUploader";
-import { Plus, Trash2, Loader2, GripVertical, Star } from "lucide-react";
+import { Plus, Trash2, Loader2, GripVertical, Star, Upload } from "lucide-react";
 
 const inputCls = "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-amber-500";
 
@@ -12,6 +12,8 @@ export default function AdminCmsLogos() {
   const [logos, setLogos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [draft, setDraft] = useState({ name: "", category: "", domain: "", logo_url: "", sort_order: 0 });
+  const [bulkBusy, setBulkBusy] = useState(false);
+  const [bulkDone, setBulkDone] = useState(0);
 
   const load = () => {
     setLoading(true);
@@ -39,6 +41,31 @@ export default function AdminCmsLogos() {
     toast({ title: "Logo supprimé" });
   };
 
+  const bulkUpload = async (files) => {
+    if (!files || !files.length) return;
+    setBulkBusy(true);
+    setBulkDone(0);
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const f = files[i];
+        const { file_url } = await base44.integrations.Core.UploadPublicFile({ file: f });
+        const name = f.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim();
+        await base44.entities.PartnerLogo.create({
+          name: name || `Partner ${logos.length + i + 1}`,
+          logo_url: file_url,
+          active: true,
+          sort_order: logos.length + i,
+        });
+        setBulkDone(i + 1);
+      }
+      toast({ title: `${files.length} logos ajoutés` });
+      load();
+    } finally {
+      setBulkBusy(false);
+      setBulkDone(0);
+    }
+  };
+
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mt-6 space-y-6">
       <div>
@@ -56,6 +83,16 @@ export default function AdminCmsLogos() {
           <ImageUploader label="Logo (optionnel — sinon Clearbit par domaine)" value={draft.logo_url} onChange={(v) => setDraft({ ...draft, logo_url: v })} />
         </div>
       </form>
+
+      <div className="rounded-2xl border border-dashed border-amber-300 bg-amber-50/60 p-5">
+        <p className="text-sm font-semibold text-slate-800">Téléverser plusieurs logos en une fois</p>
+        <p className="mt-1 text-xs text-slate-500">Sélectionnez plusieurs images — chaque fichier devient un partenaire (le nom vient du nom du fichier).</p>
+        <label className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600">
+          {bulkBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+          {bulkBusy ? `Upload ${bulkDone}…` : "Choisir des images"}
+          <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => bulkUpload(Array.from(e.target.files || []))} disabled={bulkBusy} />
+        </label>
+      </div>
 
       {loading ? (
         <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-slate-400" /></div>
