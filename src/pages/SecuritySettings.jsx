@@ -3,11 +3,11 @@ import PortalLayout from "@/components/PortalLayout";
 import SectionCard from "@/components/dashboard/SectionCard";
 import { useAuth } from "@/lib/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import MfaSetup, { RecoveryCodes } from "@/components/MfaSetup";
 import {
-  signInWithPassword, updatePassword, listTotpFactors, enrollTotp, verifyTotp, unenrollTotp, signOutOtherSessions,
+  signInWithPassword, updatePassword, listTotpFactors, unenrollTotp, signOutOtherSessions, getMfaPolicy, generateRecoveryCodes,
 } from "@/api/auth";
-import { Shield, Lock, KeyRound, LogOut, Check, Loader2, Smartphone, ShieldCheck, ShieldOff } from "lucide-react";
+import { Shield, Lock, KeyRound, LogOut, Check, Loader2, Smartphone, ShieldCheck, ShieldOff, LifeBuoy } from "lucide-react";
 import { isAdmin } from "@/lib/roles";
 
 const input = "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500";
@@ -16,41 +16,19 @@ function TwoFactor() {
   const { toast } = useToast();
   const { user } = useAuth();
   const [factors, setFactors] = useState(null);
-  const [enrolling, setEnrolling] = useState(null);
-  const [code, setCode] = useState("");
+  const [policy, setPolicy] = useState(null);
+  const [setup, setSetup] = useState(false);
+  const [codes, setCodes] = useState(null);
   const [busy, setBusy] = useState(false);
 
-  const load = () => listTotpFactors().then(setFactors).catch(() => setFactors([]));
+  const load = () => {
+    listTotpFactors().then(setFactors).catch(() => setFactors([]));
+    getMfaPolicy().then(setPolicy).catch(() => setPolicy(null));
+  };
   useEffect(() => { load(); }, []);
 
   const verified = (factors || []).find((f) => f.status === "verified");
-
-  const start = async () => {
-    setBusy(true);
-    try {
-      setEnrolling(await enrollTotp());
-      setCode("");
-    } catch (e) {
-      toast({ title: "Activation impossible", description: e.message, variant: "destructive" });
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const confirmCode = async () => {
-    setBusy(true);
-    try {
-      await verifyTotp(enrolling.id, code);
-      setEnrolling(null);
-      toast({ title: "Double authentification activée", description: "Un code vous sera demandé à chaque connexion." });
-      load();
-    } catch (e) {
-      toast({ title: "Code invalide", description: e.message, variant: "destructive" });
-      setCode("");
-    } finally {
-      setBusy(false);
-    }
-  };
+  const mandatory = !!policy?.required;
 
   const disable = async () => {
     if (!window.confirm("Désactiver la double authentification ?")) return;
@@ -66,40 +44,51 @@ function TwoFactor() {
     }
   };
 
+  const regenerate = async () => {
+    if (policy?.recovery_remaining && !window.confirm("Les anciens codes de secours ne fonctionneront plus. Continuer ?")) return;
+    setBusy(true);
+    try {
+      setCodes(await generateRecoveryCodes());
+    } catch (e) {
+      toast({ title: "Impossible", description: e.message, variant: "destructive" });
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <SectionCard icon={Smartphone} title="Double authentification (2FA)">
       {factors === null ? (
         <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+      ) : codes ? (
+        <RecoveryCodes codes={codes} doneLabel="Terminé" onDone={() => { setCodes(null); load(); }} />
       ) : verified ? (
         <div className="space-y-3">
           <p className="flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700"><ShieldCheck className="h-4 w-4" /> Activée — un code est demandé à chaque connexion.</p>
-          <button onClick={disable} disabled={busy} className="flex items-center gap-2 rounded-lg border border-rose-200 px-4 py-2 text-sm font-medium text-rose-600 hover:bg-rose-50 disabled:opacity-50"><ShieldOff className="h-4 w-4" /> Désactiver</button>
-        </div>
-      ) : enrolling ? (
-        <div className="space-y-3 text-sm text-slate-600">
-          <p>1. Scannez ce QR code avec Google Authenticator, Microsoft Authenticator ou 1Password.</p>
-          <img src={enrolling.qr_code} alt="QR code de double authentification" className="mx-auto h-44 w-44 rounded-lg border border-slate-200 bg-white p-2" />
-          <p className="break-all text-center font-mono text-xs text-slate-400">{enrolling.secret}</p>
-          <p>2. Saisissez le code à 6 chiffres affiché :</p>
-          <div className="flex justify-center">
-            <InputOTP maxLength={6} value={code} onChange={setCode} autoComplete="one-time-code">
-              <InputOTPGroup>
-                <InputOTPSlot index={0} /><InputOTPSlot index={1} /><InputOTPSlot index={2} />
-                <InputOTPSlot index={3} /><InputOTPSlot index={4} /><InputOTPSlot index={5} />
-              </InputOTPGroup>
-            </InputOTP>
+          <div className="rounded-lg border border-slate-200 p-3 text-sm">
+            <p className="flex items-center gap-2 font-medium text-slate-900"><LifeBuoy className="h-4 w-4 text-slate-400" /> Codes de secours</p>
+            <p className="mt-1 text-slate-500">
+              {policy ? `${policy.recovery_remaining} code(s) restant(s).` : ""} Ils permettent de vous reconnecter si vous perdez votre téléphone.
+            </p>
+            {policy && policy.recovery_remaining <= 2 && <p className="mt-1 text-xs text-amber-700">Pensez à générer de nouveaux codes.</p>}
+            <button onClick={regenerate} disabled={busy} className="mt-2 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50">
+              {policy?.recovery_remaining ? "Régénérer les codes" : "Générer mes codes"}
+            </button>
           </div>
-          <div className="flex gap-2">
-            <button onClick={confirmCode} disabled={busy || code.length < 6} className="flex-1 rounded-lg bg-emerald-500 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">Confirmer</button>
-            <button onClick={() => setEnrolling(null)} className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600">Annuler</button>
-          </div>
+          {mandatory ? (
+            <p className="text-xs text-slate-500">La 2FA est obligatoire pour votre rôle et ne peut pas être désactivée.</p>
+          ) : (
+            <button onClick={disable} disabled={busy} className="flex items-center gap-2 rounded-lg border border-rose-200 px-4 py-2 text-sm font-medium text-rose-600 hover:bg-rose-50 disabled:opacity-50"><ShieldOff className="h-4 w-4" /> Désactiver</button>
+          )}
         </div>
+      ) : setup ? (
+        <MfaSetup onDone={() => { setSetup(false); load(); toast({ title: "Double authentification activée" }); }} onCancel={() => setSetup(false)} />
       ) : (
         <div className="space-y-3">
           <p className="text-sm text-slate-500">Protégez votre compte avec un code temporaire généré sur votre téléphone.</p>
-          {isAdmin(user) && <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">Fortement recommandé pour les super admins : une fois activée, les actions d'administration exigent une session validée par 2FA.</p>}
-          <button onClick={start} disabled={busy} className="flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50">
-            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />} Activer la 2FA
+          {(mandatory || isAdmin(user)) && <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">Obligatoire pour votre rôle : les actions sensibles exigent une session validée par 2FA.</p>}
+          <button onClick={() => setSetup(true)} className="flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">
+            <ShieldCheck className="h-4 w-4" /> Activer la 2FA
           </button>
         </div>
       )}

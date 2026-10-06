@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import MfaChallenge from '@/components/MfaChallenge';
+import MfaEnrollGate from '@/components/MfaEnrollGate';
 
 const DefaultFallback = () => (
   <div className="fixed inset-0 flex items-center justify-center">
@@ -10,7 +11,7 @@ const DefaultFallback = () => (
 );
 
 export default function ProtectedRoute({ fallback = <DefaultFallback /> }) {
-  const { isAuthenticated, isLoadingAuth, authChecked, checkUserAuth, mfaRequired } = useAuth();
+  const { isAuthenticated, isLoadingAuth, authChecked, checkUserAuth, mfaRequired, mfaEnrollRequired } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
@@ -30,6 +31,10 @@ export default function ProtectedRoute({ fallback = <DefaultFallback /> }) {
 
   if (mfaRequired) {
     return <MfaChallenge />;
+  }
+
+  if (mfaEnrollRequired) {
+    return <MfaEnrollGate />;
   }
 
   return <Outlet />;

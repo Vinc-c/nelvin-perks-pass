@@ -1,3 +1,4 @@
+import { domainLogo } from "@/lib/logos";
 import React, { useState } from "react";
 import { usePublicContent } from "@/hooks/usePublicContent";
 
@@ -110,10 +111,7 @@ const partners = [
 const initials = (name) => name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
 
 function LogoImg({ domain, name }) {
-  const sources = [
-    `https://logo.clearbit.com/${domain}`,
-    `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
-  ];
+  const sources = [domainLogo(domain)];
   const [idx, setIdx] = useState(0);
   const [failed, setFailed] = useState(false);
   if (failed) {

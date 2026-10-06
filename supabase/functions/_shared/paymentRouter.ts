@@ -167,6 +167,12 @@ export function initPayment(psp: PspContext, pspId: string, ctx: InitCtx): Promi
   }
 }
 
+/** Our webhook endpoint for PSPs that take a per-payment notification URL. */
+function webhookUrl(pspId: string, ref?: string): string {
+  const base = `${(Deno.env.get("SUPABASE_URL") || "").replace(/\/$/, "")}/functions/v1/payment-webhook?psp=${pspId}`;
+  return ref ? `${base}&ref=${encodeURIComponent(ref)}` : base;
+}
+
 async function initStripe(psp: PspContext, ctx: InitCtx): Promise<InitResult> {
   const [key] = await psp.need("stripe", "STRIPE_SECRET_KEY");
   const params = new URLSearchParams();
@@ -265,7 +271,7 @@ async function initPayunit(psp: PspContext, ctx: InitCtx): Promise<InitResult> {
       currency: ctx.currency.toUpperCase(),
       transaction_id: ctx.reference,
       return_url: appendQuery(ctx.callback_url, { psp: "payunit", ref: ctx.reference }),
-      notify_url: appendQuery(ctx.callback_url, { psp: "payunit", ref: ctx.reference }),
+      notify_url: webhookUrl("payunit", ctx.reference),
       payment_country: String(ctx.metadata?.payment_country || "CM"),
     }),
   });
@@ -286,6 +292,7 @@ async function initKorapay(psp: PspContext, ctx: InitCtx): Promise<InitResult> {
       redirect_url: appendQuery(ctx.callback_url, { psp: "korapay", ref: ctx.reference }),
       customer: { name: String(ctx.metadata?.name || "Nelvin User"), email: ctx.email || "customer@nelvin.app" },
       narration: "Nelvin Wallet Recharge",
+      notification_url: webhookUrl("korapay"),
     }),
   });
   const data: Any = await res.json();

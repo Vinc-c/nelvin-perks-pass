@@ -54,7 +54,8 @@ L'accès super admin est piloté **uniquement** par la table `public.platform_ad
 - d'autres super admins s'ajoutent depuis *Admin → Plateforme → Super Admins* (sans limite) ; une invitation email peut être envoyée ;
 - un email ajouté est promu immédiatement s'il a déjà un compte, sinon dès son inscription ; un email retiré est rétrogradé ;
 - la base refuse de descendre sous **2** super admins et interdit de se retirer soi-même ;
-- si un admin a activé la **2FA (TOTP)**, ses droits admin n'existent qu'en session vérifiée (`aal2`), en base comme dans les Edge Functions ;
+- la **2FA (TOTP) est obligatoire** pour les super admins et les RH (réglable dans *Paramètres plateforme*) : à la première connexion, l'activation est imposée, avec **10 codes de secours** à usage unique ; sans session vérifiée (`aal2`), aucun droit admin n'existe, en base comme dans les Edge Functions ;
+- téléphone perdu : un code de secours retire l'ancien authentificateur (fonction `mfa-recover`) ; secours ultime en SQL : `update public.platform_settings set value = '[]' where key = 'mfa_required_roles';` ;
 - toutes les actions sensibles sont tracées dans `admin_audit_log` (*Journal d'audit*).
 
 ## Multi-tenant : isolation stricte
@@ -74,6 +75,7 @@ Les clés se saisissent dans *Admin → Paiements → Clés PSP & routage* :
 - Stripe, Paystack, Flutterwave, Payunit, Paddle, Korapay : activation, mode test/live, priorité, clé publique ;
 - les clés secrètes sont chiffrées dans **Supabase Vault** (`admin_set_psp_secret`) ; l'interface n'affiche qu'un masque (`••••abcd`) et elles ne sont lisibles que par les Edge Functions (rôle service) ;
 - bouton **Tester la connexion** (fonction `psp-test`) et simulateur de routage (pays / moyen / audience) ;
+- **webhooks** : chaque carte PSP affiche l'URL `…/functions/v1/payment-webhook?psp=<id>` à coller dans le tableau de bord du PSP (Payunit et Korapay la reçoivent automatiquement). La signature est vérifiée quand le secret webhook est saisi, puis le paiement est toujours revérifié auprès du PSP avant tout crédit ;
 - à défaut de clé en base, les Edge Functions utilisent les secrets d'environnement du même nom (ci-dessous).
 
 ## Modèle monétaire
@@ -104,6 +106,8 @@ supabase db push
 | `20261006170200_psp_providers_vault.sql` | PSP + clés chiffrées dans Vault |
 | `20261006170300_engagement_support_kyc_benefits.sql` | Avantages flexibles, reconnaissance, tickets support, KYC |
 | `20261006170400_tenant_hardening_admin_stats.sql` | Durcissement multi-tenant, statistiques admin, 2FA admin |
+| `20261006180000_mfa_enforcement_recovery.sql` | 2FA obligatoire (admins, RH) et codes de secours |
+| `20261006180100_drop_legacy_source_snapshot.sql` | Supprime la copie de l'ancien code source laissée en base |
 
 ### Edge Functions
 
@@ -117,6 +121,8 @@ supabase functions deploy --no-verify-jwt
 | --- | --- |
 | `create-checkout` | Paiement PSP : recharge wallet, abonnement, recharge du budget entreprise |
 | `verify-payment` | Confirmation auprès du PSP (référence, montant, devise) puis crédit idempotent |
+| `payment-webhook` | Confirmation serveur à serveur envoyée par le PSP (même si le client ferme la page) |
+| `mfa-recover` | Code de secours 2FA : retire l'authentificateur perdu |
 | `withdraw-wallet` | Demande de retrait (débit en attente de traitement admin) |
 | `generate-redemption` / `validate-redemption` | Code QR membre et validation en caisse par le partenaire |
 | `check-access` | Accès aux portails selon l'abonnement |

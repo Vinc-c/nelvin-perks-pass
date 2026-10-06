@@ -53,6 +53,15 @@ function jwtClaims(token: string): Record<string, unknown> {
   }
 }
 
+const DEFAULT_MFA_ROLES = ["SUPER_ADMIN", "HR_ADMIN"];
+
+/** Whether 2FA is mandatory for a role (platform setting, defaults to admins + HR). */
+export async function mfaRequiredFor(admin: SupabaseClient, role: string): Promise<boolean> {
+  const { data } = await admin.from("platform_settings").select("value").eq("key", "mfa_required_roles").maybeSingle();
+  const roles = Array.isArray(data?.value) ? (data!.value as string[]) : DEFAULT_MFA_ROLES;
+  return roles.includes(role);
+}
+
 /**
  * Resolves the signed-in caller from the Authorization header.
  * Returns null for anonymous requests or invalid/expired tokens.
@@ -65,11 +74,12 @@ export async function getCaller(req: Request, admin: SupabaseClient): Promise<Ca
   if (error || !data?.user) return null;
   const { data: profile } = await admin.from("profiles").select("*").eq("id", data.user.id).maybeSingle();
   if (!profile) return null;
-  // 2FA: a user with a verified TOTP factor must use an AAL2 session for
-  // sensitive actions (withdrawals, admin operations).
+  // 2FA (mirrors public.mfa_ok()): AAL2, or no verified factor when 2FA is
+  // not mandatory for the caller's role (platform setting mfa_required_roles).
   const aal = String(jwtClaims(token).aal || "aal1");
   const hasFactor = (data.user.factors || []).some((f) => f.status === "verified");
-  return { user: data.user, profile: profile as Profile, aal, mfaOk: aal === "aal2" || !hasFactor };
+  const required = await mfaRequiredFor(admin, (profile as Profile).role);
+  return { user: data.user, profile: profile as Profile, aal, mfaOk: aal === "aal2" || (!hasFactor && !required) };
 }
 
 /** Wraps a handler with CORS preflight + error handling. */

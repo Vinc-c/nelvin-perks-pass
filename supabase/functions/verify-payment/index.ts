@@ -3,7 +3,7 @@
 // Called from the payment return page, or later from "Vérifier" on a pending
 // transaction (owner or admin) when the user closed the tab mid-checkout.
 import { adminClient, getCaller, isAdminRole, json, readJson, serve, UUID_RE } from "../_shared/http.ts";
-import { PspContext, verifyPayment } from "../_shared/paymentRouter.ts";
+import { settleTransaction } from "../_shared/settle.ts";
 
 serve(async (req) => {
   const body = await readJson(req);
@@ -25,35 +25,6 @@ serve(async (req) => {
 
   const { data: tx } = await query.maybeSingle();
   if (!tx) return json({ ok: false, error: "Transaction introuvable" }, 404);
-  if (tx.status === "COMPLETED") {
-    return json({ ok: true, status: "already_completed", type: tx.type, transactionId: tx.id });
-  }
-  if (tx.status !== "PENDING") return json({ ok: false, status: tx.status, error: "Paiement non confirmé" });
-
-  // The PSP is encoded in our own reference (NELVIN-<PSP>-…), never trusted from the URL.
-  const pspId = String(tx.psp_reference || "").split("-")[1]?.toLowerCase() || "";
-  const providerRef = tx.provider_ref && tx.provider_ref !== tx.psp_reference
-    ? tx.provider_ref
-    : body.provider_ref ? String(body.provider_ref).slice(0, 200) : null;
-
-  const psp = await PspContext.load(admin);
-  const result = await verifyPayment(psp, pspId, {
-    reference: tx.psp_reference,
-    providerRef,
-    amount: Number(tx.amount),
-    currency: tx.currency,
-  });
-
-  if (!result.ok) {
-    const terminal = ["failed", "cancelled", "abandoned", "expired", "mismatch", "unpaid", "FAILED", "canceled"];
-    if (terminal.includes(result.status)) {
-      await admin.from("transactions").update({ status: "FAILED", admin_note: `PSP: ${result.status}` })
-        .eq("id", tx.id).eq("status", "PENDING");
-    }
-    return json({ ok: false, status: result.status, error: "Paiement non confirmé" });
-  }
-
-  const { data, error } = await admin.rpc("complete_payment", { p_reference: tx.psp_reference });
-  if (error) throw error;
-  return json(data);
+  const result = await settleTransaction(admin, tx, body.provider_ref ? String(body.provider_ref) : null);
+  return json(result);
 });

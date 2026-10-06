@@ -16,7 +16,12 @@ L'application affichait de nombreux modules « de façade » : données fictives
 | Les offres de partenaires non vérifiés étaient visibles | Lecture publique limitée aux partenaires vérifiés |
 | Rôle super admin attribuable par simple mise à jour de profil | Liste `platform_admins` seule source ; minimum 2 ; pas d'auto-retrait ; audit |
 | Clés PSP uniquement en variables d'environnement, aucune gestion admin | Saisie admin chiffrée dans Supabase Vault, lecture réservée au serveur |
-| Admin sans exigence 2FA | `is_admin()` exige une session `aal2` dès qu'un facteur TOTP est actif |
+| Admin sans exigence 2FA | 2FA obligatoire pour super admins et RH (session `aal2` exigée en base), codes de secours hachés, limite de 5 essais/heure |
+| Paiement perdu si le client ferme la page | Webhooks PSP signés + revérification auprès du PSP, crédit idempotent |
+| Copie de l'ancien code source stockée en base | Table supprimée (migration `drop_legacy_source_snapshot`) |
+| Service worker cassé (« Failed to convert value to Response ») | Réécrit : n'intercepte plus les appels API, page hors-ligne propre |
+| Logos partenaires via Clearbit (service fermé) | Remplacé par le service de favicons |
+| Site construit sans variables Supabase → « Failed to fetch » | Projet de production par défaut (URL et clé publiques) |
 | Documents KYC dans un bucket public | Bucket privé `kyc-private`, chemins préfixés par partenaire, liens signés |
 | Vérification de paiement sans contrôle du montant | Vérification référence + montant + devise, crédit idempotent |
 | Codes d'invitation générés avec `Math.random` | Générateur cryptographique (`crypto.getRandomValues`) |
@@ -47,3 +52,9 @@ L'application affichait de nombreux modules « de façade » : données fictives
 4. Supprimer du projet Supabase les anciennes Edge Functions qui ne font plus partie du code (`invite-user`, `create-checkout-session`, `payment-webhook`).
 5. Le schéma `legacy` conserve les anciennes tables (dont une copie de l'ancien code source) : à supprimer une fois les données vérifiées.
 6. Les super admins sont invités à activer la 2FA dans *Sécurité*.
+
+## Feuille de route (vs MyBenefit / The Entertainer)
+
+**P1 — mécaniques The Entertainer** : validation par PIN partenaire (hors-ligne), limites d'utilisation par offre (BOGO / 2-pour-1 une fois par an), abonnement famille et cadeau, favoris et avis, PWA installable avec notifications push, arabe et anglais (RTL).
+
+**P2 — mécaniques MyBenefit** : catalogue cafétéria (cartes cadeaux, sport, santé, voyage), import CSV des employés et SSO Google / Microsoft, export paie, portail aux couleurs de l'entreprise, facturation entreprise avec TVA EAU 5 %, emails transactionnels, conformité PDPL / RGPD (export et suppression du compte), supervision des erreurs et tests de bout en bout.

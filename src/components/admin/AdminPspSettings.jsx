@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { entities } from "@/api/entities";
+import { supabaseUrl } from "@/api/supabaseClient";
 import { callRpc } from "@/api/rpc";
 import { invokeFunction } from "@/api/functions";
 import { useAsync } from "@/hooks/useAsync";
@@ -8,7 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { routePayment } from "@/lib/paymentRouter";
 import { AFRICAN_COUNTRIES } from "@/data/africanCountries";
 import { Spinner } from "@/components/UiFeedback";
-import { KeyRound, Eye, EyeOff, Save, Trash2, PlugZap, CheckCircle2, XCircle, Loader2, ShieldCheck, Route, Zap, Lock } from "lucide-react";
+import { KeyRound, Eye, EyeOff, Save, Trash2, PlugZap, CheckCircle2, XCircle, Loader2, ShieldCheck, Route, Zap, Lock, Copy } from "lucide-react";
 
 // Secret fields accepted per PSP (mirrors public.psp_secret_fields()).
 export const PSP_FIELDS = {
@@ -92,6 +93,7 @@ function ProviderCard({ p, onChange }) {
   const [testing, setTesting] = useState(false);
   const [publicKey, setPublicKey] = useState(p.public_key || "");
   const hasSecret = Object.keys(p.secret_hints || {}).length > 0;
+  const webhook = `${supabaseUrl}/functions/v1/payment-webhook?psp=${p.id}`;
 
   const patch = async (values) => {
     try {
@@ -148,6 +150,13 @@ function ProviderCard({ p, onChange }) {
 
       <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
         {(PSP_FIELDS[p.id] || []).map((f) => <SecretField key={f.key} provider={p.id} field={f} hint={p.secret_hints?.[f.key]} onSaved={onChange} />)}
+        <div>
+          <span className="text-xs font-medium text-slate-600">URL webhook {p.id === "payunit" || p.id === "korapay" ? "(envoyée automatiquement)" : "(à coller dans le tableau de bord du PSP)"}</span>
+          <div className="mt-1 flex gap-1">
+            <input readOnly value={webhook} onFocus={(e) => e.target.select()} aria-label={`${p.display_name} URL webhook`} className="w-full rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 font-mono text-[11px] text-slate-600" />
+            <button type="button" onClick={() => navigator.clipboard?.writeText(webhook).then(() => toast({ title: "URL copiée" }), () => {})} className="rounded-lg border border-slate-200 px-2 text-slate-500 hover:bg-slate-50" aria-label="Copier l'URL webhook"><Copy className="h-3.5 w-3.5" /></button>
+          </div>
+        </div>
         {PUBLIC_KEY_HINT[p.id] !== "" && (
           <div>
             <span className="text-xs font-medium text-slate-600">Clé publique (non secrète)</span>

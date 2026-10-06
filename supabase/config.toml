@@ -42,3 +42,9 @@ verify_jwt = false
 [functions.withdraw-wallet]
 verify_jwt = false
 
+
+[functions.mfa-recover]
+verify_jwt = false
+
+[functions.payment-webhook]
+verify_jwt = false

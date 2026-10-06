@@ -1,3 +1,4 @@
+import { domainLogo } from "@/lib/logos";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -20,7 +21,7 @@ const FALLBACK_TICKER = [
 const initials = (name) => name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
 
 function TickerLogo({ logo_url, domain, name }) {
-  const [src, setSrc] = useState(logo_url || (domain ? `https://logo.clearbit.com/${domain}` : ""));
+  const [src, setSrc] = useState(logo_url || domainLogo(domain));
   const [failed, setFailed] = useState(false);
   if (failed || !src) {
     return (
@@ -36,11 +37,8 @@ function TickerLogo({ logo_url, domain, name }) {
       loading="lazy"
       className="h-10 w-10 rounded-lg bg-white object-contain p-1"
       onError={() => {
-        if (src.startsWith("https://logo.clearbit.com") && domain) {
-          setSrc(`https://www.google.com/s2/favicons?domain=${domain}&sz=128`);
-        } else {
-          setFailed(true);
-        }
+        if (logo_url && src === logo_url && domain) setSrc(domainLogo(domain));
+        else setFailed(true);
       }}
     />
   );

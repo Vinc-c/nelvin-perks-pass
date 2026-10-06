@@ -151,3 +151,29 @@ export async function signOutOtherSessions() {
   const { error } = await supabase.auth.signOut({ scope: "others" });
   if (error) throw authError(error, "Impossible de fermer les autres sessions");
 }
+
+/** { required, has_factor, aal, recovery_remaining } for the signed-in user. */
+export async function getMfaPolicy() {
+  const { data, error } = await supabase.rpc("mfa_policy");
+  if (error) throw authError(error, "Impossible de lire la politique 2FA");
+  return data;
+}
+
+/** Generates 10 fresh single-use recovery codes (needs an AAL2 session). */
+export async function generateRecoveryCodes() {
+  const { data, error } = await supabase.rpc("generate_mfa_recovery_codes");
+  if (error) throw authError(error, "Impossible de générer les codes de secours");
+  return data || [];
+}
+
+/** Burns a recovery code: removes the lost authenticator from the account. */
+export async function redeemRecoveryCode(code) {
+  const { data, error } = await supabase.functions.invoke("mfa-recover", { body: { code: code.trim() } });
+  if (error) {
+    let message = error.message;
+    try { message = (await error.context?.json())?.error || message; } catch { /* keep default */ }
+    throw authError({ message }, "Code de secours refusé");
+  }
+  await supabase.auth.refreshSession();
+  return data;
+}

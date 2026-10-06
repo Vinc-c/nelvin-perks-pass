@@ -1,3 +1,4 @@
+import { domainLogo } from "@/lib/logos";
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { entities } from "@/api/entities";
@@ -77,7 +78,7 @@ export default function AdminCmsLogos() {
       <form onSubmit={add} className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:grid-cols-2 lg:grid-cols-5">
         <input className={inputCls} placeholder="Nom *" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} required />
         <input className={inputCls} placeholder="Catégorie" value={draft.category} onChange={(e) => setDraft({ ...draft, category: e.target.value })} />
-        <input className={inputCls} placeholder="Domaine (clearbit)" value={draft.domain} onChange={(e) => setDraft({ ...draft, domain: e.target.value })} />
+        <input className={inputCls} placeholder="Domaine (ex. emirates.com)" value={draft.domain} onChange={(e) => setDraft({ ...draft, domain: e.target.value })} />
         <input type="number" className={inputCls} placeholder="Ordre" value={draft.sort_order} onChange={(e) => setDraft({ ...draft, sort_order: Number(e.target.value) })} />
         <button type="submit" className="flex items-center justify-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600"><Plus className="h-4 w-4" /> Ajouter</button>
         <div className="sm:col-span-2 lg:col-span-5">
@@ -104,7 +105,7 @@ export default function AdminCmsLogos() {
           {logos.map((l) => (
             <div key={l.id} className="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
               <GripVertical className="h-4 w-4 text-slate-300" />
-              <img src={l.logo_url || `https://logo.clearbit.com/${l.domain || ""}`} onError={(e) => { e.currentTarget.style.display = "none"; }} className="h-10 w-10 rounded-lg bg-slate-100 object-contain" alt="" />
+              <img src={l.logo_url || domainLogo(l.domain)} onError={(e) => { e.currentTarget.style.display = "none"; }} className="h-10 w-10 rounded-lg bg-slate-100 object-contain" alt="" />
               <input className={`${inputCls} max-w-[160px]`} value={l.name} onChange={(e) => save(l, { name: e.target.value })} />
               <input className={`${inputCls} max-w-[140px]`} placeholder="Catégorie" value={l.category || ""} onChange={(e) => save(l, { category: e.target.value })} />
               <input className={`${inputCls} max-w-[160px]`} placeholder="Domaine" value={l.domain || ""} onChange={(e) => save(l, { domain: e.target.value })} />
