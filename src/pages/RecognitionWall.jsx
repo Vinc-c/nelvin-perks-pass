@@ -1,102 +1,162 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import PortalLayout from "@/components/PortalLayout";
-import { Award, Heart, ThumbsUp, Sparkles, Send, TrendingUp } from "lucide-react";
+import { useAuth } from "@/lib/AuthContext";
+import { entities } from "@/api/entities";
+import { callRpc } from "@/api/rpc";
+import { useAsync } from "@/hooks/useAsync";
+import { useToast } from "@/components/ui/use-toast";
+import SectionCard from "@/components/dashboard/SectionCard";
+import { EmptyState, ListSkeleton } from "@/components/UiFeedback";
+import { Award, Send, Loader2, Trophy, Heart } from "lucide-react";
 
-const badgeOptions = [
-  { id: "team", label: "Team Player", icon: ThumbsUp, color: "emerald" },
-  { id: "innovator", label: "Innovator", icon: Sparkles, color: "blue" },
-  { id: "wellness", label: "Wellness Champ", icon: Heart, color: "rose" },
-  { id: "topsaver", label: "Top Saver", icon: Award, color: "amber" },
-];
+export const RECOGNITION_BADGES = {
+  TEAM_PLAYER: { label: "Esprit d'équipe", emoji: "🤝" },
+  INNOVATOR: { label: "Innovation", emoji: "💡" },
+  CUSTOMER_HERO: { label: "Héros client", emoji: "🦸" },
+  LEADERSHIP: { label: "Leadership", emoji: "🧭" },
+  GOING_EXTRA_MILE: { label: "Au-delà des attentes", emoji: "🚀" },
+  MENTOR: { label: "Mentor", emoji: "🎓" },
+};
 
-const colleagues = ["Kwame Mensah", "Aisha Bello", "John Mwangi", "Fatima Zahra", "Daniel Tadesse"];
-
-const initialFeed = [
-  { id: "r1", from: "Amara Diallo", to: "Kwame Mensah", badge: "team", message: "Saved the launch with quick thinking on the router fallback!", date: "2026-10-02", likes: 7 },
-  { id: "r2", from: "Aisha Bello", to: "Amara Diallo", badge: "topsaver", message: "Top saver this quarter — inspired the whole team to use perks.", date: "2026-09-30", likes: 12 },
-  { id: "r3", from: "John Mwangi", to: "Fatima Zahra", badge: "wellness", message: "Led the wellness month challenge. Thank you!", date: "2026-09-28", likes: 9 },
-];
+const initials = (name) => (name || "?").split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
 
 export default function RecognitionWall() {
-  const [feed, setFeed] = useState(initialFeed);
-  const [to, setTo] = useState(colleagues[0]);
-  const [badge, setBadge] = useState("team");
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [to, setTo] = useState("");
+  const [badge, setBadge] = useState("TEAM_PLAYER");
   const [message, setMessage] = useState("");
-  const [liked, setLiked] = useState({});
+  const [sending, setSending] = useState(false);
 
-  const post = () => {
-    if (!message.trim()) return;
-    setFeed((f) => [{ id: `r${Date.now()}`, from: "You", to, badge, message, date: "2026-10-02", likes: 0 }, ...f]);
-    setMessage("");
+  const { data, loading, reload } = useAsync(async () => {
+    if (!user?.company_id) return { people: [], items: [] };
+    const [people, items] = await Promise.all([
+      callRpc("company_directory"),
+      entities.Recognition.filter({ company_id: user.company_id }, "-created_date", 100),
+    ]);
+    return { people: people || [], items };
+  }, [user?.company_id], { initial: { people: [], items: [] } });
+
+  const nameOf = useMemo(() => {
+    const m = new Map((data?.people || []).map((p) => [p.id, p.full_name]));
+    return (id) => m.get(id) || "Ancien collègue";
+  }, [data]);
+
+  const colleagues = (data?.people || []).filter((p) => p.id !== user?.id);
+
+  const leaderboard = useMemo(() => {
+    const since = Date.now() - 30 * 86400000;
+    const counts = new Map();
+    (data?.items || []).filter((r) => new Date(r.created_date).getTime() >= since)
+      .forEach((r) => counts.set(r.to_user_id, (counts.get(r.to_user_id) || 0) + Number(r.points || 0)));
+    return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+  }, [data]);
+
+  const send = async (e) => {
+    e.preventDefault();
+    if (!to || message.trim().length < 3) return;
+    setSending(true);
+    try {
+      await entities.Recognition.create({ company_id: user.company_id, to_user_id: to, badge, message: message.trim() });
+      toast({ title: "Reconnaissance envoyée", description: `${nameOf(to)} a été notifié(e).` });
+      setMessage("");
+      setTo("");
+      reload();
+    } catch (err) {
+      toast({ title: "Envoi impossible", description: err.message, variant: "destructive" });
+    } finally {
+      setSending(false);
+    }
   };
 
-  const like = (id) => setLiked((l) => ({ ...l, [id]: !l[id] }));
-
-  const topRecognized = [...feed].reduce((acc, r) => { acc[r.to] = (acc[r.to] || 0) + 1; return acc; }, {});
+  if (!user?.company_id) {
+    return (
+      <PortalLayout title="Mur de reconnaissance" theme="light">
+        <EmptyState icon={Award} title="Réservé aux entreprises" description="Le mur de reconnaissance est disponible pour les salariés d'une entreprise cliente Nelvin." />
+      </PortalLayout>
+    );
+  }
 
   return (
-    <PortalLayout title="Employee Recognition" theme="light">
-      {/* Compose */}
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h3 className="flex items-center gap-2 font-semibold text-slate-900"><Award className="h-5 w-5 text-amber-500" /> Recognize a colleague</h3>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <label className="block text-sm">
-            <span className="text-slate-500">Colleague</span>
-            <select value={to} onChange={(e) => setTo(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none">
-              {colleagues.map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
-          </label>
-          <div className="text-sm">
-            <span className="text-slate-500">Badge</span>
-            <div className="mt-1 flex flex-wrap gap-2">
-              {badgeOptions.map((b) => {
-                const Icon = b.icon;
-                return (
-                  <button key={b.id} onClick={() => setBadge(b.id)} className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition ${badge === b.id ? `bg-${b.color}-50 border-${b.color}-500 text-${b.color}-600` : "border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
-                    <Icon className="h-3.5 w-3.5" /> {b.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-        <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Write a few words of praise..." rows={3} className="mt-3 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
-        <button onClick={post} className="mt-3 flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-600">
-          <Send className="h-4 w-4" /> Post recognition
-        </button>
-      </motion.div>
-
-      {/* Top recognized */}
-      <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-6 flex items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 p-4">
-        <TrendingUp className="h-5 w-5 text-amber-600" />
-        <p className="text-sm text-amber-800"><span className="font-semibold">Most recognized this month:</span> {Object.entries(topRecognized).map(([n, c]) => `${n} (${c})`).join(" · ")}</p>
-      </motion.div>
-
-      {/* Feed */}
-      <div className="mt-6 space-y-3">
-        {feed.map((r, i) => {
-          const b = badgeOptions.find((x) => x.id === r.badge) || badgeOptions[0];
-          const Icon = b.icon;
-          return (
-            <motion.div key={r.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="flex items-start gap-3">
-                <span className={`flex h-10 w-10 items-center justify-center rounded-xl bg-${b.color}-50`}><Icon className={`h-5 w-5 text-${b.color}-600`} /></span>
-                <div className="flex-1">
-                  <p className="text-sm text-slate-700"><span className="font-semibold text-slate-900">{r.from}</span> recognized <span className="font-semibold text-slate-900">{r.to}</span></p>
-                  <p className="mt-1 text-sm text-slate-600">{r.message}</p>
-                  <div className="mt-3 flex items-center gap-4 text-xs text-slate-500">
-                    <button onClick={() => like(r.id)} className={`flex items-center gap-1 transition ${liked[r.id] ? "text-rose-500" : "hover:text-rose-500"}`}>
-                      <Heart className={`h-4 w-4 ${liked[r.id] ? "fill-rose-500" : ""}`} /> {r.likes + (liked[r.id] ? 1 : 0)}
+    <PortalLayout title="Mur de reconnaissance" theme="light">
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="space-y-6 lg:col-span-1">
+          <SectionCard icon={Send} title="Reconnaître un collègue">
+            <form onSubmit={send} className="space-y-3">
+              <label className="block text-sm text-slate-600">
+                Collègue
+                <select value={to} onChange={(e) => setTo(e.target.value)} required className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none">
+                  <option value="">Choisir…</option>
+                  {colleagues.map((p) => <option key={p.id} value={p.id}>{p.full_name}{p.department ? ` · ${p.department}` : ""}</option>)}
+                </select>
+              </label>
+              <div>
+                <p className="text-sm text-slate-600">Valeur</p>
+                <div className="mt-1 grid grid-cols-2 gap-2">
+                  {Object.entries(RECOGNITION_BADGES).map(([id, b]) => (
+                    <button type="button" key={id} onClick={() => setBadge(id)} className={`not-pill flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-xs font-medium ${badge === id ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-600"}`}>
+                      <span>{b.emoji}</span>{b.label}
                     </button>
-                    <span className="rounded-full bg-slate-100 px-2.5 py-0.5 font-medium text-slate-600">{b.label}</span>
-                    <span>{r.date}</span>
-                  </div>
+                  ))}
                 </div>
               </div>
-            </motion.div>
-          );
-        })}
+              <label className="block text-sm text-slate-600">
+                Message
+                <textarea value={message} onChange={(e) => setMessage(e.target.value)} maxLength={500} rows={3} required placeholder="Merci pour…" className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
+              </label>
+              <button type="submit" disabled={sending || !to || message.trim().length < 3} className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-2.5 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">
+                {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Heart className="h-4 w-4" />} Envoyer
+              </button>
+              {colleagues.length === 0 && !loading && <p className="text-xs text-slate-400">Aucun collègue pour l'instant — invitez votre équipe depuis l'espace RH.</p>}
+            </form>
+          </SectionCard>
+
+          <SectionCard icon={Trophy} title="Top 30 jours">
+            {leaderboard.length === 0 ? (
+              <p className="text-sm text-slate-400">Pas encore de reconnaissance ce mois-ci.</p>
+            ) : (
+              <ol className="space-y-2">
+                {leaderboard.map(([id, pts], i) => (
+                  <li key={id} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-sm">
+                    <span className="flex items-center gap-2"><span className="w-5 text-center font-bold text-amber-500">{i + 1}</span>{nameOf(id)}</span>
+                    <span className="font-semibold text-slate-700">{pts} pts</span>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </SectionCard>
+        </div>
+
+        <div className="lg:col-span-2">
+          <SectionCard icon={Award} title="Fil de reconnaissance">
+            {loading ? (
+              <ListSkeleton rows={4} />
+            ) : data.items.length === 0 ? (
+              <EmptyState icon={Award} title="Soyez le premier" description="Remerciez un collègue pour son travail : il recevra une notification et des points." />
+            ) : (
+              <div className="space-y-3">
+                {data.items.map((r, i) => {
+                  const b = RECOGNITION_BADGES[r.badge] || RECOGNITION_BADGES.TEAM_PLAYER;
+                  return (
+                    <motion.div key={r.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i, 8) * 0.03 }} className="rounded-xl border border-slate-100 bg-slate-50 p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">{initials(nameOf(r.to_user_id))}</div>
+                        <p className="text-sm text-slate-700">
+                          <span className="font-semibold text-slate-900">{nameOf(r.from_user_id)}</span> a reconnu{" "}
+                          <span className="font-semibold text-slate-900">{nameOf(r.to_user_id)}</span>
+                        </p>
+                        <span className="ml-auto rounded-full bg-white px-2 py-0.5 text-xs text-slate-600 ring-1 ring-slate-200">{b.emoji} {b.label}</span>
+                      </div>
+                      <p className="mt-2 text-sm text-slate-600">« {r.message} »</p>
+                      <p className="mt-1 text-xs text-slate-400">{new Date(r.created_date).toLocaleDateString("fr-FR", { dateStyle: "medium" })} · +{r.points} pts</p>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            )}
+          </SectionCard>
+        </div>
       </div>
     </PortalLayout>
   );

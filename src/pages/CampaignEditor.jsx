@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import PortalLayout from "@/components/PortalLayout";
 import { entities } from "@/api/entities";
 import { useAuth } from "@/lib/AuthContext";
+import { isAdmin } from "@/lib/roles";
 import { useToast } from "@/components/ui/use-toast";
 import { useI18n } from "@/i18n/I18nContext";
 import { DISCOUNT_TYPES, AUDIENCES } from "@/data/offerCategories";
@@ -181,7 +182,7 @@ export default function CampaignEditor() {
                   {o.description && <p className="mt-1 line-clamp-2 text-xs text-slate-500">{o.description}</p>}
                   <div className="mt-2 flex flex-wrap gap-1.5 text-xs">
                     <span className="rounded-lg bg-emerald-50 px-2 py-1 font-medium text-emerald-700">
-                      {o.discount_type === "BOGO" ? "2 pour 1" : o.discount_type === "FIXED" ? `${o.discount_value} off` : `${o.discount_value}${o.discount_type === "PERCENTAGE" ? "%" : ""}`}
+                      {o.discount_type === "BOGO" ? "2 pour 1" : o.discount_type === "FIXED" ? `-${o.discount_value} $` : `${o.discount_value}%${o.discount_type === "CASHBACK" ? " cashback" : ""}`}
                     </span>
                     {o.cashback_rate > 0 && <span className="rounded-lg bg-amber-50 px-2 py-1 font-medium text-amber-700">{o.cashback_rate}% cashback</span>}
                     <span className="rounded-lg bg-slate-100 px-2 py-1 text-slate-600">{o.target_audience === "ALL" ? "Tous" : o.target_audience === "B2C" ? "Particuliers" : "Employés"}</span>
@@ -266,14 +267,14 @@ export default function CampaignEditor() {
                     </select>
                   </label>
                   <label className="block text-sm">
-                    <span className="text-slate-500">Valeur {dType?.suffix ? `(${dType.suffix})` : ""}</span>
+                    <span className="text-slate-500">Valeur {form.discount_type === "FIXED" ? "(USD)" : form.discount_type === "BOGO" ? "(valeur max. offerte, USD — 0 = moitié de l'addition)" : dType?.suffix ? `(${dType.suffix})` : ""}</span>
                     <input type="number" min={0} value={form.discount_value} onChange={(e) => setForm({ ...form, discount_value: Number(e.target.value) })} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-emerald-500" />
                   </label>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <label className="block text-sm">
-                    <span className="text-slate-500">Cashback membre (%)</span>
+                    <span className="text-slate-500">Cashback membre (% du montant payé)</span>
                     <input type="number" min={0} max={100} value={form.cashback_rate} onChange={(e) => setForm({ ...form, cashback_rate: Number(e.target.value) })} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-emerald-500" />
                   </label>
                   <label className="block text-sm">
@@ -289,10 +290,14 @@ export default function CampaignEditor() {
                     <span className="text-slate-500">Expire le</span>
                     <input type="date" value={form.expires_at} onChange={(e) => setForm({ ...form, expires_at: e.target.value })} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-emerald-500" />
                   </label>
-                  <label className="flex items-end gap-2 pb-2 text-sm text-slate-600">
-                    <input type="checkbox" checked={form.is_featured} onChange={(e) => setForm({ ...form, is_featured: e.target.checked })} className="h-4 w-4 accent-amber-500" />
-                    Mettre en avant (À la une)
-                  </label>
+                  {isAdmin(user) ? (
+                    <label className="flex items-end gap-2 pb-2 text-sm text-slate-600">
+                      <input type="checkbox" checked={form.is_featured} onChange={(e) => setForm({ ...form, is_featured: e.target.checked })} className="h-4 w-4 accent-amber-500" />
+                      Mettre en avant (À la une)
+                    </label>
+                  ) : (
+                    <p className="pb-2 text-xs text-slate-400">La mise en avant « À la une » est attribuée par l'équipe Nelvin.</p>
+                  )}
                 </div>
               </div>
 

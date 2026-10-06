@@ -38,6 +38,7 @@ serve(async (req) => {
     if (!name) return json({ error: "Company name is required" }, 400);
     if (name.length > 120) return json({ error: "Company name is too long" }, 400);
     const country = String(body.country || "").trim().slice(0, 60);
+    const { data: starter } = await admin.from("plans").select("max_employees").eq("code", "STARTER").maybeSingle();
     const { data: company, error } = await admin
       .from("companies")
       .insert({
@@ -45,6 +46,7 @@ serve(async (req) => {
         country,
         contact_email: user.email,
         plan_tier: "STARTER",
+        max_employees: starter?.max_employees ?? 15,
         subscription_status: "TRIAL",
         seats_used: 1,
         created_by_id: user.id,

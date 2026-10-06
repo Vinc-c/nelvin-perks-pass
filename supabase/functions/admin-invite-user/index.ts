@@ -1,12 +1,13 @@
 // Admin-only: sends a Supabase Auth invitation email to someone who has no
 // account yet.
-import { adminClient, getCaller, isAdminRole, json, readJson, serve } from "../_shared/http.ts";
+import { adminClient, getCaller, isAdminRole, json, MFA_REQUIRED, readJson, serve } from "../_shared/http.ts";
 
 serve(async (req) => {
   const admin = adminClient();
   const caller = await getCaller(req, admin);
   if (!caller) return json({ error: "Unauthorized" }, 401);
   if (!isAdminRole(caller.profile.role)) return json({ error: "Forbidden" }, 403);
+  if (!caller.mfaOk) return json(MFA_REQUIRED, 403);
 
   const body = await readJson(req);
   const email = String(body.email || "").trim().toLowerCase();

@@ -8,14 +8,20 @@ import { useToast } from "@/components/ui/use-toast";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import PortalLayout from "@/components/PortalLayout";
 
+const SUCCESS = {
+  RECHARGE: { text: "Votre wallet Nelvin a été rechargé avec succès.", to: "/wallet-activity", cta: "Voir mon activité" },
+  SUBSCRIPTION: { text: "Votre abonnement est actif.", to: "/billing-settings", cta: "Voir mon abonnement" },
+  COMPANY_TOPUP: { text: "Le budget avantages de votre entreprise a été crédité.", to: "/hr?section=benefits", cta: "Gérer les allocations" },
+};
+
 export default function PaymentReturn() {
   const [params] = useSearchParams();
   const { user, refreshUser } = useAuth();
   const { toast } = useToast();
   const [state, setState] = useState("verifying"); // verifying | success | failed
+  const [kind, setKind] = useState("RECHARGE");
 
   useEffect(() => {
-    const psp = params.get("psp");
     const ref = params.get("ref");
     const providerRef =
       params.get("session_id") || params.get("transaction_id") || params.get("tx") || params.get("pt") || undefined;
@@ -27,19 +33,20 @@ export default function PaymentReturn() {
       return;
     }
 
-    if (!psp || !ref) {
+    if (!ref) {
       setState("failed");
       return;
     }
 
     (async () => {
       try {
-        const res = await invokeFunction("verify-payment", { psp, ref, provider_ref: providerRef });
+        const res = await invokeFunction("verify-payment", { ref, provider_ref: providerRef });
         const data = res.data || {};
         if (data.ok) {
+          setKind(data.type || "RECHARGE");
           setState("success");
           await refreshUser();
-          toast({ title: "Paiement confirmé", description: "Votre wallet a été rechargé." });
+          toast({ title: "Paiement confirmé", description: SUCCESS[data.type || "RECHARGE"]?.text });
         } else {
           setState("failed");
           toast({ title: "Paiement non confirmé", description: data.error || data.status || "Réessayez.", variant: "destructive" });
@@ -69,9 +76,9 @@ export default function PaymentReturn() {
               <CheckCircle2 className="h-9 w-9 text-emerald-600" />
             </div>
             <p className="mt-4 text-xl font-bold text-slate-900">Paiement confirmé</p>
-            <p className="mt-1 text-sm text-slate-500">Votre wallet Nelvin a été rechargé avec succès.</p>
-            <Link to="/wallet-activity" className="mt-6 inline-block rounded-full bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-600">
-              Voir mon activité
+            <p className="mt-1 text-sm text-slate-500">{SUCCESS[kind]?.text}</p>
+            <Link to={SUCCESS[kind]?.to || "/wallet-activity"} className="mt-6 inline-block rounded-full bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-600">
+              {SUCCESS[kind]?.cta || "Voir mon activité"}
             </Link>
           </motion.div>
         )}

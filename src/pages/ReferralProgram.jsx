@@ -1,110 +1,113 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
 import PortalLayout from "@/components/PortalLayout";
-import { Copy, Check, Gift, Users, DollarSign, Share2, Sparkles, TrendingUp } from "lucide-react";
-
-const tiers = [
-  { invites: 1, reward: "$5", perk: "Cashback bonus" },
-  { invites: 5, reward: "$25", perk: "1 month Premium free" },
-  { invites: 10, reward: "$60", perk: "VIP event invite" },
-  { invites: 25, reward: "$150", perk: "VIP Gold upgrade" },
-];
-
-const myReferrals = [
-  { name: "Kwame Mensah", email: "kwame@example.com", status: "joined", date: "2026-09-28", reward: "$5" },
-  { name: "Aisha Bello", email: "aisha@example.com", status: "joined", date: "2026-09-20", reward: "$5" },
-  { name: "Omar Saleh", email: "omar@example.com", status: "pending", date: "2026-10-01", reward: "—" },
-  { name: "Naledi P.", email: "naledi@example.com", status: "joined", date: "2026-09-10", reward: "$5" },
-];
+import { useAuth } from "@/lib/AuthContext";
+import { callRpc } from "@/api/rpc";
+import { entities } from "@/api/entities";
+import { useAsync } from "@/hooks/useAsync";
+import { useCurrencies } from "@/hooks/useCurrencies";
+import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
+import StatCard from "@/components/dashboard/StatCard";
+import SectionCard from "@/components/dashboard/SectionCard";
+import { EmptyState, ListSkeleton } from "@/components/UiFeedback";
+import { Share2, Copy, Check, Users, Gift, UserCheck, MessageCircle } from "lucide-react";
 
 export default function ReferralProgram() {
+  const { user } = useAuth();
+  const money = useCurrencies();
+  const [currency] = useDisplayCurrency();
   const [copied, setCopied] = useState(false);
-  const link = "https://nelvin.app/r/AMARA2026";
 
-  const copy = () => { navigator.clipboard.writeText(link); setCopied(true); setTimeout(() => setCopied(false), 2000); };
+  const { data, loading } = useAsync(async () => {
+    const [referrals, bonus] = await Promise.all([
+      callRpc("my_referrals"),
+      entities.PlatformSetting.get("referral_bonus_usd").then((s) => Number(s.value)).catch(() => 5),
+    ]);
+    return { referrals: referrals || [], bonus };
+  }, [user?.id], { initial: { referrals: [], bonus: 5 } });
 
-  const stats = [
-    { icon: Users, label: "People invited", value: "12", color: "blue" },
-    { icon: Check, label: "Joined", value: "8", color: "emerald" },
-    { icon: DollarSign, label: "Rewards earned", value: "$40", color: "amber" },
-  ];
+  const code = user?.referral_code || "";
+  const link = `${window.location.origin}/register?ref=${encodeURIComponent(code)}`;
+  const referrals = data?.referrals || [];
+  const rewarded = referrals.filter((r) => r.rewarded).length;
+  const bonusText = money.format(data?.bonus || 0, currency);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* clipboard unavailable */
+    }
+  };
+  const share = async () => {
+    const text = `Rejoins Nelvin et profite d'offres et de cashback partout en Afrique : ${link}`;
+    if (navigator.share) {
+      try { await navigator.share({ title: "Nelvin", text, url: link }); } catch { /* cancelled */ }
+    } else {
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+    }
+  };
 
   return (
-    <PortalLayout title="Referral Program" theme="light">
-      {/* Hero */}
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-700 p-6 text-white shadow-lg">
-        <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10" />
-        <Gift className="h-8 w-8" />
-        <h1 className="mt-3 text-2xl font-bold">Invite friends, earn rewards</h1>
-        <p className="mt-1 max-w-md text-sm text-emerald-50">Give $5, get $5. Earn bonuses as your network grows — all rewards credited to your wallet.</p>
+    <PortalLayout title="Parrainage" theme="light">
+      <div className="rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-600 p-6 text-white shadow-lg">
+        <h1 className="text-2xl font-bold">Parrainez, gagnez {bonusText}</h1>
+        <p className="mt-1 max-w-xl text-sm text-emerald-50">
+          Partagez votre lien. Dès que votre filleul souscrit son premier Pass, {bonusText} sont crédités sur votre wallet.
+        </p>
         <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-          <div className="flex flex-1 items-center gap-2 rounded-xl bg-white/15 px-4 py-2.5">
-            <span className="truncate font-mono text-sm">{link}</span>
+          <div className="flex flex-1 items-center gap-2 rounded-xl bg-white/15 px-3 py-2.5 text-sm">
+            <span className="truncate font-mono">{link}</span>
           </div>
-          <button onClick={copy} className="flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-emerald-700 hover:bg-emerald-50">
-            {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />} {copied ? "Copied!" : "Copy link"}
+          <button onClick={copy} className="flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-emerald-700 hover:bg-emerald-50">
+            {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />} {copied ? "Copié" : "Copier"}
+          </button>
+          <button onClick={share} className="flex items-center justify-center gap-2 rounded-xl bg-white/20 px-4 py-2.5 text-sm font-semibold hover:bg-white/30">
+            {navigator.share ? <Share2 className="h-4 w-4" /> : <MessageCircle className="h-4 w-4" />} Partager
           </button>
         </div>
-        <div className="mt-3 flex gap-2">
-          <button className="flex items-center gap-1.5 rounded-full bg-white/20 px-4 py-2 text-sm font-medium hover:bg-white/30"><Share2 className="h-4 w-4" /> Share</button>
-          <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-4 py-2 text-sm">Code: <strong>AMARA2026</strong></span>
-        </div>
-      </motion.div>
-
-      {/* Stats */}
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        {stats.map((s, i) => {
-          const Icon = s.icon;
-          return (
-            <motion.div key={s.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-${s.color}-50`}><Icon className={`h-5 w-5 text-${s.color}-600`} /></div>
-              <p className="mt-3 text-2xl font-bold text-slate-900">{s.value}</p>
-              <p className="text-sm text-slate-500">{s.label}</p>
-            </motion.div>
-          );
-        })}
+        <p className="mt-3 text-xs text-emerald-100">Votre code : <span className="font-mono font-semibold">{code || "—"}</span></p>
       </div>
 
-      {/* Reward tiers */}
-      <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h3 className="flex items-center gap-2 font-semibold text-slate-900"><Sparkles className="h-5 w-5 text-amber-500" /> Reward milestones</h3>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {tiers.map((t) => (
-            <div key={t.invites} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <p className="text-xs text-slate-500">{t.invites} invites</p>
-              <p className="mt-1 text-2xl font-bold text-emerald-600">{t.reward}</p>
-              <p className="mt-1 text-xs text-slate-600">{t.perk}</p>
-            </div>
-          ))}
-        </div>
-      </motion.div>
+      <div className="mt-4 grid gap-4 sm:grid-cols-3">
+        <StatCard icon={Users} label="Filleuls inscrits" value={referrals.length} tone="blue" />
+        <StatCard icon={UserCheck} label="Filleuls abonnés" value={rewarded} tone="emerald" delay={0.05} />
+        <StatCard icon={Gift} label="Bonus gagnés" value={money.format(rewarded * (data?.bonus || 0), currency)} tone="amber" delay={0.1} />
+      </div>
 
-      {/* Referrals list */}
-      <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h3 className="flex items-center gap-2 font-semibold text-slate-900"><TrendingUp className="h-5 w-5 text-emerald-600" /> Your referrals</h3>
-        <div className="mt-4 overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-slate-100 text-left text-slate-500">
-                <th className="pb-3 font-medium">Friend</th>
-                <th className="pb-3 font-medium">Status</th>
-                <th className="pb-3 font-medium">Date</th>
-                <th className="pb-3 font-medium text-right">Reward</th>
-              </tr>
-            </thead>
-            <tbody>
-              {myReferrals.map((r) => (
-                <tr key={r.email} className="border-b border-slate-50">
-                  <td className="py-3"><p className="font-medium text-slate-900">{r.name}</p><p className="text-xs text-slate-500">{r.email}</p></td>
-                  <td className="py-3"><span className={`rounded-full px-2.5 py-1 text-xs font-medium ${r.status === "joined" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>{r.status}</span></td>
-                  <td className="py-3 text-slate-500">{r.date}</td>
-                  <td className="py-3 text-right font-semibold text-emerald-600">{r.reward}</td>
+      <SectionCard title="Vos filleuls" className="mt-6">
+        {loading ? (
+          <ListSkeleton rows={3} />
+        ) : referrals.length === 0 ? (
+          <EmptyState icon={Users} title="Aucun filleul pour l'instant" description="Partagez votre lien : vos filleuls apparaîtront ici dès leur inscription." />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-100 text-left text-slate-500">
+                  <th className="pb-3 font-medium">Filleul</th>
+                  <th className="pb-3 font-medium">Inscription</th>
+                  <th className="pb-3 font-medium">Statut</th>
+                  <th className="pb-3 font-medium">Bonus</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </motion.div>
+              </thead>
+              <tbody>
+                {referrals.map((r, i) => (
+                  <tr key={i} className="border-b border-slate-50">
+                    <td className="py-3 font-medium text-slate-900">{r.display_name}</td>
+                    <td className="py-3 text-slate-500">{new Date(r.joined_at).toLocaleDateString("fr-FR")}</td>
+                    <td className="py-3">
+                      <span className={`rounded-full px-2 py-0.5 text-xs ${r.onboarded ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>{r.onboarded ? "Actif" : "Inscription en cours"}</span>
+                    </td>
+                    <td className="py-3">{r.rewarded ? <span className="font-semibold text-emerald-600">+{bonusText}</span> : <span className="text-slate-400">En attente du 1er abonnement</span>}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </SectionCard>
     </PortalLayout>
   );
 }

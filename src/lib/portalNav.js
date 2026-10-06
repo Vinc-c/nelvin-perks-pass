@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Star, Image as ImageIcon, Type, Crown, Building2, Ticket,
   Activity, Globe, Bell, Lock, LifeBuoy, MessageSquare, History, ArrowLeftRight,
   Users, UserPlus, SlidersHorizontal, ScanLine, Tag, Banknote, QrCode, Share2,
-  Gem, Headphones, PiggyBank, TrendingUp, GitPullRequest,
+  Gem, Headphones, PiggyBank, TrendingUp, GitPullRequest, KeyRound, ScrollText,
 } from "lucide-react";
 import { isAdmin } from "@/lib/roles";
 
@@ -123,11 +123,15 @@ const NAV = {
       { to: "/merchant-directory", label: "Annuaire marchands", icon: Store },
     ]),
     ...group("Paiements", [
-      { to: "/admin", section: "psp", label: "PSP Router", icon: Activity },
+      { to: "/admin", section: "payments", label: "Paiements & retraits", icon: Banknote },
+      { to: "/admin", section: "psp", label: "Clés PSP & routage", icon: KeyRound },
+      { to: "/admin", section: "plans", label: "Plans & tarifs", icon: Gem },
       { to: "/admin", section: "currency", label: "Devises", icon: Globe },
     ]),
-    ...group("Équipe", [
+    ...group("Plateforme", [
       { to: "/admin", section: "staff", label: "Super Admins", icon: Crown },
+      { to: "/admin", section: "settings", label: "Paramètres plateforme", icon: SlidersHorizontal },
+      { to: "/admin", section: "audit", label: "Journal d'audit", icon: ScrollText },
       { to: "/pull-requests", label: "PR à reviewer", icon: GitPullRequest },
     ]),
     ...group("Support", [

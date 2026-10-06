@@ -31,3 +31,6 @@ export const AUDIENCES = [
   { value: "B2C", label: "Particuliers (B2C)" },
   { value: "B2B_ONLY", label: "Employés (B2B)" },
 ];
+/** Local illustration for a category (public/images/categories). */
+export const categoryImage = (value) =>
+  value ? `/images/categories/${String(value).toLowerCase().replace(/_/g, "-")}.webp` : "/images/placeholder.svg";

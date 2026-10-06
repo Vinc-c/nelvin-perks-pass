@@ -22,8 +22,8 @@ export default function Pricing() {
       </header>
 
       <div className="mx-auto max-w-7xl px-4 pt-12">
-        <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="text-center text-3xl font-bold sm:text-4xl">Pricing that scales with you</motion.h1>
-        <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="mx-auto mt-3 max-w-xl text-center text-slate-500">Choose monthly or annual billing and save 15% on every plan. All prices in USD.</motion.p>
+        <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="text-center text-3xl font-bold sm:text-4xl">Des tarifs simples et transparents</motion.h1>
+        <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="mx-auto mt-3 max-w-xl text-center text-slate-500">Mensuel ou annuel, pour les entreprises, les particuliers et les partenaires. Prix en USD, payables en monnaie locale.</motion.p>
       </div>
       <PricingCalculator />
       <MembershipPlans />

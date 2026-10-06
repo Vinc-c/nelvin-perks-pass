@@ -20,6 +20,10 @@ preserve existing conventions. Start with `README.md` for setup.
 ## Working Notes
 
 - Authorization lives in Postgres RLS policies and in the Edge Functions — never rely on the UI alone.
-- Money movements (wallet, cashback, payouts) go through the SECURITY DEFINER SQL functions (`redeem_code`, `complete_recharge`, `withdraw_from_wallet`), never through client writes.
+- Money movements (wallet, cashback, payouts) go through the SECURITY DEFINER SQL functions (`redeem_code`, `complete_payment`, `withdraw_from_wallet`, `hr_allocate`…), never through client writes.
 - Keep `src/lib/paymentRouter.js` and `supabase/functions/_shared/paymentRouter.ts` in sync.
 - Run `npm run lint` and `npm run build` before finishing code changes.
+- Super admins come only from `public.platform_admins`; never grant `SUPER_ADMIN` by updating `profiles`.
+- PSP secrets live in Supabase Vault (`admin_set_psp_secret`); Edge Functions read them through `PspContext`.
+- All balances are USD; convert with the `currencies` table. Prices come only from the `plans` table.
+- The platform is developed by liafrik.com.

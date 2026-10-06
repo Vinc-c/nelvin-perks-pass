@@ -1,117 +1,129 @@
-import React, { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import PortalLayout from "@/components/PortalLayout";
 import QrRedemption from "@/components/QrRedemption";
-import { mockOffers, mockMerchants } from "@/data/mockData";
+import { Image } from "@/components/ui/image";
+import { entities } from "@/api/entities";
+import { useAsync } from "@/hooks/useAsync";
 import { useCategories } from "@/hooks/useCategories";
-import { MapPin, Star, Percent, Clock, ShieldCheck, ArrowLeft, Tag, Wallet } from "lucide-react";
+import { useCurrencies } from "@/hooks/useCurrencies";
+import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
+import { offerBadge } from "@/hooks/useCatalog";
+import { categoryImage } from "@/data/offerCategories";
+import { useAuth } from "@/lib/AuthContext";
+import { EmptyState, Spinner } from "@/components/UiFeedback";
+import { MapPin, Clock, ShieldCheck, ArrowLeft, Tag, Wallet, Globe, Instagram, Phone } from "lucide-react";
+
+const AUDIENCE = { B2C: "Membres Pass", B2B_ONLY: "Salariés d'entreprises clientes", ALL: "Tous les membres" };
 
 export default function OfferDetails() {
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id") || "o1";
-  const offer = useMemo(() => mockOffers.find((o) => o.id === id) || mockOffers[0], [id]);
-  const merchant = useMemo(() => mockMerchants.find((m) => m.id === offer.merchant_id), [offer]);
-  const [redeem, setRedeem] = useState(false);
+  const [params] = useSearchParams();
+  const id = params.get("id");
+  const { user } = useAuth();
   const { meta } = useCategories();
+  const money = useCurrencies();
+  const [currency] = useDisplayCurrency();
+  const [redeem, setRedeem] = useState(false);
 
-  const terms = [
-    "Valid for one redemption per visit, per user.",
-    "Cannot be combined with other ongoing promotions.",
-    "Offline TOTP code valid for 3 minutes only.",
-    "Cashback credited to your Nelvin wallet within 24h.",
-    "Merchant reserves the right to modify terms without notice.",
-  ];
+  const { data, loading } = useAsync(async () => {
+    if (!id) return null;
+    const offer = await entities.Offer.get(id).catch(() => null);
+    if (!offer) return null;
+    const merchant = await entities.Merchant.get(offer.merchant_id).catch(() => null);
+    return { offer, merchant };
+  }, [id]);
+
+  if (loading) return <PortalLayout title="Offre" theme="light"><Spinner /></PortalLayout>;
+  if (!data) {
+    return (
+      <PortalLayout title="Offre" theme="light">
+        <EmptyState icon={Tag} title="Offre introuvable" description="Cette offre a expiré ou n'est plus disponible." action={<Link to="/merchant-directory" className="text-sm font-medium text-emerald-600 hover:underline">Voir les partenaires</Link>} />
+      </PortalLayout>
+    );
+  }
+
+  const { offer, merchant } = data;
+  const expired = offer.expires_at && new Date(offer.expires_at) < new Date();
+  const employeesOnly = offer.target_audience === "B2B_ONLY" && !user?.company_id;
+  const canRedeem = user && !expired && !employeesOnly && merchant?.verified_status === "VERIFIED";
+  const cat = meta(offer.category);
 
   return (
-    <PortalLayout title="Offer Details" theme="light">
+    <PortalLayout title="Offre" theme="light">
       <Link to="/merchant-directory" className="mb-4 inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-emerald-600">
-        <ArrowLeft className="h-4 w-4" /> Back to directory
+        <ArrowLeft className="h-4 w-4" /> Retour aux partenaires
       </Link>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="lg:col-span-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
-        >
-          <div className="relative h-48 bg-gradient-to-br from-emerald-100 via-blue-50 to-slate-100 p-6">
-            <span className="absolute right-5 top-5 rounded-full bg-amber-500 px-3 py-1 text-xs font-bold text-white">
-              {meta(offer.category).emoji} {meta(offer.category).label}
-            </span>
-            <div className="flex h-full items-end">
-              <h1 className="text-2xl font-bold text-slate-900">{offer.title}</h1>
-            </div>
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm lg:col-span-2">
+          <div className="relative h-56">
+            <Image src={offer.image_url || merchant?.cover_image_url || cat.image_url || categoryImage(offer.category)} alt={offer.title} className="h-full w-full" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 to-transparent" />
+            <span className="absolute right-5 top-5 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-slate-700">{cat.emoji} {cat.label}</span>
+            <h1 className="absolute bottom-5 left-6 right-6 text-2xl font-bold text-white">{offer.title}</h1>
           </div>
           <div className="p-6">
             <div className="flex flex-wrap items-center gap-3">
-              <span className="flex items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-700">
-                <Percent className="h-4 w-4" />
-                {offer.discount_type === "BOGO" ? "2-for-1 Deal" : `${offer.discount_value}% OFF`}
-              </span>
-              <span className="flex items-center gap-1.5 rounded-lg bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-700">
-                <Wallet className="h-4 w-4" /> {offer.cashback_rate}% Cashback
-              </span>
-              {offer.is_featured && (
-                <span className="flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-700">
-                  <Star className="h-4 w-4 text-amber-500" /> Featured
-                </span>
+              <span className="rounded-lg bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-700">{offerBadge(offer, (v) => money.format(v, currency))}</span>
+              {Number(offer.cashback_rate) > 0 && offer.discount_type !== "CASHBACK" && (
+                <span className="flex items-center gap-1.5 rounded-lg bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-700"><Wallet className="h-4 w-4" /> {offer.cashback_rate}% de cashback</span>
               )}
+              {expired && <span className="rounded-lg bg-rose-50 px-3 py-1.5 text-sm font-semibold text-rose-700">Expirée</span>}
             </div>
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <p className="flex items-center gap-1.5 text-xs text-slate-500"><MapPin className="h-4 w-4" /> Merchant location</p>
-                <p className="mt-1 font-semibold text-slate-900">{merchant?.name}</p>
-                <p className="text-sm text-slate-500">{offer.city}, {merchant?.country}</p>
-                <p className="mt-1 text-xs text-slate-400">★ {merchant?.rating} · {merchant?.verified_status}</p>
-              </div>
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <p className="flex items-center gap-1.5 text-xs text-slate-500"><Tag className="h-4 w-4" /> Audience</p>
-                <p className="mt-1 font-semibold text-slate-900">
-                  {offer.target_audience === "B2C" ? "B2C Members" : offer.target_audience === "B2B_ONLY" ? "Employees only" : "Everyone"}
-                </p>
-                <p className="text-sm text-slate-500">Discount type: {offer.discount_type}</p>
-              </div>
-            </div>
+            {offer.description && <p className="mt-5 whitespace-pre-line text-sm leading-relaxed text-slate-600">{offer.description}</p>}
 
-            <h2 className="mt-6 font-semibold text-slate-900">Terms of service</h2>
-            <ul className="mt-3 space-y-2">
-              {terms.map((term, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
-                  <ShieldCheck className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-600" /> {term}
-                </li>
-              ))}
+            <h2 className="mt-6 font-semibold text-slate-900">Conditions</h2>
+            <ul className="mt-3 space-y-2 text-sm text-slate-600">
+              {offer.deal_terms && <li className="flex items-start gap-2"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" /> {offer.deal_terms}</li>}
+              {merchant?.offer_terms && <li className="flex items-start gap-2"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" /> {merchant.offer_terms}</li>}
+              <li className="flex items-start gap-2"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" /> Code personnel à présenter en caisse, valable quelques minutes et utilisable une seule fois.</li>
+              <li className="flex items-start gap-2"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" /> La remise est calculée sur le montant de l'addition saisi par le partenaire ; le cashback est crédité immédiatement sur votre wallet.</li>
+              {offer.off_peak_hours && <li className="flex items-start gap-2"><Clock className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" /> Créneaux : {offer.off_peak_hours}</li>}
             </ul>
 
             <div className="mt-6 flex flex-col gap-2 sm:flex-row">
-              <button
-                onClick={() => setRedeem(true)}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white transition hover:bg-emerald-600"
-              >
-                <Tag className="h-4 w-4" /> Redeem this offer
-              </button>
-              <Link to="/merchant-map" className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-5 py-3 font-medium text-slate-700 hover:bg-slate-50">
-                <MapPin className="h-4 w-4" /> Find on map
-              </Link>
+              {user ? (
+                <button onClick={() => setRedeem(true)} disabled={!canRedeem} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white transition hover:bg-emerald-600 disabled:opacity-50">
+                  <Tag className="h-4 w-4" /> {employeesOnly ? "Réservée aux salariés" : expired ? "Offre expirée" : "Utiliser cette offre"}
+                </button>
+              ) : (
+                <Link to="/register" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white hover:bg-emerald-600">Créer un compte pour en profiter</Link>
+              )}
+              {merchant?.lat != null && (
+                <Link to="/merchant-map" className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-5 py-3 font-medium text-slate-700 hover:bg-slate-50"><MapPin className="h-4 w-4" /> Carte</Link>
+              )}
             </div>
           </div>
         </motion.div>
 
         <div className="space-y-4">
+          {merchant && (
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="flex items-center gap-3">
+                {merchant.logo_url && <img src={merchant.logo_url} alt="" className="h-12 w-12 rounded-xl border border-slate-100 object-contain p-1" />}
+                <div className="min-w-0">
+                  <p className="truncate font-semibold text-slate-900">{merchant.name}</p>
+                  <p className="flex items-center gap-1 text-xs text-emerald-600"><ShieldCheck className="h-3.5 w-3.5" /> Partenaire vérifié</p>
+                </div>
+              </div>
+              <dl className="mt-4 space-y-2 text-sm">
+                <div className="flex items-start gap-2 text-slate-600"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" /> {[merchant.address, merchant.city, merchant.country].filter(Boolean).join(", ") || "—"}</div>
+                {merchant.website && <a href={merchant.website.startsWith("http") ? merchant.website : `https://${merchant.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-emerald-600 hover:underline"><Globe className="h-4 w-4" /> Site web</a>}
+                {merchant.instagram && <p className="flex items-center gap-2 text-slate-600"><Instagram className="h-4 w-4 text-slate-400" /> {merchant.instagram}</p>}
+                {merchant.contact_phone && <p className="flex items-center gap-2 text-slate-600"><Phone className="h-4 w-4 text-slate-400" /> {merchant.contact_phone}</p>}
+              </dl>
+              {merchant.description && <p className="mt-3 line-clamp-6 text-sm text-slate-500">{merchant.description}</p>}
+            </div>
+          )}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 className="font-semibold text-slate-900">Quick info</h3>
-            <dl className="mt-4 space-y-3 text-sm">
-              <div className="flex justify-between"><dt className="text-slate-500">Category</dt><dd className="font-medium text-slate-900">{offer.category}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500">Discount</dt><dd className="font-medium text-emerald-600">{offer.discount_type === "BOGO" ? "BOGO" : `${offer.discount_value}%`}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500">Cashback</dt><dd className="font-medium text-amber-600">{offer.cashback_rate}%</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500">Validity</dt><dd className="flex items-center gap-1 font-medium text-slate-900"><Clock className="h-3.5 w-3.5" /> 3 min code</dd></div>
+            <h3 className="font-semibold text-slate-900">En bref</h3>
+            <dl className="mt-3 space-y-2 text-sm">
+              <div className="flex justify-between"><dt className="text-slate-500">Pour</dt><dd className="font-medium text-slate-900">{AUDIENCE[offer.target_audience]}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500">Avantage</dt><dd className="font-medium text-emerald-600">{offerBadge(offer, (v) => money.format(v, currency))}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500">Valable jusqu'au</dt><dd className="font-medium text-slate-900">{offer.expires_at ? new Date(offer.expires_at).toLocaleDateString("fr-FR") : "Sans limite"}</dd></div>
             </dl>
-          </div>
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-            <p className="font-semibold text-amber-700">VIP Gold perk</p>
-            <p className="mt-1 text-sm text-amber-700/80">VIP members earn +3% extra cashback on this offer.</p>
-            <Link to="/membership-plans" className="mt-3 inline-block text-sm font-medium text-amber-600 hover:underline">Upgrade pass →</Link>
           </div>
         </div>
       </div>

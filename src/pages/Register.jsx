@@ -25,6 +25,14 @@ export default function Register() {
   const [phone, setPhone] = useState("");
   const [step, setStep] = useState(0);
   const [otpCode, setOtpCode] = useState("");
+  // Referral code from a shared link (/register?ref=NEL…), kept for Google sign-up too.
+  const [referralCode] = useState(() => {
+    const ref = new URLSearchParams(window.location.search).get("ref");
+    if (ref) {
+      try { localStorage.setItem("nelvin_ref", ref.toUpperCase()); } catch { /* storage unavailable */ }
+    }
+    return (ref || "").toUpperCase();
+  });
 
   // Step 1 — create the (unverified) account, then advance to OTP.
   const handleSubmit = async (e) => {
@@ -44,7 +52,7 @@ export default function Register() {
     }
     setLoading(true);
     try {
-      const { needsVerification } = await signUp({ email, password, metadata: { phone } });
+      const { needsVerification } = await signUp({ email, password, metadata: { phone, ...(referralCode ? { referral_code: referralCode } : {}) } });
       if (!needsVerification) {
         // Email confirmation disabled on the project: already signed in.
         try { await updateMe({ phone }); } catch (_) { /* optional */ }

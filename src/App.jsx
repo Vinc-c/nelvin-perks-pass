@@ -88,6 +88,7 @@ const AuthenticatedApp = () => {
       <Route path="/merchant" element={<BecomePartner />} />
       <Route path="/merchant-directory" element={<MerchantDirectory />} />
       <Route path="/merchant-map" element={<MerchantMap />} />
+      <Route path="/offer-details" element={<OfferDetails />} />
       <Route path="/help-center" element={<HelpCenter />} />
 
       {/* Legal */}
@@ -153,7 +154,6 @@ const AuthenticatedApp = () => {
           <Route path="/support-tickets" element={<SupportTickets />} />
 
           <Route element={<AccessGateLayout />}>
-            <Route path="/offer-details" element={<OfferDetails />} />
             <Route path="/wallet-activity" element={<WalletActivity />} />
             <Route path="/reward-history" element={<RewardHistory />} />
             <Route path="/currency-exchange" element={<CurrencyExchange />} />

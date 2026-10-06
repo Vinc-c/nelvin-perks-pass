@@ -82,7 +82,10 @@ export default function SiteFooter() {
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-200 pt-6 sm:flex-row">
-          <p className="text-sm text-slate-400">© 2026 Nelvin Benefits — Conçu pour l'Afrique & le MENA</p>
+          <p className="text-sm text-slate-400">
+            © 2026 Nelvin Benefits — Conçu pour l'Afrique & le MENA · Développé par{" "}
+            <a href="https://liafrik.com" target="_blank" rel="noopener noreferrer" className="font-medium text-slate-500 hover:text-amber-600">liafrik.com</a>
+          </p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-slate-400">
             <Link to="/terms" className="hover:text-amber-600">Conditions</Link>
             <Link to="/privacy" className="hover:text-amber-600">Confidentialité</Link>

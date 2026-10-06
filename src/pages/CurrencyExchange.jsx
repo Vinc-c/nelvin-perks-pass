@@ -1,95 +1,77 @@
-import React, { useState, useMemo } from "react";
-import { motion } from "framer-motion";
+import React, { useState } from "react";
 import PortalLayout from "@/components/PortalLayout";
-import { mockCurrencies } from "@/data/mockData";
-import { ArrowRightLeft, Wallet, Globe, TrendingUp } from "lucide-react";
+import { useAuth } from "@/lib/AuthContext";
+import { useCurrencies } from "@/hooks/useCurrencies";
+import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
+import CurrencySelect from "@/components/CurrencySelect";
+import SectionCard from "@/components/dashboard/SectionCard";
+import { ArrowLeftRight, Wallet, Globe } from "lucide-react";
 
 export default function CurrencyExchange() {
-  const [amount, setAmount] = useState(100);
+  const { user } = useAuth();
+  const money = useCurrencies();
+  const [display, setDisplay] = useDisplayCurrency();
+  const [amount, setAmount] = useState("100");
   const [from, setFrom] = useState("USD");
-  const [to, setTo] = useState("XAF");
+  const [to, setTo] = useState(display === "USD" ? "XOF" : display);
 
-  const fromCur = mockCurrencies.find((c) => c.code === from);
-  const toCur = mockCurrencies.find((c) => c.code === to);
-
-  const converted = useMemo(() => (amount / fromCur.rate) * toCur.rate, [amount, fromCur, toCur]);
-  const walletBalance = 247.5;
-  const homeBalance = useMemo(() => (walletBalance / mockCurrencies.find((c) => c.code === "USD").rate) * toCur.rate, [to]);
-
-  const swap = () => { setFrom(to); setTo(from); };
+  const usd = money.toUsd(Number(amount) || 0, from);
+  const converted = money.fromUsd(usd, to);
+  const updated = money.currencies.map((c) => c.updated_date).filter(Boolean).sort().pop();
 
   return (
-    <PortalLayout title="Currency Exchange" theme="light">
-      <div className="mb-4">
-        <h1 className="text-xl font-bold text-slate-900">Currency Exchange</h1>
-        <p className="text-sm text-slate-500">Live conversion rates for supported currencies across Africa & MENA.</p>
+    <PortalLayout title="Devises" theme="light">
+      <div className="grid gap-6 lg:grid-cols-2">
+        <SectionCard icon={ArrowLeftRight} title="Convertisseur">
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} aria-label="Montant" className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-lg font-semibold text-slate-900 outline-none focus:border-emerald-500" />
+              <CurrencySelect value={from} onChange={setFrom} />
+            </div>
+            <button onClick={() => { setFrom(to); setTo(from); }} className="mx-auto flex items-center gap-1 rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-500 hover:bg-slate-50"><ArrowLeftRight className="h-3 w-3" /> Inverser</button>
+            <div className="flex items-center gap-2">
+              <p className="flex-1 rounded-lg bg-slate-50 px-3 py-2 text-lg font-bold text-slate-900">{money.formatIn(converted, to)}</p>
+              <CurrencySelect value={to} onChange={setTo} />
+            </div>
+            <p className="text-xs text-slate-500">
+              1 {from} = {money.formatIn(money.fromUsd(money.toUsd(1, from), to), to)} · taux Nelvin{updated ? ` mis à jour le ${new Date(updated).toLocaleDateString("fr-FR")}` : ""}
+            </p>
+          </div>
+        </SectionCard>
+
+        <SectionCard icon={Wallet} title="Mon wallet">
+          <p className="text-sm text-slate-500">Votre solde est conservé en USD et converti au taux du jour.</p>
+          <p className="mt-3 text-3xl font-bold text-slate-900">{money.format(user?.wallet_balance, display)}</p>
+          <div className="mt-4 flex items-center gap-2 text-sm text-slate-600">
+            Devise d'affichage par défaut : <CurrencySelect value={display} onChange={setDisplay} />
+          </div>
+        </SectionCard>
       </div>
 
-      {/* Converter */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-      >
-        <div className="grid items-end gap-4 sm:grid-cols-[1fr_auto_1fr]">
-          <label className="block text-sm">
-            <span className="text-slate-500">From</span>
-            <div className="mt-1 flex gap-2">
-              <input type="number" value={amount} onChange={(e) => setAmount(Number(e.target.value))} className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-emerald-500" />
-              <select value={from} onChange={(e) => setFrom(e.target.value)} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none">
-                {mockCurrencies.map((c) => <option key={c.code} value={c.code}>{c.code}</option>)}
-              </select>
-            </div>
-          </label>
-          <button onClick={swap} className="mb-2 flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-emerald-600 transition hover:bg-slate-100">
-            <ArrowRightLeft className="h-5 w-5" />
-          </button>
-          <label className="block text-sm">
-            <span className="text-slate-500">To</span>
-            <div className="mt-1 flex gap-2">
-              <input value={converted.toFixed(2)} readOnly className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 font-semibold text-emerald-600 outline-none" />
-              <select value={to} onChange={(e) => setTo(e.target.value)} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none">
-                {mockCurrencies.map((c) => <option key={c.code} value={c.code}>{c.code}</option>)}
-              </select>
-            </div>
-          </label>
+      <SectionCard icon={Globe} title="Taux appliqués (pour 1 USD)" className="mt-6">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-100 text-left text-slate-500">
+                <th className="pb-3 font-medium">Devise</th>
+                <th className="pb-3 font-medium">Région</th>
+                <th className="pb-3 text-right font-medium">Taux</th>
+                <th className="pb-3 text-right font-medium">Votre solde</th>
+              </tr>
+            </thead>
+            <tbody>
+              {money.currencies.map((c) => (
+                <tr key={c.code} className="border-b border-slate-50">
+                  <td className="py-3"><span className="font-medium text-slate-900">{c.code}</span> <span className="text-slate-400">{c.name}</span></td>
+                  <td className="py-3 text-slate-500">{c.region || "—"}</td>
+                  <td className="py-3 text-right font-mono text-slate-700">{Number(c.rate_per_usd).toLocaleString("fr-FR")}</td>
+                  <td className="py-3 text-right text-slate-700">{money.format(user?.wallet_balance, c.code)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        <p className="mt-4 text-sm text-slate-500">
-          1 {fromCur.code} = <span className="font-semibold text-slate-900">{(toCur.rate / fromCur.rate).toLocaleString(undefined, { maximumFractionDigits: 4 })}</span> {toCur.code}
-        </p>
-      </motion.div>
-
-      {/* Wallet balance */}
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="flex items-center gap-2 text-sm text-slate-500"><Wallet className="h-4 w-4 text-emerald-600" /> Wallet balance (home)</p>
-          <p className="mt-2 text-3xl font-bold text-slate-900">$247.50 <span className="text-base font-normal text-slate-400">USD</span></p>
-        </div>
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
-          <p className="flex items-center gap-2 text-sm text-emerald-700"><Globe className="h-4 w-4" /> In {toCur.name}</p>
-          <p className="mt-2 text-3xl font-bold text-emerald-700">{toCur.symbol}{homeBalance.toLocaleString(undefined, { maximumFractionDigits: 2 })} <span className="text-base font-normal text-emerald-600/70">{toCur.code}</span></p>
-        </div>
-      </div>
-
-      {/* Rate table */}
-      <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <div className="flex items-center gap-2 border-b border-slate-100 px-5 py-4">
-          <TrendingUp className="h-4 w-4 text-emerald-600" />
-          <h3 className="font-semibold text-slate-900">Current rates (per USD)</h3>
-        </div>
-        <div className="grid gap-px bg-slate-100 sm:grid-cols-2 lg:grid-cols-4">
-          {mockCurrencies.map((c) => (
-            <div key={c.code} className="bg-white p-4">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-slate-900">{c.code}</span>
-                <span className="text-xs text-slate-400">{c.symbol}</span>
-              </div>
-              <p className="mt-1 font-mono text-lg text-emerald-600">{c.rate.toLocaleString()}</p>
-              <p className="text-xs text-slate-500">{c.name}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+      </SectionCard>
     </PortalLayout>
   );
 }

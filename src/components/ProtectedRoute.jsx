@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
+import MfaChallenge from '@/components/MfaChallenge';
 
 const DefaultFallback = () => (
   <div className="fixed inset-0 flex items-center justify-center">
@@ -9,7 +10,7 @@ const DefaultFallback = () => (
 );
 
 export default function ProtectedRoute({ fallback = <DefaultFallback /> }) {
-  const { isAuthenticated, isLoadingAuth, authChecked, checkUserAuth } = useAuth();
+  const { isAuthenticated, isLoadingAuth, authChecked, checkUserAuth, mfaRequired } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
@@ -25,6 +26,10 @@ export default function ProtectedRoute({ fallback = <DefaultFallback /> }) {
   if (!isAuthenticated) {
     const returnTo = location.pathname + location.search;
     return <Navigate to={`/login?returnTo=${encodeURIComponent(returnTo)}`} replace />;
+  }
+
+  if (mfaRequired) {
+    return <MfaChallenge />;
   }
 
   return <Outlet />;

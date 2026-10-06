@@ -9,6 +9,9 @@ verify_jwt = false
 [functions.consume-invite-code]
 verify_jwt = false
 
+[functions.create-checkout]
+verify_jwt = false
+
 [functions.generate-redemption]
 verify_jwt = false
 
@@ -18,7 +21,7 @@ verify_jwt = false
 [functions.nelvin-support]
 verify_jwt = false
 
-[functions.recharge-wallet]
+[functions.psp-test]
 verify_jwt = false
 
 [functions.setup-account]

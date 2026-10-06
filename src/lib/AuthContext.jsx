@@ -1,6 +1,17 @@
 import React, { createContext, useState, useContext, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/api/supabaseClient';
-import { getCurrentUser, signOut } from '@/api/auth';
+import { getCurrentUser, signOut, getAssuranceLevel } from '@/api/auth';
+import { callRpc } from '@/api/rpc';
+
+// A referral link opened before a Google sign-up is attached afterwards.
+function claimPendingReferral(user) {
+  let code = null;
+  try { code = localStorage.getItem('nelvin_ref'); } catch { return; }
+  if (!code || !user) return;
+  try { localStorage.removeItem('nelvin_ref'); } catch { /* ignore */ }
+  if (user.referred_by || user.referral_code === code) return;
+  callRpc('claim_referral', { p_code: code }).catch(() => {});
+}
 
 const AuthContext = createContext();
 
@@ -11,6 +22,7 @@ export const AuthProvider = ({ children }) => {
   const [authError, setAuthError] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [passwordRecovery, setPasswordRecovery] = useState(false);
+  const [mfaRequired, setMfaRequired] = useState(false);
   const loadSeq = useRef(0);
 
   // `silent` re-checks (auth events) don't flip the global loading state, so
@@ -20,10 +32,19 @@ export const AuthProvider = ({ children }) => {
     if (!silent) setIsLoadingAuth(true);
     try {
       const currentUser = await getCurrentUser();
+      let needsMfa = false;
+      if (currentUser) {
+        try {
+          const aal = await getAssuranceLevel();
+          needsMfa = aal.nextLevel === 'aal2' && aal.currentLevel !== 'aal2';
+        } catch { /* treat as not required */ }
+      }
       if (seq !== loadSeq.current) return;
+      setMfaRequired(needsMfa);
       setUser(currentUser);
       setIsAuthenticated(!!currentUser);
       setAuthError(null);
+      claimPendingReferral(currentUser);
     } catch (error) {
       if (seq !== loadSeq.current) return;
       console.error('User auth check failed:', error);
@@ -42,7 +63,7 @@ export const AuthProvider = ({ children }) => {
     checkUserAuth();
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true);
-      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED' || event === 'MFA_CHALLENGE_VERIFIED') {
         // Defer: Supabase recommends not awaiting other calls inside this callback.
         setTimeout(() => { checkUserAuth({ silent: true }); }, 0);
       }
@@ -78,6 +99,7 @@ export const AuthProvider = ({ children }) => {
       authError,
       authChecked,
       passwordRecovery,
+      mfaRequired,
       logout,
       navigateToLogin,
       checkUserAuth,

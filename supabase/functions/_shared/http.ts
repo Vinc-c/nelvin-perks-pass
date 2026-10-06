@@ -42,7 +42,16 @@ export type Profile = {
   [key: string]: unknown;
 };
 
-export type Caller = { user: User; profile: Profile };
+export type Caller = { user: User; profile: Profile; aal: string; mfaOk: boolean };
+
+function jwtClaims(token: string): Record<string, unknown> {
+  try {
+    const part = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    return JSON.parse(atob(part + "=".repeat((4 - (part.length % 4)) % 4)));
+  } catch {
+    return {};
+  }
+}
 
 /**
  * Resolves the signed-in caller from the Authorization header.
@@ -56,7 +65,11 @@ export async function getCaller(req: Request, admin: SupabaseClient): Promise<Ca
   if (error || !data?.user) return null;
   const { data: profile } = await admin.from("profiles").select("*").eq("id", data.user.id).maybeSingle();
   if (!profile) return null;
-  return { user: data.user, profile: profile as Profile };
+  // 2FA: a user with a verified TOTP factor must use an AAL2 session for
+  // sensitive actions (withdrawals, admin operations).
+  const aal = String(jwtClaims(token).aal || "aal1");
+  const hasFactor = (data.user.factors || []).some((f) => f.status === "verified");
+  return { user: data.user, profile: profile as Profile, aal, mfaOk: aal === "aal2" || !hasFactor };
 }
 
 /** Wraps a handler with CORS preflight + error handling. */
@@ -83,5 +96,10 @@ export async function readJson(req: Request): Promise<Record<string, unknown>> {
 
 export const ADMIN_ROLES = ["SUPER_ADMIN", "admin"];
 export const isAdminRole = (role?: string | null) => !!role && ADMIN_ROLES.includes(role);
+
+/** Admin role AND a 2FA-satisfied session (mirrors public.is_admin()). */
+export const isAdmin = (caller: Caller | null) => !!caller && isAdminRole(caller.profile.role) && caller.mfaOk;
+
+export const MFA_REQUIRED = { error: "Validation à deux facteurs requise pour cette action.", code: "mfa_required" };
 
 export const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

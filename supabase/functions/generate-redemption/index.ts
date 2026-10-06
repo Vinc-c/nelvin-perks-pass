@@ -1,7 +1,8 @@
 // Creates a short-lived redemption code for an offer (persisted before it is shown).
 import { adminClient, getCaller, json, readJson, serve, UUID_RE } from "../_shared/http.ts";
+import { accessFor } from "../_shared/access.ts";
 
-const TTL_SECONDS = 180;
+const DEFAULT_TTL_SECONDS = 180;
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
 function genCode(): string {
@@ -15,6 +16,11 @@ serve(async (req) => {
   const admin = adminClient();
   const caller = await getCaller(req, admin);
   if (!caller) return json({ error: "Unauthorized" }, 401);
+
+  const access = await accessFor(admin, caller.profile);
+  if (!access.allowed) {
+    return json({ error: "Votre accès aux offres a expiré : renouvelez votre abonnement.", reason: access.reason }, 402);
+  }
 
   const body = await readJson(req);
   const offerId = String(body.offer_id || "");
@@ -35,7 +41,11 @@ serve(async (req) => {
     return json({ error: "Offre réservée aux salariés des entreprises partenaires" }, 403);
   }
 
-  const expiresAt = new Date(Date.now() + TTL_SECONDS * 1000).toISOString();
+  const { data: ttlRow } = await admin.from("platform_settings").select("value").eq("key", "redemption_ttl_seconds").maybeSingle();
+  const ttl = Math.min(Math.max(Number(ttlRow?.value) || DEFAULT_TTL_SECONDS, 60), 900);
+  const expiresAt = new Date(Date.now() + ttl * 1000).toISOString();
+  // The member explicitly allows the merchant to charge this code to their wallet.
+  const walletAuthorized = body.allow_wallet_payment === true;
   // Retry on the (unlikely) unique-code collision.
   for (let attempt = 0; attempt < 5; attempt++) {
     const code = genCode();
@@ -50,11 +60,12 @@ serve(async (req) => {
         code_type: "QR",
         status: "GENERATED",
         expires_at: expiresAt,
+        wallet_payment_authorized: walletAuthorized,
         created_by_id: caller.user.id,
       })
       .select("id")
       .single();
-    if (!error) return json({ ok: true, code, redemption_id: data.id, expires_at: expiresAt, ttl: TTL_SECONDS });
+    if (!error) return json({ ok: true, code, redemption_id: data.id, expires_at: expiresAt, ttl, wallet_payment_authorized: walletAuthorized });
     if (error.code !== "23505") throw error;
   }
   return json({ error: "Impossible de générer un code, réessayez." }, 503);

@@ -5,15 +5,19 @@ import { Wifi, WifiOff, Copy, Check, Clock, RefreshCw, Loader2 } from "lucide-re
 import { supabase } from "@/api/supabaseClient";
 import { invokeFunction } from "@/api/functions";
 import { useAuth } from "@/lib/AuthContext";
+import { useCurrencies } from "@/hooks/useCurrencies";
 
 const DEFAULT_TTL = 180; // 3 minutes
 
 export default function QrRedemption({ offer, onClose }) {
   const { user } = useAuth();
+  const money = useCurrencies();
+  const [started, setStarted] = useState(false);
+  const [allowWallet, setAllowWallet] = useState(false);
   const [online, setOnline] = useState(navigator.onLine);
   const [code, setCode] = useState("");
   const [redemptionId, setRedemptionId] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [expired, setExpired] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
@@ -42,7 +46,7 @@ export default function QrRedemption({ offer, onClose }) {
     setExpired(false);
     setError("");
     try {
-      const res = await invokeFunction("generate-redemption", { offer_id: offer.id });
+      const res = await invokeFunction("generate-redemption", { offer_id: offer.id, allow_wallet_payment: allowWallet });
       const d = res.data || {};
       if (!d.ok || !d.code) throw new Error(d.error || "Échec de génération");
       if (!mounted.current) return;
@@ -57,10 +61,10 @@ export default function QrRedemption({ offer, onClose }) {
     }
   };
 
-  useEffect(() => {
+  const start = () => {
+    setStarted(true);
     createRedemption();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id, offer?.id]);
+  };
 
   useEffect(() => {
     if (!code || loading) return;
@@ -120,6 +124,19 @@ export default function QrRedemption({ offer, onClose }) {
           </span>
         </div>
 
+        {!started ? (
+          <div className="space-y-4">
+            <p className="text-sm text-slate-600">Générez votre code personnel et présentez-le en caisse. Le partenaire saisit le montant de l'addition : la remise et votre cashback sont calculés automatiquement.</p>
+            <label className="flex items-start gap-3 rounded-xl border border-slate-200 p-3 text-sm">
+              <input type="checkbox" checked={allowWallet} onChange={(e) => setAllowWallet(e.target.checked)} className="mt-1 h-4 w-4 accent-emerald-500" />
+              <span>
+                <span className="font-medium text-slate-900">Payer avec mon wallet Nelvin</span>
+                <span className="block text-xs text-slate-500">Le partenaire pourra débiter le montant à payer de votre wallet (solde : {money.format(user?.wallet_balance, user?.wallet_currency || "USD")}).</span>
+              </span>
+            </label>
+            <button onClick={start} className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white hover:bg-emerald-600">Générer mon code</button>
+          </div>
+        ) : (<>
         <div className="mb-4 flex flex-col items-center rounded-xl bg-slate-50 p-6">
           {loading ? (
             <div className="flex h-40 w-40 items-center justify-center">
@@ -179,6 +196,7 @@ export default function QrRedemption({ offer, onClose }) {
         <p className="mt-3 text-center text-xs text-slate-400">
           {online ? `QR dynamique • valide ${minsLabel} minutes` : `Code hors-ligne • valide ${minsLabel} minutes`}
         </p>
+        </>)}
       </motion.div>
     </motion.div>
   );

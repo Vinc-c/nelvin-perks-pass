@@ -23,10 +23,15 @@ export default function AdminMerchantVetting() {
   }, []);
 
   const setStatus = async (m, status) => {
-    await entities.Merchant.update(m.id, { verified_status: status });
-    setMerchants((list) => list.map((x) => (x.id === m.id ? { ...x, verified_status: status } : x)));
-    toast({ title: status === "VERIFIED" ? "Marchand validé" : "Marchand rejeté", description: m.name });
+    try {
+      await entities.Merchant.update(m.id, { verified_status: status });
+      setMerchants((list) => list.map((x) => (x.id === m.id ? { ...x, verified_status: status } : x)));
+      toast({ title: status === "VERIFIED" ? "Partenaire validé" : "Partenaire refusé", description: m.name });
+    } catch (e) {
+      toast({ title: "Erreur", description: e.message, variant: "destructive" });
+    }
   };
+  const replace = (u) => setMerchants((list) => list.map((x) => (x.id === u.id ? { ...x, ...u } : x)));
 
   const count = (k) => (k === "ALL" ? merchants.length : merchants.filter((m) => m.verified_status === k).length);
   const shown = filter === "ALL" ? merchants : merchants.filter((m) => m.verified_status === filter);
@@ -45,10 +50,10 @@ export default function AdminMerchantVetting() {
         <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-slate-400" /></div>
       ) : shown.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-200 bg-white py-16 text-center text-sm text-slate-500">
-          <Store className="mx-auto mb-2 h-8 w-8 text-slate-300" /> Aucun marchand dans cette catégorie.
+          <Store className="mx-auto mb-2 h-8 w-8 text-slate-300" /> Aucun partenaire dans cette catégorie.
         </div>
       ) : (
-        shown.map((m) => <AdminMerchantRow key={m.id} merchant={m} onStatus={setStatus} />)
+        shown.map((m) => <AdminMerchantRow key={m.id} merchant={m} onStatus={setStatus} onChange={replace} />)
       )}
     </motion.div>
   );

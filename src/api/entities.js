@@ -29,7 +29,7 @@ function applyFilters(query, filters = {}) {
   return q;
 }
 
-function createEntity(table) {
+function createEntity(table, { pk = "id" } = {}) {
   const filter = async (filters = {}, sort, limit) => {
     let q = applyFilters(supabase.from(table).select("*"), filters);
     q = applySort(q, sort);
@@ -45,7 +45,7 @@ function createEntity(table) {
     list: (sort, limit) => filter({}, sort, limit),
 
     async get(id) {
-      const { data, error } = await supabase.from(table).select("*").eq("id", id).maybeSingle();
+      const { data, error } = await supabase.from(table).select("*").eq(pk, id).maybeSingle();
       if (error) fail(error);
       if (!data) fail({ message: `${table} not found`, code: "PGRST116" });
       return data;
@@ -64,17 +64,17 @@ function createEntity(table) {
     },
 
     async update(id, values) {
-      const { data, error } = await supabase.from(table).update(values).eq("id", id).select().maybeSingle();
+      const { data, error } = await supabase.from(table).update(values).eq(pk, id).select().maybeSingle();
       if (error) fail(error);
       return data;
     },
 
     async bulkUpdate(rows) {
-      return Promise.all(rows.map(({ id, ...values }) => this.update(id, values)));
+      return Promise.all(rows.map(({ [pk]: id, ...values }) => this.update(id, values)));
     },
 
     async delete(id) {
-      const { error } = await supabase.from(table).delete().eq("id", id);
+      const { error } = await supabase.from(table).delete().eq(pk, id);
       if (error) fail(error);
     },
 
@@ -94,6 +94,19 @@ function createEntity(table) {
 }
 
 export const entities = {
+  AdminAuditLog: createEntity("admin_audit_log"),
+  AllowanceRun: createEntity("allowance_runs"),
+  BenefitPolicy: createEntity("benefit_policies"),
+  Currency: createEntity("currencies", { pk: "code" }),
+  MerchantDocument: createEntity("merchant_documents"),
+  PayoutRequest: createEntity("payout_requests"),
+  Plan: createEntity("plans", { pk: "code" }),
+  PlatformAdmin: createEntity("platform_admins", { pk: "email" }),
+  PlatformSetting: createEntity("platform_settings", { pk: "key" }),
+  PspProvider: createEntity("psp_providers"),
+  Recognition: createEntity("recognitions"),
+  SupportTicket: createEntity("support_tickets"),
+  TicketMessage: createEntity("ticket_messages"),
   Category: createEntity("categories"),
   Company: createEntity("companies"),
   InviteCode: createEntity("invite_codes"),

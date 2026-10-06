@@ -3,13 +3,9 @@ import { entities } from "@/api/entities";
 import { useAuth } from "@/lib/AuthContext";
 import { UserPlus, Copy, Check, RefreshCw, Trash2, Mail, Loader2, KeyRound } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import { randomCode } from "@/lib/codes";
 
-const CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-const genCode = () => {
-  let s = "";
-  for (let i = 0; i < 6; i++) s += CHARS[Math.floor(Math.random() * CHARS.length)];
-  return `NEL-${s}`;
-};
+const genCode = () => randomCode(8);
 
 export default function InviteEmployees() {
   const { user } = useAuth();

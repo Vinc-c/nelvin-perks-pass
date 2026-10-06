@@ -2,7 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Image } from "@/components/ui/image";
-import { categoryIcons, categoryLabels } from "@/data/mockData";
+import { OFFER_CATEGORIES } from "@/data/offerCategories";
+
+const categoryIcons = Object.fromEntries(OFFER_CATEGORIES.map((c) => [c.value, c.emoji]));
+const categoryLabels = Object.fromEntries(OFFER_CATEGORIES.map((c) => [c.value, c.label]));
 
 const categoryImages = {
   FOOD_DINING: "/images/categories/food-dining.webp",

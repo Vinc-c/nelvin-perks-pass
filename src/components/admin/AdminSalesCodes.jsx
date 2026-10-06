@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { entities } from "@/api/entities";
+import { randomCode } from "@/lib/codes";
 import { Search, Plus, Copy, Check, Trash2, TrendingUp, DollarSign, Activity, X } from "lucide-react";
 
-const genCode = () => "NEL-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+const genCode = () => randomCode(8);
 
 export default function AdminSalesCodes() {
   const [codes, setCodes] = useState([]);

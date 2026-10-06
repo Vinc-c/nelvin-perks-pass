@@ -1,124 +1,199 @@
-import React, { useState, useMemo } from "react";
-import { useI18n } from "@/i18n/I18nContext";
-import { SlidersHorizontal, Save, RotateCcw } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { entities } from "@/api/entities";
+import { callRpc } from "@/api/rpc";
+import { useAuth } from "@/lib/AuthContext";
+import { useAsync } from "@/hooks/useAsync";
+import { useCurrencies } from "@/hooks/useCurrencies";
+import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
+import { OFFER_CATEGORIES, categoryMeta } from "@/data/offerCategories";
+import CheckoutModal from "@/components/CheckoutModal";
+import { useToast } from "@/components/ui/use-toast";
+import { SlidersHorizontal, Save, Plus, Trash2, Wallet, Send, Loader2, Gift } from "lucide-react";
 
-const DEPARTMENTS = ["Engineering", "Sales", "Marketing", "Operations", "HR"];
-const CATEGORIES = [
-  { key: "dining", label: "Dining", color: "emerald", max: 200 },
-  { key: "health", label: "Health", color: "blue", max: 300 },
-  { key: "sport", label: "Sport", color: "amber", max: 150 },
-];
-
+/**
+ * Company benefits policy: a monthly allowance per category for every active
+ * employee, funded by the company wallet and distributed once per month.
+ */
 export default function BenefitsBuilder() {
-  const { t } = useI18n();
-  const [cycle, setCycle] = useState("monthly"); // monthly | yearly
-  // allowances[department][category] = number
-  const [allowances, setAllowances] = useState(() =>
-    Object.fromEntries(
-      DEPARTMENTS.map((d) => [d, { dining: 120, health: 200, sport: 80 }])
-    )
-  );
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const money = useCurrencies();
+  const [currency] = useDisplayCurrency();
+  const [rows, setRows] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const [distributing, setDistributing] = useState(false);
+  const [topupOpen, setTopupOpen] = useState(false);
+  const [bonus, setBonus] = useState({ user_id: "", amount: "", label: "" });
+  const companyId = user?.company_id;
 
-  const setVal = (dept, cat, val) =>
-    setAllowances((prev) => ({ ...prev, [dept]: { ...prev[dept], [cat]: Number(val) } }));
+  const { data, reload } = useAsync(async () => {
+    if (!companyId) return null;
+    const [company, policies, runs, people] = await Promise.all([
+      entities.Company.get(companyId),
+      entities.BenefitPolicy.filter({ company_id: companyId }, "label"),
+      entities.AllowanceRun.filter({ company_id: companyId }, "-created_date", 12),
+      callRpc("company_directory"),
+    ]);
+    return { company, policies, runs, people: people || [] };
+  }, [companyId]);
 
-  const reset = () =>
-    setAllowances(Object.fromEntries(DEPARTMENTS.map((d) => [d, { dining: 120, health: 200, sport: 80 }])));
+  useEffect(() => {
+    if (data?.policies) {
+      setRows(data.policies.map((p) => ({ ...p, amount: String(Math.round(money.fromUsd(p.monthly_amount_usd, currency) * 100) / 100) })));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.policies, currency]);
 
-  const totals = useMemo(() => {
-    const perCat = { dining: 0, health: 0, sport: 0 };
-    DEPARTMENTS.forEach((d) => CATEGORIES.forEach((c) => (perCat[c.key] += allowances[d][c.key] || 0)));
-    const grand = perCat.dining + perCat.health + perCat.sport;
-    return { perCat, grand };
-  }, [allowances]);
+  const employees = (data?.people || []).filter((p) => p.role === "EMPLOYEE");
+  const perEmployeeUsd = rows.filter((r) => r.active !== false).reduce((s, r) => s + money.toUsd(Number(r.amount) || 0, currency), 0);
+  const totalUsd = perEmployeeUsd * employees.length;
+  const period = new Date().toISOString().slice(0, 7);
+  const alreadyRun = (data?.runs || []).some((r) => r.period === period);
+  const balance = Number(data?.company?.wallet_balance || 0);
+  const unused = useMemo(() => OFFER_CATEGORIES.filter((c) => !rows.some((r) => r.category === c.value)), [rows]);
 
-  const periodLabel = cycle === "monthly" ? t("pricing.monthly") : t("pricing.annual");
-  const multiplier = cycle === "yearly" ? 12 : 1;
+  const addRow = () => {
+    const c = unused[0];
+    if (c) setRows((r) => [...r, { category: c.value, label: c.label, amount: "0", active: true, _new: true }]);
+  };
+
+  const save = async () => {
+    setSaving(true);
+    try {
+      const keep = new Set(rows.map((r) => r.category));
+      for (const p of data.policies) if (!keep.has(p.category)) await entities.BenefitPolicy.delete(p.id);
+      for (const r of rows) {
+        const values = {
+          category: r.category,
+          label: (r.label || categoryMeta(r.category).label).slice(0, 60),
+          monthly_amount_usd: Math.round(money.toUsd(Number(r.amount) || 0, currency) * 100) / 100,
+          active: r.active !== false,
+        };
+        if (r.id) await entities.BenefitPolicy.update(r.id, values);
+        else await entities.BenefitPolicy.create({ ...values, company_id: companyId });
+      }
+      toast({ title: "Politique enregistrée" });
+      reload();
+    } catch (e) {
+      toast({ title: "Erreur", description: e.message, variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const distribute = async () => {
+    if (!window.confirm(`Verser ${money.format(totalUsd, currency)} à ${employees.length} employé(s) pour ${period} ?`)) return;
+    setDistributing(true);
+    try {
+      const res = await callRpc("hr_distribute_allowances");
+      toast({ title: "Allocations versées", description: `${res.employees} employé(s) · ${money.format(res.total_usd, currency)}` });
+      reload();
+    } catch (e) {
+      toast({ title: "Distribution impossible", description: e.message, variant: "destructive" });
+    } finally {
+      setDistributing(false);
+    }
+  };
+
+  const sendBonus = async (e) => {
+    e.preventDefault();
+    try {
+      await callRpc("hr_allocate", {
+        p_user_id: bonus.user_id,
+        p_amount_usd: Math.round(money.toUsd(Number(bonus.amount), currency) * 100) / 100,
+        p_label: bonus.label || "Bonus",
+      });
+      toast({ title: "Bonus versé" });
+      setBonus({ user_id: "", amount: "", label: "" });
+      reload();
+    } catch (err) {
+      toast({ title: "Versement impossible", description: err.message, variant: "destructive" });
+    }
+  };
+
+  if (!companyId) return null;
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h3 className="flex items-center gap-2 font-semibold text-slate-900">
-          <SlidersHorizontal className="h-5 w-5 text-emerald-600" /> Flexible Benefits Builder
-        </h3>
-        <div className="flex items-center gap-2">
-          <div className="inline-flex rounded-full border border-slate-200 p-0.5">
-            {["monthly", "yearly"].map((c) => (
-              <button
-                key={c}
-                onClick={() => setCycle(c)}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition ${cycle === c ? "bg-emerald-500 text-white" : "text-slate-500"}`}
-              >
-                {c === "monthly" ? t("pricing.monthly") : t("pricing.annual")}
-              </button>
+    <div className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-3">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5">
+          <p className="flex items-center gap-2 text-sm text-slate-500"><Wallet className="h-4 w-4" /> Budget avantages</p>
+          <p className="mt-2 text-2xl font-bold text-slate-900">{money.format(balance, currency)}</p>
+          <button onClick={() => setTopupOpen(true)} className="mt-2 flex items-center gap-1 text-sm font-medium text-emerald-600 hover:underline"><Plus className="h-4 w-4" /> Alimenter</button>
+        </div>
+        <div className="rounded-2xl border border-slate-200 bg-white p-5">
+          <p className="text-sm text-slate-500">Par employé et par mois</p>
+          <p className="mt-2 text-2xl font-bold text-slate-900">{money.format(perEmployeeUsd, currency)}</p>
+          <p className="text-xs text-slate-500">{employees.length} employé(s) actif(s)</p>
+        </div>
+        <div className={`rounded-2xl border p-5 ${totalUsd > balance ? "border-rose-200 bg-rose-50" : "border-slate-200 bg-white"}`}>
+          <p className="text-sm text-slate-500">Total {period}</p>
+          <p className="mt-2 text-2xl font-bold text-slate-900">{money.format(totalUsd, currency)}</p>
+          <button onClick={distribute} disabled={distributing || alreadyRun || totalUsd <= 0 || totalUsd > balance} className="mt-2 flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">
+            {distributing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />} {alreadyRun ? "Déjà versé ce mois-ci" : "Verser les allocations"}
+          </button>
+          {totalUsd > balance && !alreadyRun && <p className="mt-1 text-xs text-rose-600">Budget insuffisant</p>}
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="flex items-center gap-2 font-semibold text-slate-900"><SlidersHorizontal className="h-5 w-5 text-emerald-600" /> Politique d'avantages</h3>
+          <button onClick={addRow} disabled={!unused.length} className="flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-40"><Plus className="h-4 w-4" /> Catégorie</button>
+        </div>
+        {rows.length === 0 ? (
+          <p className="mt-4 text-sm text-slate-500">Ajoutez une première catégorie (restauration, sport, santé…) et le montant mensuel versé à chaque employé.</p>
+        ) : (
+          <div className="mt-4 space-y-2">
+            {rows.map((r, i) => (
+              <div key={r.id || r.category} className="flex flex-wrap items-center gap-3 rounded-xl bg-slate-50 px-3 py-2">
+                <select value={r.category} onChange={(e) => setRows((list) => list.map((x, j) => (j === i ? { ...x, category: e.target.value, label: categoryMeta(e.target.value).label } : x)))} className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm" aria-label="Catégorie">
+                  {[categoryMeta(r.category), ...unused].filter((c, k, arr) => arr.findIndex((y) => y.value === c.value) === k).map((c) => <option key={c.value} value={c.value}>{c.emoji} {c.label}</option>)}
+                </select>
+                <input value={r.label} onChange={(e) => setRows((list) => list.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))} className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm" aria-label="Libellé" />
+                <div className="flex items-center gap-1">
+                  <input type="number" min="0" value={r.amount} onChange={(e) => setRows((list) => list.map((x, j) => (j === i ? { ...x, amount: e.target.value } : x)))} className="w-28 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-right text-sm" aria-label="Montant mensuel" />
+                  <span className="text-xs text-slate-500">{currency}/mois</span>
+                </div>
+                <label className="flex items-center gap-1 text-xs text-slate-500"><input type="checkbox" checked={r.active !== false} onChange={(e) => setRows((list) => list.map((x, j) => (j === i ? { ...x, active: e.target.checked } : x)))} className="accent-emerald-500" /> Active</label>
+                <button onClick={() => setRows((list) => list.filter((_, j) => j !== i))} aria-label="Supprimer" className="text-rose-500"><Trash2 className="h-4 w-4" /></button>
+              </div>
             ))}
           </div>
-          <button onClick={reset} className="flex items-center gap-1 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs text-slate-500 hover:bg-slate-50">
-            <RotateCcw className="h-3.5 w-3.5" /> Reset
+        )}
+        <div className="mt-4 flex justify-end">
+          <button onClick={save} disabled={saving} className="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Enregistrer la politique
           </button>
         </div>
       </div>
 
-      <div className="mt-4 overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-slate-100 text-left text-slate-500">
-              <th className="pb-3 font-medium">Department</th>
-              {CATEGORIES.map((c) => (
-                <th key={c.key} className="pb-3 font-medium">{c.label}</th>
-              ))}
-              <th className="pb-3 font-medium">Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            {DEPARTMENTS.map((dept) => {
-              const subtotal = CATEGORIES.reduce((acc, c) => acc + (allowances[dept][c.key] || 0), 0);
-              return (
-                <tr key={dept} className="border-b border-slate-50">
-                  <td className="py-3 font-medium text-slate-900">{dept}</td>
-                  {CATEGORIES.map((c) => (
-                    <td key={c.key} className="py-3">
-                      <input
-                        type="range"
-                        min={0}
-                        max={c.max}
-                        step={10}
-                        value={allowances[dept][c.key]}
-                        onChange={(e) => setVal(dept, c.key, e.target.value)}
-                        className={`w-full accent-${c.color}-500`}
-                      />
-                      <span className="text-xs text-slate-500">${allowances[dept][c.key]}</span>
-                    </td>
-                  ))}
-                  <td className="py-3 font-semibold text-slate-900">${subtotal}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-          <tfoot>
-            <tr className="border-t border-slate-100">
-              <td className="pt-3 font-medium text-slate-500">Total / {periodLabel.toLowerCase()}</td>
-              {CATEGORIES.map((c) => (
-                <td key={c.key} className="pt-3 font-semibold text-slate-900">${totals.perCat[c.key]}</td>
-              ))}
-              <td className="pt-3">
-                <span className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-bold text-emerald-700">
-                  ${totals.grand * multiplier}
-                </span>
-              </td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
+      <form onSubmit={sendBonus} className="rounded-2xl border border-slate-200 bg-white p-5">
+        <h3 className="flex items-center gap-2 font-semibold text-slate-900"><Gift className="h-5 w-5 text-amber-500" /> Bonus ponctuel</h3>
+        <div className="mt-3 grid gap-2 sm:grid-cols-4">
+          <select required value={bonus.user_id} onChange={(e) => setBonus({ ...bonus, user_id: e.target.value })} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm" aria-label="Employé">
+            <option value="">Employé…</option>
+            {(data?.people || []).filter((p) => p.id !== user.id).map((p) => <option key={p.id} value={p.id}>{p.full_name}</option>)}
+          </select>
+          <input required type="number" min="1" value={bonus.amount} onChange={(e) => setBonus({ ...bonus, amount: e.target.value })} placeholder={`Montant (${currency})`} className="rounded-lg border border-slate-200 px-3 py-2 text-sm" aria-label="Montant" />
+          <input value={bonus.label} onChange={(e) => setBonus({ ...bonus, label: e.target.value })} maxLength={120} placeholder="Motif (prime, anniversaire…)" className="rounded-lg border border-slate-200 px-3 py-2 text-sm" aria-label="Motif" />
+          <button type="submit" disabled={!bonus.user_id || !(Number(bonus.amount) > 0)} className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50">Verser</button>
+        </div>
+        <p className="mt-2 text-xs text-slate-400">Prélevé sur le budget avantages, crédité instantanément sur le wallet de l'employé.</p>
+      </form>
 
-      <div className="mt-4 flex items-center justify-between">
-        <p className="text-xs text-slate-400">
-          Allocations apply per employee in the selected department. {cycle === "yearly" ? "Annualized (×12)." : ""}
-        </p>
-        <button className="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600">
-          <Save className="h-4 w-4" /> Save policy
-        </button>
-      </div>
+      {(data?.runs || []).length > 0 && (
+        <div className="rounded-2xl border border-slate-200 bg-white p-5">
+          <h3 className="font-semibold text-slate-900">Historique des versements</h3>
+          <div className="mt-3 space-y-1 text-sm">
+            {data.runs.map((r) => (
+              <div key={r.id} className="flex justify-between rounded-lg bg-slate-50 px-3 py-2"><span>{r.period} · {r.employees} employé(s)</span><span className="font-medium">{money.format(r.total_usd, currency)}</span></div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <CheckoutModal open={topupOpen} purpose="COMPANY_TOPUP" onClose={() => { setTopupOpen(false); reload(); }} />
     </div>
   );
 }

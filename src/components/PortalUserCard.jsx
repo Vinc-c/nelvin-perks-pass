@@ -16,13 +16,16 @@ export default function PortalUserCard() {
     const load = async () => {
       try {
         const list = await entities.Notification.filter({ user_id: user.id, read: false }, "-created_date", 50);
-        setUnread((list || []).length);
+        // Badge respects the categories muted in notification preferences.
+        const prefs = user.notif_prefs || {};
+        setUnread((list || []).filter((n) => n.type === "ALERT" || prefs[n.type] !== false).length);
       } catch { setUnread(0); }
     };
     load();
+    if (user.notif_push === false) return undefined;
     const unsub = entities.Notification.subscribe(load, { filter: `user_id=eq.${user.id}` });
     return unsub;
-  }, [user?.id]);
+  }, [user?.id, user?.notif_push, user?.notif_prefs]);
 
   return (
     <div className="flex items-center gap-3 rounded-2xl bg-slate-50 p-3">

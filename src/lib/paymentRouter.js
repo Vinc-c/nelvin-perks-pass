@@ -35,11 +35,8 @@ const COUNTRY_PSP = {
   Namibie: "flutterwave", "Afrique du Sud": "flutterwave", Zambie: "flutterwave", Zimbabwe: "flutterwave",
 };
 
-/**
- * Selects the optimal PSP for a payment.
- * @returns {{ primary: Object, fallback: Object[], reason: string }}
- */
-export function routePayment({ audience, method, country, currency }) {
+/** Ideal PSP for a payment context, ignoring which providers are enabled. */
+function idealRoute({ audience, method, country }) {
   const find = (id) => PSPS.find((p) => p.id === id);
   const countryPspId = country && COUNTRY_PSP[country];
 
@@ -90,4 +87,23 @@ export function routePayment({ audience, method, country, currency }) {
     fallback: [find("paddle"), find("korapay")],
     reason: `Paiement international (${method || "carte"}) routé vers Stripe.`,
   };
+}
+
+/**
+ * Selects the PSP for a payment. Mirrors the server: the ideal route is used
+ * when its provider is enabled in Admin → PSP, otherwise the first enabled
+ * fallback, then any enabled provider supporting the method.
+ * @param {object} ctx { audience, method, country }
+ * @param {{id: string, methods?: string[]}[]} [enabled] enabled providers
+ * @returns {{ primary: Object, fallback: Object[], reason: string }}
+ */
+export function routePayment(ctx, enabled) {
+  const ideal = idealRoute(ctx);
+  if (!enabled || enabled.length === 0) return ideal;
+  const usable = (p) => enabled.some((e) => e.id === p.id && (!e.methods?.length || e.methods.includes(ctx.method)));
+  const chain = [ideal.primary, ...ideal.fallback];
+  const pick = chain.find(usable) || PSPS.find(usable);
+  if (!pick) throw new Error("Aucun moyen de paiement actif pour cette méthode.");
+  if (pick.id === ideal.primary.id) return ideal;
+  return { primary: pick, fallback: chain.filter((p) => p.id !== pick.id && usable(p)), reason: `${ideal.primary.name} indisponible : paiement routé vers ${pick.name}.` };
 }

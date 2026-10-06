@@ -1,6 +1,6 @@
 // Admin-only: lists open GitHub pull requests. Requires a GITHUB_TOKEN secret
 // (fine-grained token with read access to pull requests).
-import { adminClient, getCaller, isAdminRole, json, readJson, serve } from "../_shared/http.ts";
+import { adminClient, getCaller, isAdminRole, json, MFA_REQUIRED, readJson, serve } from "../_shared/http.ts";
 
 const GH_API = "https://api.github.com";
 
@@ -9,6 +9,7 @@ serve(async (req) => {
   const caller = await getCaller(req, admin);
   if (!caller) return json({ error: "Unauthorized" }, 401);
   if (!isAdminRole(caller.profile.role)) return json({ error: "Forbidden" }, 403);
+  if (!caller.mfaOk) return json(MFA_REQUIRED, 403);
 
   const token = Deno.env.get("GITHUB_TOKEN");
   if (!token) return json({ error: "GITHUB_TOKEN non configuré dans les secrets des Edge Functions." }, 500);

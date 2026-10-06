@@ -9,9 +9,13 @@ export default [
     files: [
       "src/components/**/*.{js,mjs,cjs,jsx}",
       "src/pages/**/*.{js,mjs,cjs,jsx}",
-      "src/Layout.jsx",
+      "src/hooks/**/*.{js,jsx}",
+      "src/api/**/*.{js,jsx}",
+      "src/lib/**/*.{js,jsx}",
+      "src/i18n/**/*.{js,jsx}",
+      "src/App.jsx",
     ],
-    ignores: ["src/lib/**/*", "src/components/ui/**/*"],
+    ignores: ["src/components/ui/**/*"],
     ...pluginJs.configs.recommended,
     ...pluginReact.configs.flat.recommended,
     languageOptions: {
@@ -55,6 +59,7 @@ export default [
         { ignore: ["cmdk-input-wrapper", "toast-close"] },
       ],
       "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "off",
     },
   },
 ];

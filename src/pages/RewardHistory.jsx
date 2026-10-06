@@ -1,104 +1,71 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import PortalLayout from "@/components/PortalLayout";
-import { Award, Crown, Star, ThumbsUp, Trophy, Gift, Sparkles } from "lucide-react";
+import { useAuth } from "@/lib/AuthContext";
+import { useRewards } from "@/hooks/useRewards";
+import { useCurrencies } from "@/hooks/useCurrencies";
+import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
+import StatCard from "@/components/dashboard/StatCard";
+import { EmptyState, Spinner } from "@/components/UiFeedback";
+import { TrendingUp, Gift, ThumbsUp, Trophy, History } from "lucide-react";
 
-const badges = [
-  { id: "b1", name: "Foodie Explorer", desc: "10 dining redemptions", icon: Star, color: "emerald", earned: "2026-09-28" },
-  { id: "b2", name: "Wellness Pro", desc: "5 spa & wellness visits", icon: Award, color: "blue", earned: "2026-09-20" },
-  { id: "b3", name: "Fitness Streak", desc: "30-day gym streak", icon: Trophy, color: "amber", earned: "2026-09-10" },
-  { id: "b4", name: "Top Saver", desc: "Saved over $500", icon: Crown, color: "amber", earned: "2026-08-30" },
-  { id: "b5", name: "Team Player", desc: "Sent 20 peer recognitions", icon: ThumbsUp, color: "emerald", earned: "2026-08-15" },
-  { id: "b6", name: "VIP Member", desc: "Upgraded to VIP Gold pass", icon: Sparkles, color: "amber", earned: "2026-07-01" },
-];
-
-const rewards = [
-  { id: "r1", title: "$10 bonus cashback", from: "Monthly VIP perk", date: "2026-10-01", icon: Gift },
-  { id: "r2", title: "Peer praise from Fatima Zahra", from: '"Great collaboration on the Q3 launch!"', date: "2026-09-27", icon: ThumbsUp },
-  { id: "r3", title: "50 recognition points", from: "Engineering team reward", date: "2026-09-22", icon: Star },
-  { id: "r4", title: "Free coffee voucher", from: "Lagos Fitness Hub partner", date: "2026-09-18", icon: Gift },
-  { id: "r5", title: "Peer praise from John Mwangi", from: '"Always reliable and helpful!"', date: "2026-09-12", icon: ThumbsUp },
-];
+const KIND = {
+  CASHBACK: { label: "Cashback", icon: TrendingUp, tone: "bg-emerald-100 text-emerald-600" },
+  ALLOCATION: { label: "Allocation employeur", icon: Gift, tone: "bg-blue-100 text-blue-600" },
+  REFERRAL_BONUS: { label: "Bonus parrainage", icon: Gift, tone: "bg-amber-100 text-amber-600" },
+  RECOGNITION: { label: "Reconnaissance", icon: ThumbsUp, tone: "bg-rose-100 text-rose-600" },
+};
+const FILTERS = [["ALL", "Tout"], ["CASHBACK", "Cashback"], ["ALLOCATION", "Allocations"], ["REFERRAL_BONUS", "Parrainage"], ["RECOGNITION", "Reconnaissance"]];
 
 export default function RewardHistory() {
+  const { user } = useAuth();
+  const money = useCurrencies();
+  const [currency] = useDisplayCurrency();
+  const r = useRewards(user);
+  const [filter, setFilter] = useState("ALL");
+
+  if (!r.ready) {
+    return <PortalLayout title="Historique des récompenses" theme="light"><Spinner /></PortalLayout>;
+  }
+  const items = r.timeline.filter((t) => filter === "ALL" || t.kind === filter);
+  const earned = r.badges.filter((b) => b.earned).length;
+
   return (
-    <PortalLayout title="Reward History" theme="light">
-      {/* Summary */}
+    <PortalLayout title="Historique des récompenses" theme="light">
       <div className="grid gap-4 sm:grid-cols-3">
-        {[
-          { icon: Trophy, label: "Badges earned", value: "6", color: "amber" },
-          { icon: Star, label: "Recognition points", value: "420", color: "emerald" },
-          { icon: ThumbsUp, label: "Praise received", value: "12", color: "blue" },
-        ].map((s, i) => {
-          const Icon = s.icon;
-          return (
-            <motion.div
-              key={s.label}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
-            >
-              <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-${s.color}-50`}>
-                <Icon className={`h-5 w-5 text-${s.color}-600`} />
-              </div>
-              <p className="mt-3 text-2xl font-bold text-slate-900">{s.value}</p>
-              <p className="text-sm text-slate-500">{s.label}</p>
-            </motion.div>
-          );
-        })}
+        <StatCard icon={TrendingUp} label="Cashback cumulé" value={money.format(r.cashback, currency)} tone="emerald" />
+        <StatCard icon={Trophy} label="Badges débloqués" value={`${earned} / ${r.badges.length}`} tone="amber" delay={0.05} />
+        <StatCard icon={ThumbsUp} label="Reconnaissances reçues" value={r.metrics.received} tone="rose" delay={0.1} />
       </div>
 
-      {/* Badges */}
-      <h2 className="mt-8 font-semibold text-slate-900">Collected badges</h2>
-      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {badges.map((b, i) => {
-          const Icon = b.icon;
-          return (
-            <motion.div
-              key={b.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.05 }}
-              className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-            >
-              <div className={`flex h-12 w-12 items-center justify-center rounded-xl bg-${b.color}-50`}>
-                <Icon className={`h-6 w-6 text-${b.color}-600`} />
-              </div>
-              <div>
-                <p className="font-medium text-slate-900">{b.name}</p>
-                <p className="text-xs text-slate-500">{b.desc}</p>
-                <p className="mt-0.5 text-xs text-slate-400">Earned {b.earned}</p>
-              </div>
-            </motion.div>
-          );
-        })}
+      <div className="mt-6 flex flex-wrap gap-2">
+        {FILTERS.map(([id, label]) => (
+          <button key={id} onClick={() => setFilter(id)} className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${filter === id ? "bg-emerald-500 text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>{label}</button>
+        ))}
       </div>
 
-      {/* Rewards timeline */}
-      <h2 className="mt-8 font-semibold text-slate-900">Past rewards & recognition</h2>
       <div className="mt-4 space-y-3">
-        {rewards.map((r, i) => {
-          const Icon = r.icon;
-          return (
-            <motion.div
-              key={r.id}
-              initial={{ opacity: 0, x: -8 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.04 }}
-              className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-            >
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
-                <Icon className="h-5 w-5 text-emerald-600" />
-              </div>
-              <div className="flex-1">
-                <p className="font-medium text-slate-900">{r.title}</p>
-                <p className="text-sm text-slate-500">{r.from}</p>
-              </div>
-              <span className="text-xs text-slate-400">{r.date}</span>
-            </motion.div>
-          );
-        })}
+        {items.length === 0 ? (
+          <EmptyState icon={History} title="Aucune récompense pour le moment" description="Utilisez une offre partenaire pour gagner votre premier cashback." />
+        ) : (
+          items.map((it, i) => {
+            const k = KIND[it.kind] || KIND.CASHBACK;
+            const Icon = k.icon;
+            return (
+              <motion.div key={it.id} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: Math.min(i, 10) * 0.03 }}
+                className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${k.tone}`}><Icon className="h-5 w-5" /></div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-medium text-slate-900">{it.title}</p>
+                  <p className="text-xs text-slate-500">{k.label} · {new Date(it.date).toLocaleDateString("fr-FR", { dateStyle: "medium" })}</p>
+                </div>
+                <span className="shrink-0 text-sm font-semibold text-emerald-600">
+                  {it.usd != null ? `+${money.format(it.usd, currency)}` : `+${it.points} pts`}
+                </span>
+              </motion.div>
+            );
+          })
+        )}
       </div>
     </PortalLayout>
   );

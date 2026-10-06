@@ -25,6 +25,7 @@ export async function getCurrentUser() {
     id: authUser.id,
     email: profile.email || authUser.email,
     full_name: profile.full_name || authUser.user_metadata?.full_name || authUser.user_metadata?.name || null,
+    auth_provider: authUser.app_metadata?.provider || "email",
   };
 }
 
@@ -100,4 +101,48 @@ export async function updatePassword(newPassword) {
 export async function signOut(redirectTo) {
   await supabase.auth.signOut().catch(() => {});
   if (redirectTo) window.location.href = redirectTo;
+}
+
+// ---------------------------------------------------------------------------
+// Two-factor authentication (TOTP authenticator apps)
+// ---------------------------------------------------------------------------
+
+/** { currentLevel, nextLevel } — nextLevel "aal2" means a TOTP code is required. */
+export async function getAssuranceLevel() {
+  const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (error) throw authError(error, "Impossible de vérifier la double authentification");
+  return data;
+}
+
+export async function listTotpFactors() {
+  const { data, error } = await supabase.auth.mfa.listFactors();
+  if (error) throw authError(error, "Impossible de lister les facteurs");
+  return data?.totp || [];
+}
+
+/** Starts enrollment; returns { id, qr_code (SVG data URI), secret }. */
+export async function enrollTotp() {
+  // Clean up abandoned (unverified) enrollments first.
+  const { data: all } = await supabase.auth.mfa.listFactors();
+  await Promise.all((all?.all || []).filter((f) => f.status !== "verified").map((f) => supabase.auth.mfa.unenroll({ factorId: f.id })));
+  const { data, error } = await supabase.auth.mfa.enroll({ factorType: "totp", friendlyName: `Nelvin ${new Date().toISOString().slice(0, 10)}` });
+  if (error) throw authError(error, "Activation impossible");
+  return { id: data.id, qr_code: data.totp.qr_code, secret: data.totp.secret };
+}
+
+/** Verifies a 6-digit code for a factor (enrollment or sign-in challenge). */
+export async function verifyTotp(factorId, code) {
+  const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId, code: code.trim() });
+  if (error) throw authError(error, "Code invalide");
+}
+
+export async function unenrollTotp(factorId) {
+  const { error } = await supabase.auth.mfa.unenroll({ factorId });
+  if (error) throw authError(error, "Désactivation impossible");
+}
+
+/** Signs out every other device/session of this account. */
+export async function signOutOtherSessions() {
+  const { error } = await supabase.auth.signOut({ scope: "others" });
+  if (error) throw authError(error, "Impossible de fermer les autres sessions");
 }
