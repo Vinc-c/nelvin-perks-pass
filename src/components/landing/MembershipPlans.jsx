@@ -34,7 +34,7 @@ export default function MembershipPlans() {
               </div>
               <div className="flex flex-1 flex-col p-6">
                 <ul className="flex-1 space-y-3 text-sm text-slate-600">
-                  {(p.features || []).map((f) => (
+                  {[...(p.features || []), ...(p.family_seats > 0 ? [`Abonnement famille : ${p.family_seats} proches inclus`] : [])].map((f) => (
                     <li key={f} className="flex items-center gap-2">
                       <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-600"><Check className="h-3 w-3" /></span>
                       {f}

@@ -98,6 +98,7 @@ export const entities = {
   AllowanceRun: createEntity("allowance_runs"),
   BenefitPolicy: createEntity("benefit_policies"),
   Favorite: createEntity("favorites", { pk: "offer_id" }),
+  GiftCard: createEntity("gift_cards"),
   OfferReview: createEntity("offer_reviews"),
   Currency: createEntity("currencies", { pk: "code" }),
   MerchantDocument: createEntity("merchant_documents"),

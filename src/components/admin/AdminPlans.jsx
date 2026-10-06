@@ -21,6 +21,7 @@ function PlanRow({ plan, onSaved }) {
         name: p.name, tagline: p.tagline || null,
         price_monthly: Number(p.price_monthly), price_annual: Number(p.price_annual),
         max_employees: p.audience === "B2B" && p.max_employees !== "" && p.max_employees != null ? Number(p.max_employees) : null,
+        family_seats: p.audience === "B2C" ? Math.min(Math.max(Number(p.family_seats) || 0, 0), 10) : 0,
         features: p.featuresText.split("\n").map((s) => s.trim()).filter(Boolean),
         popular: !!p.popular, active: !!p.active,
       });
@@ -49,6 +50,9 @@ function PlanRow({ plan, onSaved }) {
         <input value={p.tagline || ""} onChange={(e) => setP({ ...p, tagline: e.target.value })} placeholder="Accroche" aria-label="Accroche" className={input} />
         <label className="text-xs text-slate-500">USD / mois<input type="number" min="0" step="0.01" value={p.price_monthly} onChange={(e) => setP({ ...p, price_monthly: e.target.value })} className={input} /></label>
         <label className="text-xs text-slate-500">USD / an<input type="number" min="0" step="0.01" value={p.price_annual} onChange={(e) => setP({ ...p, price_annual: e.target.value })} className={input} /></label>
+        {p.audience === "B2C" && (
+          <label className="text-xs text-slate-500">Proches inclus (abonnement famille, 0–10)<input type="number" min="0" max="10" value={p.family_seats ?? 0} onChange={(e) => setP({ ...p, family_seats: e.target.value })} className={input} /></label>
+        )}
         {p.audience === "B2B" && (
           <label className="text-xs text-slate-500">Sièges max (vide = illimité)<input type="number" min="1" value={p.max_employees ?? ""} onChange={(e) => setP({ ...p, max_employees: e.target.value })} className={input} /></label>
         )}

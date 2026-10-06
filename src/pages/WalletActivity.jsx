@@ -25,6 +25,7 @@ export const TX_LABELS = {
   COMPANY_TOPUP: "Budget entreprise",
   REFERRAL_BONUS: "Bonus parrainage",
   REFUND: "Remboursement",
+  GIFT: "Abonnement offert",
 };
 const STATUS_LABELS = { PENDING: "En attente", COMPLETED: "Effectué", FAILED: "Échoué", REFUNDED: "Remboursé", CANCELLED: "Annulé" };
 const STATUS_TONE = { PENDING: "bg-amber-100 text-amber-700", COMPLETED: "bg-emerald-100 text-emerald-700", FAILED: "bg-rose-100 text-rose-700", CANCELLED: "bg-slate-100 text-slate-600", REFUNDED: "bg-blue-100 text-blue-700" };
@@ -42,6 +43,7 @@ export function walletEffect(tx) {
     case "WITHDRAWAL":
       return tx.status === "CANCELLED" ? 0 : -usd;
     case "SUBSCRIPTION":
+    case "GIFT":
       return tx.payment_method === "WALLET" && tx.status === "COMPLETED" ? -usd : 0;
     case "REDEMPTION":
       return (tx.payment_method === "WALLET" ? -usd : 0) + Number(tx.cashback_amount || 0);

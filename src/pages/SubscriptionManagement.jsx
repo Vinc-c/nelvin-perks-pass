@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import PortalLayout from "@/components/PortalLayout";
 import CheckoutModal from "@/components/CheckoutModal";
+import FamilyPanel from "@/components/billing/FamilyPanel";
+import GiftPanel from "@/components/billing/GiftPanel";
 import { useAuth } from "@/lib/AuthContext";
 import { entities } from "@/api/entities";
 import { callRpc } from "@/api/rpc";
@@ -28,6 +30,8 @@ export default function SubscriptionManagement() {
   const audience = audienceFor(user);
   const [topupOpen, setTopupOpen] = useState(false);
   const [renew, setRenew] = useState(null);
+  const [params] = useSearchParams();
+  const giftCode = params.get("gift") || "";
 
   const { data, loading, reload } = useAsync(async () => {
     if (!user) return null;
@@ -48,7 +52,7 @@ export default function SubscriptionManagement() {
     } else {
       [subs, payments] = await Promise.all([
         entities.Subscription.filter({ user_id: user.id, company_id: null, merchant_id: null }, "-created_date", 50),
-        entities.Transaction.filter({ user_id: user.id, type: "SUBSCRIPTION" }, "-created_date", 100),
+        entities.Transaction.filter({ user_id: user.id, type: ["SUBSCRIPTION", "GIFT"] }, "-created_date", 100),
       ]);
     }
     return { subs, payments, company };
@@ -129,6 +133,9 @@ export default function SubscriptionManagement() {
           </div>
         </div>
       )}
+
+      {audience === "B2C" && <FamilyPanel onChange={reload} />}
+      {audience !== "MERCHANT" && <GiftPanel initialCode={giftCode} onRedeemed={reload} />}
 
       <SectionCard icon={Receipt} title="Paiements & reçus" className="mt-6">
         {data.payments.length === 0 ? (

@@ -49,7 +49,7 @@ export async function settleTransaction(
 export async function findPspTransaction(admin: SupabaseClient, reference: string): Promise<Tx | null> {
   if (!reference || !reference.startsWith("NELVIN-")) return null;
   const { data } = await admin.from("transactions").select("*")
-    .in("type", ["RECHARGE", "SUBSCRIPTION", "COMPANY_TOPUP"])
+    .in("type", ["RECHARGE", "SUBSCRIPTION", "COMPANY_TOPUP", "GIFT"])
     .eq("psp_reference", reference.slice(0, 120))
     .maybeSingle();
   return data;

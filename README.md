@@ -84,6 +84,12 @@ Les clés se saisissent dans *Admin → Paiements → Clés PSP & routage* :
 - **Limites d'utilisation** par membre et par offre (par jour, semaine, mois, an ou au total), par exemple un « 1 acheté = 1 offert » une fois par an. La limite est vérifiée à la génération du code et au moment de la validation.
 - **Favoris** et **avis vérifiés** : seuls les membres ayant réellement utilisé une offre peuvent la noter ; la note du partenaire est calculée à partir des avis (plus de note fictive). Les admins peuvent masquer un avis.
 
+## Abonnements particuliers
+
+- **Famille** : un plan peut inclure des proches (`family_seats`, réglable dans *Plans & tarifs* ; Premium 2, VIP 4 par défaut). Le titulaire les invite par email ; une fois l'invitation acceptée, ils profitent des offres avec leur propre compte tant que l'abonnement du titulaire est actif.
+- **Cadeau** : tout membre peut offrir un abonnement particulier (1 mois ou 1 an), payé avec son wallet ou en ligne. Un code cadeau à usage unique est émis après paiement (valable 1 an, réservé au destinataire si un email est indiqué) ; il s'active depuis *Abonnement*.
+- **Application installable** (PWA) : bouton « Installer l'app » dans les portails (Android, ordinateur ; consigne Partager → Écran d'accueil sur iPhone).
+
 ## Modèle monétaire
 
 - Tous les soldes (wallet membre, wallet entreprise, solde partenaire) sont tenus en **USD** ;
@@ -115,6 +121,7 @@ supabase db push
 | `20261006180000_mfa_enforcement_recovery.sql` | 2FA obligatoire (admins, RH) et codes de secours |
 | `20261006180100_drop_legacy_source_snapshot.sql` | Supprime la copie de l'ancien code source laissée en base |
 | `20261006190000_offer_limits_pin_favorites_reviews.sql` | Limites d'utilisation par offre, validation par PIN, favoris, avis vérifiés |
+| `20261006200000_family_gift_memberships.sql` | Abonnement famille et abonnement offert (codes cadeaux) |
 
 ### Edge Functions
 

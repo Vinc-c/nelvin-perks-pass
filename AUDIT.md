@@ -55,6 +55,6 @@ L'application affichait de nombreux modules « de façade » : données fictives
 
 ## Feuille de route (vs MyBenefit / The Entertainer)
 
-**P1 — mécaniques The Entertainer** : ✅ validation par PIN partenaire, ✅ limites d'utilisation par offre (BOGO une fois par an), ✅ favoris et avis vérifiés (note partenaire réelle). Reste : abonnement famille et cadeau, PWA installable avec notifications push, arabe et anglais (RTL).
+**P1 — mécaniques The Entertainer** : ✅ validation par PIN partenaire, ✅ limites d'utilisation par offre (BOGO une fois par an), ✅ favoris et avis vérifiés (note partenaire réelle). ✅ abonnement famille et cadeau, ✅ application installable. Reste : notifications push, traduction complète arabe / anglais avec mise en page RTL (seule une cinquantaine de libellés est traduite aujourd'hui).
 
 **P2 — mécaniques MyBenefit** : catalogue cafétéria (cartes cadeaux, sport, santé, voyage), import CSV des employés et SSO Google / Microsoft, export paie, portail aux couleurs de l'entreprise, facturation entreprise avec TVA EAU 5 %, emails transactionnels, conformité PDPL / RGPD (export et suppression du compte), supervision des erreurs et tests de bout en bout.

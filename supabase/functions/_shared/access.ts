@@ -7,7 +7,7 @@ type Sub = { status: string; expires_at: string | null };
 const isActive = (s: Sub) =>
   (s.status === "ACTIVE" || s.status === "TRIALING") && !(s.expires_at && new Date(s.expires_at) < new Date());
 
-export type Access = { allowed: boolean; reason?: string; company?: Record<string, unknown>; trial?: boolean; trial_days_left?: number };
+export type Access = { allowed: boolean; reason?: string; company?: Record<string, unknown>; trial?: boolean; trial_days_left?: number; family?: unknown };
 
 export async function accessFor(admin: SupabaseClient, profile: Profile): Promise<Access> {
   if (isAdminRole(profile.role) || profile.role === "MERCHANT") return { allowed: true };
@@ -51,5 +51,8 @@ export async function accessFor(admin: SupabaseClient, profile: Profile): Promis
     .limit(50);
   if (!subs || subs.length === 0) return { allowed: true };
   if ((subs as Sub[]).some(isActive)) return { allowed: true };
+  // Covered by a family member's active membership.
+  const { data: family } = await admin.rpc("family_coverage", { p_user: profile.id });
+  if (family) return { allowed: true, family };
   return { allowed: false, reason: "membership_expired" };
 }

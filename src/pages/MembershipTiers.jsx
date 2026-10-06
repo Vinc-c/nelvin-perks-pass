@@ -64,6 +64,7 @@ export default function MembershipTiers() {
               </div>
               {cycle === "ANNUAL" && annualSaving(p) > 0 && <p className="text-xs text-emerald-600">soit {money.format(p.price_annual / 12, currency)}/mois — {annualSaving(p)}% d'économie</p>}
               {p.max_employees != null && audience === "B2B" && <p className="mt-1 text-xs text-slate-500">Jusqu'à {p.max_employees} employés</p>}
+              {p.family_seats > 0 && audience === "B2C" && <p className="mt-1 text-xs font-medium text-rose-600">❤ Abonnement famille : {p.family_seats} proches inclus</p>}
               <ul className="mt-5 flex-1 space-y-2">
                 {(p.features || []).map((f) => (
                   <li key={f} className="flex items-start gap-2 text-sm text-slate-600"><Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" /> {f}</li>

@@ -12,6 +12,7 @@ const SUCCESS = {
   RECHARGE: { text: "Votre wallet Nelvin a été rechargé avec succès.", to: "/wallet-activity", cta: "Voir mon activité" },
   SUBSCRIPTION: { text: "Votre abonnement est actif.", to: "/billing-settings", cta: "Voir mon abonnement" },
   COMPANY_TOPUP: { text: "Le budget avantages de votre entreprise a été crédité.", to: "/hr?section=benefits", cta: "Gérer les allocations" },
+  GIFT: { text: "Votre cadeau est prêt : le code est disponible dans Abonnement → Offrir Nelvin.", to: "/billing-settings", cta: "Voir mon cadeau" },
 };
 
 export default function PaymentReturn() {

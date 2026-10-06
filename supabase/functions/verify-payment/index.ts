@@ -9,7 +9,7 @@ serve(async (req) => {
   const body = await readJson(req);
   const admin = adminClient();
 
-  let query = admin.from("transactions").select("*").in("type", ["RECHARGE", "SUBSCRIPTION", "COMPANY_TOPUP"]);
+  let query = admin.from("transactions").select("*").in("type", ["RECHARGE", "SUBSCRIPTION", "COMPANY_TOPUP", "GIFT"]);
   const txId = String(body.transaction_id || "");
   if (txId) {
     if (!UUID_RE.test(txId)) return json({ ok: false, error: "Transaction introuvable" }, 404);

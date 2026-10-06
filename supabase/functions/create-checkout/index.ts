@@ -2,12 +2,13 @@
 //   RECHARGE       — member/employee tops up their wallet
 //   SUBSCRIPTION   — membership (B2C), company plan (HR) or merchant plan
 //   COMPANY_TOPUP  — HR funds the company benefits wallet
+//   GIFT           — a B2C membership bought for someone else (gift code issued once paid)
 // A PENDING transaction is recorded first; verify-payment completes it.
 import { adminClient, errorMessage, getCaller, json, readJson, serve } from "../_shared/http.ts";
 import { initPayment, PspContext, routePayment } from "../_shared/paymentRouter.ts";
 
 const VALID_METHODS = ["CARD", "MOBILE_MONEY", "BANK_TRANSFER", "APPLE_PAY", "GOOGLE_PAY"];
-const PURPOSES = ["RECHARGE", "SUBSCRIPTION", "COMPANY_TOPUP"];
+const PURPOSES = ["RECHARGE", "SUBSCRIPTION", "COMPANY_TOPUP", "GIFT"];
 
 function genRef(pspId: string) {
   const rand = crypto.randomUUID().replace(/-/g, "").slice(0, 10);
@@ -66,6 +67,19 @@ serve(async (req) => {
     if (!Number.isFinite(amount) || amount <= 0 || amount / rate > 1000000) return json({ error: "Montant invalide" }, 400);
     audience = "B2B";
     description = "Budget avantages entreprise";
+  } else if (purpose === "GIFT") {
+    planCode = String(body.plan_code || "");
+    cycle = String(body.billing_cycle || "MONTHLY").toUpperCase();
+    if (!["MONTHLY", "ANNUAL"].includes(cycle)) return json({ error: "Cycle invalide" }, 400);
+    const { data: plan } = await admin.from("plans").select("*").eq("code", planCode).eq("active", true).eq("audience", "B2C").maybeSingle();
+    if (!plan) return json({ error: "Seuls les abonnements particuliers peuvent être offerts" }, 400);
+    const recipient = String(body.recipient_email || "").trim().toLowerCase();
+    if (recipient && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(recipient)) return json({ error: "Email du destinataire invalide" }, 400);
+    const priceUsd = Number(cycle === "ANNUAL" ? plan.price_annual : plan.price_monthly);
+    if (priceUsd <= 0) return json({ error: "Plan gratuit : rien à offrir" }, 400);
+    amount = Math.round(priceUsd * rate * 100) / 100;
+    companyId = null;
+    description = `Abonnement offert : ${plan.name} (${cycle === "ANNUAL" ? "annuel" : "mensuel"})`;
   } else {
     planCode = String(body.plan_code || "");
     cycle = String(body.billing_cycle || "MONTHLY").toUpperCase();
@@ -109,6 +123,23 @@ serve(async (req) => {
     .select("id")
     .single();
   if (error) throw error;
+
+  if (purpose === "GIFT") {
+    const { error: giftError } = await admin.rpc("create_pending_gift", {
+      p_user: user.id,
+      p_transaction_id: tx.id,
+      p_plan_code: planCode,
+      p_cycle: cycle,
+      p_recipient_email: String(body.recipient_email || ""),
+      p_recipient_name: String(body.recipient_name || ""),
+      p_message: String(body.message || ""),
+      p_amount_usd: Math.round((amount / rate) * 10000) / 10000,
+    });
+    if (giftError) {
+      await admin.from("transactions").update({ status: "FAILED", admin_note: giftError.message.slice(0, 300) }).eq("id", tx.id);
+      return json({ error: giftError.message }, 400);
+    }
+  }
 
   try {
     const session = await initPayment(psp, provider.id, {

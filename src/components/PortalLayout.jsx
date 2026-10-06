@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/AuthContext";
 import { navFor, navHref, isNavActive } from "@/lib/portalNav";
 import LanguageSwitcher from "./LanguageSwitcher";
+import InstallAppButton from "./InstallAppButton";
 import PortalNavLinks from "./PortalNavLinks";
 import PortalUserCard from "./PortalUserCard";
 import NelvinSupportWidget from "@/components/NelvinSupportWidget";
@@ -67,6 +68,7 @@ export default function PortalLayout({ children, title }) {
       <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 md:hidden">
         <Logo to={items[0].to} />
         <div className="flex items-center gap-2">
+          <InstallAppButton compact />
           <LanguageSwitcher compact variant="light" />
           <button onClick={() => setMobileNavOpen(!mobileNavOpen)} className="rounded-full p-2 hover:bg-slate-100">
             {mobileNavOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -98,7 +100,10 @@ export default function PortalLayout({ children, title }) {
       <div className="md:pl-64">
         <div className="hidden h-16 items-center justify-between px-8 md:flex">
           <h1 className="text-xl font-bold text-slate-900">{title}</h1>
-          <LanguageSwitcher variant="light" />
+          <div className="flex items-center gap-2">
+            <InstallAppButton />
+            <LanguageSwitcher variant="light" />
+          </div>
         </div>
         <main className="px-4 pb-24 pt-4 md:px-8 md:pb-8">{children}</main>
       </div>

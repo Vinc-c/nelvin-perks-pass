@@ -21,6 +21,7 @@ const TITLES = {
   RECHARGE: "Recharger mon wallet",
   COMPANY_TOPUP: "Alimenter le budget avantages",
   SUBSCRIPTION: "Souscrire",
+  GIFT: "Offrir",
 };
 
 /**
@@ -29,7 +30,7 @@ const TITLES = {
  * - purpose SUBSCRIPTION: fixed plan price; can also be paid from the wallet
  *   (member wallet, or company wallet for an HR plan).
  */
-export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", plan = null, cycle = "MONTHLY", onPaid }) {
+export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", plan = null, cycle = "MONTHLY", gift = null, onPaid }) {
   const { user, refreshUser } = useAuth();
   const { toast } = useToast();
   const money = useCurrencies();
@@ -53,7 +54,8 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  const isPlan = purpose === "SUBSCRIPTION" && plan;
+  const isGift = purpose === "GIFT" && plan;
+  const isPlan = (purpose === "SUBSCRIPTION" || isGift) && plan;
   const priceUsd = isPlan ? Number(cycle === "ANNUAL" ? plan.price_annual : plan.price_monthly) : 0;
   const payAmount = isPlan ? money.fromUsd(priceUsd, currency) : Number(amount);
   const companyPlan = isPlan && plan.audience === "B2B";
@@ -76,6 +78,7 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
         country: user?.country || "",
         plan_code: isPlan ? plan.code : undefined,
         billing_cycle: isPlan ? cycle : undefined,
+        ...(isGift ? { recipient_email: gift?.recipient_email || "", recipient_name: gift?.recipient_name || "", message: gift?.message || "" } : {}),
         callback_url: window.location.origin + "/payment-return",
       });
       toast({ title: "Redirection vers le paiement sécurisé…", description: `${res.data.psp} — ${res.data.reason || ""}` });
@@ -109,7 +112,7 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={close} className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
           <motion.div initial={{ scale: 0.95, y: 12 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 12 }} onClick={(e) => e.stopPropagation()} className="max-h-[92vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl" role="dialog" aria-modal="true">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-900">{isPlan ? `${TITLES.SUBSCRIPTION} · ${plan.name}` : TITLES[purpose]}</h3>
+              <h3 className="text-lg font-bold text-slate-900">{isPlan ? `${isGift ? TITLES.GIFT : TITLES.SUBSCRIPTION} · ${plan.name}` : TITLES[purpose]}</h3>
               <button onClick={close} aria-label="Fermer" className="rounded-full p-1 text-slate-400 hover:bg-slate-100"><X className="h-5 w-5" /></button>
             </div>
 
@@ -149,14 +152,14 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
                   <p className="mt-2 text-xs text-slate-500">≈ {money.format(money.toUsd(payAmount, currency), "USD")} · taux Nelvin du jour</p>
                 )}
 
-                {isPlan && (
+                {isPlan && !isGift && (
                   <button onClick={payWithWallet} disabled={loading} className="mt-5 flex w-full items-center justify-between rounded-xl border-2 border-emerald-500 bg-emerald-50 px-4 py-3 text-left text-sm font-semibold text-emerald-800 hover:bg-emerald-100 disabled:opacity-50">
                     <span className="flex items-center gap-2"><Wallet className="h-4 w-4" /> Payer avec {walletLabel.toLowerCase()}</span>
                     <span>{money.format(priceUsd, "USD")}</span>
                   </button>
                 )}
 
-                <p className="mt-5 text-sm font-medium text-slate-700">{isPlan ? "Ou payer en ligne" : "Méthode de paiement"}</p>
+                <p className="mt-5 text-sm font-medium text-slate-700">{isPlan && !isGift ? "Ou payer en ligne" : "Méthode de paiement"}</p>
                 {noPsp ? (
                   <div className="mt-2 flex items-start gap-2 rounded-xl bg-amber-50 p-3 text-sm text-amber-800">
                     <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" /> Le paiement en ligne n'est pas encore activé. Contactez le support ou réessayez plus tard.
