@@ -5,7 +5,8 @@ import PortalLayout from "@/components/PortalLayout";
 import MerchantStatusGate from "@/components/merchant/MerchantStatusGate";
 import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/lib/AuthContext";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
+import { invokeFunction } from "@/api/functions";
 import { mockCurrencies } from "@/data/mockData";
 import { ScanLine, Tag, Wallet, TrendingUp, Plus, Check, Loader2, Star } from "lucide-react";
 import { useCategories } from "@/hooks/useCategories";
@@ -41,9 +42,9 @@ export default function MerchantPortal() {
       setLoading(true);
       try {
         const [mer, off, red] = await Promise.all([
-          base44.entities.Merchant.get(merchantId).catch(() => null),
-          base44.entities.Offer.filter({ merchant_id: merchantId }, "-created_date", 50),
-          base44.entities.Redemption.filter({ merchant_id: merchantId }, "-created_date", 50),
+          entities.Merchant.get(merchantId).catch(() => null),
+          entities.Offer.filter({ merchant_id: merchantId }, "-created_date", 50),
+          entities.Redemption.filter({ merchant_id: merchantId }, "-created_date", 50),
         ]);
         if (!alive) return;
         setMerchant(mer);
@@ -74,14 +75,14 @@ export default function MerchantPortal() {
     setValidating(true);
     setScanResult(null);
     try {
-      const res = await base44.functions.invoke("ValidateRedemption", { code: manualCode.trim() });
+      const res = await invokeFunction("validate-redemption", { code: manualCode.trim() });
       const d = res.data || {};
       if (d.ok) {
         // Refresh redemptions + merchant payout balance from server
         if (merchantId) {
           const [red, mer] = await Promise.all([
-            base44.entities.Redemption.filter({ merchant_id: merchantId }, "-created_date", 50),
-            base44.entities.Merchant.get(merchantId).catch(() => null),
+            entities.Redemption.filter({ merchant_id: merchantId }, "-created_date", 50),
+            entities.Merchant.get(merchantId).catch(() => null),
           ]);
           setRedemptions(red || []);
           if (mer) setMerchant(mer);

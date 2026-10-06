@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2, Store } from "lucide-react";
 import AdminMerchantRow from "./AdminMerchantRow";
@@ -19,11 +19,11 @@ export default function AdminMerchantVetting() {
   const [filter, setFilter] = useState("PENDING");
 
   useEffect(() => {
-    base44.entities.Merchant.list("-created_date", 200).then(setMerchants).finally(() => setLoading(false));
+    entities.Merchant.list("-created_date", 200).then(setMerchants).finally(() => setLoading(false));
   }, []);
 
   const setStatus = async (m, status) => {
-    await base44.entities.Merchant.update(m.id, { verified_status: status });
+    await entities.Merchant.update(m.id, { verified_status: status });
     setMerchants((list) => list.map((x) => (x.id === m.id ? { ...x, verified_status: status } : x)));
     toast({ title: status === "VERIFIED" ? "Marchand validé" : "Marchand rejeté", description: m.name });
   };

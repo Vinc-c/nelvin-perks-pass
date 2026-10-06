@@ -1,7 +1,7 @@
 // Nelvin Benefits — Service Worker (offline-first PWA)
 // Caches the app shell so portals + QR redemption work without a network connection.
 
-const CACHE_VERSION = "nelvin-v1";
+const CACHE_VERSION = "nelvin-v2"; // bumped for the Supabase migration (purges the old shell)
 const APP_SHELL = [
   "/",
   "/index.html",

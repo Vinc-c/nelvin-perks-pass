@@ -3,10 +3,10 @@ import NelvinLogo from "@/components/NelvinLogo";
 import { Image } from "@/components/ui/image";
 
 // Lifestyle imagery reused from the public hero assets (no generation needed).
-const SAVANNA = "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/1a09b4fa8_generated_image.png";
-const FOOD = "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/6a31eb0f6_generated_image.png";
-const FITNESS = "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/cba30820d_generated_image.png";
-const BEAUTY = "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/542a93280_generated_image.png";
+const SAVANNA = "/images/savanna.webp";
+const FOOD = "/images/categories/food-dining.webp";
+const FITNESS = "/images/categories/fitness-sports.webp";
+const BEAUTY = "/images/categories/beauty-care.webp";
 
 export default function AuthLayout({ icon: Icon, title, subtitle, footer, children }) {
   return (

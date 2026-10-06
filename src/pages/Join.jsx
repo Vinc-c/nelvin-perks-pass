@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { base44 } from "@/api/base44Client";
+import { signUp, verifySignupOtp, resendSignupOtp } from "@/api/auth";
+import { invokeFunction } from "@/api/functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UserPlus, Mail, Lock, KeyRound, Loader2, Building2, Check, ArrowRight, ArrowLeft, ShieldCheck, Sparkles } from "lucide-react";
+import { Mail, Lock, KeyRound, Loader2, Building2, Check, ArrowRight, ArrowLeft, ShieldCheck, Sparkles } from "lucide-react";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import NelvinLogo, { NelvinMark } from "@/components/NelvinLogo";
 
@@ -27,6 +28,7 @@ export default function Join() {
   const [loading, setLoading] = useState(false);
   const [otpCode, setOtpCode] = useState("");
   const [invite, setInvite] = useState(null);
+  const [verified, setVerified] = useState(false);
 
   // Step 1 — validate invite code + work email
   const validateCode = async (e) => {
@@ -34,7 +36,7 @@ export default function Join() {
     setError("");
     setLoading(true);
     try {
-      const res = await base44.functions.invoke("ValidateInviteCode", { code, email });
+      const res = await invokeFunction("validate-invite-code", { code, email });
       const data = res.data || res;
       if (!data || data.valid === false) {
         setError(data?.error || "Invalid invite code");
@@ -58,7 +60,12 @@ export default function Join() {
     if (password.length < 6) { setError("Password must be at least 6 characters"); return; }
     setLoading(true);
     try {
-      await base44.auth.register({ email, password });
+      const { needsVerification } = await signUp({ email, password });
+      if (!needsVerification) {
+        setVerified(true);
+        await linkAndContinue();
+        return;
+      }
       setStep(2);
     } catch (err) {
       setError(err.message || "Registration failed");
@@ -72,14 +79,11 @@ export default function Join() {
     setError("");
     setLoading(true);
     try {
-      const result = await base44.auth.verifyOtp({ email, otpCode });
-      if (result?.access_token) base44.auth.setToken(result.access_token);
-      try {
-        await base44.functions.invoke("ConsumeInviteCode", { code_id: invite.code_id });
-      } catch (linkErr) {
-        console.warn("Tenant linking failed:", linkErr);
+      if (!verified) {
+        await verifySignupOtp(email, otpCode);
+        setVerified(true);
       }
-      window.location.href = "/app";
+      await linkAndContinue();
     } catch (err) {
       setError(err.message || "Invalid verification code");
     } finally {
@@ -88,8 +92,22 @@ export default function Join() {
   };
 
   const resend = async () => {
-    try { await base44.auth.resendOtp(email); } catch (err) { setError(err.message || "Failed to resend code"); }
+    setError("");
+    try { await resendSignupOtp(email); } catch (err) { setError(err.message || "Failed to resend code"); }
   };
+
+  // Links the new account to the company. A failure here must be visible:
+  // otherwise the employee lands in a member account with no company.
+  async function linkAndContinue() {
+    try {
+      await invokeFunction("consume-invite-code", { code_id: invite.code_id });
+    } catch (linkErr) {
+      setError(linkErr.message || "Impossible de lier votre compte à l'entreprise. Contactez votre RH.");
+      setStep(2);
+      return;
+    }
+    window.location.href = "/app";
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 lg:grid lg:grid-cols-2">
@@ -212,7 +230,7 @@ export default function Join() {
                       </InputOTPGroup>
                     </InputOTP>
                   </div>
-                  <Button className="mt-6 h-12 w-full font-medium" onClick={verify} disabled={loading || otpCode.length < 6}>
+                  <Button className="mt-6 h-12 w-full font-medium" onClick={verify} disabled={loading || (!verified && otpCode.length < 6)}>
                     {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Verifying…</> : <>Verify & join <ArrowRight className="ml-2 h-4 w-4" /></>}
                   </Button>
                   <p className="mt-4 text-center text-sm text-slate-500">

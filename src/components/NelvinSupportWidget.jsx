@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { base44 } from "@/api/base44Client";
+import { invokeFunction } from "@/api/functions";
 import { X, Send, Loader2 } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import { NELVIN_ICON } from "@/components/NelvinLogo";
@@ -33,7 +33,7 @@ export default function NelvinSupportWidget() {
     setInput("");
     setLoading(true);
     try {
-      const res = await base44.functions.invoke("NelvinSupport", {
+      const res = await invokeFunction("nelvin-support", {
         message: content,
         history: next.slice(-11),
       });

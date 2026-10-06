@@ -1,0 +1,41 @@
+project_id = "wdxgflyhjhcevdruvfjb"
+
+[functions.admin-invite-user]
+verify_jwt = false
+
+[functions.check-access]
+verify_jwt = false
+
+[functions.consume-invite-code]
+verify_jwt = false
+
+[functions.generate-redemption]
+verify_jwt = false
+
+[functions.list-pull-requests]
+verify_jwt = false
+
+[functions.nelvin-support]
+verify_jwt = false
+
+[functions.recharge-wallet]
+verify_jwt = false
+
+[functions.setup-account]
+verify_jwt = false
+
+[functions.submit-partner-application]
+verify_jwt = false
+
+[functions.validate-invite-code]
+verify_jwt = false
+
+[functions.validate-redemption]
+verify_jwt = false
+
+[functions.verify-payment]
+verify_jwt = false
+
+[functions.withdraw-wallet]
+verify_jwt = false
+

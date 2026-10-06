@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { base44 } from "@/api/base44Client";
+import { invokeFunction } from "@/api/functions";
 import { useAuth } from "@/lib/AuthContext";
 import { routePayment } from "@/lib/paymentRouter";
 import { useToast } from "@/components/ui/use-toast";
@@ -32,7 +32,7 @@ export default function RechargeWalletModal({ open, onClose, currency = "USD", c
     setDone(null);
     try {
       const callback_url = window.location.origin + "/payment-return";
-      const res = await base44.functions.invoke("RechargeWallet", { amount: amt, method, currency, country, callback_url });
+      const res = await invokeFunction("recharge-wallet", { amount: amt, method, currency, country, callback_url });
       if (res.data?.error) throw new Error(res.data.error);
       toast({ title: "Redirection…", description: `${res.data.psp} — ${res.data.reason || ""}` });
       if (res.data.authorization_url) {

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { uploadPublicFile } from "@/api/storage";
 import { motion, AnimatePresence } from "framer-motion";
 import PortalLayout from "@/components/PortalLayout";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
 import { useAuth } from "@/lib/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { useI18n } from "@/i18n/I18nContext";
@@ -44,8 +45,8 @@ export default function CampaignEditor() {
     setLoading(true);
     try {
       const [off, red] = await Promise.all([
-        base44.entities.Offer.filter({ merchant_id: merchantId }, "-created_date", 100),
-        base44.entities.Redemption.filter({ merchant_id: merchantId }, "-created_date", 200),
+        entities.Offer.filter({ merchant_id: merchantId }, "-created_date", 100),
+        entities.Redemption.filter({ merchant_id: merchantId }, "-created_date", 200),
       ]);
       setOffers(off || []);
       setRedemptions(red || []);
@@ -79,7 +80,7 @@ export default function CampaignEditor() {
     if (!file) return;
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadPublicFile({ file });
+      const { file_url } = await uploadPublicFile(file, "offers");
       setForm((f) => ({ ...f, image_url: file_url }));
       toast({ title: "Image téléversée", description: "Votre visuel d'offre est prêt." });
     } catch {
@@ -102,15 +103,15 @@ export default function CampaignEditor() {
       cashback_rate: Number(form.cashback_rate) || 0,
       target_audience: form.target_audience,
       image_url: form.image_url || "",
-      expires_at: form.expires_at ? new Date(form.expires_at + "T23:59:59").toISOString() : undefined,
+      expires_at: form.expires_at ? new Date(form.expires_at + "T23:59:59").toISOString() : null,
       is_featured: !!form.is_featured,
     };
     try {
       if (editing === "new") {
-        await base44.entities.Offer.create(payload);
+        await entities.Offer.create(payload);
         toast({ title: "Offre publiée", description: "Votre offre est maintenant visible par les membres." });
       } else {
-        await base44.entities.Offer.update(editing, payload);
+        await entities.Offer.update(editing, payload);
         toast({ title: "Offre mise à jour" });
       }
       setEditing(null);
@@ -125,7 +126,7 @@ export default function CampaignEditor() {
   const remove = async (id) => {
     if (!confirm("Supprimer cette offre ? Les codes générés ne pourront plus être validés.")) return;
     try {
-      await base44.entities.Offer.delete(id);
+      await entities.Offer.delete(id);
       toast({ title: "Offre supprimée" });
       await load();
     } catch (e) {

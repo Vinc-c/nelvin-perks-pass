@@ -1,19 +1,43 @@
-import base44 from "@base44/vite-plugin"
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import path from 'node:path'
+import { defineConfig, loadEnv } from 'vite'
+
+// Replaces __SITE_URL__ in index.html (canonical, Open Graph, JSON-LD) with
+// VITE_SITE_URL, e.g. https://app.nelvin.com. Falls back to relative URLs.
+function siteUrlPlugin(siteUrl) {
+  return {
+    name: 'nelvin-site-url',
+    transformIndexHtml: (html) => html.replaceAll('__SITE_URL__', siteUrl),
+  }
+}
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [
-    base44({
-      // Support for legacy code that imports the base44 SDK with @/integrations, @/entities, etc.
-      // can be removed if the code has been updated to use the new SDK imports from @base44/sdk
-      legacySDKImports: process.env.BASE44_LEGACY_SDK_IMPORTS === 'true',
-      hmrNotifier: true,
-      navigationNotifier: true,
-      analyticsTracker: true,
-      visualEditAgent: true
-    }),
-    react(),
-  ]
-});
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), 'VITE_')
+  const siteUrl = (env.VITE_SITE_URL || '').replace(/\/+$/, '')
+
+  return {
+    plugins: [react(), siteUrlPlugin(siteUrl)],
+    resolve: {
+      alias: {
+        '@': path.resolve(import.meta.dirname, './src'),
+      },
+    },
+    build: {
+      rolldownOptions: {
+        output: {
+          // Keep heavy vendor libraries out of the main bundle.
+          advancedChunks: {
+            groups: [
+              { name: 'react-vendor', test: /node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/ },
+              { name: 'supabase', test: /node_modules[\\/]@supabase[\\/]/ },
+              { name: 'charts', test: /node_modules[\\/](recharts|d3-[^\\/]+)[\\/]/ },
+              { name: 'maps', test: /node_modules[\\/](leaflet|react-leaflet)[\\/]/ },
+              { name: 'motion', test: /node_modules[\\/]framer-motion[\\/]/ },
+            ],
+          },
+        },
+      },
+    },
+  }
+})

@@ -1,6 +1,6 @@
 // Shared by the auth pages (Login, Register, and any page that resumes a flow
-// after sign-in, e.g. the MCP OAuth consent page). Keep the redirect
-// validation in one place — it is security-sensitive and easy to drift.
+// after sign-in). Keep the redirect validation in one place — it is
+// security-sensitive and easy to drift.
 
 // Resolve ?returnTo= to a safe same-origin path, else "/".
 //
@@ -14,10 +14,8 @@ export function safeReturnTo() {
   try {
     const url = new URL(raw, window.location.origin);
     if (url.origin !== window.location.origin) return "/";
-    // Only access_token/clear_access_token are still URL-read by app-params.js, but the
-    // whole bootstrap set stays stripped: one going back to a URL read must not silently
-    // become injectable again. Normal app-flow params (e.g. the OAuth consent ctx) are kept.
-    for (const p of ["access_token", "clear_access_token", "app_id", "app_base_url", "functions_version", "from_url"]) {
+    // Never carry auth tokens/codes through a redirect.
+    for (const p of ["access_token", "refresh_token", "code", "token_hash", "from_url"]) {
       url.searchParams.delete(p);
     }
     const path = url.pathname + url.search;

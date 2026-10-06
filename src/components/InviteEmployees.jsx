@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
 import { useAuth } from "@/lib/AuthContext";
 import { UserPlus, Copy, Check, RefreshCw, Trash2, Mail, Loader2, KeyRound } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
@@ -24,7 +24,7 @@ export default function InviteEmployees() {
   const load = useCallback(async () => {
     setFetching(true);
     try {
-      const res = await base44.entities.InviteCode.filter({ status: "PENDING" }, "-created_date", 50);
+      const res = await entities.InviteCode.filter({ status: "PENDING" }, "-created_date", 50);
       setCodes(Array.isArray(res) ? res : []);
     } catch {
       setCodes([]);
@@ -44,7 +44,7 @@ export default function InviteEmployees() {
     try {
       const code = genCode();
       const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-      await base44.entities.InviteCode.create({
+      await entities.InviteCode.create({
         company_id: user.company_id,
         code,
         target_email: email.trim() || null,
@@ -67,7 +67,7 @@ export default function InviteEmployees() {
 
   const revoke = async (id) => {
     try {
-      await base44.entities.InviteCode.update(id, { status: "REVOKED" });
+      await entities.InviteCode.update(id, { status: "REVOKED" });
       await load();
       toast({ title: "Invite revoked" });
     } catch (err) {

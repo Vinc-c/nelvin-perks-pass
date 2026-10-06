@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
+import { invokeFunction } from "@/api/functions";
+import { getCurrentUser } from "@/api/auth";
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -20,8 +22,8 @@ export default function AdminStaffManagement() {
     setLoading(true);
     try {
       const [list, meUser] = await Promise.all([
-        base44.entities.User.filter({ role: "SUPER_ADMIN" }),
-        base44.auth.me(),
+        entities.User.filter({ role: ["SUPER_ADMIN", "admin"] }, "created_date"),
+        getCurrentUser(),
       ]);
       setAdmins(list);
       setMe(meUser);
@@ -41,19 +43,19 @@ export default function AdminStaffManagement() {
     if (!email.trim()) return;
     setBusy(true);
     try {
-      const found = await base44.entities.User.filter({ email: email.trim() });
+      const found = await entities.User.filter({ email: email.trim().toLowerCase() });
       if (found.length > 0) {
         const u = found[0];
-        if (u.role === "SUPER_ADMIN") {
+        if (u.role === "SUPER_ADMIN" || u.role === "admin") {
           toast({ title: "Already a super admin", description: email });
         } else {
-          await base44.entities.User.update(u.id, { role: "SUPER_ADMIN" });
+          await entities.User.update(u.id, { role: "SUPER_ADMIN" });
           toast({ title: "Promoted to super admin", description: email });
           setEmail("");
           await load();
         }
       } else {
-        await base44.users.inviteUser(email.trim(), "admin");
+        await invokeFunction("admin-invite-user", { email: email.trim(), redirect_to: window.location.origin + "/app" });
         toast({
           title: "Invitation sent",
           description: `${email} must register first, then promote them to super admin.`,
@@ -86,7 +88,8 @@ export default function AdminStaffManagement() {
     }
     setBusy(true);
     try {
-      await base44.entities.User.delete(u.id);
+      // Demote rather than delete: the account and its history stay intact.
+      await entities.User.update(u.id, { role: "MEMBER" });
       toast({ title: "Super admin removed", description: u.email });
       await load();
     } catch (err) {

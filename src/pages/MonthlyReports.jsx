@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import PortalLayout from "@/components/PortalLayout";
 import { jsPDF } from "jspdf";
-import { DollarSign, TrendingUp, Wallet, Download, FileText, Calendar, Sparkles } from "lucide-react";
+import { TrendingUp, Download, FileText, Calendar } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 
 const reports = [

@@ -8,19 +8,23 @@
   "background_color": "#0F172A",
   "theme_color": "#0F172A",
   "lang": "en",
-  "categories": ["business", "finance", "lifestyle"],
+  "categories": [
+    "business",
+    "finance",
+    "lifestyle"
+  ],
   "icons": [
     {
-      "src": "https://base44.com/logo_v2.svg",
+      "src": "/images/nelvin-icon-192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "https://base44.com/logo_v2.svg",
+      "src": "/images/nelvin-icon-512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }

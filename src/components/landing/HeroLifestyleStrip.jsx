@@ -2,14 +2,14 @@ import React from "react";
 import { Image } from "@/components/ui/image";
 
 const LIFESTYLE = [
-  { src: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/6a31eb0f6_generated_image.png", label: "Dining" },
-  { src: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/04c5cd67b_generated_image.png", label: "Hotels" },
-  { src: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/603a4b51a_generated_image.png", label: "Wellness" },
-  { src: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/cba30820d_generated_image.png", label: "Fitness" },
-  { src: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/2039384ca_generated_image.png", label: "Travel" },
-  { src: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/542a93280_generated_image.png", label: "Beauty" },
-  { src: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/6a5e76d92_generated_image.png", label: "Shopping" },
-  { src: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/0bebc64e4_generated_image.png", label: "Home" },
+  { src: "/images/categories/food-dining.webp", label: "Dining" },
+  { src: "/images/categories/hotels-hospitality.webp", label: "Hotels" },
+  { src: "/images/categories/wellness-mental.webp", label: "Wellness" },
+  { src: "/images/categories/fitness-sports.webp", label: "Fitness" },
+  { src: "/images/categories/travel-holidays.webp", label: "Travel" },
+  { src: "/images/categories/beauty-care.webp", label: "Beauty" },
+  { src: "/images/categories/shopping-retail.webp", label: "Shopping" },
+  { src: "/images/categories/home-living.webp", label: "Home" },
 ];
 
 export default function HeroLifestyleStrip() {

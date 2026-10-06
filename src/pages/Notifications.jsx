@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import PortalLayout from "@/components/PortalLayout";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
 import { useAuth } from "@/lib/AuthContext";
 import { Wallet, Megaphone, Bell, Gift, Check, CheckCheck, Trash2, Loader2, RefreshCw, Tag } from "lucide-react";
 import { EmptyState } from "@/components/UiFeedback";
@@ -19,7 +19,7 @@ export default function Notifications() {
     if (!user) return;
     setLoading(true);
     try {
-      const list = await base44.entities.Notification.list("-created_date", 100);
+      const list = await entities.Notification.filter({ user_id: user.id }, "-created_date", 100);
       setNotifications(list || []);
     } catch {
       setNotifications([]);
@@ -30,12 +30,13 @@ export default function Notifications() {
 
   useEffect(() => {
     load();
-    const unsub = base44.entities.Notification.subscribe(() => load());
+    if (!user?.id) return undefined;
+    const unsub = entities.Notification.subscribe(() => load(), { filter: `user_id=eq.${user.id}` });
     return unsub;
-  }, [load]);
+  }, [load, user?.id]);
 
   const markRead = async (id) => {
-    try { await base44.entities.Notification.update(id, { read: true }); } catch {}
+    try { await entities.Notification.update(id, { read: true }); } catch {}
     setNotifications((p) => p.map((n) => (n.id === id ? { ...n, read: true } : n)));
   };
 
@@ -43,13 +44,13 @@ export default function Notifications() {
     const unread = notifications.filter((n) => !n.read);
     if (unread.length === 0) return;
     try {
-      await base44.entities.Notification.bulkUpdate(unread.map((n) => ({ id: n.id, read: true })));
+      await entities.Notification.bulkUpdate(unread.map((n) => ({ id: n.id, read: true })));
     } catch {}
     setNotifications((p) => p.map((n) => ({ ...n, read: true })));
   };
 
   const remove = async (id) => {
-    try { await base44.entities.Notification.delete(id); } catch {}
+    try { await entities.Notification.delete(id); } catch {}
     setNotifications((p) => p.filter((n) => n.id !== id));
   };
 

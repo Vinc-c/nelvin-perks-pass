@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
 import { useToast } from "@/components/ui/use-toast";
 import ImageUploader from "./ImageUploader";
 import { OFFER_CATEGORIES } from "@/data/offerCategories";
@@ -16,7 +16,7 @@ export default function AdminCmsCategories() {
 
   const load = () => {
     setLoading(true);
-    base44.entities.Category.list("sort_order").then(setRows).finally(() => setLoading(false));
+    entities.Category.list("sort_order").then(setRows).finally(() => setLoading(false));
   };
   useEffect(() => {
     load();
@@ -32,20 +32,20 @@ export default function AdminCmsCategories() {
       toast({ title: "Cette catégorie existe déjà", variant: "destructive" });
       return;
     }
-    await base44.entities.Category.create({ ...draft, value: draft.value.trim(), active: true });
+    await entities.Category.create({ ...draft, value: draft.value.trim(), active: true });
     setDraft({ value: "", label: "", emoji: "", description: "", image_url: "", sort_order: rows.length });
     toast({ title: "Catégorie ajoutée" });
     load();
   };
 
   const save = (row, patch) => {
-    base44.entities.Category.update(row.id, patch).then(() => {
+    entities.Category.update(row.id, patch).then(() => {
       setRows((l) => l.map((x) => (x.id === row.id ? { ...x, ...patch } : x)));
     });
   };
 
   const remove = async (row) => {
-    await base44.entities.Category.delete(row.id);
+    await entities.Category.delete(row.id);
     setRows((l) => l.filter((x) => x.id !== row.id));
     toast({ title: "Catégorie supprimée" });
   };
@@ -57,7 +57,7 @@ export default function AdminCmsCategories() {
       toast({ title: "Toutes les catégories par défaut existent déjà" });
       return;
     }
-    await base44.entities.Category.bulkCreate(
+    await entities.Category.bulkCreate(
       missing.map((c, i) => ({
         value: c.value,
         label: c.label,

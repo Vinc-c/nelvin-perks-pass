@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
 import { useAuth } from "@/lib/AuthContext";
 import { isAdmin } from "@/lib/roles";
 import { Loader2, Store, Clock, XCircle } from "lucide-react";
@@ -14,7 +14,7 @@ export default function MerchantStatusGate({ children }) {
 
   useEffect(() => {
     if (!merchantId) return;
-    base44.entities.Merchant.get(merchantId)
+    entities.Merchant.get(merchantId)
       .then(setMerchant)
       .catch(() => setMerchant(null))
       .finally(() => setLoading(false));

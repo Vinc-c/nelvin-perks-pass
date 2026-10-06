@@ -1,6 +1,6 @@
 // Nelvin Benefits — PaymentRouter abstraction layer (client side).
 // Dynamically selects the best PSP for a given payment context across 6 gateways.
-// Kept in sync with base44/shared/paymentRouter.ts (server side).
+// Kept in sync with supabase/functions/_shared/paymentRouter.ts (server side).
 
 export const PSPS = [
   { id: "paddle", name: "Paddle", region: "Global", useCase: "SaaS B2B Merchant of Record, facturation internationale, taxe auto", methods: ["CARD", "BANK_TRANSFER"] },

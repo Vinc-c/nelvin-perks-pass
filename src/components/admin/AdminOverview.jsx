@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
 import { Building2, Shield, Users, Image as ImageIcon, Type, Store, Crown } from "lucide-react";
 
 export default function AdminOverview() {
   const [stats, setStats] = useState(null);
   useEffect(() => {
     Promise.all([
-      base44.entities.Company.list(),
-      base44.entities.Merchant.list("-created_date", 500),
-      base44.entities.User.list(),
-      base44.entities.PartnerLogo.list(),
-      base44.entities.SiteImage.list(),
-      base44.entities.SiteCopy.list(),
+      entities.Company.list(),
+      entities.Merchant.list("-created_date", 500),
+      entities.User.list(),
+      entities.PartnerLogo.list(),
+      entities.SiteImage.list(),
+      entities.SiteCopy.list(),
     ]).then(([companies, merchants, users, logos, images, copy]) => {
       setStats({
         companies: companies.length,

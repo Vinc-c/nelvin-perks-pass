@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
+import { signOut } from "@/api/auth";
 import { useAuth } from "@/lib/AuthContext";
 import { ROLE_LABELS } from "@/lib/roles";
 import { LogOut, Bell } from "lucide-react";
@@ -14,12 +15,12 @@ export default function PortalUserCard() {
     if (!user?.id) return;
     const load = async () => {
       try {
-        const list = await base44.entities.Notification.filter({ read: false }, "-created_date", 50);
+        const list = await entities.Notification.filter({ user_id: user.id, read: false }, "-created_date", 50);
         setUnread((list || []).length);
       } catch { setUnread(0); }
     };
     load();
-    const unsub = base44.entities.Notification.subscribe(load);
+    const unsub = entities.Notification.subscribe(load, { filter: `user_id=eq.${user.id}` });
     return unsub;
   }, [user?.id]);
 
@@ -39,7 +40,7 @@ export default function PortalUserCard() {
         )}
       </Link>
       <button
-        onClick={() => base44.auth.logout("/")}
+        onClick={() => signOut("/")}
         title="Se déconnecter"
         className="rounded-full p-2 text-slate-500 transition hover:bg-white hover:text-rose-600"
       >

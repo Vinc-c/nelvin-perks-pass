@@ -7,9 +7,9 @@ import { Image } from "@/components/ui/image";
 // NELVIN_ICON — gold icon mark only. Use on dark surfaces where the navy
 //               wordmark wouldn't be legible.
 export const NELVIN_LOGO =
-  "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/1b0d25031_07_NelvinBenefits.svg";
+  "/images/nelvin-logo.svg";
 export const NELVIN_ICON =
-  "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/3f8e302cf_05_Icon_Only_App_Favicon.png";
+  "/images/nelvin-icon-512.png";
 
 // Full brand lockup (icon + "NelvinBenefits"). Pass a height class, e.g. "h-8".
 export default function NelvinLogo({ className = "h-8" }) {

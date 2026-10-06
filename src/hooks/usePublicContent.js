@@ -1,16 +1,21 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
 
 let cache = null;
 let promise = null;
 
+// Public CMS content (partner logos, hero/marketing images, copy). These
+// tables are readable anonymously (active rows only) under RLS.
 export function loadPublicContent(force = false) {
   if (cache && !force) return Promise.resolve(cache);
   if (!promise || force) {
-    promise = base44.functions
-      .invoke("GetPublicContent")
-      .then((res) => {
-        cache = res.data || res || { logos: [], images: [], copy: [] };
+    promise = Promise.all([
+      entities.PartnerLogo.filter({ active: true }, "sort_order", 500),
+      entities.SiteImage.filter({ active: true }, "-created_date", 500),
+      entities.SiteCopy.list("-created_date", 500),
+    ])
+      .then(([logos, images, copy]) => {
+        cache = { logos, images, copy };
         promise = null;
         return cache;
       })

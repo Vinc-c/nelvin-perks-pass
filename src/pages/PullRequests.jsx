@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PortalLayout from "@/components/PortalLayout";
-import { base44 } from "@/api/base44Client";
+import { invokeFunction } from "@/api/functions";
 import { EmptyState, Spinner } from "@/components/UiFeedback";
 import { RefreshCw, ExternalLink, GitPullRequest, MessageSquare, GitBranch } from "lucide-react";
 import moment from "moment";
@@ -19,7 +19,7 @@ export default function PullRequests() {
     setLoading(true);
     setError("");
     try {
-      const res = await base44.functions.invoke("ListPullRequests", repo ? { repo } : {});
+      const res = await invokeFunction("list-pull-requests", repo ? { repo } : {});
       setData(res.data);
     } catch (e) {
       setError(e.message || "Échec du chargement");

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
 import { Search, Plus, Copy, Check, Trash2, TrendingUp, DollarSign, Activity, X } from "lucide-react";
 
 const genCode = () => "NEL-" + Math.random().toString(36).slice(2, 8).toUpperCase();
@@ -17,7 +17,7 @@ export default function AdminSalesCodes() {
 
   const load = async () => {
     setLoading(true);
-    try { setCodes(await base44.entities.SalesCode.list("-created_date", 100)); } catch { setCodes([]); }
+    try { setCodes(await entities.SalesCode.list("-created_date", 100)); } catch { setCodes([]); }
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
@@ -25,7 +25,7 @@ export default function AdminSalesCodes() {
   const create = async () => {
     if (!draft.agent_name) return;
     try {
-      await base44.entities.SalesCode.create({
+      await entities.SalesCode.create({
         code: genCode(),
         agent_name: draft.agent_name,
         agent_email: draft.agent_email,
@@ -41,8 +41,8 @@ export default function AdminSalesCodes() {
     } catch {}
   };
 
-  const toggle = async (c) => { try { await base44.entities.SalesCode.update(c.id, { status: c.status === "ACTIVE" ? "PAUSED" : "ACTIVE" }); load(); } catch {} };
-  const remove = async (c) => { try { await base44.entities.SalesCode.delete(c.id); load(); } catch {} };
+  const toggle = async (c) => { try { await entities.SalesCode.update(c.id, { status: c.status === "ACTIVE" ? "PAUSED" : "ACTIVE" }); load(); } catch {} };
+  const remove = async (c) => { try { await entities.SalesCode.delete(c.id); load(); } catch {} };
   const copy = (code) => { navigator.clipboard?.writeText(code); setCopied(code); setTimeout(() => setCopied(null), 1500); };
 
   const logSale = async () => {
@@ -51,7 +51,7 @@ export default function AdminSalesCodes() {
     const c = codes.find((x) => x.id === logFor);
     const rate = c.commission_rate || 0;
     try {
-      await base44.entities.SalesCode.update(logFor, {
+      await entities.SalesCode.update(logFor, {
         sales_count: (c.sales_count || 0) + 1,
         total_revenue: (c.total_revenue || 0) + amt,
         total_commission: (c.total_commission || 0) + amt * rate,

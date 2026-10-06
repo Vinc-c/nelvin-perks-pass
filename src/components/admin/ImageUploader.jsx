@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { uploadPublicFile } from "@/api/storage";
+
 import { Upload, Loader2, X } from "lucide-react";
 
 // Public upload — marketing/brand images shown publicly across the site.
@@ -9,7 +10,7 @@ export default function ImageUploader({ value, onChange, label = "Image" }) {
     if (!file) return;
     setBusy(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadPublicFile({ file });
+      const { file_url } = await uploadPublicFile(file, "cms");
       onChange(file_url);
     } finally {
       setBusy(false);

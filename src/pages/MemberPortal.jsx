@@ -8,7 +8,7 @@ import WithdrawWalletModal from "@/components/WithdrawWalletModal";
 import DealsMap from "@/components/DealsMap";
 import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/lib/AuthContext";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
 import { mockCurrencies } from "@/data/mockData";
 import { Wallet, ArrowDownLeft, ArrowUpRight, MapPin, Crown, Star, TrendingUp, Loader2 } from "lucide-react";
 import RoleWelcomeHeader from "@/components/RoleWelcomeHeader";
@@ -41,8 +41,8 @@ export default function MemberPortal() {
     if (!user) return;
     try {
       const [tx, red] = await Promise.all([
-        base44.entities.Transaction.filter({ created_by_id: user.id }, "-created_date", 50),
-        base44.entities.Redemption.filter({ created_by_id: user.id }, "-created_date", 50),
+        entities.Transaction.filter({ user_id: user.id }, "-created_date", 50),
+        entities.Redemption.filter({ user_id: user.id }, "-created_date", 50),
       ]);
       setTransactions(tx || []);
       setRedemptions(red || []);
@@ -55,10 +55,10 @@ export default function MemberPortal() {
       setLoading(true);
       try {
         const [off, mer, tx, red] = await Promise.all([
-          base44.entities.Offer.list("-created_date", 100),
-          base44.entities.Merchant.list("-created_date", 200),
-          user ? base44.entities.Transaction.filter({ created_by_id: user.id }, "-created_date", 50) : Promise.resolve([]),
-          user ? base44.entities.Redemption.filter({ created_by_id: user.id }, "-created_date", 50) : Promise.resolve([]),
+          entities.Offer.list("-created_date", 100),
+          entities.Merchant.list("-created_date", 200),
+          user ? entities.Transaction.filter({ user_id: user.id }, "-created_date", 50) : Promise.resolve([]),
+          user ? entities.Redemption.filter({ user_id: user.id }, "-created_date", 50) : Promise.resolve([]),
         ]);
         if (!alive) return;
         setOffers(off || []);

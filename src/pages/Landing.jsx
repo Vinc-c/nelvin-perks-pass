@@ -17,7 +17,7 @@ import NelvinLogo from "@/components/NelvinLogo";
 import { useAuth } from "@/lib/AuthContext";
 import { usePublicContent, imageByKey, copyByKey } from "@/hooks/usePublicContent";
 
-const SAVANNA = "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/1a09b4fa8_generated_image.png";
+const SAVANNA = "/images/savanna.webp";
 
 const ANNOUNCE =
   "Perks & savings, built for everyone.  ·  Daily discounts for individuals, flexible benefits for employees, and effortless administration for HR teams — one platform connecting every side of the employee benefits story across Africa.";

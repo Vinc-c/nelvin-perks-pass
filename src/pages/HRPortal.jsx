@@ -4,7 +4,7 @@ import PortalLayout from "@/components/PortalLayout";
 import BenefitsBuilder from "@/components/BenefitsBuilder";
 import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/lib/AuthContext";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
 import { mockCurrencies } from "@/data/mockData";
 import { Users, TrendingUp, DollarSign, Search, Check, Loader2 } from "lucide-react";
 import RoleWelcomeHeader from "@/components/RoleWelcomeHeader";
@@ -37,9 +37,9 @@ export default function HRPortal() {
       setLoading(true);
       try {
         const [emps, co, txs] = await Promise.all([
-          base44.entities.User.filter({ company_id: companyId }, "-created_date", 500),
-          base44.entities.Company.get(companyId).catch(() => null),
-          base44.entities.Transaction.filter({ company_id: companyId }, "-created_date", 200),
+          entities.User.filter({ company_id: companyId }, "-created_date", 500),
+          entities.Company.get(companyId).catch(() => null),
+          entities.Transaction.filter({ company_id: companyId }, "-created_date", 200),
         ]);
         if (!alive) return;
         setEmployees((emps || []).filter((e) => e.role === "EMPLOYEE"));

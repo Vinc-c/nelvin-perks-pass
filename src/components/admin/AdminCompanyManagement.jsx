@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
 import { Building2, Search, Plus, Crown, TrendingUp, Users, Save, X } from "lucide-react";
 
 const PLAN_PRICE = { STARTER: 4, GROWTH: 12, ENTERPRISE: 30 };
@@ -15,7 +15,7 @@ export default function AdminCompanyManagement() {
   const load = async () => {
     setLoading(true);
     try {
-      const list = await base44.entities.Company.list("-created_date", 100);
+      const list = await entities.Company.list("-created_date", 100);
       setCompanies(list);
     } catch { setCompanies([]); }
     setLoading(false);
@@ -25,13 +25,13 @@ export default function AdminCompanyManagement() {
   const mrr = (c) => (PLAN_PRICE[c.plan_tier] || 0) * (c.billing_cycle === "ANNUAL" ? 12 : 1);
 
   const patch = async (c, data) => {
-    try { await base44.entities.Company.update(c.id, data); load(); } catch {}
+    try { await entities.Company.update(c.id, data); load(); } catch {}
   };
 
   const create = async () => {
     if (!draft.name) return;
     try {
-      await base44.entities.Company.create({ ...draft, subscription_status: "TRIAL", seats_used: 0, total_saved: 0 });
+      await entities.Company.create({ ...draft, max_employees: Number(draft.max_employees) || 15, subscription_status: "TRIAL", seats_used: 0, total_saved: 0 });
       setShowAdd(false);
       setDraft({ name: "", industry: "", country: "", plan_tier: "STARTER", billing_cycle: "MONTHLY", max_employees: 15, contact_email: "" });
       load();

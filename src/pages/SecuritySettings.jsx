@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import PortalLayout from "@/components/PortalLayout";
+import { useAuth } from "@/lib/AuthContext";
+import { signInWithPassword, updatePassword } from "@/api/auth";
 import { Shield, Lock, KeyRound, Monitor, Smartphone, Tablet, LogOut, Eye, EyeOff, Check, Trash2 } from "lucide-react";
 
 const sessions = [
@@ -16,8 +18,29 @@ export default function SecuritySettings() {
   const [revoked, setRevoked] = useState(null);
   const [pwd, setPwd] = useState({ current: "", next: "", confirm: "" });
   const [pwdSaved, setPwdSaved] = useState(false);
+  const [pwdError, setPwdError] = useState("");
+  const [pwdBusy, setPwdBusy] = useState(false);
+  const { user } = useAuth();
 
-  const savePwd = () => { if (pwd.next && pwd.next === pwd.confirm) { setPwdSaved(true); setPwd({ current: "", next: "", confirm: "" }); setTimeout(() => setPwdSaved(false), 2500); } };
+  // Re-checks the current password, then sets the new one.
+  const savePwd = async () => {
+    setPwdError("");
+    if (!pwd.current || !pwd.next) return setPwdError("Fill in all fields.");
+    if (pwd.next.length < 6) return setPwdError("The new password must be at least 6 characters.");
+    if (pwd.next !== pwd.confirm) return setPwdError("Passwords do not match.");
+    setPwdBusy(true);
+    try {
+      await signInWithPassword(user?.email || "", pwd.current);
+      await updatePassword(pwd.next);
+      setPwdSaved(true);
+      setPwd({ current: "", next: "", confirm: "" });
+      setTimeout(() => setPwdSaved(false), 2500);
+    } catch (e) {
+      setPwdError(e.message === "Invalid login credentials" ? "Current password is incorrect." : e.message || "Update failed.");
+    } finally {
+      setPwdBusy(false);
+    }
+  };
 
   return (
     <PortalLayout title="Security Settings" theme="light">
@@ -91,7 +114,8 @@ export default function SecuritySettings() {
             <input type="password" value={pwd.current} onChange={(e) => setPwd({ ...pwd, current: e.target.value })} placeholder="Current password" className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
             <input type="password" value={pwd.next} onChange={(e) => setPwd({ ...pwd, next: e.target.value })} placeholder="New password" className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
             <input type="password" value={pwd.confirm} onChange={(e) => setPwd({ ...pwd, confirm: e.target.value })} placeholder="Confirm new password" className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
-            <button onClick={savePwd} className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600">Update password</button>
+            <button onClick={savePwd} disabled={pwdBusy} className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">{pwdBusy ? "Updating…" : "Update password"}</button>
+            {pwdError && <p className="text-sm text-rose-600">{pwdError}</p>}
             {pwdSaved && <p className="flex items-center gap-1 text-sm text-emerald-600"><Check className="h-4 w-4" /> Password updated.</p>}
           </div>
         </motion.div>

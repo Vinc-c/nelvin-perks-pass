@@ -4,7 +4,7 @@ import SectionCard from "@/components/dashboard/SectionCard";
 import RoleWelcomeHeader from "@/components/RoleWelcomeHeader";
 import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/lib/AuthContext";
-import { base44 } from "@/api/base44Client";
+import { updateMe, requestPasswordReset } from "@/api/auth";
 import { useToast } from "@/components/ui/use-toast";
 import { User, Globe, Shield, Bell, Smartphone, Mail, Save, Loader2, Lock } from "lucide-react";
 
@@ -21,13 +21,23 @@ export default function Settings() {
   const save = async () => {
     setSaving(true);
     try {
-      await base44.auth.updateMe({ phone, notif_push: pushNotif, notif_email: emailNotif });
+      await updateMe({ phone, notif_push: pushNotif, notif_email: emailNotif });
       await refreshUser();
       toast({ title: "Paramètres enregistrés", description: "Vos préférences ont été mises à jour." });
     } catch (e) {
       toast({ title: "Erreur", description: e.message || "Impossible d'enregistrer.", variant: "destructive" });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const sendPasswordReset = async () => {
+    if (!user?.email) return;
+    try {
+      await requestPasswordReset(user.email);
+      toast({ title: "Email envoyé", description: `Un lien de changement de mot de passe a été envoyé à ${user.email}.` });
+    } catch (e) {
+      toast({ title: "Erreur", description: e.message || "Impossible d'envoyer l'email.", variant: "destructive" });
     }
   };
 
@@ -93,7 +103,7 @@ export default function Settings() {
                 <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition ${twoFA ? "left-5" : "left-0.5"}`} />
               </button>
             </div>
-            <button className="w-full rounded-lg border border-slate-200 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50">Changer de mot de passe</button>
+            <button onClick={sendPasswordReset} className="w-full rounded-lg border border-slate-200 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50">Changer de mot de passe</button>
           </div>
         </SectionCard>
 

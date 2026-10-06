@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { base44 } from "@/api/base44Client";
+import { invokeFunction } from "@/api/functions";
+import { uploadPublicFile } from "@/api/storage";
 import {
-  User, Building2, Tag, Globe, Shield, FileText, Upload, Check, Plus, X, Star, Sparkles, Loader2,
+  User, Building2, Tag, Globe, Shield, FileText, Upload, Check, Plus, X, Sparkles, Loader2,
 } from "lucide-react";
 import AfricanCountrySelect from "./AfricanCountrySelect";
 import { useCategories } from "@/hooks/useCategories";
@@ -123,9 +124,9 @@ export default function PartnerApplicationForm({ onSubmitted }) {
       setBusy(true);
       setUploading(true);
       const [logo, cover, product] = await Promise.all([
-        base44.integrations.Core.UploadPublicFile({ file: files.logo }),
-        base44.integrations.Core.UploadPublicFile({ file: files.cover }),
-        base44.integrations.Core.UploadPublicFile({ file: files.product }),
+        uploadPublicFile(files.logo, "applications"),
+        uploadPublicFile(files.cover, "applications"),
+        uploadPublicFile(files.product, "applications"),
       ]);
       setUploading(false);
 
@@ -136,7 +137,7 @@ export default function PartnerApplicationForm({ onSubmitted }) {
             .join("\n")
         : "";
 
-      const res = await base44.functions.invoke("SubmitPartnerApplication", {
+      const res = await invokeFunction("submit-partner-application", {
         email: form.email,
         brandName: form.brandName,
         contactName: form.contactName,

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { AFRICAN_COUNTRIES, findAfricanCountry } from "@/data/africanCountries";
+import { AFRICAN_COUNTRIES } from "@/data/africanCountries";
 import { ChevronDown, Search, Check, Globe } from "lucide-react";
 
 // Single-country picker scoped to the 54 African countries Nelvin serves.

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
 import { useToast } from "@/components/ui/use-toast";
 import { Plus, Trash2, Loader2, Type } from "lucide-react";
 
@@ -15,25 +15,25 @@ export default function AdminCmsCopy() {
 
   const load = () => {
     setLoading(true);
-    base44.entities.SiteCopy.list("-created_date").then(setItems).finally(() => setLoading(false));
+    entities.SiteCopy.list("-created_date").then(setItems).finally(() => setLoading(false));
   };
   useEffect(() => { load(); }, []);
 
   const add = async (e) => {
     e.preventDefault();
     if (!draft.key.trim() || !draft.value.trim()) return;
-    await base44.entities.SiteCopy.create({ ...draft, key: draft.key.trim() });
+    await entities.SiteCopy.create({ ...draft, key: draft.key.trim() });
     setDraft({ key: "", label: "", value: "", section: "MARKETING" });
     toast({ title: "Texte ajouté" });
     load();
   };
 
   const save = async (c, patch) => {
-    await base44.entities.SiteCopy.update(c.id, patch);
+    await entities.SiteCopy.update(c.id, patch);
     setItems((l) => l.map((x) => (x.id === c.id ? { ...x, ...patch } : x)));
   };
   const remove = async (c) => {
-    await base44.entities.SiteCopy.delete(c.id);
+    await entities.SiteCopy.delete(c.id);
     setItems((l) => l.filter((x) => x.id !== c.id));
   };
 

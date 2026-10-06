@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { QRCodeSVG } from "qrcode.react";
 import { Wifi, WifiOff, Copy, Check, Clock, RefreshCw, Loader2 } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/api/supabaseClient";
+import { invokeFunction } from "@/api/functions";
 import { useAuth } from "@/lib/AuthContext";
 
 const DEFAULT_TTL = 180; // 3 minutes
@@ -41,7 +42,7 @@ export default function QrRedemption({ offer, onClose }) {
     setExpired(false);
     setError("");
     try {
-      const res = await base44.functions.invoke("GenerateRedemption", { offer_id: offer.id });
+      const res = await invokeFunction("generate-redemption", { offer_id: offer.id });
       const d = res.data || {};
       if (!d.ok || !d.code) throw new Error(d.error || "Échec de génération");
       if (!mounted.current) return;
@@ -68,7 +69,7 @@ export default function QrRedemption({ offer, onClose }) {
         if (s <= 1) {
           setExpired(true);
           if (redemptionId) {
-            base44.entities.Redemption.update(redemptionId, { status: "EXPIRED" }).catch(() => {});
+            supabase.rpc("expire_my_redemption", { p_id: redemptionId }).then(() => {}, () => {});
           }
           return 0;
         }

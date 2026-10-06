@@ -5,8 +5,8 @@ import { QrCode, Smartphone } from "lucide-react";
 import StoreBadges from "@/components/landing/StoreBadges";
 import { usePublicContent, imageByKey } from "@/hooks/usePublicContent";
 
-const SAVANNA = "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/1a09b4fa8_generated_image.png";
-const PHONE_FALLBACK = "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/2c61026fb_generated_image.png";
+const SAVANNA = "/images/savanna.webp";
+const PHONE_FALLBACK = "/images/app-phone.webp";
 
 export default function AppDownloadCta() {
   const content = usePublicContent();

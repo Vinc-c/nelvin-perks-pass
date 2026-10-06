@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import PortalLayout from "@/components/PortalLayout";
 import { Copy, Check, Gift, Users, DollarSign, Share2, Sparkles, TrendingUp } from "lucide-react";

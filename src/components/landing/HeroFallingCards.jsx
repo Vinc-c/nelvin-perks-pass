@@ -3,21 +3,21 @@ import { Image } from "@/components/ui/image";
 import { categoryIcons, categoryLabels } from "@/data/mockData";
 
 const categoryImages = {
-  FOOD_DINING: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/6a31eb0f6_generated_image.png",
-  TRAVEL_HOLIDAYS: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/2039384ca_generated_image.png",
-  HOTELS_HOSPITALITY: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/04c5cd67b_generated_image.png",
-  FITNESS_SPORTS: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/cba30820d_generated_image.png",
-  WELLNESS_MENTAL: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/603a4b51a_generated_image.png",
-  HEALTHCARE: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/41af3f651a_generated_image.png",
-  FINANCIAL_WELLNESS: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/22417eb80_generated_image.png",
-  SHOPPING_RETAIL: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/6a5e76d92_generated_image.png",
-  TECHNOLOGY: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/1536141c2_generated_image.png",
-  FAMILY_PARENTING: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/1070ce513_generated_image.png",
-  EDUCATION_LEARNING: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/0181c0478_generated_image.png",
-  HOME_LIVING: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/0bebc64e4_generated_image.png",
-  AUTOMOTIVE_MOBILITY: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/667c78d01_generated_image.png",
-  BEAUTY_CARE: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/542a93280_generated_image.png",
-  ENTERTAINMENT: "https://media.base44.com/images/public/6abfd80d39eaeaf0ec0f1f2f/e88afbb65_generated_image.png",
+  FOOD_DINING: "/images/categories/food-dining.webp",
+  TRAVEL_HOLIDAYS: "/images/categories/travel-holidays.webp",
+  HOTELS_HOSPITALITY: "/images/categories/hotels-hospitality.webp",
+  FITNESS_SPORTS: "/images/categories/fitness-sports.webp",
+  WELLNESS_MENTAL: "/images/categories/wellness-mental.webp",
+  HEALTHCARE: "/images/categories/healthcare.webp",
+  FINANCIAL_WELLNESS: "/images/categories/financial-wellness.webp",
+  SHOPPING_RETAIL: "/images/categories/shopping-retail.webp",
+  TECHNOLOGY: "/images/categories/technology.webp",
+  FAMILY_PARENTING: "/images/categories/family-parenting.webp",
+  EDUCATION_LEARNING: "/images/categories/education-learning.webp",
+  HOME_LIVING: "/images/categories/home-living.webp",
+  AUTOMOTIVE_MOBILITY: "/images/categories/automotive-mobility.webp",
+  BEAUTY_CARE: "/images/categories/beauty-care.webp",
+  ENTERTAINMENT: "/images/categories/entertainment.webp",
 };
 
 const keys = Object.keys(categoryLabels);

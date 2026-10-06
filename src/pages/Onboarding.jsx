@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { invokeFunction } from "@/api/functions";
+import { updateMe } from "@/api/auth";
 import { useAuth } from "@/lib/AuthContext";
 import { isOnboarded, homeFor } from "@/lib/roles";
 import AuthLayout from "@/components/AuthLayout";
@@ -28,7 +29,7 @@ export default function Onboarding() {
       setError("");
       setLoading(true);
       try {
-        await base44.auth.updateMe({ onboarded: true });
+        await updateMe({ onboarded: true });
         window.location.href = "/employee";
       } catch (err) {
         setError(err.response?.data?.error || err.message || "Impossible de finaliser votre accès");
@@ -52,7 +53,7 @@ export default function Onboarding() {
     if (type === "entreprise" && !company.name.trim()) return setError("Indiquez le nom de votre entreprise.");
     setLoading(true);
     try {
-      const res = await base44.functions.invoke("SetupAccount", {
+      const res = await invokeFunction("setup-account", {
         account_type: type,
         company_name: company.name,
         country: company.country,

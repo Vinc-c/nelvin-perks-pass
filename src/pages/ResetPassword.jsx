@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { Link } from "react-router-dom";
+import { updatePassword } from "@/api/auth";
+import { useAuth } from "@/lib/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,8 +9,9 @@ import { Lock, Loader2, AlertTriangle } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 
 export default function ResetPassword() {
-  const [searchParams] = useSearchParams();
-  const resetToken = searchParams.get("token");
+  // The reset email link opens a temporary recovery session (handled by the
+  // Supabase client on load); the user just picks a new password.
+  const { isAuthenticated, authChecked } = useAuth();
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -23,10 +25,14 @@ export default function ResetPassword() {
       setError("Passwords do not match");
       return;
     }
+    if (newPassword.length < 6) {
+      setError("Le mot de passe doit contenir au moins 6 caractères.");
+      return;
+    }
     setLoading(true);
     try {
-      await base44.auth.resetPassword({ resetToken, newPassword });
-      window.location.href = "/login";
+      await updatePassword(newPassword);
+      window.location.href = "/app";
     } catch (err) {
       setError(err.message || "Failed to reset password");
     } finally {
@@ -34,7 +40,15 @@ export default function ResetPassword() {
     }
   };
 
-  if (!resetToken) {
+  if (!authChecked) {
+    return (
+      <AuthLayout icon={Lock} title="New password" subtitle="Vérification du lien…">
+        <div className="flex justify-center py-4"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>
+      </AuthLayout>
+    );
+  }
+
+  if (!isAuthenticated) {
     return (
       <AuthLayout
         icon={AlertTriangle}

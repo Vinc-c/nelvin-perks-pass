@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
 import { useToast } from "@/components/ui/use-toast";
 import ImageUploader from "./ImageUploader";
 import { Plus, Trash2, Loader2, ImageIcon } from "lucide-react";
@@ -16,25 +16,25 @@ export default function AdminCmsImages() {
 
   const load = () => {
     setLoading(true);
-    base44.entities.SiteImage.list("-created_date").then(setItems).finally(() => setLoading(false));
+    entities.SiteImage.list("-created_date").then(setItems).finally(() => setLoading(false));
   };
   useEffect(() => { load(); }, []);
 
   const add = async (e) => {
     e.preventDefault();
     if (!draft.key.trim() || !draft.image_url) return;
-    await base44.entities.SiteImage.create({ ...draft, key: draft.key.trim(), active: true });
+    await entities.SiteImage.create({ ...draft, key: draft.key.trim(), active: true });
     setDraft({ key: "", label: "", image_url: "", section: "LANDING" });
     toast({ title: "Image ajoutée" });
     load();
   };
 
   const save = async (img, patch) => {
-    await base44.entities.SiteImage.update(img.id, patch);
+    await entities.SiteImage.update(img.id, patch);
     setItems((l) => l.map((x) => (x.id === img.id ? { ...x, ...patch } : x)));
   };
   const remove = async (img) => {
-    await base44.entities.SiteImage.delete(img.id);
+    await entities.SiteImage.delete(img.id);
     setItems((l) => l.filter((x) => x.id !== img.id));
   };
 

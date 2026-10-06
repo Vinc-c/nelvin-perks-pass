@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { invokeFunction } from "@/api/functions";
 import { useAuth } from "@/lib/AuthContext";
 import { useI18n } from "@/i18n/I18nContext";
 import { Loader2, Lock, CreditCard, Home } from "lucide-react";
@@ -19,7 +19,7 @@ export default function AccessGate({ children }) {
     let alive = true;
     (async () => {
       try {
-        const res = await base44.functions.invoke("CheckAccess", {});
+        const res = await invokeFunction("check-access", {});
         if (!alive) return;
         const d = res.data || {};
         setState({ loading: false, allowed: !!d.allowed, reason: d.reason || "" });

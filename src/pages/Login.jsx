@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { signInWithPassword, signInWithGoogle } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,8 +14,8 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  // Post-login destination (e.g. the MCP OAuth consent page sends users here
-  // with returnTo so the grant flow can resume). Same-origin paths only.
+  // Post-login destination (protected pages send users here with returnTo).
+  // Same-origin paths only.
   const returnTo = safeReturnTo();
 
   const handleSubmit = async (e) => {
@@ -23,9 +23,9 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      await base44.auth.loginViaEmailPassword(email, password);
+      await signInWithPassword(email, password);
       // Each role lands on its own portal via /app (unless an explicit
-      // returnTo destination was requested, e.g. the MCP OAuth consent flow).
+      // returnTo destination was requested).
       window.location.href = returnTo !== "/" ? returnTo : "/app";
     } catch (err) {
       setError(err.message || "Invalid email or password");
@@ -34,8 +34,13 @@ export default function Login() {
     }
   };
 
-  const handleGoogle = () => {
-    base44.auth.loginWithProvider("google", returnTo !== "/" ? returnTo : "/app");
+  const handleGoogle = async () => {
+    setError("");
+    try {
+      await signInWithGoogle(returnTo !== "/" ? returnTo : "/app");
+    } catch (err) {
+      setError(err.message || "Connexion Google impossible");
+    }
   };
 
   return (

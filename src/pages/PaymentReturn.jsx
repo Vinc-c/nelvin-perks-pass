@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { base44 } from "@/api/base44Client";
+import { invokeFunction } from "@/api/functions";
 import { useAuth } from "@/lib/AuthContext";
 import { homeFor } from "@/lib/roles";
 import { useToast } from "@/components/ui/use-toast";
@@ -34,7 +34,7 @@ export default function PaymentReturn() {
 
     (async () => {
       try {
-        const res = await base44.functions.invoke("VerifyPayment", { psp, ref, provider_ref: providerRef });
+        const res = await invokeFunction("verify-payment", { psp, ref, provider_ref: providerRef });
         const data = res.data || {};
         if (data.ok) {
           setState("success");

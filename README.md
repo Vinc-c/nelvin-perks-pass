@@ -1,62 +1,105 @@
-# Base44 Project
+# Nelvin Perks Pass
 
-Use this repository to run and edit the app locally, then publish changes back through Base44.
+Plateforme d'avantages salariés, d'offres B2C et de cashback pour l'Afrique et le MENA.
 
-Any change pushed to the repo will also be reflected in the Base44 Builder.
+- **Frontend** : React 18 + Vite + Tailwind (`src/`)
+- **Backend** : [Supabase](https://supabase.com) — Postgres + Row Level Security, Auth, Storage, Realtime et Edge Functions (`supabase/`)
 
-## Prerequisites
-
-1. Clone the repository using the project's Git URL.
-2. Navigate to the project directory.
-3. Install dependencies: `npm install`.
-4. Install the Base44 CLI: `npm install -g base44@latest`.
-5. Install [Deno](https://docs.deno.com/runtime/getting_started/installation/) — the local Base44 backend runs on it.
-
-Run `base44 --help` (or see the [CLI reference](https://docs.base44.com/developers/references/cli/commands/introduction)) for the full command surface.
-
-## Run Locally
-
-Three commands, from the project root:
+## Démarrer en local
 
 ```bash
-base44 login   # one-time per machine
-base44 link    # one-time per clone
-base44 dev     # local backend + frontend together
+npm install
+cp .env.example .env.local   # puis renseigner les valeurs
+npm run dev                  # http://localhost:5173
 ```
 
-Open the frontend URL that `base44 dev` prints (typically `http://localhost:5173`).
+| Variable | Rôle |
+| --- | --- |
+| `VITE_SUPABASE_URL` | URL du projet Supabase |
+| `VITE_SUPABASE_ANON_KEY` | Clé publique (publishable / anon). Les données sont protégées par RLS. |
+| `VITE_SITE_URL` | URL publique du site (balises canonical / Open Graph) |
 
-Notes:
+Vérifications : `npm run lint` et `npm run build`.
 
-- **Every fresh clone needs `base44 link`.** It writes `base44/.app.jsonc` (the app-id pointer), which is deliberately gitignored. Your app id is in the Builder URL (`app.base44.com/apps/<id>/...`); `base44 link --help` shows the non-interactive flags.
-- **`base44 dev` runs the frontend for you** (via `site.serveCommand` in this repo's `base44/config.jsonc`) — never run `npm run dev` yourself: alone it serves a UI with no backend behind it (`[base44] Proxy not enabled`, every `/api` call fails), and alongside `base44 dev` the second Vite silently takes the next port and you end up looking at the wrong one.
-- **The app must be published at least once for the UI to load under `base44 dev`.** The frontend boots by fetching app settings from the hosted app; before the first publish that fails and every page redirects to login. The local API works regardless.
-- Entities, functions, and auth run locally — entity data is **in-memory only**, wiped when `base44 dev` restarts. Everything else (Core integrations, OAuth login) is forwarded to your deployed app. Full breakdown: [Local development overview](https://docs.base44.com/developers/backend/overview/local-dev/local-development-overview).
+## Structure
 
-## Frontend Only, Hosted Backend
+```
+src/api/            Accès Supabase : client, entités (tables), auth, Edge Functions, upload
+src/lib/AuthContext Session + profil de l'utilisateur
+src/pages, src/components
+supabase/migrations Schéma SQL (tables, RLS, fonctions atomiques wallet/redemption, storage)
+supabase/functions  Edge Functions Deno (paiements, redemptions, onboarding, IA support…)
+```
 
-To work on just the frontend against your app's live hosted backend:
+### Rôles
+
+`MEMBER` (particulier), `EMPLOYEE`, `HR_ADMIN` (entreprise), `MERCHANT` (partenaire), `SUPER_ADMIN`.
+Le rôle est stocké dans `public.profiles` et ne peut être modifié que par un admin ou côté serveur.
+
+Premier super admin :
+
+```sql
+update public.profiles set role = 'SUPER_ADMIN', onboarded = true where email = 'vous@exemple.com';
+```
+
+## Backend Supabase
+
+### Base de données
+
+Appliquer les migrations dans l'ordre (CLI ou éditeur SQL du dashboard) :
 
 ```bash
-base44 dev --remote
+supabase link --project-ref wdxgflyhjhcevdruvfjb
+supabase db push
 ```
 
-⚠️ In this mode writes go to your app's **production data** — plain `base44 dev` keeps everything local.
+- `20261006160000_archive_legacy_schema.sql` déplace l'ancien schéma `public` dans un schéma privé `legacy` (aucune suppression).
+- `20261006160100_app_schema.sql` crée le schéma de l'application.
 
-## Publish Your Changes
-
-After pushing your changes to git, open the Base44 dashboard and publish the app:
+### Edge Functions
 
 ```bash
-base44 dashboard open
+supabase functions deploy --no-verify-jwt
 ```
 
-This repo syncs to Base44 through git, so publish from the dashboard rather than `base44 deploy` — a CLI deploy ships your local tree directly, bypassing the sync, and the deployed state silently diverges from the repo.
+(`verify_jwt` est désactivé dans `supabase/config.toml` : chaque fonction vérifie elle-même l'utilisateur, ce qui permet aussi les clés `sb_publishable_…`.)
 
-## Docs & Support
+| Fonction | Rôle |
+| --- | --- |
+| `check-access` | Accès aux portails selon l'abonnement (entreprise / membre) |
+| `setup-account` | Onboarding (rôle, création de l'entreprise) |
+| `validate-invite-code` / `consume-invite-code` | Invitations salariés |
+| `generate-redemption` / `validate-redemption` | Codes QR et validation marchand (cashback atomique) |
+| `recharge-wallet` / `verify-payment` | Recharge wallet multi-PSP + confirmation |
+| `withdraw-wallet` | Retrait (débit atomique) |
+| `submit-partner-application` | Candidature partenaire |
+| `nelvin-support` | Assistant IA (API Anthropic) |
+| `list-pull-requests` | Page admin GitHub |
+| `admin-invite-user` | Invitation d'un futur admin par email |
 
-GitHub integration: [https://docs.base44.com/developers/app-code/local-development/github](https://docs.base44.com/developers/app-code/local-development/github)
+Secrets (`supabase secrets set NOM=valeur`) :
 
-Local development: [https://docs.base44.com/developers/backend/overview/local-dev/local-development-overview](https://docs.base44.com/developers/backend/overview/local-dev/local-development-overview)
+| Secret | Utilisé par |
+| --- | --- |
+| `APP_URL` | URL du site (redirections de paiement et invitations) |
+| `ALLOWED_ORIGINS` | Optionnel : autres origines autorisées pour les retours de paiement (séparées par des virgules) |
+| `STRIPE_SECRET_KEY`, `PAYSTACK_SECRET_KEY`, `FLUTTERWAVE_SECRET_KEY`, `PADDLE_API_KEY`, `KORAPAY_SECRET_KEY` | PSP |
+| `PAYUNIT_API_KEY`, `PAYUNIT_API_USERNAME`, `PAYUNIT_API_PASSWORD`, `PAYUNIT_MODE` | Payunit |
+| `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` (optionnel) | Assistant IA |
+| `GITHUB_TOKEN` | Page Pull requests |
 
-Support: [https://app.base44.com/support](https://app.base44.com/support)
+### Auth (dashboard Supabase)
+
+1. **Authentication → URL Configuration** : *Site URL* = l'URL du site ; ajouter `https://votre-domaine/**` (et `http://localhost:5173/**`) aux *Redirect URLs*.
+2. **Authentication → Email Templates → Confirm signup** : l'app demande un **code à 6 chiffres**. Le modèle doit contenir `{{ .Token }}`, par exemple :
+   `<p>Votre code Nelvin : <strong>{{ .Token }}</strong></p>`
+3. **Authentication → Providers → Google** : activer et renseigner le client OAuth pour « Continuer avec Google ».
+
+### Storage
+
+Bucket public `nelvin-public` (images ≤ 10 Mo). Les visiteurs non connectés ne peuvent téléverser que dans `applications/` (candidature partenaire).
+
+## Déploiement du frontend
+
+Site statique (`npm run build` → `dist/`) déployable sur Vercel, Netlify, Cloudflare Pages…
+Configurer la réécriture SPA (toutes les routes → `index.html`) et les variables `VITE_*`.

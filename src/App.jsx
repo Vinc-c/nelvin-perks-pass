@@ -1,66 +1,71 @@
+import { lazy, Suspense } from 'react';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
-import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import { I18nProvider } from '@/i18n/I18nContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { Navigate } from 'react-router-dom';
 import Login from '@/pages/Login';
-import Register from '@/pages/Register';
-import Join from '@/pages/Join';
-import ForgotPassword from '@/pages/ForgotPassword';
-import ResetPassword from '@/pages/ResetPassword';
+const Register = lazy(() => import('@/pages/Register'));
+const Join = lazy(() => import('@/pages/Join'));
+const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
 import Landing from '@/pages/Landing';
-import Pricing from '@/pages/Pricing';
-import EmployeePortal from '@/pages/EmployeePortal';
-import MemberPortal from '@/pages/MemberPortal';
-import HRPortal from '@/pages/HRPortal';
-import MerchantPortal from '@/pages/MerchantPortal';
-import BecomePartner from '@/pages/BecomePartner';
-import AdminPortal from '@/pages/AdminPortal';
-import OfferDetails from '@/pages/OfferDetails';
-import WalletActivity from '@/pages/WalletActivity';
-import CampaignEditor from '@/pages/CampaignEditor';
-import KycVerification from '@/pages/KycVerification';
-import HrSavingsReport from '@/pages/HrSavingsReport';
-import SupportCenter from '@/pages/SupportCenter';
-import Notifications from '@/pages/Notifications';
-import MerchantMap from '@/pages/MerchantMap';
-import Settings from '@/pages/Settings';
-import RewardHistory from '@/pages/RewardHistory';
-import CurrencyExchange from '@/pages/CurrencyExchange';
-import MerchantDirectory from '@/pages/MerchantDirectory';
-import AnalyticsOverview from '@/pages/AnalyticsOverview';
-import NotificationSettings from '@/pages/NotificationSettings';
-import MembershipTiers from '@/pages/MembershipTiers';
-import ReferralProgram from '@/pages/ReferralProgram';
-import HelpCenter from '@/pages/HelpCenter';
-import MyRewards from '@/pages/MyRewards';
-import SubscriptionManagement from '@/pages/SubscriptionManagement';
-import SecuritySettings from '@/pages/SecuritySettings';
-import RecognitionWall from '@/pages/RecognitionWall';
-import SupportTickets from '@/pages/SupportTickets';
-import MonthlyReports from '@/pages/MonthlyReports';
-import Onboarding from '@/pages/Onboarding';
-import RoleHome from '@/pages/RoleHome';
+const Pricing = lazy(() => import('@/pages/Pricing'));
+const EmployeePortal = lazy(() => import('@/pages/EmployeePortal'));
+const MemberPortal = lazy(() => import('@/pages/MemberPortal'));
+const HRPortal = lazy(() => import('@/pages/HRPortal'));
+const MerchantPortal = lazy(() => import('@/pages/MerchantPortal'));
+const BecomePartner = lazy(() => import('@/pages/BecomePartner'));
+const AdminPortal = lazy(() => import('@/pages/AdminPortal'));
+const OfferDetails = lazy(() => import('@/pages/OfferDetails'));
+const WalletActivity = lazy(() => import('@/pages/WalletActivity'));
+const CampaignEditor = lazy(() => import('@/pages/CampaignEditor'));
+const KycVerification = lazy(() => import('@/pages/KycVerification'));
+const HrSavingsReport = lazy(() => import('@/pages/HrSavingsReport'));
+const SupportCenter = lazy(() => import('@/pages/SupportCenter'));
+const Notifications = lazy(() => import('@/pages/Notifications'));
+const MerchantMap = lazy(() => import('@/pages/MerchantMap'));
+const Settings = lazy(() => import('@/pages/Settings'));
+const RewardHistory = lazy(() => import('@/pages/RewardHistory'));
+const CurrencyExchange = lazy(() => import('@/pages/CurrencyExchange'));
+const MerchantDirectory = lazy(() => import('@/pages/MerchantDirectory'));
+const AnalyticsOverview = lazy(() => import('@/pages/AnalyticsOverview'));
+const NotificationSettings = lazy(() => import('@/pages/NotificationSettings'));
+const MembershipTiers = lazy(() => import('@/pages/MembershipTiers'));
+const ReferralProgram = lazy(() => import('@/pages/ReferralProgram'));
+const HelpCenter = lazy(() => import('@/pages/HelpCenter'));
+const MyRewards = lazy(() => import('@/pages/MyRewards'));
+const SubscriptionManagement = lazy(() => import('@/pages/SubscriptionManagement'));
+const SecuritySettings = lazy(() => import('@/pages/SecuritySettings'));
+const RecognitionWall = lazy(() => import('@/pages/RecognitionWall'));
+const SupportTickets = lazy(() => import('@/pages/SupportTickets'));
+const MonthlyReports = lazy(() => import('@/pages/MonthlyReports'));
+const Onboarding = lazy(() => import('@/pages/Onboarding'));
+const RoleHome = lazy(() => import('@/pages/RoleHome'));
 import RoleRoute from '@/components/RoleRoute';
 import AccessGateLayout from '@/components/AccessGateLayout';
-import Terms from '@/pages/Terms';
-import Privacy from '@/pages/Privacy';
-import CookiePolicy from '@/pages/CookiePolicy';
-import RefundPolicy from '@/pages/RefundPolicy';
-import PaymentReturn from '@/pages/PaymentReturn';
-import PullRequests from '@/pages/PullRequests';
+const Terms = lazy(() => import('@/pages/Terms'));
+const Privacy = lazy(() => import('@/pages/Privacy'));
+const CookiePolicy = lazy(() => import('@/pages/CookiePolicy'));
+const RefundPolicy = lazy(() => import('@/pages/RefundPolicy'));
+const PaymentReturn = lazy(() => import('@/pages/PaymentReturn'));
+const PullRequests = lazy(() => import('@/pages/PullRequests'));
+
+const PageFallback = () => (
+  <div className="fixed inset-0 flex items-center justify-center">
+    <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+  </div>
+);
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { isLoadingAuth, authChecked } = useAuth();
 
-  // Show loading spinner while checking app public settings or auth
-  if (isLoadingPublicSettings || isLoadingAuth) {
+  // Show a spinner only while the very first session check runs.
+  if (isLoadingAuth && !authChecked) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
@@ -68,19 +73,9 @@ const AuthenticatedApp = () => {
     );
   }
 
-  // Handle authentication errors
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
-      navigateToLogin();
-      return null;
-    }
-  }
-
   // Render the main app
   return (
+    <Suspense fallback={<PageFallback />}>
     <Routes>
       {/* Public */}
       <Route path="/" element={<Landing />} />
@@ -102,7 +97,7 @@ const AuthenticatedApp = () => {
       <Route path="/refund-policy" element={<RefundPolicy />} />
       <Route path="/payment-return" element={<PaymentReturn />} />
 
-      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+      <Route element={<ProtectedRoute />}>
         {/* Entry points */}
         <Route path="/app" element={<RoleHome />} />
         <Route path="/onboarding" element={<Onboarding />} />
@@ -168,6 +163,7 @@ const AuthenticatedApp = () => {
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
+    </Suspense>
   );
 };
 

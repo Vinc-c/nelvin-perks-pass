@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
 import { OFFER_CATEGORIES } from "@/data/offerCategories";
 
 // Loads category metadata managed by super admins (Category entity) and
@@ -12,7 +12,7 @@ export function useCategories() {
 
   useEffect(() => {
     let alive = true;
-    base44.entities.Category
+    entities.Category
       .list("sort_order")
       .then((r) => {
         if (!alive) return;

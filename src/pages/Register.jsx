@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { base44 } from "@/api/base44Client";
+import { signUp, verifySignupOtp, resendSignupOtp, signInWithGoogle, updateMe } from "@/api/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,9 +38,19 @@ export default function Register() {
       setError("Indiquez un numéro de téléphone valide.");
       return;
     }
+    if (password.length < 6) {
+      setError("Le mot de passe doit contenir au moins 6 caractères.");
+      return;
+    }
     setLoading(true);
     try {
-      await base44.auth.register({ email, password });
+      const { needsVerification } = await signUp({ email, password, metadata: { phone } });
+      if (!needsVerification) {
+        // Email confirmation disabled on the project: already signed in.
+        try { await updateMe({ phone }); } catch (_) { /* optional */ }
+        window.location.href = safeReturnTo() !== "/" ? safeReturnTo() : onboardingDest(accountType);
+        return;
+      }
       setStep(1);
     } catch (err) {
       setError(err.message || "Registration failed");
@@ -54,9 +64,8 @@ export default function Register() {
     setError("");
     setLoading(true);
     try {
-      const result = await base44.auth.verifyOtp({ email, otpCode });
-      if (result?.access_token) base44.auth.setToken(result.access_token);
-      try { await base44.auth.updateMe({ phone }); } catch (_) {}
+      await verifySignupOtp(email, otpCode);
+      try { await updateMe({ phone }); } catch (_) { /* optional */ }
       const dest = onboardingDest(accountType);
       window.location.href = safeReturnTo() !== "/" ? safeReturnTo() : dest;
     } catch (err) {
@@ -67,12 +76,17 @@ export default function Register() {
   };
 
   const resend = async () => {
-    try { await base44.auth.resendOtp(email); } catch (err) { setError(err.message || "Failed to resend code"); }
+    setError("");
+    try { await resendSignupOtp(email); } catch (err) { setError(err.message || "Failed to resend code"); }
   };
 
-  const handleGoogle = () => {
+  const handleGoogle = async () => {
     const returnTo = safeReturnTo();
-    base44.auth.loginWithProvider("google", returnTo !== "/" ? returnTo : onboardingDest(accountType));
+    try {
+      await signInWithGoogle(returnTo !== "/" ? returnTo : onboardingDest(accountType));
+    } catch (err) {
+      setError(err.message || "Connexion Google impossible");
+    }
   };
 
   return (

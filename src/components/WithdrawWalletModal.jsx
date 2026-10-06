@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { base44 } from "@/api/base44Client";
+import { invokeFunction } from "@/api/functions";
 import { useAuth } from "@/lib/AuthContext";
 import { routePayment } from "@/lib/paymentRouter";
 import { useToast } from "@/components/ui/use-toast";
@@ -34,7 +34,7 @@ export default function WithdrawWalletModal({ open, onClose, currency = "USD", c
     setLoading(true);
     setDone(null);
     try {
-      const res = await base44.functions.invoke("WithdrawWallet", { amount: amt, method, destination, currency, country });
+      const res = await invokeFunction("withdraw-wallet", { amount: amt, method, destination, currency, country });
       if (res.data?.error) throw new Error(res.data.error);
       setDone({ psp: res.data.psp, balance: res.data.balance, amt });
       toast({ title: "Retrait effectué", description: `${currency} ${amt.toFixed(2)} transférés via ${res.data.psp}.` });

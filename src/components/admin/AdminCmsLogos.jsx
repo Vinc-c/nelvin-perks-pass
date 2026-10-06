@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { base44 } from "@/api/base44Client";
+import { entities } from "@/api/entities";
+import { uploadPublicFile } from "@/api/storage";
 import { useToast } from "@/components/ui/use-toast";
 import ImageUploader from "./ImageUploader";
 import { Plus, Trash2, Loader2, GripVertical, Star, Upload } from "lucide-react";
@@ -17,26 +18,26 @@ export default function AdminCmsLogos() {
 
   const load = () => {
     setLoading(true);
-    base44.entities.PartnerLogo.list("sort_order").then(setLogos).finally(() => setLoading(false));
+    entities.PartnerLogo.list("sort_order").then(setLogos).finally(() => setLoading(false));
   };
   useEffect(() => { load(); }, []);
 
   const add = async (e) => {
     e.preventDefault();
     if (!draft.name.trim()) return;
-    await base44.entities.PartnerLogo.create({ ...draft, name: draft.name.trim(), active: true });
+    await entities.PartnerLogo.create({ ...draft, name: draft.name.trim(), active: true });
     setDraft({ name: "", category: "", domain: "", logo_url: "", sort_order: logos.length });
     toast({ title: "Logo ajouté" });
     load();
   };
 
   const save = async (logo, patch) => {
-    await base44.entities.PartnerLogo.update(logo.id, patch);
+    await entities.PartnerLogo.update(logo.id, patch);
     setLogos((l) => l.map((x) => (x.id === logo.id ? { ...x, ...patch } : x)));
   };
 
   const remove = async (logo) => {
-    await base44.entities.PartnerLogo.delete(logo.id);
+    await entities.PartnerLogo.delete(logo.id);
     setLogos((l) => l.filter((x) => x.id !== logo.id));
     toast({ title: "Logo supprimé" });
   };
@@ -48,9 +49,9 @@ export default function AdminCmsLogos() {
     try {
       for (let i = 0; i < files.length; i++) {
         const f = files[i];
-        const { file_url } = await base44.integrations.Core.UploadPublicFile({ file: f });
+        const { file_url } = await uploadPublicFile(f, "cms");
         const name = f.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim();
-        await base44.entities.PartnerLogo.create({
+        await entities.PartnerLogo.create({
           name: name || `Partner ${logos.length + i + 1}`,
           logo_url: file_url,
           active: true,
