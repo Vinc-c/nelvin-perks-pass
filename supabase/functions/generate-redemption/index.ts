@@ -41,6 +41,12 @@ serve(async (req) => {
     return json({ error: "Offre réservée aux salariés des entreprises partenaires" }, 403);
   }
 
+  // Per-member usage limit (e.g. buy-one-get-one once a year).
+  const { data: remaining } = await admin.rpc("offer_usage_remaining", { p_user: caller.user.id, p_offer: offer.id });
+  if (remaining === 0) {
+    return json({ error: "Vous avez déjà utilisé cette offre le nombre de fois autorisé pour la période.", reason: "LIMIT_REACHED" }, 409);
+  }
+
   const { data: ttlRow } = await admin.from("platform_settings").select("value").eq("key", "redemption_ttl_seconds").maybeSingle();
   const ttl = Math.min(Math.max(Number(ttlRow?.value) || DEFAULT_TTL_SECONDS, 60), 900);
   const expiresAt = new Date(Date.now() + ttl * 1000).toISOString();

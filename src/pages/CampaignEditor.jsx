@@ -24,6 +24,8 @@ const EMPTY = {
   image_url: "",
   expires_at: "",
   is_featured: false,
+  usage_limit: "",
+  usage_period: "YEAR",
 };
 
 export default function CampaignEditor() {
@@ -73,6 +75,8 @@ export default function CampaignEditor() {
       image_url: o.image_url || "",
       expires_at: o.expires_at ? o.expires_at.slice(0, 10) : "",
       is_featured: !!o.is_featured,
+      usage_limit: o.usage_limit ?? "",
+      usage_period: o.usage_period || "YEAR",
     });
     setEditing(o.id);
   };
@@ -106,6 +110,8 @@ export default function CampaignEditor() {
       image_url: form.image_url || "",
       expires_at: form.expires_at ? new Date(form.expires_at + "T23:59:59").toISOString() : null,
       is_featured: !!form.is_featured,
+      usage_limit: form.usage_limit === "" || form.usage_limit == null ? null : Math.max(1, Math.round(Number(form.usage_limit))),
+      usage_period: form.usage_period || "YEAR",
     };
     try {
       if (editing === "new") {
@@ -281,6 +287,23 @@ export default function CampaignEditor() {
                     <span className="text-slate-500">Audience</span>
                     <select value={form.target_audience} onChange={(e) => setForm({ ...form, target_audience: e.target.value })} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none">
                       {AUDIENCES.map((a) => <option key={a.value} value={a.value}>{a.label}</option>)}
+                    </select>
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <label className="block text-sm">
+                    <span className="text-slate-500">Utilisations par membre (vide = illimité)</span>
+                    <input type="number" min={1} max={1000} value={form.usage_limit} onChange={(e) => setForm({ ...form, usage_limit: e.target.value })} placeholder={form.discount_type === "BOGO" ? "Conseillé : 1" : "Illimité"} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-emerald-500" />
+                  </label>
+                  <label className="block text-sm">
+                    <span className="text-slate-500">Période</span>
+                    <select value={form.usage_period} onChange={(e) => setForm({ ...form, usage_period: e.target.value })} disabled={form.usage_limit === ""} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none disabled:opacity-50">
+                      <option value="DAY">Par jour</option>
+                      <option value="WEEK">Par semaine</option>
+                      <option value="MONTH">Par mois</option>
+                      <option value="YEAR">Par an</option>
+                      <option value="LIFETIME">Au total</option>
                     </select>
                   </label>
                 </div>

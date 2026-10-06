@@ -9,7 +9,9 @@ import { useCurrencies } from "@/hooks/useCurrencies";
 import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
 import { categoryImage } from "@/data/offerCategories";
 import { EmptyState, ListSkeleton } from "@/components/UiFeedback";
-import { Search, MapPin, ShieldCheck, Tag, Store } from "lucide-react";
+import { useFavorites } from "@/hooks/useFavorites";
+import { useAuth } from "@/lib/AuthContext";
+import { Search, MapPin, ShieldCheck, Tag, Store, Heart, Star } from "lucide-react";
 
 export default function MerchantDirectory() {
   const { categories, meta } = useCategories();
@@ -20,6 +22,9 @@ export default function MerchantDirectory() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState(params.get("category") || "ALL");
   const [location, setLocation] = useState("");
+  const { user } = useAuth();
+  const { ids: favoriteIds } = useFavorites();
+  const [favOnly, setFavOnly] = useState(params.get("favorites") === "1");
 
   const offersByMerchant = useMemo(() => {
     const m = new Map();
@@ -33,9 +38,10 @@ export default function MerchantDirectory() {
     return merchants.filter((m) =>
       (!q || m.name.toLowerCase().includes(q) || (m.description || "").toLowerCase().includes(q)) &&
       (category === "ALL" || m.category === category) &&
-      (!loc || (m.city || "").toLowerCase().includes(loc) || (m.country || "").toLowerCase().includes(loc))
+      (!loc || (m.city || "").toLowerCase().includes(loc) || (m.country || "").toLowerCase().includes(loc)) &&
+      (!favOnly || (offersByMerchant.get(m.id) || []).some((o) => favoriteIds.has(o.id)))
     );
-  }, [merchants, query, category, location]);
+  }, [merchants, query, category, location, favOnly, favoriteIds, offersByMerchant]);
 
   const usedCategories = ["ALL", ...categories.map((c) => c.value).filter((v) => merchants.some((m) => m.category === v))];
 
@@ -55,6 +61,11 @@ export default function MerchantDirectory() {
           <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Ville ou pays" aria-label="Ville ou pays" className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
+          {user && (
+            <button onClick={() => setFavOnly((v) => !v)} aria-pressed={favOnly} className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition ${favOnly ? "bg-rose-500 text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
+              <Heart className={`h-3.5 w-3.5 ${favOnly ? "fill-white" : ""}`} /> Mes favoris ({favoriteIds.size})
+            </button>
+          )}
           {usedCategories.map((c) => (
             <button key={c} onClick={() => setCategory(c)} className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${category === c ? "bg-emerald-500 text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
               {c === "ALL" ? "Toutes" : `${meta(c).emoji} ${meta(c).label}`}
@@ -73,7 +84,7 @@ export default function MerchantDirectory() {
         <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((m, i) => {
             const list = offersByMerchant.get(m.id) || [];
-            const best = list[0];
+            const best = (favOnly && list.find((o) => favoriteIds.has(o.id))) || list[0];
             return (
               <motion.div key={m.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i, 9) * 0.04 }} className="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
                 <div className="relative h-36 overflow-hidden">
@@ -88,6 +99,7 @@ export default function MerchantDirectory() {
                     <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-600" aria-label="Partenaire vérifié" />
                   </div>
                   <p className="mt-1 flex items-center gap-1 text-sm text-slate-500"><MapPin className="h-3.5 w-3.5" /> {[m.city, m.country].filter(Boolean).join(", ") || "—"}</p>
+                  {m.reviews_count > 0 && <p className="mt-1 flex items-center gap-1 text-xs text-slate-500"><Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" /> {Number(m.rating).toFixed(1)} · {m.reviews_count} avis</p>}
                   {best ? (
                     <p className="mt-2 flex items-center gap-1.5 text-sm text-emerald-700"><Tag className="h-3.5 w-3.5" /> {best.title} · <span className="font-semibold">{offerBadge(best, (v) => money.format(v, currency))}</span></p>
                   ) : (

@@ -48,3 +48,6 @@ verify_jwt = false
 
 [functions.payment-webhook]
 verify_jwt = false
+
+[functions.redeem-with-pin]
+verify_jwt = false

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link, useSearchParams } from "react-router-dom";
 import PortalLayout from "@/components/PortalLayout";
 import MerchantStatusGate from "@/components/merchant/MerchantStatusGate";
+import MerchantPinCard from "@/components/merchant/MerchantPinCard";
 import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/lib/AuthContext";
 import { entities } from "@/api/entities";
@@ -28,6 +29,7 @@ const REASONS = {
   WALLET_NOT_AUTHORIZED: "Le membre n'a pas autorisé le paiement par wallet pour ce code",
   CURRENCY: "Devise non prise en charge",
   INVALID: "Code invalide",
+  LIMIT_REACHED: "Ce membre a déjà utilisé cette offre le nombre de fois autorisé",
 };
 const PAYOUT_STATUS = { PENDING: ["En traitement", "bg-amber-100 text-amber-700"], PAID: ["Payé", "bg-emerald-100 text-emerald-700"], REJECTED: ["Refusé", "bg-rose-100 text-rose-700"] };
 
@@ -193,6 +195,8 @@ export default function MerchantPortal() {
             )}
           </SectionCard>
           )}
+
+          {show("scan") && <MerchantPinCard />}
 
           {show("redemptions") && (
           <SectionCard title="Codes validés" icon={TrendingUp}>

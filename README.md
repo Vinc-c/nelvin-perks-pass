@@ -78,6 +78,12 @@ Les clés se saisissent dans *Admin → Paiements → Clés PSP & routage* :
 - **webhooks** : chaque carte PSP affiche l'URL `…/functions/v1/payment-webhook?psp=<id>` à coller dans le tableau de bord du PSP (Payunit et Korapay la reçoivent automatiquement). La signature est vérifiée quand le secret webhook est saisi, puis le paiement est toujours revérifié auprès du PSP avant tout crédit ;
 - à défaut de clé en base, les Edge Functions utilisent les secrets d'environnement du même nom (ci-dessous).
 
+## Offres et validation
+
+- **Deux façons de valider** : le code QR personnel (scanné ou saisi par le partenaire) ou le **PIN de caisse** du partenaire, saisi sur le téléphone du membre (aucune connexion partenaire nécessaire en caisse). Le PIN est stocké haché ; 5 erreurs bloquent les essais 15 minutes.
+- **Limites d'utilisation** par membre et par offre (par jour, semaine, mois, an ou au total), par exemple un « 1 acheté = 1 offert » une fois par an. La limite est vérifiée à la génération du code et au moment de la validation.
+- **Favoris** et **avis vérifiés** : seuls les membres ayant réellement utilisé une offre peuvent la noter ; la note du partenaire est calculée à partir des avis (plus de note fictive). Les admins peuvent masquer un avis.
+
 ## Modèle monétaire
 
 - Tous les soldes (wallet membre, wallet entreprise, solde partenaire) sont tenus en **USD** ;
@@ -108,6 +114,7 @@ supabase db push
 | `20261006170400_tenant_hardening_admin_stats.sql` | Durcissement multi-tenant, statistiques admin, 2FA admin |
 | `20261006180000_mfa_enforcement_recovery.sql` | 2FA obligatoire (admins, RH) et codes de secours |
 | `20261006180100_drop_legacy_source_snapshot.sql` | Supprime la copie de l'ancien code source laissée en base |
+| `20261006190000_offer_limits_pin_favorites_reviews.sql` | Limites d'utilisation par offre, validation par PIN, favoris, avis vérifiés |
 
 ### Edge Functions
 
@@ -123,6 +130,7 @@ supabase functions deploy --no-verify-jwt
 | `verify-payment` | Confirmation auprès du PSP (référence, montant, devise) puis crédit idempotent |
 | `payment-webhook` | Confirmation serveur à serveur envoyée par le PSP (même si le client ferme la page) |
 | `mfa-recover` | Code de secours 2FA : retire l'authentificateur perdu |
+| `redeem-with-pin` | Validation d'une offre sur le téléphone du membre avec le PIN de caisse du partenaire |
 | `withdraw-wallet` | Demande de retrait (débit en attente de traitement admin) |
 | `generate-redemption` / `validate-redemption` | Code QR membre et validation en caisse par le partenaire |
 | `check-access` | Accès aux portails selon l'abonnement |

@@ -97,6 +97,8 @@ export const entities = {
   AdminAuditLog: createEntity("admin_audit_log"),
   AllowanceRun: createEntity("allowance_runs"),
   BenefitPolicy: createEntity("benefit_policies"),
+  Favorite: createEntity("favorites", { pk: "offer_id" }),
+  OfferReview: createEntity("offer_reviews"),
   Currency: createEntity("currencies", { pk: "code" }),
   MerchantDocument: createEntity("merchant_documents"),
   PayoutRequest: createEntity("payout_requests"),
