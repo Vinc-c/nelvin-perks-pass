@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Search, Check, X, MapPin } from "lucide-react";
+import { Search, Check, X } from "lucide-react";
 import { AFRICAN_REGIONS, AFRICAN_COUNTRIES } from "@/data/africanCountries";
 
 // All 54 African countries grouped by AU region — Nelvin only serves Africa.
@@ -24,9 +24,9 @@ export default function AfricanCountrySelect({ value, onChange }) {
       {value.length > 0 && (
         <div className="mb-3 flex flex-wrap gap-2">
           {value.map((c) => (
-            <span key={c} className="inline-flex items-center gap-1.5 rounded-full bg-blue-600 px-3 py-1.5 text-sm font-medium text-white">
+            <span key={c} className="inline-flex items-center gap-1.5 rounded-full bg-[#0E1A3B] px-3 py-1.5 text-sm font-medium text-white">
               {c}
-              <button type="button" onClick={() => toggle(c)} className="rounded-full hover:bg-blue-700">
+              <button type="button" onClick={() => toggle(c)} className="rounded-full hover:bg-[#27306E]">
                 <X className="h-3.5 w-3.5" />
               </button>
             </span>
@@ -41,7 +41,7 @@ export default function AfricanCountrySelect({ value, onChange }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Rechercher un pays…"
-          className="w-full rounded-full border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          className="w-full rounded-full border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition focus:border-[#0E1A3B] focus:ring-2 focus:ring-[#0E1A3B]/10"
         />
       </div>
 
@@ -49,12 +49,12 @@ export default function AfricanCountrySelect({ value, onChange }) {
       <div className="mt-3 max-h-72 space-y-4 overflow-y-auto rounded-xl border border-slate-100 bg-slate-50/50 p-4">
         {filtered.length === 0 && (
           <p className="flex items-center gap-2 py-6 text-center text-sm text-slate-400">
-            <MapPin className="h-4 w-4" /> Aucun pays trouvé.
+            Aucun pays trouvé.
           </p>
         )}
         {filtered.map((region) => (
           <div key={region.name}>
-            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">{region.name}</p>
+            <p className="mb-2 text-xs font-semibold text-slate-500">{region.name}</p>
             <div className="grid gap-2 sm:grid-cols-2">
               {region.countries.map((c) => {
                 const active = value.includes(c);
@@ -64,10 +64,10 @@ export default function AfricanCountrySelect({ value, onChange }) {
                     key={c}
                     onClick={() => toggle(c)}
                     className={`flex items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left text-sm transition ${
-                      active ? "border-blue-500 bg-blue-50 text-blue-700" : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
+                      active ? "border-[#0E1A3B] bg-[#EEF1F7] text-[#0E1A3B]" : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
                     }`}
                   >
-                    <span className={`flex h-4 w-4 items-center justify-center rounded border ${active ? "border-blue-600 bg-blue-600" : "border-slate-300"}`}>
+                    <span className={`flex h-4 w-4 items-center justify-center rounded border ${active ? "border-[#0E1A3B] bg-[#0E1A3B]" : "border-slate-300"}`}>
                       {active && <Check className="h-3 w-3 text-white" />}
                     </span>
                     {c}

@@ -34,3 +34,15 @@ export const AUDIENCES = [
 /** Local illustration for a category (public/images/categories). */
 export const categoryImage = (value) =>
   value ? `/images/categories/${String(value).toLowerCase().replace(/_/g, "-")}.webp` : "/images/placeholder.svg";
+
+// Woven-motif colours per category (brand palette), used instead of emoji on
+// the landing page and the map.
+export const NV = { night: "#0E1A3B", gold: "#D4A13A", indigo: "#27306E", malachite: "#0E7C66", mist: "#EEF1F7", clay: "#9C4A2F" };
+const HUES = {
+  FOOD_DINING: [NV.gold, NV.clay], TRAVEL_HOLIDAYS: [NV.indigo, NV.gold], HOTELS_HOSPITALITY: [NV.night, NV.gold],
+  FITNESS_SPORTS: [NV.malachite, NV.gold], WELLNESS_MENTAL: [NV.malachite, NV.mist], HEALTHCARE: [NV.indigo, NV.mist],
+  FINANCIAL_WELLNESS: [NV.malachite, NV.night], SHOPPING_RETAIL: [NV.clay, NV.gold], TECHNOLOGY: [NV.indigo, NV.malachite],
+  FAMILY_PARENTING: [NV.gold, NV.malachite], EDUCATION_LEARNING: [NV.indigo, NV.clay], HOME_LIVING: [NV.clay, NV.night],
+  AUTOMOTIVE_MOBILITY: [NV.night, NV.malachite], BEAUTY_CARE: [NV.clay, NV.mist], ENTERTAINMENT: [NV.gold, NV.indigo],
+};
+export const categoryHues = (value) => HUES[value] || [NV.night, NV.gold];

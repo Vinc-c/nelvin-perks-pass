@@ -32,7 +32,7 @@ export default function AuthLayout({ icon: Icon, title, subtitle, footer, childr
               </div>
             </div>
             <div className="max-w-sm text-white">
-              <h2 className="text-2xl font-bold leading-tight">Perks & savings, built for everyone across Africa & MENA.</h2>
+              <h2 className="text-2xl font-bold leading-tight">Les bons plans et avantages salariés des villes africaines.</h2>
               <p className="mt-3 text-sm text-white/80">Dining, hotels, spas, fitness & more — save thousands every year with your Nelvin membership.</p>
             </div>
           </div>

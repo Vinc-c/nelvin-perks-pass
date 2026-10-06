@@ -31,6 +31,11 @@ serve(async (req) => {
   const redeemable = ["ONLINE", "OFFLINE", "BOTH"].includes(String(data.offerRedeemable)) ? String(data.offerRedeemable) : "BOTH";
   const expiry = /^\d{4}-\d{2}-\d{2}$/.test(String(data.offerExpiry)) ? String(data.offerExpiry) : null;
 
+  // Optional shop position picked on the map; must fall on the African continent.
+  const lat = Number(data.lat), lng = Number(data.lng);
+  const located = data.lat != null && data.lng != null && Number.isFinite(lat) && Number.isFinite(lng)
+    && lat >= -40 && lat <= 40 && lng >= -30 && lng <= 65;
+
   const admin = adminClient();
   const caller = await getCaller(req, admin);
 
@@ -47,6 +52,8 @@ serve(async (req) => {
       country: countries[0],
       city: str(data.city, 80),
       address: str(data.address, 200),
+      lat: located ? Math.round(lat * 1e6) / 1e6 : null,
+      lng: located ? Math.round(lng * 1e6) / 1e6 : null,
       logo_url: str(data.logoUrl, 1000),
       cover_image_url: str(data.coverUrl, 1000),
       contact_email: str(data.email, 200),

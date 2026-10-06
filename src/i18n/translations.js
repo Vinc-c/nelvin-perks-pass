@@ -12,7 +12,7 @@ export const LANGUAGES = [
 export const translations = {
   en: {
     "app.name": "Nelvin Benefits",
-    "app.tagline": "Corporate perks, B2C cashback & multi-PSP payments for Africa & MENA",
+    "app.tagline": "Corporate perks, B2C cashback & multi-PSP payments for Africa",
     "nav.home": "Home",
     "nav.employee": "Employee",
     "nav.member": "Member",
@@ -68,7 +68,7 @@ export const translations = {
   },
   fr: {
     "app.name": "Nelvin Benefits",
-    "app.tagline": "Avantages corporate, cashback B2C & paiements multi-PSP pour l'Afrique & MENA",
+    "app.tagline": "Avantages corporate, cashback B2C & paiements multi-PSP pour l'Afrique",
     "nav.home": "Accueil",
     "nav.employee": "Employé",
     "nav.member": "Membre",
@@ -124,7 +124,7 @@ export const translations = {
   },
   sw: {
     "app.name": "Nelvin Benefits",
-    "app.tagline": "Faida za kampuni, cashback ya B2C & malipo ya multi-PSP kwa Afrika & MENA",
+    "app.tagline": "Faida za kampuni, cashback ya B2C & malipo ya multi-PSP kwa Afrika",
     "nav.home": "Nyumbani",
     "nav.employee": "Mfanyikazi",
     "nav.member": "Mwanachama",
@@ -236,7 +236,7 @@ export const translations = {
   },
   yo: {
     "app.name": "Nelvin Benefits",
-    "app.tagline": "Anfani ile-iṣẹ, cashback B2C & sisanwo multi-PSP fun Afrika & MENA",
+    "app.tagline": "Anfani ile-iṣẹ, cashback B2C & sisanwo multi-PSP fun Afrika",
     "nav.home": "Ile",
     "nav.employee": "Osise",
     "nav.member": "Omọ ẹgbẹ",

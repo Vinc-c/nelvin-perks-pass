@@ -4,6 +4,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import PortalLayout from "@/components/PortalLayout";
 import MerchantStatusGate from "@/components/merchant/MerchantStatusGate";
 import MerchantPinCard from "@/components/merchant/MerchantPinCard";
+import MerchantLocationCard from "@/components/merchant/MerchantLocationCard";
 import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/lib/AuthContext";
 import { entities } from "@/api/entities";
@@ -223,6 +224,10 @@ export default function MerchantPortal() {
         </div>
         )}
 
+        {show("offers") && merchant && (
+          <div className="mt-6"><MerchantLocationCard key={merchant.id} merchant={merchant} onSaved={(u) => u && setMerchant(u)} /></div>
+        )}
+
         {show("offers") && (
         <SectionCard className="mt-6" title="Offres & campagnes" action={
           <Link to="/campaign-editor" className="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-2 text-sm font-medium text-white transition hover:bg-emerald-600 active:scale-95">
@@ -241,7 +246,7 @@ export default function MerchantPortal() {
                   <div key={c.id} className="overflow-hidden rounded-xl border border-slate-200 bg-white">
                     <div className="relative h-20 bg-slate-100">
                       {c.image_url ? <img src={c.image_url} alt={c.title} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-slate-300"><Tag className="h-5 w-5" /></div>}
-                      <span className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-medium text-slate-700">{cmeta.emoji} {cmeta.label}</span>
+                      <span className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-medium text-slate-700">{cmeta.label}</span>
                       {c.is_featured && <span className="absolute right-2 top-2 rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-bold text-white"><Star className="inline h-2.5 w-2.5" /></span>}
                       <span className={`absolute bottom-2 right-2 rounded-full px-2 py-0.5 text-[10px] font-medium text-white ${active ? "bg-emerald-500" : "bg-slate-500"}`}>{active ? "active" : "expirée"}</span>
                     </div>

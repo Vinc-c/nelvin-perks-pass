@@ -1,3 +1,4 @@
+import Motif from "@/components/brand/Motif";
 import React, { useMemo, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Link, useSearchParams } from "react-router-dom";
@@ -95,7 +96,7 @@ export default function EmployeePortal() {
             {allowances.map((a) => (
               <div key={a.id} className="rounded-2xl border border-slate-200 bg-white p-5">
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl">{meta(a.category).emoji || "🎁"}</span>
+                  <Motif category={a.category} className="h-10 w-10 shrink-0" />
                   <span className="text-xs text-slate-400">{a.pct}% utilisé</span>
                 </div>
                 <p className="mt-3 text-sm text-slate-500">{a.label}</p>

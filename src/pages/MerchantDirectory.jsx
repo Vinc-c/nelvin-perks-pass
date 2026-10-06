@@ -68,7 +68,7 @@ export default function MerchantDirectory() {
           )}
           {usedCategories.map((c) => (
             <button key={c} onClick={() => setCategory(c)} className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${category === c ? "bg-emerald-500 text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
-              {c === "ALL" ? "Toutes" : `${meta(c).emoji} ${meta(c).label}`}
+              {c === "ALL" ? "Toutes" : meta(c).label}
             </button>
           ))}
         </div>
@@ -90,7 +90,7 @@ export default function MerchantDirectory() {
                 <div className="relative h-36 overflow-hidden">
                   <Image src={m.cover_image_url || meta(m.category).image_url || categoryImage(m.category)} alt={m.name} className="h-full w-full transition duration-500 hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent" />
-                  <span className="absolute left-3 top-3 rounded-full bg-white/85 px-2.5 py-1 text-xs font-medium text-slate-700 backdrop-blur-sm">{meta(m.category).emoji} {meta(m.category).label}</span>
+                  <span className="absolute left-3 top-3 rounded-full bg-white/85 px-2.5 py-1 text-xs font-medium text-slate-700 backdrop-blur-sm">{meta(m.category).label}</span>
                   {m.logo_url && <img src={m.logo_url} alt="" className="absolute bottom-3 left-3 h-10 w-10 rounded-lg bg-white object-contain p-1 shadow" />}
                 </div>
                 <div className="flex flex-1 flex-col p-4">

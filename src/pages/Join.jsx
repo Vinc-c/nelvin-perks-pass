@@ -13,9 +13,9 @@ import NelvinLogo, { NelvinMark } from "@/components/NelvinLogo";
 const STEPS = ["Invite", "Account", "Verify"];
 
 const benefits = [
-  { icon: Sparkles, text: "30-day free trial on every plan" },
-  { icon: Building2, text: "1,900+ Buy 1 Get 1 Free brands across Africa & MENA" },
-  { icon: ShieldCheck, text: "Secure, invite-only onboarding — your data stays in your company" },
+  { icon: Sparkles, text: "Essai gratuit offert par votre entreprise" },
+  { icon: Building2, text: "Offres chez les commerces partenaires des villes africaines" },
+  { icon: ShieldCheck, text: "Accès sur invitation : vos données restent dans votre entreprise" },
 ];
 
 export default function Join() {
@@ -131,7 +131,7 @@ export default function Join() {
             })}
           </ul>
         </div>
-        <p className="text-xs text-blue-200">© 2026 Nelvin Benefits — Built for Africa & MENA</p>
+        <p className="text-xs text-blue-200">© 2026 Nelvin Benefits, pensé pour l'Afrique</p>
       </div>
 
       {/* Wizard */}

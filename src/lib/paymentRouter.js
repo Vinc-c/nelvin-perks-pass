@@ -4,7 +4,7 @@
 
 export const PSPS = [
   { id: "paddle", name: "Paddle", region: "Global", useCase: "SaaS B2B Merchant of Record, facturation internationale, taxe auto", methods: ["CARD", "BANK_TRANSFER"] },
-  { id: "stripe", name: "Stripe", region: "Global / MENA", useCase: "Cartes internationales, Apple Pay, Google Pay", methods: ["CARD", "APPLE_PAY", "GOOGLE_PAY"] },
+  { id: "stripe", name: "Stripe", region: "International", useCase: "Cartes internationales, Apple Pay, Google Pay", methods: ["CARD", "APPLE_PAY", "GOOGLE_PAY"] },
   { id: "paystack", name: "Paystack", region: "Afrique de l'Ouest", useCase: "Cartes & virement Nigeria, Ghana, CEDEAO", methods: ["CARD", "BANK_TRANSFER"] },
   { id: "flutterwave", name: "Flutterwave", region: "Pan-Afrique", useCase: "MTN MoMo, Orange Money, M-Pesa, Wave, paiements locaux", methods: ["MOBILE_MONEY", "CARD"] },
   { id: "payunit", name: "Payunit", region: "CEMAC", useCase: "Cameroun, Gabon, Tchad — agrégation Mobile Money & carte", methods: ["MOBILE_MONEY", "CARD"] },
@@ -14,7 +14,7 @@ export const PSPS = [
 // Country (French name, matching src/data/africanCountries.js) → preferred PSP.
 // Covers all 54 African countries so routing always resolves to a real gateway.
 const COUNTRY_PSP = {
-  // Afrique du Nord → Stripe (cartes internationales / MENA)
+  // Afrique du Nord → Stripe (cartes internationales)
   Algérie: "stripe", Égypte: "stripe", Libye: "stripe", Maroc: "stripe", Soudan: "stripe", Tunisie: "stripe",
   // Afrique de l'Ouest → Paystack
   Nigeria: "paystack", Ghana: "paystack", "Côte d'Ivoire": "paystack", Sénégal: "paystack",

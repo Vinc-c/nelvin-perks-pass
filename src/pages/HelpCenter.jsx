@@ -7,7 +7,7 @@ import { Search, LifeBuoy, Send, BookOpen, Wrench, Check } from "lucide-react";
 const faqs = [
   { q: "How do I redeem an offer?", a: "Open any offer, tap Redeem, and show the generated QR code or 6-digit code to the merchant. Codes are valid for 3 minutes and work offline." },
   { q: "When is my cashback credited?", a: "Cashback is credited to your Nelvin wallet within 24 hours of a successful redemption. VIP members receive priority crediting." },
-  { q: "Can I use my membership in another country?", a: "Yes. Pass Premium and VIP unlock offers across all cities in Africa & MENA. Your wallet converts automatically to local currency." },
+  { q: "Can I use my membership in another country?", a: "Yes. Pass Premium and VIP unlock offers across all partner cities in Africa. Your wallet converts automatically to local currency." },
   { q: "How do I withdraw my wallet balance?", a: "Go to your wallet and tap Withdraw to transfer to Mobile Money or a local bank account. Withdrawals are usually instant." },
   { q: "What happens if a code expires?", a: "Simply tap Redeem again to generate a fresh code. No rewards are lost when a code expires before use." },
 ];

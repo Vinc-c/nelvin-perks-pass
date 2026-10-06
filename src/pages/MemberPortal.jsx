@@ -5,7 +5,7 @@ import PortalLayout from "@/components/PortalLayout";
 import QrRedemption from "@/components/QrRedemption";
 import RechargeWalletModal from "@/components/RechargeWalletModal";
 import WithdrawWalletModal from "@/components/WithdrawWalletModal";
-import DealsMap from "@/components/DealsMap";
+import PartnerMap from "@/components/map/PartnerMap";
 import OfferCard from "@/components/OfferCard";
 import CurrencySelect from "@/components/CurrencySelect";
 import { useI18n } from "@/i18n/I18nContext";
@@ -106,7 +106,7 @@ export default function MemberPortal() {
         <div className="flex flex-wrap gap-2">
           {usedCategories.map((c) => (
             <button key={c} onClick={() => setCategory(c)} className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${category === c ? "bg-emerald-500 text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
-              {c === "ALL" ? "Toutes les offres" : `${meta(c).emoji} ${meta(c).label}`}
+              {c === "ALL" ? "Toutes les offres" : meta(c).label}
             </button>
           ))}
         </div>
@@ -128,8 +128,14 @@ export default function MemberPortal() {
       </>)}
 
       {section === "overview" && catalog.merchants.some((m) => m.lat != null) && (
-        <div className="mt-6">
-          <DealsMap merchants={catalog.merchants} onSelect={(m) => { const o = catalog.offers.find((x) => x.merchant_id === m.id); if (o) setSelectedOffer(o); }} />
+        <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="flex items-center justify-between px-5 py-4">
+            <h2 className="font-semibold text-slate-900">Partenaires sur la carte</h2>
+            <Link to="/merchant-map" className="text-sm font-medium text-emerald-600 hover:underline">Ouvrir la carte</Link>
+          </div>
+          <div className="h-72">
+            <PartnerMap merchants={catalog.merchants} onSelect={(m) => { window.location.href = `/merchant-map?m=${m.id}`; }} />
+          </div>
         </div>
       )}
 

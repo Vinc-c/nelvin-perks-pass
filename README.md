@@ -1,6 +1,6 @@
 # Nelvin Perks Pass
 
-Plateforme multi-tenant d'avantages salariés, d'offres B2C et de cashback pour l'Afrique et le MENA.
+Plateforme multi-tenant d'avantages salariés, d'offres B2C et de cashback pour l'Afrique.
 
 > **Plateforme conçue et développée par [liafrik.com](https://liafrik.com).**
 
@@ -20,6 +20,8 @@ npm run dev                  # http://localhost:5173
 | `VITE_SUPABASE_URL` | URL du projet Supabase |
 | `VITE_SUPABASE_ANON_KEY` | Clé publique (publishable / anon). Les données sont protégées par RLS. |
 | `VITE_SITE_URL` | URL publique du site (balises canonical / Open Graph) |
+| `VITE_MAP_TILE_URL` | Facultatif. Tuiles de la carte (défaut : OpenStreetMap). À définir vers un fournisseur commercial à fort trafic. |
+| `VITE_MAP_TILE_ATTRIBUTION` | Facultatif. Mention de copyright du fournisseur de tuiles. |
 
 Vérifications : `npm run lint` et `npm run build`.
 

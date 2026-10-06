@@ -77,7 +77,7 @@ export default function OfferDetails() {
           <div className="relative h-56">
             <Image src={offer.image_url || merchant?.cover_image_url || cat.image_url || categoryImage(offer.category)} alt={offer.title} className="h-full w-full" />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 to-transparent" />
-            <span className="absolute left-5 top-5 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-slate-700">{cat.emoji} {cat.label}</span>
+            <span className="absolute left-5 top-5 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-slate-700">{cat.label}</span>
             <FavoriteButton offerId={offer.id} className="absolute right-5 top-5" />
             <h1 className="absolute bottom-5 left-6 right-6 text-2xl font-bold text-white">{offer.title}</h1>
           </div>

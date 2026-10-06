@@ -1,3 +1,4 @@
+import LocationPicker from "@/components/map/LocationPicker";
 import React, { useState } from "react";
 import { Image } from "@/components/ui/image";
 import { entities } from "@/api/entities";
@@ -88,15 +89,13 @@ function Location({ merchant, onSaved }) {
   };
   const input = "rounded-md border border-slate-200 px-2 py-1.5 text-xs";
   return (
-    <div className="grid gap-2 sm:grid-cols-6">
-      <input value={loc.address} onChange={(e) => setLoc({ ...loc, address: e.target.value })} placeholder="Adresse" aria-label="Adresse" className={`${input} sm:col-span-2`} />
-      <input value={loc.city} onChange={(e) => setLoc({ ...loc, city: e.target.value })} placeholder="Ville" aria-label="Ville" className={input} />
-      <input value={loc.country} onChange={(e) => setLoc({ ...loc, country: e.target.value })} placeholder="Pays" aria-label="Pays" className={input} />
-      <input type="number" step="any" value={loc.lat} onChange={(e) => setLoc({ ...loc, lat: e.target.value })} placeholder="Latitude" aria-label="Latitude" className={input} />
-      <div className="flex gap-1">
-        <input type="number" step="any" value={loc.lng} onChange={(e) => setLoc({ ...loc, lng: e.target.value })} placeholder="Longitude" aria-label="Longitude" className={`${input} min-w-0 flex-1`} />
-        <button onClick={save} className="rounded-md bg-slate-900 px-2 text-white" aria-label="Enregistrer l'adresse"><Save className="h-3.5 w-3.5" /></button>
+    <div className="space-y-2">
+      <div className="grid gap-2 sm:grid-cols-3">
+        <input value={loc.city} onChange={(e) => setLoc({ ...loc, city: e.target.value })} placeholder="Ville" aria-label="Ville" className={input} />
+        <input value={loc.country} onChange={(e) => setLoc({ ...loc, country: e.target.value })} placeholder="Pays" aria-label="Pays" className={input} />
+        <button onClick={save} className="flex items-center justify-center gap-1.5 rounded-md bg-slate-900 px-3 py-1.5 text-xs font-medium text-white"><Save className="h-3.5 w-3.5" /> Enregistrer l'emplacement</button>
       </div>
+      <LocationPicker value={loc} onChange={(v) => setLoc({ ...loc, ...v, lat: v.lat ?? "", lng: v.lng ?? "" })} />
     </div>
   );
 }

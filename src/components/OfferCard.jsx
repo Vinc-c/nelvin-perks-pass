@@ -15,7 +15,7 @@ export default function OfferCard({ offer, meta, format, onRedeem, index = 0, ct
       <Link to={`/offer-details?id=${offer.id}`} className="relative block h-28">
         <Image src={offer.image_url || offer.merchant?.cover_image_url || cat.image_url || categoryImage(offer.category)} alt={offer.title} className="h-full w-full" />
         {offer.is_featured && <span className="absolute left-3 top-3 rounded-full bg-amber-500 px-2 py-0.5 text-xs font-bold text-white">⭐ À la une</span>}
-        <span className="absolute bottom-3 right-3 rounded-lg bg-white/85 px-2 py-1 text-xs text-slate-700">{cat.emoji} {cat.label}</span>
+        <span className="absolute bottom-3 right-3 rounded-lg bg-white/85 px-2 py-1 text-xs text-slate-700">{cat.label}</span>
       </Link>
       <FavoriteButton offerId={offer.id} className="absolute right-3 top-3" />
       <div className="flex flex-1 flex-col p-4">

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Unbounded:wght@500;600;700&family=Figtree:wght@400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -142,3 +142,15 @@ button:not(.not-pill) {
   from { transform: translateY(-50%); }
   to { transform: translateY(0); }
 }
+/* Nelvin editorial identity (landing, map): brand gold + navy. */
+.nv-display { font-family: 'Unbounded', 'Poppins', ui-sans-serif, system-ui, sans-serif; letter-spacing: -0.02em; }
+.nv-body { font-family: 'Figtree', 'Poppins', ui-sans-serif, system-ui, sans-serif; }
+.nv-focus:focus-visible { outline: 3px solid #D4A13A; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  .nv-motion { animation: none !important; transition: none !important; }
+}
+.nelvin-pin { background: transparent; border: 0; }
+.leaflet-container { font-family: 'Figtree', 'Poppins', ui-sans-serif, system-ui, sans-serif; }
+
+/* Quieter basemap so partner pins carry the colour. */
+.nv-tiles { filter: saturate(0.55) contrast(0.95) brightness(1.03); }

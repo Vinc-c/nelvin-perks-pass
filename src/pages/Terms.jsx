@@ -13,7 +13,7 @@ export default function Terms() {
         <p>Si vous n'acceptez pas ces conditions, vous ne devez pas utiliser nos services.</p>
       </LegalSection>
       <LegalSection title="2. Définitions des services">
-        <p>Nelvin est une plateforme d'avantages corporatifs et de réductions B2C opérant en Afrique et au Moyen-Orient. Nos services incluent : les avantages employés, les offres membres (Particulier), la marketplace marchands, le cashback multi-PSP, et la validation de codes de remboursement (QR/alphnumérique) hors-ligne.</p>
+        <p>Nelvin est une plateforme d'avantages corporatifs et de réductions B2C opérant en Afrique. Nos services incluent : les avantages employés, les offres membres (Particulier), la marketplace marchands, le cashback multi-PSP, et la validation de codes de remboursement (QR/alphnumérique) hors-ligne.</p>
       </LegalSection>
       <LegalSection title="3. Éligibilité des comptes">
         <p>Vous devez avoir au moins 18 ans pour créer un compte. Les types de comptes sont : Particulier, Marchand et Entreprise/RH. Les employés sont invités par leur entreprise via un code d'invitation. Vous êtes responsable de l'exactitude des informations fournies lors de l'inscription.</p>

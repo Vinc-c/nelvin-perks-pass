@@ -179,7 +179,7 @@ export default function CampaignEditor() {
                   ) : (
                     <div className="flex h-full items-center justify-center text-slate-300"><ImageIcon className="h-8 w-8" /></div>
                   )}
-                  <span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-slate-700">{cmeta.emoji} {cmeta.label}</span>
+                  <span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-slate-700">{cmeta.label}</span>
                   {o.is_featured && <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-amber-500 px-2 py-0.5 text-xs font-bold text-white"><Star className="h-3 w-3" /> À la une</span>}
                   <span className={`absolute bottom-3 right-3 rounded-full px-2 py-0.5 text-xs font-medium ${active ? "bg-emerald-500 text-white" : "bg-slate-500 text-white"}`}>{active ? "Active" : "Expirée"}</span>
                 </div>
@@ -258,7 +258,7 @@ export default function CampaignEditor() {
                   <div className="mt-1.5 flex flex-wrap gap-2">
                     {categories.map((c) => (
                       <button key={c.value} type="button" onClick={() => setForm({ ...form, category: c.value })} className={`not-pill rounded-full px-3 py-1.5 text-xs font-medium transition ${form.category === c.value ? "bg-emerald-500 text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
-                        {c.emoji} {c.label}
+                        {c.label}
                       </button>
                     ))}
                   </div>

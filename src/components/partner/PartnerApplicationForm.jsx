@@ -1,74 +1,70 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useMemo, useState } from "react";
 import { invokeFunction } from "@/api/functions";
 import { uploadPublicFile } from "@/api/storage";
-import {
-  User, Building2, Tag, Globe, Shield, FileText, Upload, Check, Plus, X, Sparkles, Loader2,
-} from "lucide-react";
+import { Check, X, Loader2 } from "lucide-react";
 import AfricanCountrySelect from "./AfricanCountrySelect";
+import LocationPicker from "@/components/map/LocationPicker";
+import Motif from "@/components/brand/Motif";
 import { useCategories } from "@/hooks/useCategories";
 
 const REDEEM = [
-  { v: "ONLINE", l: "Online via my website" },
-  { v: "OFFLINE", l: "In person / at my physical locations" },
-  { v: "BOTH", l: "Both online and in physical locations" },
+  { v: "OFFLINE", l: "En boutique" },
+  { v: "ONLINE", l: "Sur mon site" },
+  { v: "BOTH", l: "Les deux" },
 ];
 
-function SectionHeader({ icon: Icon, title, subtitle }) {
+const TERMS = [
+  { k: "multi", t: "Un membre peut utiliser l'offre plusieurs fois sur une période convenue." },
+  { k: "twelve", t: "L'offre reste valable au moins 12 mois." },
+  { k: "openAll", t: "L'offre est ouverte à tous les membres, pas seulement aux nouveaux clients." },
+  { k: "better", t: "L'offre est plus avantageuse que vos promotions publiques." },
+];
+
+function Step({ n, title, hint, children }) {
   return (
-    <div className="flex items-center gap-3 rounded-t-2xl bg-gradient-to-r from-cyan-500 to-cyan-600 px-5 py-4 text-white">
-      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20">
-        <Icon className="h-5 w-5" />
-      </div>
+    <section className="grid gap-5 border-t border-slate-200 py-8 first:border-t-0 first:pt-0 md:grid-cols-[220px_1fr] md:gap-10">
       <div>
-        <p className="text-base font-bold leading-tight">{title}</p>
-        <p className="text-xs text-cyan-50">{subtitle}</p>
+        <p className="nv-display text-3xl font-semibold text-[#D4A13A]">{n}</p>
+        <h2 className="nv-display mt-2 text-lg font-semibold text-[#0E1A3B]">{title}</h2>
+        {hint && <p className="mt-1 text-sm text-slate-500">{hint}</p>}
       </div>
-    </div>
+      <div className="min-w-0 space-y-4">{children}</div>
+    </section>
   );
 }
 
 function Field({ label, required, children, hint }) {
   return (
     <label className="block">
-      <p className="text-sm font-medium text-slate-700">
-        {label} {required && <span className="text-rose-500">*</span>}
-      </p>
-      {hint && <p className="text-xs text-slate-400">{hint}</p>}
-      <div className="mt-1.5">{children}</div>
+      <span className="text-sm font-medium text-slate-800">
+        {label} {required && <span className="text-[#9C4A2F]" aria-hidden>*</span>}
+      </span>
+      {hint && <span className="block text-xs text-slate-500">{hint}</span>}
+      <span className="mt-1.5 block">{children}</span>
     </label>
   );
 }
 
 const inputCls =
-  "w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
+  "w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[#0E1A3B] focus:ring-2 focus:ring-[#0E1A3B]/10";
 
 function FileDrop({ label, hint, file, onPick }) {
+  const preview = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
+  useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
   return (
     <label className="block">
-      <p className="text-sm font-medium text-slate-700">
-        {label} <span className="text-rose-500">*</span>
-      </p>
-      <p className="text-xs text-slate-400">{hint}</p>
-      <div className="mt-1.5 flex cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center transition hover:border-blue-400 hover:bg-blue-50/40">
-        <input
-          type="file"
-          accept="image/png,image/jpeg,image/webp"
-          className="hidden"
-          onChange={(e) => onPick(e.target.files?.[0] || null)}
-        />
-        {file ? (
-          <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
-            <Check className="h-4 w-4 text-emerald-600" /> {file.name}
-          </div>
-        ) : (
-          <div className="text-sm text-slate-400">
-            <Upload className="mx-auto mb-1 h-5 w-5" />
-            Drag & drop a file or browse
-            <span className="mt-1 block text-xs">PNG, JPG, WebP up to 10MB</span>
-          </div>
-        )}
-      </div>
+      <span className="text-sm font-medium text-slate-800">{label} <span className="text-[#9C4A2F]" aria-hidden>*</span></span>
+      <span className="block text-xs text-slate-500">{hint}</span>
+      <span className="nv-focus mt-1.5 flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 transition hover:border-[#0E1A3B]">
+        <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(e) => onPick(e.target.files?.[0] || null)} />
+        {preview
+          ? <img src={preview} alt="" className="h-14 w-14 shrink-0 rounded-lg object-cover" />
+          : <span className="h-14 w-14 shrink-0 rounded-lg bg-[repeating-linear-gradient(45deg,#EEF1F7_0_6px,#fff_6px_12px)] ring-1 ring-slate-200" />}
+        <span className="min-w-0 text-sm">
+          <span className="block truncate font-medium text-slate-800">{file ? file.name : "Choisir une image"}</span>
+          <span className="block text-xs text-slate-500">PNG, JPG ou WebP, 10 Mo maximum</span>
+        </span>
+      </span>
     </label>
   );
 }
@@ -79,9 +75,10 @@ export default function PartnerApplicationForm({ onSubmitted }) {
     email: "", brandName: "", contactName: "", contactPhone: "", city: "",
     category: "",
     description: "", supportEmail: "", website: "", instagram: "", facebook: "", whatsapp: "",
-    offerHeadline: "", offerHowToUse: "", offerRedeemable: "BOTH", offerTerms: "", offerExpiry: "",
+    offerHeadline: "", offerHowToUse: "", offerRedeemable: "OFFLINE", offerTerms: "", offerExpiry: "",
     countries: [], notes: "",
   });
+  const [place, setPlace] = useState({ address: "", lat: null, lng: null });
   const [tc, setTc] = useState({ multi: false, twelve: false, openAll: false, better: false });
   const [files, setFiles] = useState({ logo: null, cover: null, product: null });
   const [extraOffers, setExtraOffers] = useState([]);
@@ -92,33 +89,29 @@ export default function PartnerApplicationForm({ onSubmitted }) {
   const { categories } = useCategories();
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
-  const toggleCountry = (c) =>
-    setForm((f) => ({
-      ...f,
-      countries: f.countries.includes(c) ? f.countries.filter((x) => x !== c) : [...f.countries, c],
-    }));
+  const inStore = form.offerRedeemable !== "ONLINE";
 
-  const addOffer = () =>
-    setExtraOffers((o) => [...o, { headline: "", howToUse: "", redeemable: "BOTH", terms: "", expiry: "" }]);
+  const addOffer = () => setExtraOffers((o) => [...o, { headline: "", howToUse: "", redeemable: "BOTH", terms: "", expiry: "" }]);
   const removeOffer = (i) => setExtraOffers((o) => o.filter((_, idx) => idx !== i));
-  const setExtra = (i, k, v) =>
-    setExtraOffers((o) => o.map((x, idx) => (idx === i ? { ...x, [k]: v } : x)));
+  const setExtra = (i, k, v) => setExtraOffers((o) => o.map((x, idx) => (idx === i ? { ...x, [k]: v } : x)));
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
     if (!form.email || !form.brandName || !form.contactName || !form.contactPhone || !form.city)
-      return setError("Please complete all required Basic Information fields.");
-    if (!form.category) return setError("Please select your brand category.");
+      return setError("Complétez vos coordonnées : e-mail, nom du commerce, contact, téléphone et ville.");
+    if (!form.category) return setError("Choisissez la catégorie de votre commerce.");
     if (!form.description || !form.supportEmail || !form.website)
-      return setError("Please complete all required Brand Details fields.");
+      return setError("Complétez la présentation : description, e-mail du service client et site web.");
     if (!files.logo || !files.cover || !files.product)
-      return setError("Please upload your brand logo, cover image and product image.");
+      return setError("Ajoutez votre logo, une image de couverture et une photo de vos produits ou services.");
     if (!form.offerHeadline || !form.offerHowToUse || !form.offerExpiry)
-      return setError("Please complete all required Offer Details fields.");
-    if (form.countries.length === 0) return setError("Please select at least one country.");
+      return setError("Complétez l'offre : titre, mode d'utilisation et date de fin.");
+    if (inStore && (place.lat == null || place.lng == null))
+      return setError("Placez votre commerce sur la carte pour que les membres puissent vous trouver.");
+    if (form.countries.length === 0) return setError("Choisissez au moins un pays.");
     if (!tc.multi || !tc.twelve || !tc.openAll || !tc.better)
-      return setError("Please confirm all Terms & Conditions.");
+      return setError("Confirmez les quatre engagements partenaires.");
 
     try {
       setBusy(true);
@@ -131,10 +124,8 @@ export default function PartnerApplicationForm({ onSubmitted }) {
       setUploading(false);
 
       const extraText = extraOffers.length
-        ? "\n\nAdditional offers:\n" +
-          extraOffers
-            .map((o, i) => `#${i + 2}: ${o.headline} | how: ${o.howToUse} | redeem: ${o.redeemable} | terms: ${o.terms} | exp: ${o.expiry}`)
-            .join("\n")
+        ? "\n\nOffres supplémentaires :\n" +
+          extraOffers.map((o, i) => `#${i + 2}: ${o.headline} | utilisation : ${o.howToUse} | fin : ${o.expiry}`).join("\n")
         : "";
 
       const res = await invokeFunction("submit-partner-application", {
@@ -144,7 +135,9 @@ export default function PartnerApplicationForm({ onSubmitted }) {
         contactPhone: form.contactPhone,
         city: form.city,
         category: form.category,
-        address: "",
+        address: place.address || "",
+        lat: place.lat,
+        lng: place.lng,
         description: form.description,
         supportEmail: form.supportEmail,
         website: form.website,
@@ -160,7 +153,7 @@ export default function PartnerApplicationForm({ onSubmitted }) {
         offerTerms: form.offerTerms,
         offerExpiry: form.offerExpiry,
         countries: form.countries,
-        notes: (form.notes || "") + extraText,
+        notes: (form.brandType === "existing" ? "[Commerce déjà référencé] " : "") + (form.notes || "") + extraText,
         termsConfirmed: [tc.multi, tc.twelve, tc.openAll, tc.better],
       });
 
@@ -168,7 +161,7 @@ export default function PartnerApplicationForm({ onSubmitted }) {
       if (onSubmitted) { onSubmitted(); return; }
       setSubmitted(true);
     } catch (err) {
-      setError(err.message || "Submission failed. Please try again.");
+      setError(err.message || "L'envoi a échoué. Vérifiez votre connexion et réessayez.");
     } finally {
       setBusy(false);
       setUploading(false);
@@ -177,233 +170,166 @@ export default function PartnerApplicationForm({ onSubmitted }) {
 
   if (submitted) {
     return (
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mx-auto max-w-xl rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
-          <Check className="h-8 w-8 text-emerald-600" />
-        </div>
-        <h2 className="mt-5 text-2xl font-bold text-slate-900">Application submitted</h2>
-        <p className="mt-2 text-sm text-slate-500">
-          Thank you! Your brand has been submitted for review. Our partnerships team will reach out within 2–3 business days.
+      <div className="mx-auto max-w-xl rounded-2xl bg-white p-10 text-center ring-1 ring-slate-200">
+        <h2 className="nv-display text-2xl font-semibold text-[#0E1A3B]">Candidature envoyée</h2>
+        <p className="mt-3 text-sm text-slate-600">
+          Merci. L'équipe partenaires étudie votre dossier et vous contacte par e-mail sous 2 à 3 jours ouvrés.
         </p>
-        <a href="/" className="mt-6 inline-flex items-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700">
-          Back to home
+        <a href="/" className="nv-focus mt-6 inline-flex rounded-full bg-[#0E1A3B] px-6 py-3 text-sm font-semibold text-white hover:bg-[#27306E]">
+          Retour à l'accueil
         </a>
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-3xl space-y-8">
-      {/* New / Existing brand */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-sm font-semibold text-slate-900">Are you a new brand or already listed on Nelvin?</p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+    <form onSubmit={handleSubmit} className="nv-body rounded-3xl bg-white p-6 ring-1 ring-slate-200 sm:p-10">
+      <Step n="1" title="Vos coordonnées" hint="Pour vous recontacter au sujet du dossier.">
+        <fieldset className="grid gap-2 sm:grid-cols-2">
+          <legend className="sr-only">Statut du commerce</legend>
           {[
-            { v: "new", t: "New Brand", s: "I'm applying for the first time" },
-            { v: "existing", t: "Existing Brand", s: "I'm already on Nelvin" },
-          ].map((o) => {
-            const active = form.brandType === o.v;
+            { v: "new", t: "Première candidature" },
+            { v: "existing", t: "Déjà partenaire Nelvin" },
+          ].map((o) => (
+            <label key={o.v} className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3.5 text-sm font-medium transition ${form.brandType === o.v ? "border-[#0E1A3B] bg-[#EEF1F7] text-[#0E1A3B]" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
+              <input type="radio" name="brandType" value={o.v} checked={form.brandType === o.v} onChange={() => set("brandType", o.v)} className="accent-[#0E1A3B]" />
+              {o.t}
+            </label>
+          ))}
+        </fieldset>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Nom du commerce" required>
+            <input value={form.brandName} onChange={(e) => set("brandName", e.target.value)} placeholder="Ex. Chez Wou" className={inputCls} />
+          </Field>
+          <Field label="E-mail" required>
+            <input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="vous@commerce.com" className={inputCls} />
+          </Field>
+          <Field label="Personne à contacter" required>
+            <input value={form.contactName} onChange={(e) => set("contactName", e.target.value)} placeholder="Prénom et nom" className={inputCls} />
+          </Field>
+          <Field label="Téléphone" required>
+            <input type="tel" value={form.contactPhone} onChange={(e) => set("contactPhone", e.target.value)} placeholder="+237 6 …" className={inputCls} />
+          </Field>
+          <Field label="Ville" required>
+            <input value={form.city} onChange={(e) => set("city", e.target.value)} placeholder="Ex. Douala" className={inputCls} />
+          </Field>
+        </div>
+      </Step>
+
+      <Step n="2" title="Votre activité" hint="La catégorie sous laquelle les membres vous trouveront.">
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3" role="radiogroup" aria-label="Catégorie">
+          {categories.map((c) => {
+            const active = form.category === c.value;
             return (
-              <button
-                type="button"
-                key={o.v}
-                onClick={() => set("brandType", o.v)}
-                className={`flex items-start gap-3 rounded-xl border-2 p-4 text-left transition ${
-                  active ? "border-blue-500 bg-blue-50/50 ring-2 ring-blue-100" : "border-slate-200 hover:border-slate-300"
-                }`}
-              >
-                <span className={`mt-0.5 flex h-5 w-5 items-center justify-center rounded-full border-2 ${active ? "border-blue-500" : "border-slate-300"}`}>
-                  {active && <span className="h-2.5 w-2.5 rounded-full bg-blue-500" />}
-                </span>
-                <span>
-                  <span className="block text-sm font-bold text-slate-900">{o.t}</span>
-                  <span className="block text-xs text-slate-500">{o.s}</span>
-                </span>
+              <button type="button" role="radio" aria-checked={active} key={c.value} onClick={() => set("category", c.value)}
+                className={`nv-focus not-pill flex items-center gap-2.5 rounded-lg border p-2 text-left text-sm font-medium transition ${active ? "border-[#0E1A3B] bg-[#EEF1F7] text-[#0E1A3B]" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
+                <Motif category={c.value} className="h-7 w-7 shrink-0" rounded="rounded-md" />
+                {c.label}
               </button>
             );
           })}
         </div>
-      </div>
-
-      {/* Basic Information */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <SectionHeader icon={User} title="Basic Information" subtitle="Tell us about yourself" />
-        <div className="space-y-4 p-6">
-          <Field label="What is your email address?" required>
-            <input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="you@company.com" className={inputCls} />
+        <Field label="Présentation du commerce" required>
+          <textarea rows={3} value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="Ce que vous proposez, votre spécialité, votre ambiance" className={inputCls} />
+        </Field>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="E-mail du service client" required>
+            <input type="email" value={form.supportEmail} onChange={(e) => set("supportEmail", e.target.value)} placeholder="contact@commerce.com" className={inputCls} />
           </Field>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="What is your brand name?" required>
-              <input value={form.brandName} onChange={(e) => set("brandName", e.target.value)} placeholder="Your Brand Name" className={inputCls} />
-            </Field>
-            <Field label="Contact person name" required>
-              <input value={form.contactName} onChange={(e) => set("contactName", e.target.value)} placeholder="Full name" className={inputCls} />
-            </Field>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Contact person number" required>
-              <input value={form.contactPhone} onChange={(e) => set("contactPhone", e.target.value)} placeholder="+237 ..." className={inputCls} />
-            </Field>
-            <Field label="Ville" required>
-              <input value={form.city} onChange={(e) => set("city", e.target.value)} placeholder="Ex. Douala" className={inputCls} />
-            </Field>
-          </div>
+          <Field label="Site web ou page principale" required>
+            <input value={form.website} onChange={(e) => set("website", e.target.value)} placeholder="https://" className={inputCls} />
+          </Field>
+          <Field label="WhatsApp Business">
+            <input value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} placeholder="+237 6 …" className={inputCls} />
+          </Field>
+          <Field label="Instagram">
+            <input value={form.instagram} onChange={(e) => set("instagram", e.target.value)} placeholder="https://instagram.com/…" className={inputCls} />
+          </Field>
+          <Field label="Facebook">
+            <input value={form.facebook} onChange={(e) => set("facebook", e.target.value)} placeholder="https://facebook.com/…" className={inputCls} />
+          </Field>
         </div>
-      </div>
-
-      {/* Category */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <SectionHeader icon={Tag} title="Catégorie" subtitle="Dans quelle catégorie se situe votre marque ?" />
-        <div className="p-6">
-          <p className="text-sm font-medium text-slate-700">Sélectionnez votre catégorie principale <span className="text-rose-500">*</span></p>
-          <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {categories.map((c) => {
-              const active = form.category === c.value;
-              return (
-                <button type="button" key={c.value} onClick={() => set("category", c.value)} className={`not-pill rounded-lg border px-3.5 py-2.5 text-left text-sm font-medium transition ${active ? "border-blue-500 bg-blue-50 text-blue-700" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
-                  {c.emoji} {c.label}
-                </button>
-              );
-            })}
-          </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FileDrop label="Logo" hint="Carré, 800 × 800 px" file={files.logo} onPick={(f) => setFiles((s) => ({ ...s, logo: f }))} />
+          <FileDrop label="Image de couverture" hint="Bannière de votre page, 1200 × 600 px" file={files.cover} onPick={(f) => setFiles((s) => ({ ...s, cover: f }))} />
         </div>
-      </div>
+      </Step>
 
-      {/* Brand Details */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <SectionHeader icon={Building2} title="Brand Details" subtitle="Tell us about your brand" />
-        <div className="space-y-4 p-6">
-          <Field label="Short description of your company" required>
-            <textarea rows={3} value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="A few sentences about what you do" className={inputCls} />
+      <Step n="3" title="Votre offre membre" hint="Ce que les membres Nelvin obtiennent chez vous.">
+        <Field label="Titre de l'offre" required hint="Ex. 20 % sur l'addition, du lundi au jeudi">
+          <input value={form.offerHeadline} onChange={(e) => set("offerHeadline", e.target.value)} placeholder="20 % sur l'addition" className={inputCls} />
+        </Field>
+        <Field label="Comment l'utiliser" required hint="Ex. Montrez votre pass Nelvin en caisse avant de payer">
+          <textarea rows={2} value={form.offerHowToUse} onChange={(e) => set("offerHowToUse", e.target.value)} className={inputCls} />
+        </Field>
+        <fieldset>
+          <legend className="text-sm font-medium text-slate-800">Où l'offre s'utilise <span className="text-[#9C4A2F]" aria-hidden>*</span></legend>
+          <div className="mt-1.5 grid grid-cols-3 gap-2">
+            {REDEEM.map((r) => (
+              <label key={r.v} className={`flex cursor-pointer items-center justify-center rounded-lg border px-3 py-2.5 text-sm font-medium transition ${form.offerRedeemable === r.v ? "border-[#0E1A3B] bg-[#EEF1F7] text-[#0E1A3B]" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
+                <input type="radio" name="redeem" className="sr-only" checked={form.offerRedeemable === r.v} onChange={() => set("offerRedeemable", r.v)} />
+                {r.l}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <FileDrop label="Photo de vos produits ou services" hint="1440 × 810 px, sans texte sur l'image" file={files.product} onPick={(f) => setFiles((s) => ({ ...s, product: f }))} />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Conditions particulières" hint="Ex. Hors boissons, plafonné à 10 000 FCFA">
+            <input value={form.offerTerms} onChange={(e) => set("offerTerms", e.target.value)} className={inputCls} />
           </Field>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Support Contact Email" required>
-              <input type="email" value={form.supportEmail} onChange={(e) => set("supportEmail", e.target.value)} placeholder="support@company.com" className={inputCls} />
-            </Field>
-            <Field label="Website Link" required>
-              <input value={form.website} onChange={(e) => set("website", e.target.value)} placeholder="https://" className={inputCls} />
-            </Field>
-            <Field label="Instagram Link">
-              <input value={form.instagram} onChange={(e) => set("instagram", e.target.value)} placeholder="https://" className={inputCls} />
-            </Field>
-            <Field label="Facebook Link">
-              <input value={form.facebook} onChange={(e) => set("facebook", e.target.value)} placeholder="https://" className={inputCls} />
-            </Field>
-            <Field label="WhatsApp Number">
-              <input value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} placeholder="+237 ..." className={inputCls} />
-            </Field>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <FileDrop label="Brand Logo (800x800px, max 10mb)" hint="PNG, JPG, WebP" file={files.logo} onPick={(f) => setFiles((s) => ({ ...s, logo: f }))} />
-            <FileDrop label="Cover Image (1200x600px, max 10mb)" hint="Used as the banner on your brand page" file={files.cover} onPick={(f) => setFiles((s) => ({ ...s, cover: f }))} />
-          </div>
+          <Field label="Date de fin" required hint="Au moins 12 mois de validité">
+            <input type="date" value={form.offerExpiry} onChange={(e) => set("offerExpiry", e.target.value)} className={inputCls} />
+          </Field>
         </div>
-      </div>
-
-      {/* Offer Details */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <SectionHeader icon={Tag} title="Offer Details" subtitle="Tell us about your offer" />
-        <div className="space-y-4 p-6">
-          <Field label="What would you like the headline of your offer to be?" required hint="Example: Save 20% off your order in-store">
-            <input value={form.offerHeadline} onChange={(e) => set("offerHeadline", e.target.value)} placeholder="Save 20% off your order in-store" className={inputCls} />
-          </Field>
-          <Field label="How do you use the offer?" required hint="Example: 1. Copy code 2. Open website 3. Paste code in the discount box">
-            <textarea rows={2} value={form.offerHowToUse} onChange={(e) => set("offerHowToUse", e.target.value)} placeholder="1. Copy code 2. Open website 3. Paste code" className={inputCls} />
-          </Field>
-          <FileDrop label="Product / Service Image (1440x810px)" hint="No text should be visible in the image" file={files.product} onPick={(f) => setFiles((s) => ({ ...s, product: f }))} />
-          <Field label="Is the offer redeemable online / offline?" required>
-            <div className="grid gap-2 sm:grid-cols-3">
-              {REDEEM.map((r) => {
-                const active = form.offerRedeemable === r.v;
-                return (
-                  <button type="button" key={r.v} onClick={() => set("offerRedeemable", r.v)} className={`not-pill rounded-lg border px-3 py-2.5 text-xs font-medium transition ${active ? "border-blue-500 bg-blue-50 text-blue-700" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
-                    {r.l}
-                  </button>
-                );
-              })}
+        {extraOffers.map((o, i) => (
+          <div key={i} className="rounded-xl bg-[#EEF1F7] p-4">
+            <div className="mb-3 flex items-center justify-between">
+              <p className="text-sm font-semibold text-[#0E1A3B]">Offre supplémentaire {i + 2}</p>
+              <button type="button" onClick={() => removeOffer(i)} aria-label={`Retirer l'offre ${i + 2}`} className="nv-focus rounded-full p-1 text-slate-500 hover:bg-white"><X className="h-4 w-4" /></button>
             </div>
-          </Field>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Are there any Terms & Conditions?" required>
-              <input value={form.offerTerms} onChange={(e) => set("offerTerms", e.target.value)} placeholder="Maximum cap of $50 per order" className={inputCls} />
-            </Field>
-            <Field label="When does the offer expire?" required hint="Minimum 12 months validity">
-              <input type="date" value={form.offerExpiry} onChange={(e) => set("offerExpiry", e.target.value)} className={inputCls} />
-            </Field>
-          </div>
-
-          {/* Extra offers */}
-          {extraOffers.map((o, i) => (
-            <div key={i} className="rounded-xl border border-slate-200 bg-slate-50/60 p-4">
-              <div className="mb-3 flex items-center justify-between">
-                <p className="text-sm font-semibold text-slate-700">Additional offer #{i + 2}</p>
-                <button type="button" onClick={() => removeOffer(i)} className="rounded-full p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-500"><X className="h-4 w-4" /></button>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <input value={o.headline} onChange={(e) => setExtra(i, "headline", e.target.value)} placeholder="Offer headline" className={inputCls} />
-                <input type="date" value={o.expiry} onChange={(e) => setExtra(i, "expiry", e.target.value)} className={inputCls} />
-              </div>
-              <textarea rows={2} value={o.howToUse} onChange={(e) => setExtra(i, "howToUse", e.target.value)} placeholder="How to use the offer" className={`${inputCls} mt-3`} />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <input value={o.headline} onChange={(e) => setExtra(i, "headline", e.target.value)} placeholder="Titre de l'offre" aria-label="Titre de l'offre" className={inputCls} />
+              <input type="date" value={o.expiry} onChange={(e) => setExtra(i, "expiry", e.target.value)} aria-label="Date de fin" className={inputCls} />
             </div>
-          ))}
-          <button type="button" onClick={addOffer} className="flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-100">
-            <Plus className="h-4 w-4" /> Add Another Offer
-          </button>
-        </div>
-      </div>
+            <textarea rows={2} value={o.howToUse} onChange={(e) => setExtra(i, "howToUse", e.target.value)} placeholder="Comment l'utiliser" aria-label="Comment l'utiliser" className={`${inputCls} mt-3`} />
+          </div>
+        ))}
+        <button type="button" onClick={addOffer} className="nv-focus rounded-full px-4 py-2 text-sm font-semibold text-[#0E1A3B] ring-1 ring-slate-300 hover:bg-slate-50">
+          Ajouter une autre offre
+        </button>
+      </Step>
 
-      {/* Countries */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <SectionHeader icon={Globe} title="Pays" subtitle="Où vos offres sont-elles valables ? (Afrique uniquement)" />
-        <div className="p-6">
+      <Step n="4" title="Où vous trouver" hint={inStore ? "Votre commerce apparaîtra sur la carte des partenaires." : "Facultatif pour une offre uniquement en ligne."}>
+        <LocationPicker value={place} onChange={setPlace} />
+        <div>
+          <p className="mb-1.5 text-sm font-medium text-slate-800">Pays où l'offre est valable <span className="text-[#9C4A2F]" aria-hidden>*</span></p>
           <AfricanCountrySelect value={form.countries} onChange={(v) => set("countries", v)} />
         </div>
-      </div>
+      </Step>
 
-      {/* Terms confirmations */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <SectionHeader icon={Shield} title="Terms & Conditions for Nelvin" subtitle="Please confirm the following requirements" />
-        <div className="space-y-3 p-6">
-          {[
-            { k: "multi", t: "The offer may be used more than one time within an agreed period." },
-            { k: "twelve", t: "The offer has a minimum of 12 months validity." },
-            { k: "openAll", t: "This offer is open to all users, not first time only." },
-            { k: "better", t: "The offer is better than what is currently publicly advertised." },
-          ].map((row) => (
-            <label key={row.k} className="flex items-start gap-3 rounded-lg p-2 hover:bg-slate-50">
-              <input type="checkbox" checked={tc[row.k]} onChange={(e) => setTc((s) => ({ ...s, [row.k]: e.target.checked }))} className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
-              <span className="text-sm text-slate-700">{row.t} <span className="text-rose-500">*</span></span>
+      <Step n="5" title="Engagements" hint="Ce qui fait la valeur du pass pour les membres.">
+        <div className="space-y-1">
+          {TERMS.map((row) => (
+            <label key={row.k} className="flex cursor-pointer items-start gap-3 rounded-lg p-2 hover:bg-slate-50">
+              <input type="checkbox" checked={tc[row.k]} onChange={(e) => setTc((s) => ({ ...s, [row.k]: e.target.checked }))} className="mt-0.5 h-4 w-4 rounded accent-[#0E1A3B]" />
+              <span className="text-sm text-slate-700">{row.t}</span>
             </label>
           ))}
         </div>
-      </div>
+        <Field label="Autre chose à nous dire ?">
+          <textarea rows={3} value={form.notes} onChange={(e) => set("notes", e.target.value)} placeholder="Ex. plusieurs adresses, codes uniques pour la vente en ligne" className={inputCls} />
+        </Field>
+      </Step>
 
-      {/* Additional notes */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <SectionHeader icon={FileText} title="Additional Notes" subtitle="Any other information you'd like to share" />
-        <div className="p-6">
-          <textarea rows={3} value={form.notes} onChange={(e) => set("notes", e.target.value)} placeholder="Example: Unique Codes" className={inputCls} />
-        </div>
-      </div>
+      {error && <p role="alert" className="mb-4 rounded-xl bg-[#9C4A2F]/10 px-4 py-3 text-sm text-[#9C4A2F]">{error}</p>}
 
-      {error && (
-        <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</div>
-      )}
-
-      <button
-        type="submit"
-        disabled={busy}
-        className="flex w-full items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition hover:bg-blue-700 disabled:opacity-70"
-      >
-        {busy ? (
-          <><Loader2 className="h-5 w-5 animate-spin" /> {uploading ? "Uploading files..." : "Submitting..."}</>
-        ) : (
-          <><Sparkles className="h-5 w-5" /> Submit Application</>
-        )}
+      <button type="submit" disabled={busy}
+        className="nv-focus flex w-full items-center justify-center gap-2 rounded-full bg-[#0E1A3B] px-6 py-4 text-base font-semibold text-white transition hover:bg-[#27306E] disabled:opacity-70">
+        {busy ? <><Loader2 className="h-5 w-5 animate-spin" /> {uploading ? "Envoi des images…" : "Envoi du dossier…"}</> : <><Check className="h-5 w-5" /> Envoyer ma candidature</>}
       </button>
-
-      <p className="text-center text-sm text-slate-400">
-        Need help? Contact us at <a href="mailto:partners@nelvinbenefits.com" className="font-medium text-blue-600 hover:underline">partners@nelvinbenefits.com</a>
+      <p className="mt-4 text-center text-sm text-slate-500">
+        Une question ? Écrivez-nous à <a href="mailto:partners@nelvinbenefits.com" className="font-medium text-[#0E1A3B] underline underline-offset-4">partners@nelvinbenefits.com</a>
       </p>
     </form>
   );

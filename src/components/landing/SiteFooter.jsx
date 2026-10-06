@@ -1,97 +1,70 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Instagram, Facebook, Twitter, Linkedin } from "lucide-react";
-import NelvinLogo from "@/components/NelvinLogo";
+import KenteBand from "@/components/brand/KenteBand";
+import { NelvinMark } from "@/components/NelvinLogo";
 
 const columns = [
   {
-    title: "Société",
+    title: "Nelvin",
     links: [
-      { label: "Adhésion", to: "/pricing" },
-      { label: "VIP Key", to: "/member" },
-      { label: "Devenir Partenaire", to: "/merchant" },
-      { label: "Espace Entreprise / RH", to: "/hr" },
+      { label: "Les offres", to: "/merchant-directory" },
+      { label: "Carte des partenaires", to: "/merchant-map" },
+      { label: "Tarifs du Pass", to: "/pricing" },
+      { label: "Inscrire mon commerce", to: "/merchant" },
     ],
   },
   {
-    title: "Aide & Support",
+    title: "Aide",
     links: [
-      { label: "FAQs", to: "/support-center" },
-      { label: "Règles d'utilisation", to: "/terms" },
       { label: "Centre d'aide", to: "/help-center" },
+      { label: "Règles d'utilisation", to: "/terms" },
     ],
   },
   {
     title: "Légal",
     links: [
       { label: "Conditions d'utilisation", to: "/terms" },
-      { label: "Politique de confidentialité", to: "/privacy" },
-      { label: "Politique des cookies", to: "/cookies" },
-      { label: "Remboursement & annulation", to: "/refund-policy" },
+      { label: "Confidentialité", to: "/privacy" },
+      { label: "Cookies", to: "/cookies" },
+      { label: "Remboursement et annulation", to: "/refund-policy" },
     ],
   },
 ];
 
-const socials = [
-  { Icon: Instagram, label: "Instagram" },
-  { Icon: Facebook, label: "Facebook" },
-  { Icon: Twitter, label: "Twitter" },
-  { Icon: Linkedin, label: "LinkedIn" },
-];
-
 export default function SiteFooter() {
   return (
-    <footer className="border-t border-slate-200 bg-white">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+    <footer className="nv-body bg-[#0E1A3B] text-white">
+      <KenteBand height={12} />
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
         <div className="grid gap-10 lg:grid-cols-5">
           <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center gap-2">
-              <NelvinLogo className="h-7" />
+            <Link to="/" className="nv-focus inline-flex items-center gap-3 rounded">
+              <NelvinMark className="h-11 w-11" />
+              <span className="nv-display text-xl font-semibold">Nelvin</span>
             </Link>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-500">
-              Avantages et économies conçus pour tous, à travers l'Afrique et le Moyen-Orient.
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/70">
+              Le pass des bons plans et des avantages salariés, pensé pour les villes africaines.
             </p>
-            <div className="mt-5 flex gap-3">
-              {socials.map(({ Icon, label }) => (
-                <a
-                  key={label}
-                  href="#"
-                  aria-label={label}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition-colors hover:border-amber-500 hover:text-amber-600"
-                >
-                  <Icon className="h-4 w-4" />
-                </a>
-              ))}
-            </div>
           </div>
-
           {columns.map((col) => (
             <div key={col.title}>
-              <h4 className="text-sm font-bold text-slate-900">{col.title}</h4>
+              <h2 className="text-sm font-semibold text-[#D4A13A]">{col.title}</h2>
               <ul className="mt-4 space-y-2.5 text-sm">
                 {col.links.map((l) => (
                   <li key={l.to + l.label}>
-                    <Link to={l.to} className="text-slate-500 transition-colors hover:text-amber-600">
-                      {l.label}
-                    </Link>
+                    <Link to={l.to} className="nv-focus rounded text-white/75 hover:text-white">{l.label}</Link>
                   </li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
-
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-200 pt-6 sm:flex-row">
-          <p className="text-sm text-slate-400">
-            © 2026 Nelvin Benefits — Conçu pour l'Afrique & le MENA · Développé par{" "}
-            <a href="https://liafrik.com" target="_blank" rel="noopener noreferrer" className="font-medium text-slate-500 hover:text-amber-600">liafrik.com</a>
+        <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-sm text-white/60 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} Nelvin Benefits</p>
+          <p>
+            Plateforme développée par{" "}
+            <a href="https://liafrik.com" target="_blank" rel="noopener noreferrer" className="nv-focus rounded font-semibold text-white hover:text-[#D4A13A]">liafrik.com</a>
           </p>
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-slate-400">
-            <Link to="/terms" className="hover:text-amber-600">Conditions</Link>
-            <Link to="/privacy" className="hover:text-amber-600">Confidentialité</Link>
-            <Link to="/cookies" className="hover:text-amber-600">Cookies</Link>
-            <Link to="/refund-policy" className="hover:text-amber-600">Remboursement</Link>
-          </div>
         </div>
       </div>
     </footer>
