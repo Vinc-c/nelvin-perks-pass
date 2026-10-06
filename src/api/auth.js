@@ -2,8 +2,13 @@
 // The app-level "user" is the auth user merged with their `profiles` row.
 import { supabase } from "./supabaseClient";
 
+const NETWORK_RE = /failed to fetch|networkerror|load failed|network request failed|fetch failed/i;
+
 const authError = (error, fallback) => {
-  const err = new Error(error?.message || fallback);
+  const network = NETWORK_RE.test(error?.message || "") || error?.name === "AuthRetryableFetchError";
+  const err = new Error(network
+    ? "Connexion au serveur impossible. Vérifiez votre connexion internet puis réessayez."
+    : error?.message || fallback);
   err.status = error?.status;
   return err;
 };
