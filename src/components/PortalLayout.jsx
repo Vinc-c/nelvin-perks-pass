@@ -109,14 +109,14 @@ export default function PortalLayout({ children, title }) {
       </div>
 
       {/* Mobile bottom nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around border-t border-slate-200 bg-white px-2 py-2 md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-30 grid border-t border-slate-200 bg-white px-1 py-2 md:hidden" style={{ gridTemplateColumns: `repeat(${Math.min(items.length, 5) || 1}, minmax(0, 1fr))` }}>
         {items.slice(0, 5).map((item, i) => {
           const Icon = item.icon;
           const active = isNavActive(item, location.pathname, location.search);
           return (
-            <Link key={`${item.to}-${item.section || ""}-${i}`} to={navHref(item)} className={`flex flex-col items-center gap-1 rounded-full px-2 py-1.5 text-xs ${active ? "text-amber-700" : "text-slate-500"}`}>
+            <Link key={`${item.to}-${item.section || ""}-${i}`} to={navHref(item)} className={`flex min-w-0 flex-col items-center gap-1 rounded-full px-1 py-1.5 text-xs ${active ? "text-amber-700" : "text-slate-500"}`}>
               <Icon className="h-5 w-5" />
-              <span className="max-w-[64px] truncate">{item.label}</span>
+              <span className="max-w-full truncate">{item.label}</span>
             </Link>
           );
         })}

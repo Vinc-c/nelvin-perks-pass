@@ -64,7 +64,7 @@ export default function PullRequests() {
           >
             Tous les dépôts
           </button>
-          {data.repos.map((r) => (
+          {(data.repos || []).map((r) => (
             <button
               key={r.name}
               onClick={() => setRepo(r.name)}
@@ -90,7 +90,7 @@ export default function PullRequests() {
         />
       ) : (
         <div className="space-y-3">
-          {data.items.map((pr) => (
+          {(data.items || []).map((pr) => (
             <a
               key={pr.id}
               href={pr.html_url}
@@ -113,7 +113,7 @@ export default function PullRequests() {
                 </p>
                 {pr.labels?.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1.5">
-                    {pr.labels.map((l) => (
+                    {(pr.labels || []).map((l) => (
                       <span key={l} className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">{l}</span>
                     ))}
                   </div>

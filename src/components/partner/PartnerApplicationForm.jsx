@@ -362,7 +362,7 @@ export default function PartnerApplicationForm({ onSubmitted }) {
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <SectionHeader icon={MapPin} title="Location" subtitle="Where members will find you on the partner map" />
         <div className="p-6">
-          <LocationPicker value={place} onChange={setPlace} />
+          <LocationPicker value={place} onChange={setPlace} lang="en" />
         </div>
       </div>
 

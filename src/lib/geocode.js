@@ -26,13 +26,34 @@ export async function geocodeAddress(query, { country } = {}) {
   }));
 }
 
-export function currentPosition() {
+export function currentPosition({ timeoutMs = 15000 } = {}) {
   return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) return reject(new Error("Votre navigateur ne permet pas la géolocalisation."));
+    const fail = (code, msg) => Object.assign(new Error(msg), { code });
+    if (!navigator.geolocation) return reject(fail("unsupported", "Votre navigateur ne permet pas la géolocalisation."));
+    // Browsers wait indefinitely while the permission prompt is open: give up
+    // after a while so the interface never stays stuck.
+    let done = false;
+    const guard = setTimeout(() => {
+      if (done) return;
+      done = true;
+      reject(fail("timeout", "Pas de réponse de la localisation. Autorisez l'accès à votre position, ou cherchez l'adresse."));
+    }, timeoutMs);
     navigator.geolocation.getCurrentPosition(
-      (p) => resolve({ lat: Number(p.coords.latitude.toFixed(6)), lng: Number(p.coords.longitude.toFixed(6)), accuracy: p.coords.accuracy }),
-      (e) => reject(new Error(e.code === 1 ? "Autorisez l'accès à votre position dans le navigateur." : "Position introuvable. Utilisez la recherche d'adresse.")),
-      { enableHighAccuracy: true, timeout: 12000 },
+      (p) => {
+        if (done) return;
+        done = true;
+        clearTimeout(guard);
+        resolve({ lat: Number(p.coords.latitude.toFixed(6)), lng: Number(p.coords.longitude.toFixed(6)), accuracy: p.coords.accuracy });
+      },
+      (e) => {
+        if (done) return;
+        done = true;
+        clearTimeout(guard);
+        reject(e.code === 1
+          ? fail("denied", "Autorisez l'accès à votre position dans le navigateur.")
+          : fail("unavailable", "Position introuvable. Utilisez la recherche d'adresse."));
+      },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 },
     );
   });
 }

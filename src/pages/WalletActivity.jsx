@@ -171,12 +171,12 @@ export default function WalletActivity() {
             </button>
           ))}
         </div>
-        <div className="flex gap-2">
-          <div className="relative">
+        <div className="flex w-full gap-2 sm:w-auto">
+          <div className="relative min-w-0 flex-1">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Rechercher" aria-label="Rechercher une transaction" className="rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-900 outline-none focus:border-emerald-500" />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Rechercher" aria-label="Rechercher une transaction" className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-900 outline-none focus:border-emerald-500" />
           </div>
-          <button onClick={exportCsv} disabled={!rows.length} className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-40"><Download className="h-4 w-4" /> CSV</button>
+          <button onClick={exportCsv} disabled={!rows.length} className="flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-40"><Download className="h-4 w-4" /> CSV</button>
         </div>
       </div>
 

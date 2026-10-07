@@ -20,7 +20,8 @@ const MIN_ADMINS = 2;
 export default function AdminStaffManagement() {
   const { toast } = useToast();
   const { user } = useAuth();
-  const { data: admins, loading, reload } = useAsync(() => callRpc("admin_staff_list"), [], { initial: [] });
+  const { data: adminRows, loading, reload } = useAsync(() => callRpc("admin_staff_list"), [], { initial: [] });
+  const admins = Array.isArray(adminRows) ? adminRows : [];
   const [email, setEmail] = useState("");
   const [note, setNote] = useState("");
   const [invite, setInvite] = useState(true);
@@ -38,7 +39,7 @@ export default function AdminStaffManagement() {
     setBusy(true);
     try {
       await entities.PlatformAdmin.create({ email: clean, note: note.trim() || null });
-      const row = (await callRpc("admin_staff_list")).find((a) => a.email === clean);
+      const row = ((await callRpc("admin_staff_list")) || []).find((a) => a.email === clean);
       if (row && !row.joined && invite) {
         try {
           await invokeFunction("admin-invite-user", { email: clean, redirect_to: `${window.location.origin}/app` });

@@ -30,7 +30,7 @@ export function useCompanyAnalytics(companyId) {
       entities.Company.get(companyId).catch(() => null),
       entities.Transaction.filter({ company_id: companyId, type: ["REDEMPTION", "ALLOCATION"], status: "COMPLETED" }, "-created_date", 5000),
     ]);
-    return { employees, company, txs };
+    return { employees: Array.isArray(employees) ? employees : [], company, txs: Array.isArray(txs) ? txs : [] };
   }, [companyId]);
 
   const computed = useMemo(() => {
@@ -186,9 +186,9 @@ export default function HRPortal() {
 
       {show("employees") && (
       <SectionCard title="Collaborateurs" className="mt-6" action={
-        <div className="relative">
+        <div className="relative w-36 sm:w-56">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("common.search")} aria-label="Rechercher un collaborateur" className="rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500" />
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("common.search")} aria-label="Rechercher un collaborateur" className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500" />
         </div>
       }>
         {filtered.length === 0 ? (

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import PartnerMap, { distanceKm } from "@/components/map/PartnerMap";
 import Motif from "@/components/brand/Motif";
@@ -10,6 +10,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { useCurrencies } from "@/hooks/useCurrencies";
 import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
 import { useAuth } from "@/lib/AuthContext";
+import { currentPosition } from "@/lib/geocode";
 
 const RADII = [2, 5, 10, 25];
 const initials = (name) => String(name || "?").split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
@@ -23,7 +24,7 @@ function MerchantFace({ m, size = "h-12 w-12" }) {
   return m.logo_url ? (
     <img src={m.logo_url} alt="" className={`${size} shrink-0 rounded-full border border-slate-200 bg-white object-contain p-1`} />
   ) : (
-    <span className={`relative ${size} shrink-0 overflow-hidden rounded-full`}>
+    <span aria-hidden="true" className={`relative ${size} shrink-0 overflow-hidden rounded-full`}>
       <Motif category={m.category} className="absolute inset-0 h-full w-full" rounded="rounded-full" />
       <span className="absolute inset-[5px] flex items-center justify-center rounded-full bg-[#0E1A3B] text-sm font-bold text-white">{initials(m.name)}</span>
     </span>
@@ -45,6 +46,9 @@ export default function MerchantMap() {
   const [geoError, setGeoError] = useState("");
   const [locating, setLocating] = useState(false);
   const selectedId = params.get("m");
+  const listRef = useRef(null);
+  // Bring the partner card into view whenever a partner is selected.
+  useEffect(() => { if (selectedId) listRef.current?.scrollTo({ top: 0, behavior: "smooth" }); }, [selectedId]);
 
   const offersByMerchant = useMemo(() => {
     const map = new Map();
@@ -72,15 +76,21 @@ export default function MerchantMap() {
     setParams(next, { replace: true });
   };
 
-  const locate = () => {
-    if (!navigator.geolocation) { setGeoError("Votre navigateur ne permet pas la géolocalisation."); return; }
+  const locate = async () => {
     setLocating(true);
     setGeoError("");
-    navigator.geolocation.getCurrentPosition(
-      (pos) => { setMe([pos.coords.latitude, pos.coords.longitude]); setLocating(false); },
-      (err) => { setGeoError(err.code === 1 ? "Autorisez la localisation dans votre navigateur pour voir les partenaires autour de vous." : "Position introuvable pour le moment, réessayez."); setLocating(false); },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
-    );
+    try {
+      const p = await currentPosition();
+      setMe([p.lat, p.lng]);
+    } catch (err) {
+      setGeoError({
+        denied: "Autorisez la localisation dans votre navigateur pour voir les partenaires autour de vous.",
+        unsupported: "Votre navigateur ne permet pas la géolocalisation.",
+        timeout: "Pas de réponse de la localisation. Autorisez l'accès à votre position, puis réessayez.",
+      }[err.code] || "Position introuvable pour le moment, réessayez.");
+    } finally {
+      setLocating(false);
+    }
   };
 
   useEffect(() => { document.title = "Carte des partenaires · Nelvin"; }, []);
@@ -137,7 +147,7 @@ export default function MerchantMap() {
             )}
           </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto">
+          <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto">
             {selected && (
               <section className="border-b border-slate-200 bg-[#0E1A3B] text-white" aria-label={`Partenaire ${selected.name}`}>
                 {selected.cover_image_url && <img src={selected.cover_image_url} alt="" className="h-36 w-full object-cover" />}
@@ -198,7 +208,7 @@ export default function MerchantMap() {
                     return (
                       <li key={m.id}>
                         <button onClick={() => select(m)} aria-current={active ? "true" : undefined}
-                          className={`nv-focus flex w-full items-center gap-3 p-4 text-left transition-colors ${active ? "bg-[#EEF1F7]" : "hover:bg-slate-50"}`}>
+                          className={`nv-focus not-pill flex w-full items-center gap-3 p-4 text-left transition-colors ${active ? "bg-[#EEF1F7]" : "hover:bg-slate-50"}`}>
                           <MerchantFace m={m} />
                           <span className="min-w-0 flex-1">
                             <span className="block truncate font-semibold">{m.name}</span>

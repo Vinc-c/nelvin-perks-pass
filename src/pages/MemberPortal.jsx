@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import PortalLayout from "@/components/PortalLayout";
 import QrRedemption from "@/components/QrRedemption";
 import RechargeWalletModal from "@/components/RechargeWalletModal";
@@ -26,6 +26,7 @@ import { EmptyState } from "@/components/UiFeedback";
 import AccessGate from "@/components/AccessGate";
 
 export default function MemberPortal() {
+  const navigate = useNavigate();
   const { t } = useI18n();
   const { user } = useAuth();
   const money = useCurrencies();
@@ -134,7 +135,7 @@ export default function MemberPortal() {
             <Link to="/merchant-map" className="text-sm font-medium text-emerald-600 hover:underline">Ouvrir la carte</Link>
           </div>
           <div className="h-72">
-            <PartnerMap merchants={catalog.merchants} onSelect={(m) => { window.location.href = `/merchant-map?m=${m.id}`; }} />
+            <PartnerMap merchants={catalog.merchants} onSelect={(m) => navigate(`/merchant-map?m=${m.id}`)} />
           </div>
         </div>
       )}

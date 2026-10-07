@@ -123,7 +123,7 @@ export default function OfferDetails() {
                 <Link to="/register" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white hover:bg-emerald-600">Créer un compte pour en profiter</Link>
               )}
               {merchant?.lat != null && (
-                <Link to="/merchant-map" className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-5 py-3 font-medium text-slate-700 hover:bg-slate-50"><MapPin className="h-4 w-4" /> Carte</Link>
+                <Link to={`/merchant-map?m=${merchant.id}`} className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-5 py-3 font-medium text-slate-700 hover:bg-slate-50"><MapPin className="h-4 w-4" /> Carte</Link>
               )}
             </div>
           </div>

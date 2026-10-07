@@ -15,6 +15,19 @@ export const TILES = {
   attribution: import.meta.env.VITE_MAP_TILE_ATTRIBUTION || '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 };
 
+export const LEAFLET_PREFIX = '<a href="https://leafletjs.com" target="_blank" rel="noopener noreferrer">Leaflet</a>';
+
+/** Keeps Leaflet's z-indexes inside the map and sets a clean attribution prefix. */
+export function MapChrome() {
+  const map = useMap();
+  useEffect(() => {
+    map.attributionControl?.setPrefix(LEAFLET_PREFIX);
+    map.getContainer().style.isolation = "isolate";
+    map.getContainer().style.zIndex = "0";
+  }, [map]);
+  return null;
+}
+
 export function distanceKm(a, b) {
   const R = 6371;
   const dLat = ((b[0] - a[0]) * Math.PI) / 180;
@@ -114,12 +127,14 @@ function Framing({ merchants, selected, me, fitKey }) {
     else if (merchants.length === 1) map.setView([Number(merchants[0].lat), Number(merchants[0].lng)], 14);
     else map.fitBounds(L.latLngBounds(merchants.map((m) => [Number(m.lat), Number(m.lng)])), { padding: [48, 48], maxZoom: 14 });
   }, [fitKey, merchants, map]);
+  const selLat = selected ? Number(selected.lat) : null;
+  const selLng = selected ? Number(selected.lng) : null;
   useEffect(() => {
-    if (selected) map.flyTo([Number(selected.lat), Number(selected.lng)], Math.max(map.getZoom(), 15), { duration: 0.6 });
-  }, [selected, map]);
+    if (selLat != null) map.flyTo([selLat, selLng], Math.max(map.getZoom(), 15), { duration: 0.6 });
+  }, [selected?.id, selLat, selLng, map]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (me) map.flyTo(me, 13, { duration: 0.8 });
-  }, [me, map]);
+  }, [me?.[0], me?.[1], map]); // eslint-disable-line react-hooks/exhaustive-deps
   return null;
 }
 
@@ -146,6 +161,7 @@ export default function PartnerMap({ merchants, selectedId, onSelect, me, fitKey
       minZoom={2}
     >
       <TileLayer attribution={TILES.attribution} url={TILES.url} maxZoom={19} className="nv-tiles" />
+      <MapChrome />
       <Framing merchants={located} selected={selected} me={me} fitKey={fitKey} />
       <Clusters merchants={located} selectedId={selectedId} onSelect={onSelect} />
       {me && <Marker position={me} icon={meIcon} title="Vous êtes ici" />}

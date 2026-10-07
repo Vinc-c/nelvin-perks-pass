@@ -43,6 +43,7 @@ export default function AdminOverview() {
   if (loading && !s) return <Spinner />;
   if (error) return <p className="mt-6 rounded-xl bg-rose-50 p-4 text-sm text-rose-700">{error.message}</p>;
 
+  if (!s) return <p className="mt-6 rounded-xl bg-slate-50 p-4 text-sm text-slate-600">Statistiques indisponibles pour le moment. Rechargez la page.</p>;
   const users = s.users || {};
   const merchants = s.merchants || {};
   const n = (v) => Number(v || 0).toLocaleString("fr-FR");

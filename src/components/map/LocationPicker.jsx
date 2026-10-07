@@ -4,7 +4,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Loader2 } from "lucide-react";
 import { geocodeAddress, currentPosition } from "@/lib/geocode";
-import { AFRICA_BOUNDS, TILES } from "@/components/map/PartnerMap";
+import { AFRICA_BOUNDS, TILES, MapChrome } from "@/components/map/PartnerMap";
 import { NV } from "@/data/offerCategories";
 
 const pin = L.divIcon({
@@ -16,6 +16,43 @@ const pin = L.divIcon({
     <div style="position:absolute;left:50%;bottom:2px;width:10px;height:10px;transform:translateX(-50%) rotate(45deg);background:${NV.gold}"></div>
   </div>`,
 });
+
+const TEXT = {
+  fr: {
+    placeholder: "Rue, quartier, repère (ex. Rue Njo-Njo, Bonapriso)",
+    address: "Adresse du commerce",
+    search: "Localiser l'adresse",
+    here: "Je suis sur place",
+    notFound: "Adresse introuvable. Essayez avec le quartier et la ville, ou placez le repère sur la carte.",
+    searchFail: "La recherche d'adresse ne répond pas. Réessayez dans un instant ou placez le repère sur la carte.",
+    denied: "Autorisez l'accès à votre position dans le navigateur.",
+    unavailable: "Position introuvable. Utilisez la recherche d'adresse.",
+    unsupported: "Votre navigateur ne permet pas la géolocalisation.",
+    timeout: "Pas de réponse de la localisation. Autorisez l'accès à votre position, ou cherchez l'adresse.",
+    drag: "Faites glisser jusqu'à l'entrée exacte",
+    placed: (a, b) => `Repère placé (${a}, ${b}). Faites-le glisser jusqu'à l'entrée exacte du commerce.`,
+    hint: "Cherchez l'adresse, utilisez votre position, ou touchez la carte à l'emplacement du commerce.",
+    clear: "Retirer le repère",
+    map: "Carte : touchez pour placer le commerce",
+  },
+  en: {
+    placeholder: "Street, area, landmark (e.g. Rue Njo-Njo, Bonapriso)",
+    address: "Shop address",
+    search: "Find address",
+    here: "I'm at the shop",
+    notFound: "Address not found. Try with the area and city, or place the pin on the map.",
+    searchFail: "Address search is not responding. Try again shortly or place the pin on the map.",
+    denied: "Allow location access in your browser.",
+    unavailable: "Location unavailable. Use the address search instead.",
+    unsupported: "Your browser does not support location.",
+    timeout: "No response from location. Allow location access, or search the address.",
+    drag: "Drag to the exact entrance",
+    placed: (a, b) => `Pin placed (${a}, ${b}). Drag it to the shop's exact entrance.`,
+    hint: "Search the address, use your location, or tap the map where the shop is.",
+    clear: "Remove pin",
+    map: "Map: tap to place the shop",
+  },
+};
 
 function Follow({ point }) {
   const map = useMap();
@@ -35,7 +72,8 @@ function ClickToPlace({ onPick }) {
  * use the device position, or click / drag the pin to the exact door.
  * value = { address, city, lat, lng }
  */
-export default function LocationPicker({ value, onChange, dark = false }) {
+export default function LocationPicker({ value, onChange, dark = false, lang = "fr" }) {
+  const T = TEXT[lang] || TEXT.fr;
   const [query, setQuery] = useState(value?.address || "");
   const [results, setResults] = useState([]);
   const [busy, setBusy] = useState(null);
@@ -50,9 +88,9 @@ export default function LocationPicker({ value, onChange, dark = false }) {
     try {
       const rows = await geocodeAddress([query, value?.city].filter(Boolean).join(", "));
       setResults(rows);
-      if (rows.length === 0) setError("Adresse introuvable. Essayez avec le quartier et la ville, ou placez le repère sur la carte.");
-    } catch (e) {
-      setError(e.message);
+      if (rows.length === 0) setError(T.notFound);
+    } catch {
+      setError(T.searchFail);
     } finally {
       setBusy(null);
     }
@@ -65,7 +103,7 @@ export default function LocationPicker({ value, onChange, dark = false }) {
       const p = await currentPosition();
       set({ lat: p.lat, lng: p.lng });
     } catch (e) {
-      setError(e.message);
+      setError(T[e.code] || T.unavailable);
     } finally {
       setBusy(null);
     }
@@ -90,17 +128,17 @@ export default function LocationPicker({ value, onChange, dark = false }) {
           value={query}
           onChange={(e) => { setQuery(e.target.value); set({ address: e.target.value }); }}
           onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); search(); } }}
-          placeholder="Rue, quartier, repère (ex. Rue Njo-Njo, Bonapriso)"
-          aria-label="Adresse du commerce"
+          placeholder={T.placeholder}
+          aria-label={T.address}
           className={field}
         />
         <button type="button" onClick={search} disabled={busy !== null || query.trim().length < 3}
           className="nv-focus inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-[#0E1A3B] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#27306E] disabled:opacity-50">
-          {busy === "search" && <Loader2 className="h-4 w-4 animate-spin" />} Localiser l'adresse
+          {busy === "search" && <Loader2 className="h-4 w-4 animate-spin" />} {T.search}
         </button>
         <button type="button" onClick={locateMe} disabled={busy !== null}
           className={`nv-focus inline-flex shrink-0 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold ring-1 disabled:opacity-50 ${dark ? "text-white ring-white/20 hover:bg-white/10" : "text-[#0E1A3B] ring-slate-200 hover:bg-slate-50"}`}>
-          {busy === "me" && <Loader2 className="h-4 w-4 animate-spin" />} Je suis sur place
+          {busy === "me" && <Loader2 className="h-4 w-4 animate-spin" />} {T.here}
         </button>
       </div>
 
@@ -110,7 +148,7 @@ export default function LocationPicker({ value, onChange, dark = false }) {
             <li key={`${r.lat},${r.lng}`}>
               <button type="button"
                 onClick={() => { set({ lat: r.lat, lng: r.lng, city: value?.city || r.city }); setResults([]); }}
-                className={`nv-focus block w-full px-3 py-2 text-left text-sm ${dark ? "text-white/85 hover:bg-white/10" : "text-slate-700 hover:bg-slate-50"}`}>
+                className={`nv-focus not-pill block w-full px-3 py-2 text-left text-sm ${dark ? "text-white/85 hover:bg-white/10" : "text-slate-700 hover:bg-slate-50"}`}>
                 {r.label}
               </button>
             </li>
@@ -119,19 +157,21 @@ export default function LocationPicker({ value, onChange, dark = false }) {
       )}
       {error && <p role="alert" className="text-sm text-[#9C4A2F]">{error}</p>}
 
-      <div className="relative h-64 overflow-hidden rounded-xl ring-1 ring-black/5">
+      <div className="relative h-64 overflow-hidden rounded-xl ring-1 ring-black/5" aria-label={T.map}>
         <MapContainer bounds={point ? undefined : AFRICA_BOUNDS} center={point ? [point.lat, point.lng] : undefined} zoom={point ? 16 : undefined}
           className="h-full w-full" style={{ background: NV.mist }} scrollWheelZoom={false}>
           <TileLayer attribution={TILES.attribution} url={TILES.url} maxZoom={19} className="nv-tiles" />
+          <MapChrome />
           <ClickToPlace onPick={(p) => set(p)} />
           <Follow point={point} />
-          {point && <Marker position={[point.lat, point.lng]} icon={pin} draggable eventHandlers={handlers} title="Faites glisser jusqu'à l'entrée exacte" />}
+          {point && <Marker position={[point.lat, point.lng]} icon={pin} draggable eventHandlers={handlers} title={T.drag} />}
         </MapContainer>
       </div>
       <p className={`text-xs ${muted}`}>
-        {point
-          ? `Repère placé (${point.lat.toFixed(5)}, ${point.lng.toFixed(5)}). Faites-le glisser jusqu'à l'entrée exacte du commerce.`
-          : "Cherchez l'adresse, utilisez votre position, ou touchez la carte à l'emplacement du commerce."}
+        {point ? T.placed(point.lat.toFixed(5), point.lng.toFixed(5)) : T.hint}
+        {point && (
+          <button type="button" onClick={() => set({ lat: null, lng: null })} className={`not-pill ml-2 font-semibold underline underline-offset-2 ${dark ? "text-white" : "text-[#0E1A3B]"}`}>{T.clear}</button>
+        )}
       </p>
     </div>
   );
