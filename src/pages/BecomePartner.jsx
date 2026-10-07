@@ -1,86 +1,129 @@
-import React, { useEffect } from "react";
+import { domainLogo } from "@/lib/logos";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Menu, X, Star, ArrowRight } from "lucide-react";
 import PartnerApplicationForm from "@/components/partner/PartnerApplicationForm";
-import SiteHeader from "@/components/landing/SiteHeader";
-import SiteFooter from "@/components/landing/SiteFooter";
-import KenteBand from "@/components/brand/KenteBand";
 import { usePublicContent } from "@/hooks/usePublicContent";
-import { usePlans } from "@/hooks/usePlans";
-import { useCurrencies } from "@/hooks/useCurrencies";
+import NelvinLogo, { NelvinMark } from "@/components/NelvinLogo";
 
-const STEPS = [
-  { title: "Vous candidatez", text: "Présentez votre commerce, votre offre membre et placez votre adresse sur la carte. Comptez dix minutes." },
-  { title: "Nous vérifions", text: "L'équipe partenaires contrôle votre commerce et vous répond par e-mail sous 2 à 3 jours ouvrés." },
-  { title: "Vous êtes visible", text: "Votre offre apparaît dans l'application et votre commerce sur la carte, auprès des membres et des salariés des entreprises clientes." },
-  { title: "Vous encaissez", text: "En caisse, scannez le code du membre ou tapez votre PIN sur son téléphone. Ventes et reversements se suivent dans votre espace." },
-];
+
+const initials = (name) => name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
+
+function TickerLogo({ logo_url, domain, name }) {
+  const [src, setSrc] = useState(logo_url || domainLogo(domain));
+  const [failed, setFailed] = useState(false);
+  if (failed || !src) {
+    return (
+      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/15 text-sm font-bold text-white">
+        {initials(name)}
+      </div>
+    );
+  }
+  return (
+    <img
+      src={src}
+      alt={`${name} logo`}
+      loading="lazy"
+      className="h-10 w-10 rounded-lg bg-white object-contain p-1"
+      onError={() => {
+        if (logo_url && src === logo_url && domain) setSrc(domainLogo(domain));
+        else setFailed(true);
+      }}
+    />
+  );
+}
 
 export default function BecomePartner() {
+  const [menuOpen, setMenuOpen] = useState(false);
   const content = usePublicContent();
-  const logos = (content?.logos || []).filter((l) => l.active !== false && /^https:\/\//.test(l.logo_url || ""));
-  const { plans } = usePlans();
-  const money = useCurrencies();
-  const prices = plans.filter((p) => p.audience === "MERCHANT").map((p) => Number(p.price_monthly)).filter((v) => v > 0);
-  const from = prices.length ? Math.min(...prices) : null;
-
-  useEffect(() => { document.title = "Devenir partenaire Nelvin"; }, []);
+  const cmsLogos = (content?.logos || []).filter((l) => l.active !== false);
+  // Real partner logos only (CMS); the ticker is hidden until there are some.
+  const ticker = cmsLogos;
+  const loop = [...ticker, ...ticker];
 
   return (
-    <div className="nv-body min-h-screen bg-[#EEF1F7] text-[#0E1A3B]">
-      <SiteHeader />
-      <main>
-        <section className="bg-[#0E1A3B] text-white">
-          <div className="mx-auto grid max-w-7xl gap-12 px-4 pb-16 pt-14 sm:px-6 lg:grid-cols-[1.2fr_1fr] lg:items-end lg:pb-20 lg:pt-20">
-            <div>
-              <h1 className="nv-display max-w-[16ch] text-4xl font-semibold leading-[1.05] sm:text-5xl lg:text-6xl">
-                De nouveaux clients, sans payer de publicité.
-              </h1>
-              <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/80">
-                Les membres Nelvin et les salariés des entreprises clientes cherchent où dépenser près de chez eux. Proposez-leur une offre, ils viennent chez vous.
-              </p>
-              <a href="#candidature" className="nv-focus mt-8 inline-flex rounded-full bg-[#D4A13A] px-7 py-3.5 font-semibold text-[#0E1A3B] hover:bg-[#e0b350]">
-                Commencer ma candidature
-              </a>
-            </div>
-            <dl className="grid gap-5 text-sm sm:grid-cols-2 lg:grid-cols-1">
-              <div className="border-l-2 border-[#D4A13A] pl-4"><dt className="text-white/60">Vous fixez l'offre</dt><dd className="mt-0.5 text-base font-semibold">Remise, 2-pour-1 ou cadeau, jours et plafonds compris</dd></div>
-              <div className="border-l-2 border-[#D4A13A] pl-4"><dt className="text-white/60">Paiement</dt><dd className="mt-0.5 text-base font-semibold">Ventes wallet reversées en Mobile Money ou virement</dd></div>
-              {from && <div className="border-l-2 border-[#D4A13A] pl-4"><dt className="text-white/60">Abonnement partenaire</dt><dd className="mt-0.5 text-base font-semibold">Dès {money.format(from, "USD")} par mois</dd></div>}
-            </dl>
+    <div className="min-h-screen bg-slate-50 font-body text-slate-900">
+      {/* Nav over colored hero */}
+      <header className="absolute top-0 left-0 right-0 z-40">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+          <div className="flex items-center gap-2">
+             <NelvinMark className="h-9 w-9" />
           </div>
-          <KenteBand height={18} />
-        </section>
+          <nav className="hidden items-center gap-7 text-sm font-medium text-white/80 lg:flex">
+            <Link to="/merchant-directory" className="hover:text-white">Offers</Link>
+            <Link to="/pricing" className="hover:text-white">Pricing</Link>
+            <Link to="/" className="hover:text-white">Home</Link>
+          </nav>
+          <div className="flex items-center gap-2">
+            <Link to="/login" className="hidden rounded-full px-5 py-2 text-sm font-semibold text-white hover:bg-white/10 sm:inline-flex">Log in</Link>
+            <Link to="/register" className="hidden rounded-full bg-white px-5 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-100 sm:inline-flex">Get started</Link>
+            <button onClick={() => setMenuOpen(!menuOpen)} className="rounded-full p-2 text-white hover:bg-white/10 lg:hidden">
+              {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
+        </div>
+        {menuOpen && (
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="border-t border-white/10 bg-blue-700 px-4 py-4 lg:hidden">
+            <nav className="flex flex-col gap-1 text-sm font-medium text-white/90">
+              <Link to="/merchant-directory" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-white/10">Offers</Link>
+              <Link to="/pricing" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-white/10">Pricing</Link>
+              <Link to="/" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-white/10">Home</Link>
+              <Link to="/login" onClick={() => setMenuOpen(false)} className="mt-2 rounded-full bg-white px-4 py-2.5 text-center font-semibold text-blue-700">Log in</Link>
+            </nav>
+          </motion.div>
+        )}
+      </header>
 
-        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6" aria-labelledby="etapes">
-          <h2 id="etapes" className="nv-display text-2xl font-semibold sm:text-3xl">Comment ça se passe</h2>
-          <ol className="mt-8 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {STEPS.map((s, i) => (
-              <li key={s.title} className="border-t-2 border-[#0E1A3B] pt-4">
-                <p className="nv-display text-sm font-semibold text-[#9C4A2F]">Étape {i + 1}</p>
-                <h3 className="nv-display mt-1 text-lg font-semibold">{s.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">{s.text}</p>
-              </li>
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 to-blue-700 pb-16 pt-28 sm:pt-32">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(255,255,255,0.18),_transparent_55%)]" />
+        <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-4 py-1.5 text-sm font-semibold text-white ring-1 ring-white/25">
+            <Star className="h-4 w-4 text-amber-300" /> Free to apply
+          </span>
+          <h1 className="mt-5 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl">Partner Application</h1>
+          <p className="mx-auto mt-4 max-w-xl text-base text-blue-50">
+            Reach Nelvin members and the employees of our client companies across Africa. Applying is free, fast, and fully managed.
+          </p>
+          <a href="#apply" className="mt-7 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 font-semibold text-blue-700 transition hover:bg-blue-50">
+            Start application <ArrowRight className="h-4 w-4" />
+          </a>
+        </div>
+
+        {/* Logo ticker */}
+        {ticker.length > 0 && (
+        <div className="relative mt-12 overflow-hidden">
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-blue-700 to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-blue-700 to-transparent" />
+          <div className="flex w-max items-center gap-8 px-6 animate-marquee">
+            {loop.map((b, i) => (
+              <div key={`${b.name}-${i}`} className="flex items-center gap-2.5">
+                <TickerLogo logo_url={b.logo_url} domain={b.domain} name={b.name} />
+                <span className="text-sm font-semibold text-white/90">{b.name}</span>
+              </div>
             ))}
-          </ol>
-          {logos.length > 0 && (
-            <div className="mt-14">
-              <h2 className="text-sm font-semibold text-slate-600">Ils sont déjà partenaires</h2>
-              <ul className="mt-4 flex flex-wrap items-center gap-3">
-                {logos.slice(0, 16).map((l) => (
-                  <li key={l.id || l.name} className="flex items-center gap-2 rounded-full bg-white py-1.5 pl-1.5 pr-4 ring-1 ring-slate-200">
-                    <img src={l.logo_url} alt="" className="h-8 w-8 rounded-full object-contain" loading="lazy" />
-                    <span className="text-sm font-medium">{l.name}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </section>
+          </div>
+        </div>
+        )}
+      </section>
 
-        <section id="candidature" className="mx-auto max-w-6xl scroll-mt-20 px-4 pb-20 sm:px-6" aria-label="Candidature partenaire">
-          <PartnerApplicationForm />
-        </section>
-      </main>
-      <SiteFooter />
+      {/* Application form */}
+      <section id="apply" className="mx-auto max-w-5xl px-4 py-14 sm:px-6">
+        <PartnerApplicationForm />
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+          <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+            <div className="flex items-center gap-2">
+              <NelvinLogo className="h-7" />
+            </div>
+            <p className="text-sm text-slate-400">© 2026 Nelvin Benefits — Built for Africa</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
