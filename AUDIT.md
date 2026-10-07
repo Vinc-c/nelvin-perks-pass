@@ -57,11 +57,11 @@ L'application affichait de nombreux modules « de façade » : données fictives
 
 - Plateforme recentrée sur l'Afrique : plus aucune mention MENA / Moyen-Orient (méta SEO, manifeste, CGU, traductions, assistant IA).
 - Nouvelle identité : bleu nuit, or, malachite, argile ; typographies Unbounded et Figtree ; bande tissée inspirée du kente ; motifs tissés par catégorie à la place des emoji.
-- Landing premium entièrement en français, chiffres réels (partenaires, villes, offres, prix des plans, devises depuis la base), avis vérifiés uniquement, aucun faux témoignage, aucun faux logo de marque, aucune fausse capture d'app.
+- Landing d'origine conservée (hero savane, cartes de catégories, collections, couverture, FAQ, appli) et rendue honnête : chiffres en direct (partenaires, offres, villes), logos des vrais partenaires seulement, avis vérifiés seulement, FAQ corrigée, téléphone dessiné à partir des photos de catégories (au lieu d'une capture affichant des roupies), motifs tissés à la place des emoji.
 - QR codes réels (qrcode.react) qui ouvrent Nelvin sur le téléphone qui scanne ; suppression du faux QR et des faux badges App Store / Google Play.
 - Carte des partenaires réelle : fond OpenStreetMap, regroupement des repères (supercluster), logo du partenaire sur son repère, « Autour de moi », rayon, itinéraire Google Maps, WhatsApp.
 - Positions vérifiables : recherche d'adresse OpenStreetMap (Nominatim), « Je suis sur place » et repère déplaçable, dans la candidature partenaire, l'espace marchand et le back-office.
-- Supprimés : Testimonials, StoreBadges, AppDownloadCta, HeroFallingCards, HeroLifestyleStrip, HowItWorks, MembershipCoverage, FaqSection, PartnerLogos (liste de grandes marques présentées à tort comme partenaires), bandeau de logos de BecomePartner.
+- Supprimés : faux témoignages, faux badges App Store / Google Play, faux QR, liste de grandes marques présentées à tort comme partenaires, bandeau de logos de BecomePartner.
 - Fond de carte : les tuiles OpenStreetMap conviennent au lancement ; à fort trafic, définir `VITE_MAP_TILE_URL` et `VITE_MAP_TILE_ATTRIBUTION` vers un fournisseur commercial (MapTiler, Stadia, Mapbox).
 
 ## Feuille de route (vs MyBenefit / The Entertainer)

@@ -154,3 +154,9 @@ button:not(.not-pill) {
 
 /* Quieter basemap so partner pins carry the colour. */
 .nv-tiles { filter: saturate(0.55) contrast(0.95) brightness(1.03); }
+
+/* Respect reduced motion on the landing marquees and hero animations. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee, .animate-marquee-reverse, .animate-kenburns { animation: none !important; }
+  [data-fall] { animation: none !important; }
+}
