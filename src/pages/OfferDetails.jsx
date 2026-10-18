@@ -5,6 +5,7 @@ import PortalLayout from "@/components/PortalLayout";
 import QrRedemption from "@/components/QrRedemption";
 import PinRedemption from "@/components/PinRedemption";
 import FavoriteButton from "@/components/FavoriteButton";
+import ShareButton from "@/components/ShareButton";
 import OfferReviews, { Stars } from "@/components/OfferReviews";
 import { callRpc } from "@/api/rpc";
 import { Image } from "@/components/ui/image";
@@ -165,6 +166,7 @@ export default function OfferDetails() {
               ) : (
                 <Link to="/register" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white hover:bg-emerald-600">Créer un compte pour en profiter</Link>
               )}
+              <ShareButton title={offer.title} path={offer.slug ? `/offre/${offer.slug}` : `/offer-details?id=${offer.id}`} />
               {offer.booking_required && merchant?.whatsapp && (
                 <a
                   href={`https://wa.me/${String(merchant.whatsapp).replace(/\D/g, "")}?text=${encodeURIComponent(`Bonjour, je suis membre Nelvin et je souhaite réserver pour l'offre « ${offer.title} ».`)}`}

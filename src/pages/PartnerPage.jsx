@@ -10,6 +10,7 @@ import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
 import { offerBadge } from "@/hooks/useCatalog";
 import { offerPath, useSeo } from "@/lib/seo";
 import { Spinner } from "@/components/UiFeedback";
+import ShareButton from "@/components/ShareButton";
 
 /** Public, indexable page of a verified partner (/partenaire/:slug). */
 export default function PartnerPage() {
@@ -63,6 +64,7 @@ export default function PartnerPage() {
                 {m.verified_status === "VERIFIED" && <p className="mt-0.5 flex items-center gap-1 text-xs text-emerald-600"><ShieldCheck className="h-3.5 w-3.5" /> Partenaire vérifié</p>}
               </div>
             </div>
+            <div className="mt-4"><ShareButton title={m.name} path={`/partenaire/${m.slug}`} /></div>
             {m.offer_headline && <p className="mt-5 text-lg font-medium text-slate-800">{m.offer_headline}</p>}
             {m.description && <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-slate-600">{m.description}</p>}
             <h2 className="mt-8 text-lg font-bold">Offres Nelvin</h2>

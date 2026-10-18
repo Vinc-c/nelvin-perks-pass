@@ -7,13 +7,25 @@ import { useAsync } from "@/hooks/useAsync";
  * returns verified partners to non-admins). Offers are decorated with their
  * merchant's name/city/coordinates.
  */
+const CACHE_KEY = "nelvin_catalog_v1";
+
 export function useCatalog() {
   const { data, loading, error, reload } = useAsync(async () => {
-    const [merchants, offers] = await Promise.all([
-      entities.Merchant.filter({ verified_status: "VERIFIED" }, "name", 500),
-      entities.Offer.list("-created_date", 500),
-    ]);
-    return { merchants, offers };
+    try {
+      const [merchants, offers] = await Promise.all([
+        entities.Merchant.filter({ verified_status: "VERIFIED" }, "name", 500),
+        entities.Offer.list("-created_date", 500),
+      ]);
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify({ merchants, offers, at: Date.now() })); } catch { /* storage full or blocked */ }
+      return { merchants, offers };
+    } catch (e) {
+      // Weak or no connection: show the last catalogue seen on this phone.
+      try {
+        const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
+        if (cached?.offers) return { merchants: cached.merchants || [], offers: cached.offers, offline: true, cachedAt: cached.at };
+      } catch { /* corrupted cache */ }
+      throw e;
+    }
   }, [], { initial: { merchants: [], offers: [] } });
 
   const value = useMemo(() => {
@@ -33,7 +45,7 @@ export function useCatalog() {
           category: o.category || m?.category || "",
         };
       });
-    return { merchants: data?.merchants || [], offers, merchantById };
+    return { merchants: data?.merchants || [], offers, merchantById, offline: !!data?.offline, cachedAt: data?.cachedAt || null };
   }, [data]);
 
   return { ...value, loading, error, reload };
