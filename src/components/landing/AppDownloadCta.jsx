@@ -23,21 +23,21 @@ export default function AppDownloadCta() {
     <section className="relative mt-8 md:mt-[184px] lg:mt-[192px]">
       <div className="absolute inset-0 overflow-hidden">
         <Image src={SAVANNA} fittingType="fill" className="h-full w-full animate-kenburns" />
-        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/85 to-white/60" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#F2EBDA]/95 via-[#F2EBDA]/85 to-[#F2EBDA]/60" />
       </div>
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-8 sm:px-6 md:min-h-[276px] md:grid-cols-2 lg:min-h-[288px] lg:py-10">
         <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="md:pr-6">
-          <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+          <span className="inline-flex items-center rounded-full border border-nv-line bg-nv-ivory-2 px-3 py-1 text-xs font-semibold text-nv-emerald">
             No app store needed
           </span>
-          <h2 className="mt-3 text-2xl font-bold text-slate-900 sm:text-3xl">Start the good life now.</h2>
-          <p className="mt-2 max-w-md text-sm text-slate-600">
+          <h2 className="mt-3 text-2xl font-bold text-nv-ink sm:text-3xl">Start saving today.</h2>
+          <p className="mt-2 max-w-md text-sm text-nv-muted">
             Scan the code with your phone's camera to open Nelvin, then add it to your home screen in one tap.
           </p>
           <div className="mt-5 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-            <div className="rounded-2xl bg-white p-2 shadow-lg ring-1 ring-slate-100" title="Open Nelvin on your phone">
-              <QRCodeSVG value={appUrl} size={80} level="M" fgColor="#0E1A3B" aria-label="QR code that opens Nelvin on your phone" />
+            <div className="rounded-2xl bg-white p-2 shadow-lg ring-1 ring-nv-line" title="Open Nelvin on your phone">
+              <QRCodeSVG value={appUrl} size={80} level="M" fgColor="#08261D" aria-label="QR code that opens Nelvin on your phone" />
             </div>
             <InstallAppButton />
           </div>

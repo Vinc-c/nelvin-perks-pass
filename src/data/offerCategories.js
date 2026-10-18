@@ -1,5 +1,5 @@
 export const OFFER_CATEGORIES = [
-  { value: "FOOD_DINING", label: "Restauration", emoji: "🍽️" },
+  { value: "FOOD_DINING", label: "Restaurants et cafés", emoji: "🍽️" },
   { value: "TRAVEL_HOLIDAYS", label: "Voyages & vacances", emoji: "✈️" },
   { value: "HOTELS_HOSPITALITY", label: "Hôtels & hospitalité", emoji: "🏨" },
   { value: "FITNESS_SPORTS", label: "Fitness & sport", emoji: "🏋️" },
@@ -15,6 +15,15 @@ export const OFFER_CATEGORIES = [
   { value: "BEAUTY_CARE", label: "Beauté & soin", emoji: "💄" },
   { value: "ENTERTAINMENT", label: "Divertissement", emoji: "🎉" },
 ];
+
+/** English labels used by the (English) public landing page. */
+export const CATEGORY_LABELS_EN = {
+  FOOD_DINING: "Restaurants and cafés", TRAVEL_HOLIDAYS: "Travel and holidays", HOTELS_HOSPITALITY: "Hotels and hospitality",
+  FITNESS_SPORTS: "Fitness and sports", WELLNESS_MENTAL: "Wellness and mind", HEALTHCARE: "Healthcare",
+  FINANCIAL_WELLNESS: "Financial well-being", SHOPPING_RETAIL: "Shopping and retail", TECHNOLOGY: "Technology",
+  FAMILY_PARENTING: "Family and parenting", EDUCATION_LEARNING: "Education and learning", HOME_LIVING: "Home and living",
+  AUTOMOTIVE_MOBILITY: "Auto and mobility", BEAUTY_CARE: "Beauty and care", ENTERTAINMENT: "Entertainment",
+};
 
 export const categoryMeta = (value) =>
   OFFER_CATEGORIES.find((c) => c.value === value) || { value, label: value || "Autre", emoji: "🏷️" };
@@ -37,12 +46,12 @@ export const categoryImage = (value) =>
 
 // Woven-motif colours per category (brand palette), used instead of emoji on
 // the landing page and the map.
-export const NV = { night: "#0E1A3B", gold: "#D4A13A", indigo: "#27306E", malachite: "#0E7C66", mist: "#EEF1F7", clay: "#9C4A2F" };
+export const NV = { night: "#08261D", gold: "#C8A24A", indigo: "#14201B", malachite: "#0F4A38", mist: "#F2EBDA", clay: "#A8472A", emerald: "#0F4A38", ink: "#14201B", terracotta: "#A8472A" };
 const HUES = {
-  FOOD_DINING: [NV.gold, NV.clay], TRAVEL_HOLIDAYS: [NV.indigo, NV.gold], HOTELS_HOSPITALITY: [NV.night, NV.gold],
-  FITNESS_SPORTS: [NV.malachite, NV.gold], WELLNESS_MENTAL: [NV.malachite, NV.mist], HEALTHCARE: [NV.indigo, NV.mist],
-  FINANCIAL_WELLNESS: [NV.malachite, NV.night], SHOPPING_RETAIL: [NV.clay, NV.gold], TECHNOLOGY: [NV.indigo, NV.malachite],
-  FAMILY_PARENTING: [NV.gold, NV.malachite], EDUCATION_LEARNING: [NV.indigo, NV.clay], HOME_LIVING: [NV.clay, NV.night],
-  AUTOMOTIVE_MOBILITY: [NV.night, NV.malachite], BEAUTY_CARE: [NV.clay, NV.mist], ENTERTAINMENT: [NV.gold, NV.indigo],
+  FOOD_DINING: [NV.gold, NV.terracotta], TRAVEL_HOLIDAYS: [NV.emerald, NV.gold], HOTELS_HOSPITALITY: [NV.ink, NV.gold],
+  FITNESS_SPORTS: [NV.emerald, NV.terracotta], WELLNESS_MENTAL: [NV.emerald, NV.gold], HEALTHCARE: [NV.ink, NV.emerald],
+  FINANCIAL_WELLNESS: [NV.ink, NV.gold], SHOPPING_RETAIL: [NV.terracotta, NV.gold], TECHNOLOGY: [NV.ink, NV.terracotta],
+  FAMILY_PARENTING: [NV.gold, NV.emerald], EDUCATION_LEARNING: [NV.emerald, NV.ink], HOME_LIVING: [NV.terracotta, NV.ink],
+  AUTOMOTIVE_MOBILITY: [NV.ink, NV.emerald], BEAUTY_CARE: [NV.terracotta, NV.gold], ENTERTAINMENT: [NV.gold, NV.ink],
 };
-export const categoryHues = (value) => HUES[value] || [NV.night, NV.gold];
+export const categoryHues = (value) => HUES[value] || [NV.ink, NV.gold];

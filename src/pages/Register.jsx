@@ -12,10 +12,12 @@ import PhoneInput from "@/components/PhoneInput";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import { safeReturnTo } from "@/lib/authReturnTo";
+import { useI18n } from "@/i18n/I18nContext";
 
 const onboardingDest = (type) => "/onboarding?type=" + type;
 
 export default function Register() {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -122,11 +124,11 @@ export default function Register() {
         {step === 0 && (
           <motion.div key="form" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
             <div className="mb-6">
-              <p className="text-sm font-medium mb-3">Quel type de compte souhaitez-vous créer ?</p>
+              <p className="text-sm font-medium mb-3">{t("reg.chooseType")}</p>
               <AccountTypePicker value={accountType} onChange={setAccountType} />
               <p className="mt-3 text-center text-xs text-muted-foreground">
-                Salarié invité par votre entreprise ?{" "}
-                <Link to="/join" className="font-medium text-primary hover:underline">Utilisez votre code d'invitation</Link>
+                {t("reg.invited")}{" "}
+                <Link to="/join" className="font-medium text-primary hover:underline">{t("reg.inviteLink")}</Link>
               </p>
             </div>
 
@@ -139,8 +141,8 @@ export default function Register() {
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-border" />
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-3 text-muted-foreground">ou</span>
+              <div className="relative flex justify-center text-xs">
+                <span className="bg-card px-3 text-muted-foreground">{t("reg.or")}</span>
               </div>
             </div>
 
@@ -150,25 +152,25 @@ export default function Register() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t("reg.email")}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
                   <Input id="email" type="email" autoComplete="email" autoFocus placeholder="vous@exemple.com" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-10 h-12" required />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone">Téléphone</Label>
+                <Label htmlFor="phone">{t("reg.phone")}</Label>
                 <PhoneInput value={phone} onChange={setPhone} required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Mot de passe (8 caractères min.)</Label>
+                <Label htmlFor="password">{t("reg.password")}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
                   <Input id="password" type="password" autoComplete="new-password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className="pl-10 h-12" required />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirm">Confirmer le mot de passe</Label>
+                <Label htmlFor="confirm">{t("reg.confirm")}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
                   <Input id="confirm" type="password" autoComplete="new-password" placeholder="••••••••" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="pl-10 h-12" required />
@@ -183,8 +185,8 @@ export default function Register() {
 
         {step === 1 && (
           <motion.div key="otp" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
-            <h2 className="text-xl font-bold tracking-tight text-slate-900">Vérifiez votre email</h2>
-            <p className="mt-1 text-sm text-slate-500">Nous avons envoyé un code à 6 chiffres à {email}</p>
+            <h2 className="text-xl font-bold tracking-tight text-nv-ink">Vérifiez votre email</h2>
+            <p className="mt-1 text-sm text-nv-muted">Nous avons envoyé un code à 6 chiffres à {email}</p>
             {error && <div className="mt-4 rounded-lg bg-rose-50 p-3 text-sm text-rose-600">{error}</div>}
             <div className="mt-6 flex justify-center">
               <InputOTP maxLength={6} value={otpCode} onChange={setOtpCode} autoFocus autoComplete="one-time-code">
@@ -197,7 +199,7 @@ export default function Register() {
             <Button className="mt-6 h-12 w-full font-medium" onClick={verify} disabled={loading || otpCode.length < 6}>
               {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Vérification…</> : <>Vérifier et continuer <ArrowRight className="ml-2 h-4 w-4" /></>}
             </Button>
-            <p className="mt-4 text-center text-sm text-slate-500">
+            <p className="mt-4 text-center text-sm text-nv-muted">
               Code non reçu ?{" "}
               <button onClick={resend} className="font-medium text-primary hover:underline">Renvoyer</button>
             </p>

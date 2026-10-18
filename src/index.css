@@ -5,28 +5,40 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    /* Nelvin palette (text, buttons, panels, borders) */
+    --emerald-deep: #08261D;
+    --emerald: #0F4A38;
+    --gold-hex: #C8A24A;
+    --gold-light: #E6CF8B;
+    --bronze: #84631A;
+    --terracotta: #A8472A;
+    --ivory: #FAF6EC;
+    --ivory-2: #F2EBDA;
+    --line: #E4DAC3;
+    --ink: #14201B;
+    --muted-ink: #55625B;
+    --background: 43 58% 95%;
+    --foreground: 155 23% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 155 23% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 222 47% 11%;
+    --popover-foreground: 155 23% 10%;
+    --primary: 162 65% 9%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --secondary: 42 48% 90%;
+    --secondary-foreground: 155 23% 10%;
+    --muted: 42 48% 90%;
+    --muted-foreground: 148 7% 36%;
     --accent: 160 84% 39%;
     --accent-foreground: 0 0% 100%;
-    --gold: 46 64% 52%;
-    --gold-foreground: 222 47% 11%;
-    --brand: 189 100% 38%;
+    --gold: 42 53% 54%;
+    --gold-foreground: 155 23% 10%;
+    --brand: 162 66% 17%;
     --brand-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
+    --border: 42 38% 83%;
+    --input: 42 38% 83%;
     --ring: 160 84% 39%;
     --chart-1: 160 84% 39%;
     --chart-2: 222 47% 30%;
@@ -38,7 +50,7 @@
     --font-body: 'Poppins', ui-sans-serif, system-ui, sans-serif;
     --font-display: 'Poppins', ui-sans-serif, system-ui, sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    --sidebar-background: 222 47% 11%;
+    --sidebar-background: 162 65% 9%;
     --sidebar-foreground: 210 40% 96%;
     --sidebar-primary: 160 84% 39%;
     --sidebar-primary-foreground: 0 0% 100%;
@@ -142,10 +154,10 @@ button:not(.not-pill) {
   from { transform: translateY(-50%); }
   to { transform: translateY(0); }
 }
-/* Nelvin editorial identity (landing, map): brand gold + navy. */
+/* Nelvin editorial identity (landing, map): brand gold + emerald. */
 .nv-display { font-family: 'Unbounded', 'Poppins', ui-sans-serif, system-ui, sans-serif; letter-spacing: -0.02em; }
 .nv-body { font-family: 'Figtree', 'Poppins', ui-sans-serif, system-ui, sans-serif; }
-.nv-focus:focus-visible { outline: 3px solid #D4A13A; outline-offset: 3px; }
+.nv-focus:focus-visible { outline: 3px solid #C8A24A; outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) {
   .nv-motion { animation: none !important; transition: none !important; }
 }

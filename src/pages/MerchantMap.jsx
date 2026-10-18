@@ -27,7 +27,7 @@ function MerchantFace({ m, size = "h-12 w-12" }) {
   ) : (
     <span aria-hidden="true" className={`relative ${size} shrink-0 overflow-hidden rounded-full`}>
       <Motif category={m.category} className="absolute inset-0 h-full w-full" rounded="rounded-full" />
-      <span className="absolute inset-[5px] flex items-center justify-center rounded-full bg-[#0E1A3B] text-sm font-bold text-white">{initials(m.name)}</span>
+      <span className="absolute inset-[5px] flex items-center justify-center rounded-full bg-[#08261D] text-sm font-bold text-white">{initials(m.name)}</span>
     </span>
   );
 }
@@ -101,12 +101,12 @@ export default function MerchantMap() {
   const countries = [...new Set(located.map((m) => m.country).filter(Boolean))];
 
   return (
-    <div className="nv-body flex h-[100dvh] flex-col bg-white text-[#0E1A3B]">
+    <div className="nv-body flex h-[100dvh] flex-col bg-white text-[#08261D]">
       <header className="z-[500] flex h-16 shrink-0 items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 sm:px-6">
         <Link to="/" className="nv-focus shrink-0 rounded"><NelvinLogo className="h-9" /></Link>
         <div className="flex items-center gap-2 text-sm font-semibold">
-          <Link to="/merchant-directory" className="nv-focus hidden rounded-full px-4 py-2 hover:bg-[#EEF1F7] sm:inline-flex">Toutes les offres</Link>
-          <Link to={user ? "/app" : "/register"} className="nv-focus rounded-full bg-[#0E1A3B] px-4 py-2 text-white hover:bg-[#27306E]">{user ? "Mon espace" : "Créer mon compte"}</Link>
+          <Link to="/merchant-directory" className="nv-focus hidden rounded-full px-4 py-2 hover:bg-[#F2EBDA] sm:inline-flex">Toutes les offres</Link>
+          <Link to={user ? "/app" : "/register"} className="nv-focus rounded-full bg-[#08261D] px-4 py-2 text-white hover:bg-[#0F4A38]">{user ? "Mon espace" : "Créer mon compte"}</Link>
         </div>
       </header>
       <KenteBand height={8} />
@@ -119,7 +119,7 @@ export default function MerchantMap() {
             <div className="flex gap-2">
               <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Nom, ville, quartier, catégorie" aria-label="Rechercher un partenaire"
                 className="nv-focus min-w-0 flex-1 rounded-xl border border-slate-300 px-3 py-2.5 text-sm" />
-              <button onClick={locate} disabled={locating} className="nv-focus shrink-0 rounded-xl bg-[#0E7C66] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#0b6553] disabled:opacity-60">
+              <button onClick={locate} disabled={locating} className="nv-focus shrink-0 rounded-xl bg-[#0F4A38] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#0b6553] disabled:opacity-60">
                 {locating ? "Localisation…" : me ? "Actualiser" : "Autour de moi"}
               </button>
             </div>
@@ -129,7 +129,7 @@ export default function MerchantMap() {
                 <span className="mr-1 text-slate-500">Rayon</span>
                 {[null, ...RADII].map((r) => (
                   <button key={r ?? "all"} onClick={() => setRadius(r)} aria-pressed={radius === r}
-                    className={`nv-focus rounded-full px-3 py-1 font-medium ${radius === r ? "bg-[#0E1A3B] text-white" : "bg-[#EEF1F7] text-slate-700 hover:bg-slate-200"}`}>
+                    className={`nv-focus rounded-full px-3 py-1 font-medium ${radius === r ? "bg-[#08261D] text-white" : "bg-[#F2EBDA] text-slate-700 hover:bg-slate-200"}`}>
                     {r ? `${r} km` : "Tout"}
                   </button>
                 ))}
@@ -139,7 +139,7 @@ export default function MerchantMap() {
               <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 text-xs" role="group" aria-label="Catégorie">
                 {["ALL", ...categories].map((c) => (
                   <button key={c} onClick={() => setCategory(c)} aria-pressed={category === c}
-                    className={`nv-focus flex shrink-0 items-center gap-1.5 rounded-full py-1 pl-1 pr-3 font-medium ${category === c ? "bg-[#0E1A3B] text-white" : "bg-[#EEF1F7] text-slate-700 hover:bg-slate-200"}`}>
+                    className={`nv-focus flex shrink-0 items-center gap-1.5 rounded-full py-1 pl-1 pr-3 font-medium ${category === c ? "bg-[#08261D] text-white" : "bg-[#F2EBDA] text-slate-700 hover:bg-slate-200"}`}>
                     {c !== "ALL" ? <Motif category={c} className="h-5 w-5" rounded="rounded-full" /> : <span className="w-2" />}
                     {c === "ALL" ? "Toutes" : meta(c).label}
                   </button>
@@ -150,7 +150,7 @@ export default function MerchantMap() {
 
           <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto">
             {selected && (
-              <section className="border-b border-slate-200 bg-[#0E1A3B] text-white" aria-label={`Partenaire ${selected.name}`}>
+              <section className="border-b border-slate-200 bg-[#08261D] text-white" aria-label={`Partenaire ${selected.name}`}>
                 {selected.cover_image_url && <img src={selected.cover_image_url} alt="" className="h-36 w-full object-cover" />}
                 <div className="space-y-3 p-4">
                   <div className="flex items-start gap-3">
@@ -158,23 +158,23 @@ export default function MerchantMap() {
                     <div className="min-w-0 flex-1">
                       <h2 className="nv-display text-lg font-semibold leading-tight">{selected.name}</h2>
                       <p className="text-sm text-white/70">{meta(selected.category).label}{selected.km != null ? ` — à ${selected.km < 1 ? `${Math.round(selected.km * 1000)} m` : `${selected.km.toFixed(1)} km`}` : ""}</p>
-                      {selected.reviews_count > 0 && <p className="mt-0.5 text-sm text-[#D4A13A]">{Number(selected.rating).toFixed(1)} / 5 sur {selected.reviews_count} avis vérifiés</p>}
+                      {selected.reviews_count > 0 && <p className="mt-0.5 text-sm text-[#C8A24A]">{Number(selected.rating).toFixed(1)} / 5 sur {selected.reviews_count} avis vérifiés</p>}
                     </div>
                     <button onClick={() => select(null)} className="nv-focus rounded-full px-2 text-white/60 hover:text-white" aria-label="Fermer la fiche">✕</button>
                   </div>
                   <p className="text-sm text-white/80">{[selected.address, selected.city, selected.country].filter(Boolean).join(", ")}</p>
                   <div className="flex flex-wrap gap-2 text-sm font-semibold">
-                    <a href={`https://www.google.com/maps/dir/?api=1&destination=${selected.lat},${selected.lng}`} target="_blank" rel="noopener noreferrer" className="nv-focus rounded-full bg-[#D4A13A] px-4 py-2 text-[#0E1A3B] hover:bg-[#e0b350]">Itinéraire</a>
+                    <a href={`https://www.google.com/maps/dir/?api=1&destination=${selected.lat},${selected.lng}`} target="_blank" rel="noopener noreferrer" className="nv-focus rounded-full bg-[#C8A24A] px-4 py-2 text-[#08261D] hover:bg-[#E6CF8B]">Itinéraire</a>
                     {selected.whatsapp && <a href={`https://wa.me/${selected.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer" className="nv-focus rounded-full border border-white/30 px-4 py-2 hover:bg-white/10">WhatsApp</a>}
                     {httpsUrl(selected.website) && <a href={httpsUrl(selected.website)} target="_blank" rel="noopener noreferrer" className="nv-focus rounded-full border border-white/30 px-4 py-2 hover:bg-white/10">Site web</a>}
                   </div>
                   {selOffers.length > 0 ? (
                     <ul className="space-y-2">
                       {selOffers.map((o) => (
-                        <li key={o.id} className="flex items-center gap-2 rounded-xl bg-white p-3 text-[#0E1A3B]">
+                        <li key={o.id} className="flex items-center gap-2 rounded-xl bg-white p-3 text-[#08261D]">
                           <Link to={offerPath(o)} className="nv-focus min-w-0 flex-1 rounded">
                             <p className="truncate text-sm font-semibold">{o.title}</p>
-                            <p className="text-sm font-bold text-[#0E7C66]">{offerBadge(o, fmt)}{Number(o.cashback_rate) > 0 && o.discount_type !== "CASHBACK" ? ` + ${o.cashback_rate}% de cashback` : ""}</p>
+                            <p className="text-sm font-bold text-[#0F4A38]">{offerBadge(o, fmt)}{Number(o.cashback_rate) > 0 && o.discount_type !== "CASHBACK" ? ` + ${o.cashback_rate}% de cashback` : ""}</p>
                           </Link>
                           <FavoriteButton offerId={o.id} className="shrink-0 border border-slate-200" />
                         </li>
@@ -193,7 +193,7 @@ export default function MerchantMap() {
               <div className="space-y-3 p-6">
                 <h2 className="nv-display text-lg font-semibold">La carte se remplit avec nos premiers partenaires</h2>
                 <p className="text-sm text-slate-600">Chaque commerce apparaît ici dès que son adresse est vérifiée par l'équipe Nelvin. Restaurants, salons, salles de sport, hôtels : rejoignez le réseau et gagnez de nouveaux clients.</p>
-                <Link to="/merchant" className="nv-focus inline-flex rounded-full bg-[#0E1A3B] px-5 py-2.5 text-sm font-semibold text-white">Inscrire mon commerce</Link>
+                <Link to="/merchant" className="nv-focus inline-flex rounded-full bg-[#08261D] px-5 py-2.5 text-sm font-semibold text-white">Inscrire mon commerce</Link>
               </div>
             ) : list.length === 0 ? (
               <p className="p-6 text-sm text-slate-600">Aucun partenaire ne correspond. Élargissez le rayon ou changez de catégorie.</p>
@@ -209,12 +209,12 @@ export default function MerchantMap() {
                     return (
                       <li key={m.id}>
                         <button onClick={() => select(m)} aria-current={active ? "true" : undefined}
-                          className={`nv-focus not-pill flex w-full items-center gap-3 p-4 text-left transition-colors ${active ? "bg-[#EEF1F7]" : "hover:bg-slate-50"}`}>
+                          className={`nv-focus not-pill flex w-full items-center gap-3 p-4 text-left transition-colors ${active ? "bg-[#F2EBDA]" : "hover:bg-slate-50"}`}>
                           <MerchantFace m={m} />
                           <span className="min-w-0 flex-1">
                             <span className="block truncate font-semibold">{m.name}</span>
                             <span className="block truncate text-sm text-slate-500">{meta(m.category).label}, {m.city || m.country}</span>
-                            {best && <span className="block truncate text-sm font-semibold text-[#0E7C66]"><span className="mr-1.5 rounded bg-[#0E7C66]/10 px-1.5 py-0.5">{offerBadge(best, fmt)}</span>{best.title}</span>}
+                            {best && <span className="block truncate text-sm font-semibold text-[#0F4A38]"><span className="mr-1.5 rounded bg-[#0F4A38]/10 px-1.5 py-0.5">{offerBadge(best, fmt)}</span>{best.title}</span>}
                           </span>
                           {m.km != null && <span className="shrink-0 text-sm font-semibold tabular-nums text-slate-700">{m.km < 1 ? `${Math.round(m.km * 1000)} m` : `${m.km.toFixed(1)} km`}</span>}
                         </button>

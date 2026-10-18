@@ -21,8 +21,8 @@ export default function PartnerLogos({ merchants = [] }) {
 
   return (
     <section className="bg-white/60 py-10">
-      <h2 className="px-4 text-center text-2xl font-bold text-slate-900 sm:px-6 sm:text-3xl">Your favorites are already in</h2>
-      <p className="mt-2 px-4 text-center text-slate-500">
+      <h2 className="px-4 text-center text-2xl font-bold text-nv-ink sm:px-6 sm:text-3xl">Your favorites are already in</h2>
+      <p className="mt-2 px-4 text-center text-nv-muted">
         {merchants.length > 0 ? `${merchants.length} verified partner${merchants.length > 1 ? "s" : ""} across Africa, and counting.` : "Verified partners across Africa."}
       </p>
       <div className="relative mt-8 overflow-hidden">
@@ -34,10 +34,10 @@ export default function PartnerLogos({ merchants = [] }) {
               {p.logo ? (
                 <img src={p.logo} alt="" loading="lazy" className="h-12 w-12 rounded-xl bg-white object-contain" />
               ) : (
-                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#0E1A3B] text-sm font-bold text-[#D4A13A]">{initials(p.name)}</span>
+                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#08261D] text-sm font-bold text-[#C8A24A]">{initials(p.name)}</span>
               )}
               <span className="min-w-0">
-                <span className="block truncate text-sm font-semibold text-slate-800">{p.name}</span>
+                <span className="block truncate text-sm font-semibold text-nv-ink">{p.name}</span>
                 {p.sub && <span className="block truncate text-xs text-slate-400">{p.sub}</span>}
               </span>
             </li>
