@@ -51,6 +51,17 @@ module.exports = {
   				DEFAULT: 'hsl(var(--accent))',
   				foreground: 'hsl(var(--accent-foreground))'
   			},
+  			'nv-deep': 'var(--emerald-deep)',
+  			'nv-emerald': 'var(--emerald)',
+  			'nv-gold': 'var(--gold-hex)',
+  			'nv-gold-light': 'var(--gold-light)',
+  			'nv-bronze': 'var(--bronze)',
+  			'nv-terracotta': 'var(--terracotta)',
+  			'nv-ivory': 'var(--ivory)',
+  			'nv-ivory-2': 'var(--ivory-2)',
+  			'nv-line': 'var(--line)',
+  			'nv-ink': 'var(--ink)',
+  			'nv-muted': 'var(--muted-ink)',
   			gold: {
   				DEFAULT: 'hsl(var(--gold))',
   				foreground: 'hsl(var(--gold-foreground))'

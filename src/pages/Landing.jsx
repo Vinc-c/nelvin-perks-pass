@@ -24,7 +24,7 @@ import KenteBand from "@/components/brand/KenteBand";
 const SAVANNA = "/images/savanna.webp";
 
 const ANNOUNCE =
-  "Perks and savings, built for everyone. Daily deals for individuals, flexible benefits for employees and simple administration for HR teams, in one platform built for Africa.";
+  "Savings for everyone: daily offers for individuals, benefits for employees and easy administration for HR teams. One platform, built for Africa.";
 
 export default function Landing() {
   const { t } = useI18n();
@@ -33,9 +33,9 @@ export default function Landing() {
   const content = usePublicContent();
   const heroBg = imageByKey(content?.images, "hero_background", SAVANNA);
   const savannaBand = imageByKey(content?.images, "savanna_band", SAVANNA);
-  const heroBadge = copyByKey(content?.copy, "hero.badge", "Premium perks across Africa");
-  const heroTitle = copyByKey(content?.copy, "hero.title", "Premium perks at the best spots across Africa");
-  const heroSubtitle = copyByKey(content?.copy, "hero.subtitle", "Dining, hotels, spas, fitness and more, from Dakar to Nairobi. Show your Nelvin pass at the till and save on every visit.");
+  const heroBadge = copyByKey(content?.copy, "hero.badge", "Member savings across Africa");
+  const heroTitle = copyByKey(content?.copy, "hero.title", "Save at the best places across Africa");
+  const heroSubtitle = copyByKey(content?.copy, "hero.subtitle", "Restaurants, hotels, spas, gyms and shops, from Dakar to Nairobi. Show your Nelvin pass at the till and save on every visit.");
 
   // Live figures from the catalogue (a CMS value, when set, takes precedence).
   const { merchants, offers } = useCatalog();
@@ -60,20 +60,20 @@ export default function Landing() {
   const renderHeroTitle = () =>
     heroTitle.split(/(across Africa|\d[\d,]*\+\s*brands)/i).map((part, i) =>
       /across Africa|\d[\d,]*\+\s*brands/i.test(part)
-        ? <span key={i} className="text-gold">{part}</span>
+        ? <span key={i} className="text-nv-bronze">{part}</span>
         : part
     );
 
   return (
-    <div className="min-h-screen overflow-x-clip bg-[radial-gradient(ellipse_at_top,_#e0f7fa_0%,_#f4f9fc_45%,_#ffffff_100%)] font-body text-slate-900">
+    <div className="min-h-screen overflow-x-clip bg-[radial-gradient(ellipse_at_top,_#F2EBDA_0%,_#FAF6EC_45%,_#ffffff_100%)] font-body text-nv-ink">
       <a href="#contenu" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">Aller au contenu</a>
       {/* Nav */}
-      <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/70 backdrop-blur-lg">
+      <header className="sticky top-0 z-40 border-b border-nv-line bg-white/70 backdrop-blur-lg">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-2">
             <NelvinLogo className="h-12" />
           </div>
-          <nav className="hidden items-center gap-7 text-sm font-medium text-slate-600 lg:flex">
+          <nav className="hidden items-center gap-7 text-sm font-medium text-nv-muted lg:flex">
             <Link to="/merchant-directory" className="hover:text-brand">Les offres</Link>
             <Link to="/merchant-map" className="hover:text-brand">La carte</Link>
             <Link to="/pricing" className="hover:text-brand">Tarifs</Link>
@@ -87,35 +87,35 @@ export default function Landing() {
               </Link>
             ) : (
               <>
-                <Link to="/login" className="hidden rounded-full px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 sm:inline-flex">
-                  Connexion
+                <Link to="/login" className="hidden rounded-full px-4 py-2 text-sm font-semibold text-nv-ink transition hover:bg-nv-ivory-2 sm:inline-flex">
+                  {t("cta.login")}
                 </Link>
                 <Link to="/register" className="hidden rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-brand/30 transition hover:bg-brand/90 sm:inline-flex">
                   {t("cta.getStarted")}
                 </Link>
               </>
             )}
-            <button onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"} aria-expanded={menuOpen} className="rounded-full p-2 text-slate-700 hover:bg-slate-100 lg:hidden">
+            <button onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"} aria-expanded={menuOpen} className="rounded-full p-2 text-nv-ink hover:bg-nv-ivory-2 lg:hidden">
               {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
         {menuOpen && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="border-t border-slate-100 bg-white px-4 py-4 lg:hidden">
-            <div className="mb-3 flex items-center justify-between rounded-full border border-slate-200 px-3 py-1.5">
-              <span className="text-xs font-medium text-slate-500">Langue</span>
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="border-t border-nv-line bg-white px-4 py-4 lg:hidden">
+            <div className="mb-3 flex items-center justify-between rounded-full border border-nv-line px-3 py-1.5">
+              <span className="text-xs font-medium text-nv-muted">Langue</span>
               <LanguageSwitcher variant="light" />
             </div>
-            <nav className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-              <Link to="/merchant-directory" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-slate-50">Les offres</Link>
-              <Link to="/merchant-map" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-slate-50">La carte</Link>
-              <Link to="/pricing" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-slate-50">Tarifs</Link>
-              <Link to="/merchant" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-slate-50">Commerçants</Link>
+            <nav className="flex flex-col gap-1 text-sm font-medium text-nv-ink">
+              <Link to="/merchant-directory" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-nv-ivory-2">Les offres</Link>
+              <Link to="/merchant-map" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-nv-ivory-2">La carte</Link>
+              <Link to="/pricing" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-nv-ivory-2">Tarifs</Link>
+              <Link to="/merchant" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-nv-ivory-2">Commerçants</Link>
               {isAuthenticated ? (
                 <Link to="/app" onClick={() => setMenuOpen(false)} className="mt-2 rounded-full bg-brand px-4 py-2.5 text-center font-semibold text-white">Mon espace</Link>
               ) : (
                 <>
-                  <Link to="/login" onClick={() => setMenuOpen(false)} className="mt-2 rounded-full border border-slate-200 px-4 py-2.5 text-center font-semibold text-slate-800">Connexion</Link>
+                  <Link to="/login" onClick={() => setMenuOpen(false)} className="mt-2 rounded-full border border-nv-line px-4 py-2.5 text-center font-semibold text-nv-ink">{t("cta.login")}</Link>
                   <Link to="/register" onClick={() => setMenuOpen(false)} className="rounded-full bg-brand px-4 py-2.5 text-center font-semibold text-white">{t("cta.getStarted")}</Link>
                 </>
               )}
@@ -123,8 +123,8 @@ export default function Landing() {
           </motion.div>
         )}
         {/* Slim black announcement band with gold scrolling text */}
-        <div className="overflow-hidden bg-black">
-          <div className="flex w-max animate-marquee whitespace-nowrap py-1 text-xs font-medium text-gold">
+        <div className="overflow-hidden bg-nv-deep">
+          <div className="flex w-max animate-marquee whitespace-nowrap py-1 text-xs font-medium text-nv-gold-light">
             <span className="px-8">{ANNOUNCE}</span>
             <span className="px-8" aria-hidden="true">{ANNOUNCE}</span>
           </div>
@@ -138,24 +138,24 @@ export default function Landing() {
         <div className="absolute inset-0">
           <Image src={heroBg} fittingType="fill" className="h-full w-full animate-kenburns" />
           <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/50 to-white/25" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#e0f7fa_0%,_transparent_70%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#F2EBDA_0%,_transparent_70%)]" />
         </div>
         <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:py-20">
           <motion.div className="min-w-0" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 py-1.5 pl-1.5 pr-4 text-sm font-medium text-brand">
               <span className="h-5 w-8 overflow-hidden rounded-full"><KenteBand height={20} /></span> {heroBadge}
             </span>
-            <h1 className="mt-5 text-4xl font-bold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+            <h1 className="mt-5 text-4xl font-bold leading-[1.1] tracking-tight text-nv-ink sm:text-5xl lg:text-6xl">
               {renderHeroTitle()}
             </h1>
-            <p className="mt-5 max-w-xl text-lg text-slate-600">
+            <p className="mt-5 max-w-xl text-lg text-nv-muted">
               {heroSubtitle}
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link to="/pricing" className="flex items-center justify-center gap-2 rounded-full bg-brand px-7 py-3.5 font-semibold text-white shadow-lg shadow-brand/30 transition hover:bg-brand/90">
                 View memberships <ArrowRight className="h-4 w-4" />
               </Link>
-              <a href="#app-download" className="flex items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-7 py-3.5 font-semibold text-slate-800 transition hover:bg-slate-50">
+              <a href="#app-download" className="flex items-center justify-center gap-2 rounded-full border border-nv-line bg-white px-7 py-3.5 font-semibold text-nv-ink transition hover:bg-nv-ivory-2">
                 Get the app
               </a>
             </div>
@@ -182,11 +182,11 @@ export default function Landing() {
       {/* Stats bar: live figures only */}
       {stats.length > 1 && (
         <section className="mx-auto -mt-2 max-w-5xl px-4 sm:px-6">
-          <dl className={`grid grid-cols-2 gap-px overflow-hidden rounded-3xl bg-slate-100 shadow-xl shadow-slate-200/60 ring-1 ring-slate-100 ${stats.length === 4 ? "sm:grid-cols-4" : stats.length === 3 ? "sm:grid-cols-3" : ""}`}>
+          <dl className={`grid grid-cols-2 gap-px overflow-hidden rounded-3xl bg-nv-ivory-2 shadow-xl shadow-slate-200/60 ring-1 ring-nv-line ${stats.length === 4 ? "sm:grid-cols-4" : stats.length === 3 ? "sm:grid-cols-3" : ""}`}>
             {stats.map((s) => (
               <div key={s.label} className="bg-white px-5 py-6 text-center">
-                <dd className="text-2xl font-extrabold text-slate-900 sm:text-3xl">{s.value}</dd>
-                <dt className="mt-1 text-xs font-medium text-slate-500 sm:text-sm">{s.label}</dt>
+                <dd className="text-2xl font-extrabold text-nv-ink sm:text-3xl">{s.value}</dd>
+                <dt className="mt-1 text-xs font-medium text-nv-muted sm:text-sm">{s.label}</dt>
               </div>
             ))}
           </dl>
@@ -202,7 +202,7 @@ export default function Landing() {
           <div className="mx-auto w-full max-w-7xl px-6">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <p className="text-sm font-semibold text-brand">Built for the continent</p>
-              <h2 className="mt-2 max-w-xl text-3xl font-bold text-slate-900 sm:text-4xl">From savanna sunsets to city skylines — savings everywhere you go.</h2>
+              <h2 className="mt-2 max-w-xl text-3xl font-bold text-nv-ink sm:text-4xl">Savings in the cities where you live and travel.</h2>
             </motion.div>
           </div>
         </div>

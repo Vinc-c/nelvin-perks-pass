@@ -2,11 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Image } from "@/components/ui/image";
 import Motif from "@/components/brand/Motif";
-import { OFFER_CATEGORIES } from "@/data/offerCategories";
+import { OFFER_CATEGORIES, CATEGORY_LABELS_EN } from "@/data/offerCategories";
 import { CATEGORY_IMAGES } from "@/data/categoryImages";
 
 const keys = OFFER_CATEGORIES.map((c) => c.value);
-const labels = Object.fromEntries(OFFER_CATEGORIES.map((c) => [c.value, c.label]));
+const labels = Object.fromEntries(OFFER_CATEGORIES.map((c) => [c.value, CATEGORY_LABELS_EN[c.value] || c.label]));
 
 function MiniCard({ k, count, hidden }) {
   return (
@@ -14,18 +14,18 @@ function MiniCard({ k, count, hidden }) {
       to={`/merchant-directory?category=${k}`}
       tabIndex={hidden ? -1 : undefined}
       aria-hidden={hidden || undefined}
-      className="block w-full flex-shrink-0 overflow-hidden rounded-2xl bg-white shadow-lg shadow-slate-300/40 ring-1 ring-slate-100 transition hover:ring-[#D4A13A]"
+      className="block w-full flex-shrink-0 overflow-hidden rounded-2xl bg-white shadow-lg shadow-slate-300/40 ring-1 ring-nv-line transition hover:ring-[#C8A24A]"
     >
       <div className="relative h-24 w-full">
         <Image src={CATEGORY_IMAGES[k]} fittingType="fill" className="h-full w-full" />
         <Motif category={k} className="absolute left-2 top-2 h-7 w-7 shadow ring-2 ring-white" rounded="rounded-full" />
-        <span className="absolute bottom-2 left-2 rounded-full bg-brand px-2 py-0.5 text-[10px] font-bold text-white shadow">
-          Premium perk
+        <span className="absolute bottom-2 left-2 rounded-full bg-nv-gold px-2 py-0.5 text-[10px] font-bold text-nv-ink shadow">
+          Member offer
         </span>
       </div>
-      <div className="flex items-center justify-between gap-2 px-3 py-2">
-        <p className="truncate text-xs font-bold text-slate-900">{labels[k]}</p>
-        {count > 0 && <span className="hidden shrink-0 text-[10px] font-semibold text-slate-500 sm:inline">{count} offre{count > 1 ? "s" : ""}</span>}
+      <div className="flex items-center justify-between gap-2 px-2 py-2 sm:px-3">
+        <p className="min-w-0 break-words text-[11px] font-bold leading-tight text-nv-ink sm:text-xs">{labels[k]}</p>
+        {count > 0 && <span className="hidden shrink-0 text-[10px] font-semibold text-nv-muted sm:inline">{count} offre{count > 1 ? "s" : ""}</span>}
       </div>
     </Link>
   );

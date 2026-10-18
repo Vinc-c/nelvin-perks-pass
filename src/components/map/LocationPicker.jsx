@@ -117,8 +117,8 @@ export default function LocationPicker({ value, onChange, dark = false, lang = "
   }), [value]);
 
   const field = dark
-    ? "w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white placeholder:text-white/40 outline-none focus:border-[#D4A13A]"
-    : "w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#0E1A3B] focus:ring-2 focus:ring-[#0E1A3B]/10";
+    ? "w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white placeholder:text-white/40 outline-none focus:border-[#C8A24A]"
+    : "w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-[#08261D] focus:ring-2 focus:ring-[#08261D]/10";
   const muted = dark ? "text-white/60" : "text-slate-500";
 
   return (
@@ -133,11 +133,11 @@ export default function LocationPicker({ value, onChange, dark = false, lang = "
           className={field}
         />
         <button type="button" onClick={search} disabled={busy !== null || query.trim().length < 3}
-          className="nv-focus inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-[#0E1A3B] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#27306E] disabled:opacity-50">
+          className="nv-focus inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-[#08261D] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#0F4A38] disabled:opacity-50">
           {busy === "search" && <Loader2 className="h-4 w-4 animate-spin" />} {T.search}
         </button>
         <button type="button" onClick={locateMe} disabled={busy !== null}
-          className={`nv-focus inline-flex shrink-0 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold ring-1 disabled:opacity-50 ${dark ? "text-white ring-white/20 hover:bg-white/10" : "text-[#0E1A3B] ring-slate-200 hover:bg-slate-50"}`}>
+          className={`nv-focus inline-flex shrink-0 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold ring-1 disabled:opacity-50 ${dark ? "text-white ring-white/20 hover:bg-white/10" : "text-[#08261D] ring-slate-200 hover:bg-slate-50"}`}>
           {busy === "me" && <Loader2 className="h-4 w-4 animate-spin" />} {T.here}
         </button>
       </div>
@@ -155,7 +155,7 @@ export default function LocationPicker({ value, onChange, dark = false, lang = "
           ))}
         </ul>
       )}
-      {error && <p role="alert" className="text-sm text-[#9C4A2F]">{error}</p>}
+      {error && <p role="alert" className="text-sm text-[#A8472A]">{error}</p>}
 
       <div className="relative h-64 overflow-hidden rounded-xl ring-1 ring-black/5" aria-label={T.map}>
         <MapContainer bounds={point ? undefined : AFRICA_BOUNDS} center={point ? [point.lat, point.lng] : undefined} zoom={point ? 16 : undefined}
@@ -170,7 +170,7 @@ export default function LocationPicker({ value, onChange, dark = false, lang = "
       <p className={`text-xs ${muted}`}>
         {point ? T.placed(point.lat.toFixed(5), point.lng.toFixed(5)) : T.hint}
         {point && (
-          <button type="button" onClick={() => set({ lat: null, lng: null })} className={`not-pill ml-2 font-semibold underline underline-offset-2 ${dark ? "text-white" : "text-[#0E1A3B]"}`}>{T.clear}</button>
+          <button type="button" onClick={() => set({ lat: null, lng: null })} className={`not-pill ml-2 font-semibold underline underline-offset-2 ${dark ? "text-white" : "text-[#08261D]"}`}>{T.clear}</button>
         )}
       </p>
     </div>

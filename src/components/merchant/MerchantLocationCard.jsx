@@ -63,10 +63,10 @@ export default function MerchantLocationCard({ merchant, onSaved }) {
         <LocationPicker value={loc} onChange={setLoc} />
       </div>
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <button onClick={save} disabled={saving} className="inline-flex items-center gap-2 rounded-lg bg-[#0E1A3B] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#27306E] disabled:opacity-60">
+        <button onClick={save} disabled={saving} className="inline-flex items-center gap-2 rounded-lg bg-[#08261D] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#0F4A38] disabled:opacity-60">
           {saving && <Loader2 className="h-4 w-4 animate-spin" />} Enregistrer l'emplacement
         </button>
-        {onMap && <Link to={`/merchant-map?m=${merchant.id}`} className="text-sm font-medium text-[#0E1A3B] underline underline-offset-4">Voir sur la carte publique</Link>}
+        {onMap && <Link to={`/merchant-map?m=${merchant.id}`} className="text-sm font-medium text-[#08261D] underline underline-offset-4">Voir sur la carte publique</Link>}
       </div>
     </section>
   );
