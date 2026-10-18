@@ -22,6 +22,7 @@ const MerchantPortal = lazy(() => import('@/pages/MerchantPortal'));
 const BecomePartner = lazy(() => import('@/pages/BecomePartner'));
 const AdminPortal = lazy(() => import('@/pages/AdminPortal'));
 const OfferDetails = lazy(() => import('@/pages/OfferDetails'));
+const PartnerPage = lazy(() => import('@/pages/PartnerPage'));
 const WalletActivity = lazy(() => import('@/pages/WalletActivity'));
 const CampaignEditor = lazy(() => import('@/pages/CampaignEditor'));
 const KycVerification = lazy(() => import('@/pages/KycVerification'));
@@ -89,6 +90,8 @@ const AuthenticatedApp = () => {
       <Route path="/merchant-directory" element={<MerchantDirectory />} />
       <Route path="/merchant-map" element={<MerchantMap />} />
       <Route path="/offer-details" element={<OfferDetails />} />
+      <Route path="/offre/:slug" element={<OfferDetails />} />
+      <Route path="/partenaire/:slug" element={<PartnerPage />} />
       <Route path="/help-center" element={<HelpCenter />} />
 
       {/* Legal */}

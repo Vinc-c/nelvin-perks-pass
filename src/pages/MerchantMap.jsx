@@ -1,3 +1,4 @@
+import { offerPath } from "@/lib/seo";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import PartnerMap, { distanceKm } from "@/components/map/PartnerMap";
@@ -171,7 +172,7 @@ export default function MerchantMap() {
                     <ul className="space-y-2">
                       {selOffers.map((o) => (
                         <li key={o.id} className="flex items-center gap-2 rounded-xl bg-white p-3 text-[#0E1A3B]">
-                          <Link to={`/offer-details?id=${o.id}`} className="nv-focus min-w-0 flex-1 rounded">
+                          <Link to={offerPath(o)} className="nv-focus min-w-0 flex-1 rounded">
                             <p className="truncate text-sm font-semibold">{o.title}</p>
                             <p className="text-sm font-bold text-[#0E7C66]">{offerBadge(o, fmt)}{Number(o.cashback_rate) > 0 && o.discount_type !== "CASHBACK" ? ` + ${o.cashback_rate}% de cashback` : ""}</p>
                           </Link>

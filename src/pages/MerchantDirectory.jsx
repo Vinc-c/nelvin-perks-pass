@@ -1,3 +1,4 @@
+import { offerPath } from "@/lib/seo";
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -107,7 +108,7 @@ export default function MerchantDirectory() {
                   )}
                   <div className="flex-1" />
                   {best && (
-                    <Link to={`/offer-details?id=${best.id}`} className="mt-3 block w-full rounded-xl bg-emerald-500 py-2 text-center text-sm font-medium text-white hover:bg-emerald-600">
+                    <Link to={offerPath(best)} className="mt-3 block w-full rounded-xl bg-emerald-500 py-2 text-center text-sm font-medium text-white hover:bg-emerald-600">
                       Voir l'offre{list.length > 1 ? ` (+${list.length - 1})` : ""}
                     </Link>
                   )}

@@ -83,7 +83,7 @@ Les clés se saisissent dans *Admin → Paiements → Clés PSP & routage* :
 ## Offres et validation
 
 - **Deux façons de valider** : le code QR personnel (scanné ou saisi par le partenaire) ou le **PIN de caisse** du partenaire, saisi sur le téléphone du membre (aucune connexion partenaire nécessaire en caisse). Le PIN est stocké haché ; 5 erreurs bloquent les essais 15 minutes.
-- **Limites d'utilisation** par membre et par offre (par jour, semaine, mois, an ou au total), par exemple un « 1 acheté = 1 offert » une fois par an. La limite est vérifiée à la génération du code et au moment de la validation.
+- **Limites d'utilisation** par membre et par offre (par jour, semaine, mois, an ou au total), par exemple un privilège premium (dessert offert, surclassement…) une fois par an. La limite est vérifiée à la génération du code et au moment de la validation.
 - **Favoris** et **avis vérifiés** : seuls les membres ayant réellement utilisé une offre peuvent la noter ; la note du partenaire est calculée à partir des avis (plus de note fictive). Les admins peuvent masquer un avis.
 
 ## Abonnements particuliers
@@ -125,6 +125,7 @@ supabase db push
 | `20261006190000_offer_limits_pin_favorites_reviews.sql` | Limites d'utilisation par offre, validation par PIN, favoris, avis vérifiés |
 | `20261006200000_family_gift_memberships.sql` | Abonnement famille et abonnement offert (codes cadeaux) |
 | `20261018100000_payment_methods_env_fallback.sql` | Moyens de paiement proposés alignés sur le routeur (repli sur les secrets d'environnement) |
+| `20261018110000_premium_perks_seo.sql` | Type d'offre « Privilège » (remplace le 2-pour-1), réservation WhatsApp, slugs et champs SEO éditables (offres et partenaires), pages `/offre/:slug` et `/partenaire/:slug` |
 
 ### Edge Functions
 

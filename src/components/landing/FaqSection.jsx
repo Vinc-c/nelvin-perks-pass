@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 
 const faqs = [
-  { q: "What is Nelvin?", a: "Nelvin is a perks and benefits membership for African cities: Buy 1 Get 1 Free, discounts and cashback at verified restaurants, hotels, spas, gyms and more. You can join on your own, or through your employer's Nelvin programme." },
+  { q: "What is Nelvin?", a: "Nelvin is a perks and benefits membership for African cities: premium perks, discounts and cashback at verified restaurants, hotels, spas, gyms and more. You can join on your own, or through your employer's Nelvin programme." },
   { q: "How do the Nelvin offers work?", a: "Pick an offer in the app and redeem it at the till: either the partner scans your personal code, valid for 3 minutes, or the cashier types their PIN on your phone. The discount applies to the real bill and any cashback lands in your wallet straight away." },
   { q: "How do I create an account?", a: "Sign up with your email, choose a membership and start redeeming. Nelvin opens in your phone's browser and installs on your home screen in one tap, with no app store needed. Employees can also join with their company's invitation code." },
   { q: "How do I pay for my membership?", a: "By Mobile Money, card, bank transfer or with your Nelvin wallet balance. Prices are shown in your local currency, including FCFA, naira, cedi and shilling." },

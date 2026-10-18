@@ -119,6 +119,7 @@ const NAV = {
     ...group("Clients & partenaires", [
       { to: "/admin", section: "companies", label: "Entreprises", icon: Building2 },
       { to: "/admin", section: "kyc", label: "Validation marchands", icon: Shield },
+      { to: "/admin", section: "offers", label: "Offres & SEO", icon: Tag },
       { to: "/admin", section: "sales", label: "Codes commerciaux", icon: Ticket },
       { to: "/merchant-directory", label: "Annuaire marchands", icon: Store },
     ]),

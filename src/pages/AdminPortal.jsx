@@ -10,6 +10,7 @@ import AdminCmsCopy from "@/components/admin/AdminCmsCopy";
 import AdminCmsCategories from "@/components/admin/AdminCmsCategories";
 import AdminCompanyManagement from "@/components/admin/AdminCompanyManagement";
 import AdminMerchantVetting from "@/components/admin/AdminMerchantVetting";
+import AdminOffers from "@/components/admin/AdminOffers";
 import AdminSalesCodes from "@/components/admin/AdminSalesCodes";
 import AdminStaffManagement from "@/components/admin/AdminStaffManagement";
 import AdminPspSettings from "@/components/admin/AdminPspSettings";
@@ -27,6 +28,7 @@ const SECTIONS = {
   cms_categories: AdminCmsCategories,
   companies: AdminCompanyManagement,
   kyc: AdminMerchantVetting,
+  offers: AdminOffers,
   sales: AdminSalesCodes,
   staff: AdminStaffManagement,
   psp: AdminPspSettings,

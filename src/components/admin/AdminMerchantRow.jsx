@@ -1,4 +1,5 @@
 import LocationPicker from "@/components/map/LocationPicker";
+import MerchantProfileEditor from "@/components/merchant/MerchantProfileEditor";
 import React, { useState } from "react";
 import { Image } from "@/components/ui/image";
 import { entities } from "@/api/entities";
@@ -147,6 +148,10 @@ export default function AdminMerchantRow({ merchant: m, onStatus, onChange }) {
           <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Documents KYC</p>
             <Documents merchantId={m.id} />
+          </div>
+          <div>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Profil public & SEO</p>
+            <MerchantProfileEditor merchant={m} onSaved={(u) => onChange?.(u)} />
           </div>
           <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Localisation (carte des offres)</p>
