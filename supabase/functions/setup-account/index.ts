@@ -24,7 +24,7 @@ serve(async (req) => {
   const body = await readJson(req);
   const type = String(body.account_type || "");
   const role = ROLE_BY_TYPE[type];
-  if (!role) return json({ error: "Invalid account type" }, 400);
+  if (!role) return json({ error: "Type de compte invalide." }, 400);
   if (role === "MERCHANT") {
     return json({ error: "Les marchands s'inscrivent via la candidature partenaire." }, 400);
   }
@@ -35,8 +35,8 @@ serve(async (req) => {
 
   if (role === "HR_ADMIN") {
     const name = String(body.company_name || "").trim();
-    if (!name) return json({ error: "Company name is required" }, 400);
-    if (name.length > 120) return json({ error: "Company name is too long" }, 400);
+    if (!name) return json({ error: "Le nom de l'entreprise est obligatoire." }, 400);
+    if (name.length > 120) return json({ error: "Le nom de l'entreprise est trop long (120 caractères max)." }, 400);
     const country = String(body.country || "").trim().slice(0, 60);
     const { data: starter } = await admin.from("plans").select("max_employees").eq("code", "STARTER").maybeSingle();
     const { data: company, error } = await admin

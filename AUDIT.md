@@ -4,7 +4,7 @@ Audit complet réalisé le 6 octobre 2026 · plateforme développée par [liafri
 
 ## Résumé
 
-L'application affichait de nombreux modules « de façade » : données fictives, actions sans effet, montants incohérents entre devises et contrôles d'accès faits uniquement dans l'interface. Chaque module repose désormais sur des données réelles, avec les règles métier appliquées en base (RLS + fonctions SQL atomiques) et vérifiées par 85 tests SQL automatisés.
+L'application affichait de nombreux modules « de façade » : données fictives, actions sans effet, montants incohérents entre devises et contrôles d'accès faits uniquement dans l'interface. Chaque module repose désormais sur des données réelles, avec les règles métier appliquées en base (RLS + fonctions SQL atomiques) et contrôlées par des tests SQL automatisés (les scripts de test ne sont pas inclus dans ce dépôt).
 
 ## Failles corrigées (sécurité / multi-tenant)
 

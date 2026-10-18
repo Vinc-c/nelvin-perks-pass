@@ -37,7 +37,8 @@ export default function MerchantStatusGate({ children }) {
   if (merchant.verified_status === "PENDING") {
     return (
       <MerchantStatusCard icon={Clock} tone="amber" title="Candidature en cours d'examen"
-        text={`Merci ! « ${merchant.name} » est en cours de validation par notre équipe (2 à 3 jours ouvrés). Vous serez notifié dès l'activation.`} />
+        text={`Merci ! « ${merchant.name} » est en cours de validation par notre équipe (2 à 3 jours ouvrés). Vous serez notifié dès l'activation. Vous pouvez déjà déposer vos documents de vérification.`}
+        cta={{ href: "/kyc-verification", label: "Envoyer mes documents KYC" }} />
     );
   }
 

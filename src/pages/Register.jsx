@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UserPlus, Mail, Lock, Loader2, ArrowRight } from "lucide-react";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import AccountTypePicker from "@/components/AccountTypePicker";
+import AccountTypePicker, { ACCOUNT_TYPES } from "@/components/AccountTypePicker";
 import PhoneInput from "@/components/PhoneInput";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
@@ -21,7 +21,11 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [accountType, setAccountType] = useState("particulier");
+  // /register?type=marchand (from the partner page) pre-selects the account type.
+  const [accountType, setAccountType] = useState(() => {
+    const t = new URLSearchParams(window.location.search).get("type");
+    return ACCOUNT_TYPES.some((a) => a.v === t) ? t : "particulier";
+  });
   const [phone, setPhone] = useState("");
   const [step, setStep] = useState(0);
   const [otpCode, setOtpCode] = useState("");
