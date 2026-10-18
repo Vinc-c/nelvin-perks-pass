@@ -39,15 +39,15 @@ export default function Register() {
     e.preventDefault();
     setError("");
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError("Les mots de passe ne correspondent pas.");
       return;
     }
     if (!phone.trim() || phone.replace(/\D/g, "").length < 6) {
       setError("Indiquez un numéro de téléphone valide.");
       return;
     }
-    if (password.length < 6) {
-      setError("Le mot de passe doit contenir au moins 6 caractères.");
+    if (password.length < 8) {
+      setError("Le mot de passe doit contenir au moins 8 caractères.");
       return;
     }
     setLoading(true);
@@ -55,13 +55,13 @@ export default function Register() {
       const { needsVerification } = await signUp({ email, password, metadata: { phone, ...(referralCode ? { referral_code: referralCode } : {}) } });
       if (!needsVerification) {
         // Email confirmation disabled on the project: already signed in.
-        try { await updateMe({ phone }); } catch (_) { /* optional */ }
+        try { await updateMe({ phone }); } catch { /* optional */ }
         window.location.href = safeReturnTo() !== "/" ? safeReturnTo() : onboardingDest(accountType);
         return;
       }
       setStep(1);
     } catch (err) {
-      setError(err.message || "Registration failed");
+      setError(err.message || "Inscription impossible.");
     } finally {
       setLoading(false);
     }
@@ -73,11 +73,11 @@ export default function Register() {
     setLoading(true);
     try {
       await verifySignupOtp(email, otpCode);
-      try { await updateMe({ phone }); } catch (_) { /* optional */ }
+      try { await updateMe({ phone }); } catch { /* optional */ }
       const dest = onboardingDest(accountType);
       window.location.href = safeReturnTo() !== "/" ? safeReturnTo() : dest;
     } catch (err) {
-      setError(err.message || "Invalid verification code");
+      setError(err.message || "Code de vérification invalide.");
     } finally {
       setLoading(false);
     }
@@ -85,7 +85,7 @@ export default function Register() {
 
   const resend = async () => {
     setError("");
-    try { await resendSignupOtp(email); } catch (err) { setError(err.message || "Failed to resend code"); }
+    try { await resendSignupOtp(email); } catch (err) { setError(err.message || "Impossible de renvoyer le code."); }
   };
 
   const handleGoogle = async () => {
@@ -100,16 +100,16 @@ export default function Register() {
   return (
     <AuthLayout
       icon={UserPlus}
-      title="Create your account"
-      subtitle="Sign up to get started"
+      title="Créer votre compte"
+      subtitle="Inscrivez-vous pour commencer"
       footer={
         <>
-          Already have an account?{" "}
+          Déjà un compte ?{" "}
           <Link
             to={"/login" + (safeReturnTo() !== "/" ? "?returnTo=" + encodeURIComponent(safeReturnTo()) : "")}
             className="text-primary font-medium hover:underline"
           >
-            Log in
+            Se connecter
           </Link>
         </>
       }
@@ -128,7 +128,7 @@ export default function Register() {
 
             <Button variant="outline" className="w-full h-12 text-sm font-medium mb-6" onClick={handleGoogle}>
               <GoogleIcon className="w-5 h-5 mr-2" />
-              Continue with Google
+              Continuer avec Google
             </Button>
 
             <div className="relative mb-6">
@@ -136,7 +136,7 @@ export default function Register() {
                 <div className="w-full border-t border-border" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-3 text-muted-foreground">or</span>
+                <span className="bg-card px-3 text-muted-foreground">ou</span>
               </div>
             </div>
 
@@ -149,7 +149,7 @@ export default function Register() {
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
-                  <Input id="email" type="email" autoComplete="email" autoFocus placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-10 h-12" required />
+                  <Input id="email" type="email" autoComplete="email" autoFocus placeholder="vous@exemple.com" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-10 h-12" required />
                 </div>
               </div>
               <div className="space-y-2">
@@ -157,21 +157,21 @@ export default function Register() {
                 <PhoneInput value={phone} onChange={setPhone} required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Mot de passe (8 caractères min.)</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
                   <Input id="password" type="password" autoComplete="new-password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className="pl-10 h-12" required />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirm">Confirm Password</Label>
+                <Label htmlFor="confirm">Confirmer le mot de passe</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
                   <Input id="confirm" type="password" autoComplete="new-password" placeholder="••••••••" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="pl-10 h-12" required />
                 </div>
               </div>
               <Button type="submit" className="w-full h-12 font-medium" disabled={loading}>
-                {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Creating account...</> : <>Create account <ArrowRight className="ml-2 h-4 w-4" /></>}
+                {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Création du compte…</> : <>Créer mon compte <ArrowRight className="ml-2 h-4 w-4" /></>}
               </Button>
             </form>
           </motion.div>
@@ -179,8 +179,8 @@ export default function Register() {
 
         {step === 1 && (
           <motion.div key="otp" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
-            <h2 className="text-xl font-bold tracking-tight text-slate-900">Verify your email</h2>
-            <p className="mt-1 text-sm text-slate-500">We sent a 6-digit code to {email}</p>
+            <h2 className="text-xl font-bold tracking-tight text-slate-900">Vérifiez votre email</h2>
+            <p className="mt-1 text-sm text-slate-500">Nous avons envoyé un code à 6 chiffres à {email}</p>
             {error && <div className="mt-4 rounded-lg bg-rose-50 p-3 text-sm text-rose-600">{error}</div>}
             <div className="mt-6 flex justify-center">
               <InputOTP maxLength={6} value={otpCode} onChange={setOtpCode} autoFocus autoComplete="one-time-code">
@@ -191,11 +191,11 @@ export default function Register() {
               </InputOTP>
             </div>
             <Button className="mt-6 h-12 w-full font-medium" onClick={verify} disabled={loading || otpCode.length < 6}>
-              {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Verifying...</> : <>Verify & continue <ArrowRight className="ml-2 h-4 w-4" /></>}
+              {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Vérification…</> : <>Vérifier et continuer <ArrowRight className="ml-2 h-4 w-4" /></>}
             </Button>
             <p className="mt-4 text-center text-sm text-slate-500">
-              Didn't receive the code?{" "}
-              <button onClick={resend} className="font-medium text-primary hover:underline">Resend</button>
+              Code non reçu ?{" "}
+              <button onClick={resend} className="font-medium text-primary hover:underline">Renvoyer</button>
             </p>
           </motion.div>
         )}

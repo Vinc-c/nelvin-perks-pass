@@ -92,17 +92,22 @@ function idealRoute({ audience, method, country }) {
 /**
  * Selects the PSP for a payment. Mirrors the server: the ideal route is used
  * when its provider is enabled in Admin → PSP, otherwise the first enabled
- * fallback, then any enabled provider supporting the method.
+ * fallback, then any enabled provider supporting the method (in the order of
+ * `enabled`, i.e. admin priority). Providers with stored keys are preferred;
+ * when none has stored keys, every enabled provider is considered.
  * @param {object} ctx { audience, method, country }
- * @param {{id: string, methods?: string[]}[]} [enabled] enabled providers
+ * @param {{id: string, methods?: string[], has_secret?: boolean}[]} [enabled] enabled providers, by priority
  * @returns {{ primary: Object, fallback: Object[], reason: string }}
  */
 export function routePayment(ctx, enabled) {
   const ideal = idealRoute(ctx);
   if (!enabled || enabled.length === 0) return ideal;
-  const usable = (p) => enabled.some((e) => e.id === p.id && (!e.methods?.length || e.methods.includes(ctx.method)));
+  const keyed = enabled.filter((e) => e.has_secret);
+  const pool = keyed.length > 0 ? keyed : enabled;
+  const usable = (p) => pool.some((e) => e.id === p.id && (!e.methods?.length || e.methods.includes(ctx.method)));
   const chain = [ideal.primary, ...ideal.fallback];
-  const pick = chain.find(usable) || PSPS.find(usable);
+  const pick = chain.find(usable) ||
+    PSPS.filter(usable).sort((a, b) => pool.findIndex((e) => e.id === a.id) - pool.findIndex((e) => e.id === b.id))[0];
   if (!pick) throw new Error("Aucun moyen de paiement actif pour cette méthode.");
   if (pick.id === ideal.primary.id) return ideal;
   return { primary: pick, fallback: chain.filter((p) => p.id !== pick.id && usable(p)), reason: `${ideal.primary.name} indisponible : paiement routé vers ${pick.name}.` };

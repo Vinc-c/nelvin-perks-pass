@@ -85,7 +85,6 @@ export default function MerchantPortal() {
     })();
     const unsub = merchantId ? entities.Redemption.subscribe(() => load().catch(() => {}), { filter: `merchant_id=eq.${merchantId}` }) : () => {};
     return () => { alive = false; unsub(); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [merchantId]);
 
   const redeemed = useMemo(() => redemptions.filter((r) => r.status === "REDEEMED"), [redemptions]);

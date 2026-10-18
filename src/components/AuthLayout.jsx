@@ -8,7 +8,7 @@ const FOOD = "/images/categories/food-dining.webp";
 const FITNESS = "/images/categories/fitness-sports.webp";
 const BEAUTY = "/images/categories/beauty-care.webp";
 
-export default function AuthLayout({ icon: Icon, title, subtitle, footer, children }) {
+export default function AuthLayout({ title, subtitle, footer, children }) {
   return (
     <div className="relative flex min-h-screen items-stretch justify-center bg-[radial-gradient(ellipse_at_top,_#e0f7fa_0%,_#f4f9fc_45%,_#ffffff_100%)]">
       <div className="grid w-full max-w-6xl min-h-screen lg:grid-cols-2">
@@ -33,7 +33,7 @@ export default function AuthLayout({ icon: Icon, title, subtitle, footer, childr
             </div>
             <div className="max-w-sm text-white">
               <h2 className="text-2xl font-bold leading-tight">Les bons plans et avantages salariés des villes africaines.</h2>
-              <p className="mt-3 text-sm text-white/80">Dining, hotels, spas, fitness & more — save thousands every year with your Nelvin membership.</p>
+              <p className="mt-3 text-sm text-white/80">Restaurants, hôtels, spas, sport et plus encore : économisez chaque année avec votre pass Nelvin.</p>
             </div>
           </div>
         </div>

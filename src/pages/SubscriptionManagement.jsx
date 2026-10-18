@@ -87,7 +87,7 @@ export default function SubscriptionManagement() {
           <h2 className="text-2xl font-bold">{plan?.name || (trial ? `Essai gratuit — ${company?.plan_tier}` : "Aucun abonnement")}</h2>
           {current ? (
             <>
-              <p className="mt-1 text-sm text-amber-50">{current.cancel_at_period_end ? "Se termine" : "Valable"} le {new Date(current.expires_at).toLocaleDateString("fr-FR")} ({daysLeft} j)</p>
+              {current.expires_at && <p className="mt-1 text-sm text-amber-50">{current.cancel_at_period_end ? "Se termine" : "Valable"} le {new Date(current.expires_at).toLocaleDateString("fr-FR")} ({daysLeft} j)</p>}
               <p className="mt-4 flex items-center gap-2 text-sm text-amber-50"><Calendar className="h-4 w-4" /> Facturation {current.billing_cycle === "ANNUAL" ? "annuelle" : "mensuelle"}</p>
             </>
           ) : trial ? (

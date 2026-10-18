@@ -58,7 +58,7 @@ function Follow({ point }) {
   const map = useMap();
   useEffect(() => {
     if (point) map.flyTo([point.lat, point.lng], Math.max(map.getZoom(), 16), { duration: 0.5 });
-  }, [point?.lat, point?.lng]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [point?.lat, point?.lng]);
   return null;
 }
 
@@ -114,7 +114,7 @@ export default function LocationPicker({ value, onChange, dark = false, lang = "
       const ll = e.target.getLatLng();
       set({ lat: Number(ll.lat.toFixed(6)), lng: Number(ll.lng.toFixed(6)) });
     },
-  }), [value]); // eslint-disable-line react-hooks/exhaustive-deps
+  }), [value]);
 
   const field = dark
     ? "w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white placeholder:text-white/40 outline-none focus:border-[#D4A13A]"

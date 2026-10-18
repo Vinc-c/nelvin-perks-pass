@@ -26,7 +26,6 @@ export function useAsync(loader, deps = [], { initial = null, enabled = true } =
     } finally {
       if (id === seq.current) setLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, ...deps]);
 
   useEffect(() => {

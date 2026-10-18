@@ -22,11 +22,11 @@ export default function ResetPassword() {
     e.preventDefault();
     setError("");
     if (newPassword !== confirmPassword) {
-      setError("Passwords do not match");
+      setError("Les mots de passe ne correspondent pas.");
       return;
     }
-    if (newPassword.length < 6) {
-      setError("Le mot de passe doit contenir au moins 6 caractères.");
+    if (newPassword.length < 8) {
+      setError("Le mot de passe doit contenir au moins 8 caractères.");
       return;
     }
     setLoading(true);
@@ -34,7 +34,7 @@ export default function ResetPassword() {
       await updatePassword(newPassword);
       window.location.href = "/app";
     } catch (err) {
-      setError(err.message || "Failed to reset password");
+      setError(err.message || "Impossible de modifier le mot de passe.");
     } finally {
       setLoading(false);
     }
@@ -42,7 +42,7 @@ export default function ResetPassword() {
 
   if (!authChecked) {
     return (
-      <AuthLayout icon={Lock} title="New password" subtitle="Vérification du lien…">
+      <AuthLayout icon={Lock} title="Nouveau mot de passe" subtitle="Vérification du lien…">
         <div className="flex justify-center py-4"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>
       </AuthLayout>
     );
@@ -52,16 +52,16 @@ export default function ResetPassword() {
     return (
       <AuthLayout
         icon={AlertTriangle}
-        title="Invalid reset link"
-        subtitle="This password reset link is missing or invalid"
+        title="Lien de réinitialisation invalide"
+        subtitle="Ce lien de réinitialisation est absent ou invalide"
         footer={
           <Link to="/forgot-password" className="text-primary font-medium hover:underline">
-            Request a new link
+            Demander un nouveau lien
           </Link>
         }
       >
         <p className="text-sm text-foreground text-center">
-          The link you used appears to be incomplete. Please request a new password reset email.
+          Le lien utilisé semble incomplet. Demandez un nouvel email de réinitialisation.
         </p>
       </AuthLayout>
     );
@@ -70,8 +70,8 @@ export default function ResetPassword() {
   return (
     <AuthLayout
       icon={Lock}
-      title="New password"
-      subtitle="Enter your new password below"
+      title="Nouveau mot de passe"
+      subtitle="Saisissez votre nouveau mot de passe (8 caractères min.)"
     >
       {error && (
         <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
@@ -80,7 +80,7 @@ export default function ResetPassword() {
       )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="password">New Password</Label>
+          <Label htmlFor="password">Nouveau mot de passe</Label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <Input
@@ -97,7 +97,7 @@ export default function ResetPassword() {
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="confirm">Confirm Password</Label>
+          <Label htmlFor="confirm">Confirmer le mot de passe</Label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <Input
@@ -116,10 +116,10 @@ export default function ResetPassword() {
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Resetting...
+              Modification…
             </>
           ) : (
-            "Reset password"
+            "Modifier le mot de passe"
           )}
         </Button>
       </form>

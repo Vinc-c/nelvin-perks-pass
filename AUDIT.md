@@ -49,7 +49,7 @@ L'application affichait de nombreux modules « de façade » : données fictives
 1. Appliquer les migrations sur le projet Supabase et déployer les Edge Functions (voir README).
 2. Saisir les clés PSP dans *Admin → Clés PSP & routage* puis passer chaque PSP en mode live.
 3. Configurer le modèle d'email OTP (`{{ .Token }}`), les URL de redirection et Google OAuth.
-4. Supprimer du projet Supabase les anciennes Edge Functions qui ne font plus partie du code (`invite-user`, `create-checkout-session`, `payment-webhook`).
+4. Supprimer du projet Supabase les anciennes Edge Functions qui ne font plus partie du code (`invite-user`, `create-checkout-session`). Attention : `payment-webhook` fait partie du code actuel (webhooks PSP) et doit au contraire rester déployée.
 5. Le schéma `legacy` conserve les anciennes tables (dont une copie de l'ancien code source) : à supprimer une fois les données vérifiées.
 6. Les super admins sont invités à activer la 2FA dans *Sécurité*.
 

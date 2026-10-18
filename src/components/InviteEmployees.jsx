@@ -33,7 +33,7 @@ export default function InviteEmployees() {
 
   const generate = async () => {
     if (!user?.company_id) {
-      toast({ title: "No company linked", description: "Your HR account isn't linked to a company.", variant: "destructive" });
+      toast({ title: "Aucune entreprise liée", description: "Votre compte RH n'est rattaché à aucune entreprise.", variant: "destructive" });
       return;
     }
     setLoading(true);
@@ -49,11 +49,11 @@ export default function InviteEmployees() {
         status: "PENDING",
         expires_at: expiresAt,
       });
-      toast({ title: "Invite code generated", description: `Share ${code} with your employee.` });
+      toast({ title: "Code d'invitation généré", description: `Transmettez ${code} à votre employé.` });
       setEmail(""); setName("");
       await load();
     } catch (err) {
-      toast({ title: "Failed to generate", description: err.message, variant: "destructive" });
+      toast({ title: "Génération impossible", description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -65,15 +65,15 @@ export default function InviteEmployees() {
     try {
       await entities.InviteCode.update(id, { status: "REVOKED" });
       await load();
-      toast({ title: "Invite revoked" });
+      toast({ title: "Invitation révoquée" });
     } catch (err) {
-      toast({ title: "Failed to revoke", description: err.message, variant: "destructive" });
+      toast({ title: "Révocation impossible", description: err.message, variant: "destructive" });
     }
   };
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5">
-      <h3 className="flex items-center gap-2 font-semibold text-slate-900"><UserPlus className="h-5 w-5 text-emerald-600" /> Invite employees</h3>
+      <h3 className="flex items-center gap-2 font-semibold text-slate-900"><UserPlus className="h-5 w-5 text-emerald-600" /> Inviter des employés</h3>
       <p className="mt-1 text-sm text-slate-500">Generate a one-time code. The employee joins at <span className="font-mono text-slate-700">/join</span> by entering the code + their email & password.</p>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3">

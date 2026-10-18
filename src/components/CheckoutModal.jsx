@@ -51,7 +51,6 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
         if (m?.length && !m.includes(method)) setMethod(m[0]);
       })
       .catch(() => setAvailable([]));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const isGift = purpose === "GIFT" && plan;

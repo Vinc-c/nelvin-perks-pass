@@ -94,12 +94,6 @@ export default function PartnerApplicationForm({ onSubmitted }) {
   const { categories } = useCategories();
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
-  const toggleCountry = (c) =>
-    setForm((f) => ({
-      ...f,
-      countries: f.countries.includes(c) ? f.countries.filter((x) => x !== c) : [...f.countries, c],
-    }));
-
   const addOffer = () =>
     setExtraOffers((o) => [...o, { headline: "", howToUse: "", redeemable: "BOTH", terms: "", expiry: "" }]);
   const removeOffer = (i) => setExtraOffers((o) => o.filter((_, idx) => idx !== i));
@@ -110,19 +104,19 @@ export default function PartnerApplicationForm({ onSubmitted }) {
     e.preventDefault();
     setError("");
     if (!form.email || !form.brandName || !form.contactName || !form.contactPhone || !form.city)
-      return setError("Please complete all required Basic Information fields.");
-    if (!form.category) return setError("Please select your brand category.");
+      return setError("Complétez tous les champs obligatoires des informations de base.");
+    if (!form.category) return setError("Sélectionnez la catégorie de votre marque.");
     if (!form.description || !form.supportEmail || !form.website)
-      return setError("Please complete all required Brand Details fields.");
+      return setError("Complétez tous les champs obligatoires du détail de la marque.");
     if (!files.logo || !files.cover || !files.product)
-      return setError("Please upload your brand logo, cover image and product image.");
+      return setError("Téléversez le logo, l'image de couverture et l'image produit de votre marque.");
     if (!form.offerHeadline || !form.offerHowToUse || !form.offerExpiry)
-      return setError("Please complete all required Offer Details fields.");
+      return setError("Complétez tous les champs obligatoires de l'offre.");
     if (form.offerRedeemable !== "ONLINE" && (place.lat == null || place.lng == null))
-      return setError("Please place your shop on the map so members can find you.");
-    if (form.countries.length === 0) return setError("Please select at least one country.");
+      return setError("Placez votre commerce sur la carte pour que les membres puissent vous trouver.");
+    if (form.countries.length === 0) return setError("Sélectionnez au moins un pays.");
     if (!tc.multi || !tc.twelve || !tc.openAll || !tc.better)
-      return setError("Please confirm all Terms & Conditions.");
+      return setError("Confirmez toutes les conditions générales.");
 
     try {
       setBusy(true);

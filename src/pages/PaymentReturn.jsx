@@ -57,7 +57,6 @@ export default function PaymentReturn() {
         toast({ title: "Vérification échouée", description: e.message || "Réessayez.", variant: "destructive" });
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

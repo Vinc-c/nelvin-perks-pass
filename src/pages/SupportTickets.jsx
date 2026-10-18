@@ -30,7 +30,6 @@ export default function SupportTickets() {
 
   useEffect(() => {
     if (!selectedId && !creating && tickets?.length) select(tickets[0].id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tickets]);
 
   const create = async (e) => {

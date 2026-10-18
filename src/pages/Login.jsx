@@ -28,7 +28,7 @@ export default function Login() {
       // returnTo destination was requested).
       window.location.href = returnTo !== "/" ? returnTo : "/app";
     } catch (err) {
-      setError(err.message || "Invalid email or password");
+      setError(err.message || "Email ou mot de passe invalide.");
     } finally {
       setLoading(false);
     }
@@ -46,16 +46,16 @@ export default function Login() {
   return (
     <AuthLayout
       icon={LogIn}
-      title="Welcome back"
-      subtitle="Log in to your account"
+      title="Bon retour"
+      subtitle="Connectez-vous à votre compte"
       footer={
         <>
-          Don't have an account?{" "}
+          Pas encore de compte ?{" "}
           <Link
             to={"/register" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : "")}
             className="text-primary font-medium hover:underline"
           >
-            Create one
+            Créer un compte
           </Link>
         </>
       }
@@ -66,7 +66,7 @@ export default function Login() {
         onClick={handleGoogle}
       >
         <GoogleIcon className="w-5 h-5 mr-2" />
-        Continue with Google
+        Continuer avec Google
       </Button>
 
       <div className="relative mb-6">
@@ -74,7 +74,7 @@ export default function Login() {
           <div className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-card px-3 text-muted-foreground">or</span>
+          <span className="bg-card px-3 text-muted-foreground">ou</span>
         </div>
       </div>
 
@@ -94,7 +94,7 @@ export default function Login() {
               type="email"
               autoComplete="email"
               autoFocus
-              placeholder="you@example.com"
+              placeholder="vous@exemple.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="pl-10 h-12"
@@ -104,7 +104,7 @@ export default function Login() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">Mot de passe</Label>
             <Link to="/forgot-password" className="text-xs text-primary hover:underline">
               Forgot password?
             </Link>
@@ -127,18 +127,18 @@ export default function Login() {
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Logging in...
+              Connexion…
             </>
           ) : (
-            "Log in"
+            "Se connecter"
           )}
         </Button>
       </form>
 
       <p className="text-center text-sm text-muted-foreground mt-5">
-        Joining your company?{" "}
+        Vous rejoignez votre entreprise ?{" "}
         <Link to="/join" className="text-primary font-medium hover:underline">
-          Use your HR invite code
+          Utilisez votre code d'invitation RH
         </Link>
       </p>
     </AuthLayout>
