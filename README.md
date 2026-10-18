@@ -124,6 +124,7 @@ supabase db push
 | `20261006180100_drop_legacy_source_snapshot.sql` | Supprime la copie de l'ancien code source laissée en base |
 | `20261006190000_offer_limits_pin_favorites_reviews.sql` | Limites d'utilisation par offre, validation par PIN, favoris, avis vérifiés |
 | `20261006200000_family_gift_memberships.sql` | Abonnement famille et abonnement offert (codes cadeaux) |
+| `20261018100000_payment_methods_env_fallback.sql` | Moyens de paiement proposés alignés sur le routeur (repli sur les secrets d'environnement) |
 
 ### Edge Functions
 
@@ -145,7 +146,7 @@ supabase functions deploy --no-verify-jwt
 | `check-access` | Accès aux portails selon l'abonnement |
 | `setup-account` | Onboarding (rôle, création de l'entreprise) |
 | `validate-invite-code` / `consume-invite-code` | Invitations salariés (limite de sièges) |
-| `submit-partner-application` | Candidature partenaire |
+| `submit-partner-application` | Candidature partenaire (compte connecté requis : la marque est liée au compte, qui devient marchand ; les comptes RH / salariés sont refusés) |
 | `psp-test` | Test de connexion d'un PSP (admin) |
 | `admin-invite-user` | Invitation email d'un futur admin (admin) |
 | `nelvin-support` | Assistant IA (API Anthropic) |

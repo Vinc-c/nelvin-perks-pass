@@ -1,5 +1,8 @@
-// Partner (merchant) application. Creates a PENDING merchant; when the
-// applicant is signed in, links the brand to them and makes them a MERCHANT.
+// Partner (merchant) application. The applicant must be signed in: the new
+// PENDING merchant is linked to their account (so they can follow the review,
+// upload KYC documents and reach the dashboard once validated) and the account
+// becomes a MERCHANT. Accounts tied to a company (employees, HR) are refused:
+// they would lose their role, so a separate merchant account is required.
 import { adminClient, getCaller, isAdminRole, json, readJson, serve } from "../_shared/http.ts";
 
 const CATEGORIES = [
@@ -15,19 +18,26 @@ const REQUIRED = [
 const str = (v: unknown, max = 500) => String(v ?? "").trim().slice(0, max);
 
 serve(async (req) => {
+  const admin = adminClient();
+  const caller = await getCaller(req, admin);
+  if (!caller) return json({ error: "Connectez-vous ou créez un compte marchand pour déposer votre candidature." }, 401);
+  if (!isAdminRole(caller.profile.role) && (caller.profile.role === "HR_ADMIN" || caller.profile.role === "EMPLOYEE" || caller.profile.company_id)) {
+    return json({ error: "Ce compte est rattaché à une entreprise. Créez un compte marchand distinct pour devenir partenaire." }, 409);
+  }
+
   const data = await readJson(req);
   for (const f of REQUIRED) {
-    if (!data[f]) return json({ error: `Missing required field: ${f}` }, 400);
+    if (!data[f]) return json({ error: `Champ obligatoire manquant : ${f}` }, 400);
   }
   const countries = Array.isArray(data.countries) ? data.countries.map((c) => str(c, 80)).filter(Boolean) : [];
-  if (countries.length === 0) return json({ error: "At least one country is required" }, 400);
+  if (countries.length === 0) return json({ error: "Sélectionnez au moins un pays." }, 400);
   const terms = Array.isArray(data.termsConfirmed) ? data.termsConfirmed : [];
-  if (terms.filter(Boolean).length < 4) return json({ error: "Please confirm all terms & conditions" }, 400);
+  if (terms.filter(Boolean).length < 4) return json({ error: "Confirmez toutes les conditions générales." }, 400);
   if (String(data.brandName).length > 120 || String(data.description).length > 2000) {
-    return json({ error: "Input too long" }, 400);
+    return json({ error: "Texte trop long (nom : 120 caractères, description : 2000)." }, 400);
   }
   const category = str(data.category, 40);
-  if (!CATEGORIES.includes(category)) return json({ error: "Invalid category" }, 400);
+  if (!CATEGORIES.includes(category)) return json({ error: "Catégorie invalide." }, 400);
   const redeemable = ["ONLINE", "OFFLINE", "BOTH"].includes(String(data.offerRedeemable)) ? String(data.offerRedeemable) : "BOTH";
   const expiry = /^\d{4}-\d{2}-\d{2}$/.test(String(data.offerExpiry)) ? String(data.offerExpiry) : null;
 
@@ -36,11 +46,8 @@ serve(async (req) => {
   const located = data.lat != null && data.lng != null && Number.isFinite(lat) && Number.isFinite(lng)
     && lat >= -40 && lat <= 40 && lng >= -30 && lng <= 65;
 
-  const admin = adminClient();
-  const caller = await getCaller(req, admin);
-
-  // A signed-in applicant who already owns a brand cannot create a second one.
-  if (caller?.profile.merchant_id && !isAdminRole(caller.profile.role)) {
+  // An applicant who already owns a brand cannot create a second one.
+  if (caller.profile.merchant_id && !isAdminRole(caller.profile.role)) {
     return json({ error: "Votre compte est déjà lié à une marque partenaire." }, 409);
   }
 
@@ -73,13 +80,13 @@ serve(async (req) => {
       offer_countries: countries.join(", "),
       application_notes: str(data.notes, 6000),
       verified_status: "PENDING",
-      created_by_id: caller?.user.id ?? null,
+      created_by_id: caller.user.id,
     })
     .select("id")
     .single();
   if (error) throw error;
 
-  if (caller && !caller.profile.merchant_id) {
+  if (!caller.profile.merchant_id) {
     const isAdmin = isAdminRole(caller.profile.role);
     await admin
       .from("profiles")

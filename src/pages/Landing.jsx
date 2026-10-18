@@ -66,7 +66,7 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen overflow-x-clip bg-[radial-gradient(ellipse_at_top,_#e0f7fa_0%,_#f4f9fc_45%,_#ffffff_100%)] font-body text-slate-900">
-      <a href="#contenu" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">Skip to content</a>
+      <a href="#contenu" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">Aller au contenu</a>
       {/* Nav */}
       <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/70 backdrop-blur-lg">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
@@ -74,28 +74,28 @@ export default function Landing() {
             <NelvinLogo className="h-12" />
           </div>
           <nav className="hidden items-center gap-7 text-sm font-medium text-slate-600 lg:flex">
-            <Link to="/merchant-directory" className="hover:text-brand">Offers</Link>
-            <Link to="/merchant-map" className="hover:text-brand">Near me</Link>
-            <Link to="/pricing" className="hover:text-brand">Pricing</Link>
-            <Link to="/merchant" className="hover:text-brand">For businesses</Link>
+            <Link to="/merchant-directory" className="hover:text-brand">Les offres</Link>
+            <Link to="/merchant-map" className="hover:text-brand">La carte</Link>
+            <Link to="/pricing" className="hover:text-brand">Tarifs</Link>
+            <Link to="/merchant" className="hover:text-brand">Commerçants</Link>
           </nav>
           <div className="flex items-center gap-2">
             <div className="hidden lg:block"><LanguageSwitcher compact variant="light" /></div>
             {isAuthenticated ? (
               <Link to="/app" className="hidden rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-brand/30 transition hover:bg-brand/90 sm:inline-flex">
-                Dashboard
+                Mon espace
               </Link>
             ) : (
               <>
                 <Link to="/login" className="hidden rounded-full px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 sm:inline-flex">
-                  Log in
+                  Connexion
                 </Link>
                 <Link to="/register" className="hidden rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-brand/30 transition hover:bg-brand/90 sm:inline-flex">
                   {t("cta.getStarted")}
                 </Link>
               </>
             )}
-            <button onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} className="rounded-full p-2 text-slate-700 hover:bg-slate-100 lg:hidden">
+            <button onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"} aria-expanded={menuOpen} className="rounded-full p-2 text-slate-700 hover:bg-slate-100 lg:hidden">
               {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
@@ -107,15 +107,15 @@ export default function Landing() {
               <LanguageSwitcher variant="light" />
             </div>
             <nav className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-              <Link to="/merchant-directory" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-slate-50">Offers</Link>
-              <Link to="/merchant-map" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-slate-50">Near me</Link>
-              <Link to="/pricing" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-slate-50">Pricing</Link>
-              <Link to="/merchant" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-slate-50">For businesses</Link>
+              <Link to="/merchant-directory" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-slate-50">Les offres</Link>
+              <Link to="/merchant-map" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-slate-50">La carte</Link>
+              <Link to="/pricing" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-slate-50">Tarifs</Link>
+              <Link to="/merchant" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-slate-50">Commerçants</Link>
               {isAuthenticated ? (
-                <Link to="/app" onClick={() => setMenuOpen(false)} className="mt-2 rounded-full bg-brand px-4 py-2.5 text-center font-semibold text-white">Dashboard</Link>
+                <Link to="/app" onClick={() => setMenuOpen(false)} className="mt-2 rounded-full bg-brand px-4 py-2.5 text-center font-semibold text-white">Mon espace</Link>
               ) : (
                 <>
-                  <Link to="/login" onClick={() => setMenuOpen(false)} className="mt-2 rounded-full border border-slate-200 px-4 py-2.5 text-center font-semibold text-slate-800">Log in</Link>
+                  <Link to="/login" onClick={() => setMenuOpen(false)} className="mt-2 rounded-full border border-slate-200 px-4 py-2.5 text-center font-semibold text-slate-800">Connexion</Link>
                   <Link to="/register" onClick={() => setMenuOpen(false)} className="rounded-full bg-brand px-4 py-2.5 text-center font-semibold text-white">{t("cta.getStarted")}</Link>
                 </>
               )}

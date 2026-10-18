@@ -81,7 +81,10 @@ export default function Onboarding() {
           </div>
           <AccountTypePicker value={type} onChange={setType} />
           <div className="mt-6">
-            <PartnerApplicationForm onSubmitted={() => { window.location.href = "/merchant-dashboard"; }} />
+            <PartnerApplicationForm
+              defaults={{ email: user?.email || "", contactName: user?.full_name || "", contactPhone: user?.phone || "" }}
+              onSubmitted={() => { window.location.href = "/merchant-dashboard"; }}
+            />
           </div>
         </div>
       </div>
