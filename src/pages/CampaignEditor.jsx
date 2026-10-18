@@ -6,7 +6,6 @@ import { entities } from "@/api/entities";
 import { useAuth } from "@/lib/AuthContext";
 import { isAdmin } from "@/lib/roles";
 import { useToast } from "@/components/ui/use-toast";
-import { useI18n } from "@/i18n/I18nContext";
 import { DISCOUNT_TYPES, AUDIENCES } from "@/data/offerCategories";
 import { useCategories } from "@/hooks/useCategories";
 import { Image as ImageIcon, Plus, Pencil, Trash2, X, Loader2, Star, Tag, Upload, TrendingUp } from "lucide-react";
@@ -29,7 +28,6 @@ const EMPTY = {
 };
 
 export default function CampaignEditor() {
-  const { t } = useI18n();
   const { user } = useAuth();
   const { toast } = useToast();
   const merchantId = user?.merchant_id;
@@ -60,7 +58,7 @@ export default function CampaignEditor() {
     }
   };
 
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [merchantId]);
+  useEffect(() => { load();   }, [merchantId]);
 
   const openNew = () => { setForm(EMPTY); setEditing("new"); };
   const openEdit = (o) => {

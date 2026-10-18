@@ -39,7 +39,7 @@ export default function NelvinSupportWidget() {
       });
       const reply = res.data?.reply || res.data?.error || "Désolé, une erreur est survenue. Réessayez.";
       setMessages((m) => [...m, { role: "assistant", content: reply }]);
-    } catch (e) {
+    } catch {
       setMessages((m) => [...m, { role: "assistant", content: "Désolé, une erreur est survenue. Réessayez." }]);
     } finally {
       setLoading(false);

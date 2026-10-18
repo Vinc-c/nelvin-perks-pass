@@ -17,7 +17,7 @@ export const OFFER_CATEGORIES = [
 ];
 
 export const categoryMeta = (value) =>
-  OFFER_CATEGORIES.find((c) => c.value === value) || { label: value || "Autre", emoji: "🏷️" };
+  OFFER_CATEGORIES.find((c) => c.value === value) || { value, label: value || "Autre", emoji: "🏷️" };
 
 export const DISCOUNT_TYPES = [
   { value: "PERCENTAGE", label: "Pourcentage (%)", suffix: "%" },

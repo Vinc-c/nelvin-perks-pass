@@ -10,7 +10,7 @@ import { Mail, Lock, KeyRound, Loader2, Building2, Check, ArrowRight, ArrowLeft,
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import NelvinLogo, { NelvinMark } from "@/components/NelvinLogo";
 
-const STEPS = ["Invite", "Account", "Verify"];
+const STEPS = ["Invitation", "Compte", "Vérification"];
 
 const benefits = [
   { icon: Sparkles, text: "Essai gratuit offert par votre entreprise" },
@@ -39,14 +39,14 @@ export default function Join() {
       const res = await invokeFunction("validate-invite-code", { code, email });
       const data = res.data || res;
       if (!data || data.valid === false) {
-        setError(data?.error || "Invalid invite code");
+        setError(data?.error || "Code d'invitation invalide.");
         setLoading(false);
         return;
       }
       setInvite({ code_id: data.code_id, company_id: data.company_id, role: data.role });
       setStep(1);
     } catch (err) {
-      setError(err.message || "Failed to validate code");
+      setError(err.message || "Impossible de valider le code.");
     } finally {
       setLoading(false);
     }
@@ -56,8 +56,8 @@ export default function Join() {
   const createAccount = async (e) => {
     e.preventDefault();
     setError("");
-    if (password !== confirmPassword) { setError("Passwords do not match"); return; }
-    if (password.length < 6) { setError("Password must be at least 6 characters"); return; }
+    if (password !== confirmPassword) { setError("Les mots de passe ne correspondent pas."); return; }
+    if (password.length < 8) { setError("Le mot de passe doit contenir au moins 8 caractères."); return; }
     setLoading(true);
     try {
       const { needsVerification } = await signUp({ email, password });
@@ -68,7 +68,7 @@ export default function Join() {
       }
       setStep(2);
     } catch (err) {
-      setError(err.message || "Registration failed");
+      setError(err.message || "Inscription impossible.");
     } finally {
       setLoading(false);
     }
@@ -85,7 +85,7 @@ export default function Join() {
       }
       await linkAndContinue();
     } catch (err) {
-      setError(err.message || "Invalid verification code");
+      setError(err.message || "Code de vérification invalide.");
     } finally {
       setLoading(false);
     }
@@ -93,7 +93,7 @@ export default function Join() {
 
   const resend = async () => {
     setError("");
-    try { await resendSignupOtp(email); } catch (err) { setError(err.message || "Failed to resend code"); }
+    try { await resendSignupOtp(email); } catch (err) { setError(err.message || "Impossible de renvoyer le code."); }
   };
 
   // Links the new account to the company. A failure here must be visible:
@@ -117,8 +117,8 @@ export default function Join() {
           <NelvinMark className="h-10 w-10" />
         </div>
         <div>
-          <h2 className="max-w-md text-3xl font-bold leading-tight text-white">Join your company in 3 simple steps.</h2>
-          <p className="mt-3 max-w-md text-blue-100">Activate your employee benefits, wallet and perks in minutes — with a 30-day free trial on every plan.</p>
+          <h2 className="max-w-md text-3xl font-bold leading-tight text-white">Rejoignez votre entreprise en 3 étapes.</h2>
+          <p className="mt-3 max-w-md text-blue-100">Activez vos avantages salariés, votre wallet et vos offres en quelques minutes.</p>
           <ul className="mt-8 space-y-4">
             {benefits.map((b) => {
               const Icon = b.icon;
@@ -160,26 +160,26 @@ export default function Join() {
               {/* Step 1 — invite code */}
               {step === 0 && (
                 <motion.div key="s1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                  <h1 className="text-2xl font-bold tracking-tight text-slate-900">Join your company</h1>
-                  <p className="mt-1 text-sm text-slate-500">Enter the invite code from your HR team and your work email.</p>
+                  <h1 className="text-2xl font-bold tracking-tight text-slate-900">Rejoindre votre entreprise</h1>
+                  <p className="mt-1 text-sm text-slate-500">Saisissez le code d'invitation de votre équipe RH et votre email professionnel.</p>
                   {error && <div className="mt-4 rounded-lg bg-rose-50 p-3 text-sm text-rose-600">{error}</div>}
                   <form onSubmit={validateCode} className="mt-5 space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="code">HR invite code</Label>
+                      <Label htmlFor="code">Code d'invitation RH</Label>
                       <div className="relative">
                         <KeyRound className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                        <Input id="code" autoFocus placeholder="e.g. NEL-7K2P9" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} className="h-12 pl-10 font-mono uppercase tracking-wider" required />
+                        <Input id="code" autoFocus placeholder="ex. NEL-7K2P9" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} className="h-12 pl-10 font-mono uppercase tracking-wider" required />
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email">Work email</Label>
+                      <Label htmlFor="email">Email professionnel</Label>
                       <div className="relative">
                         <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                        <Input id="email" type="email" placeholder="you@company.com" value={email} onChange={(e) => setEmail(e.target.value)} className="h-12 pl-10" required />
+                        <Input id="email" type="email" placeholder="vous@entreprise.com" value={email} onChange={(e) => setEmail(e.target.value)} className="h-12 pl-10" required />
                       </div>
                     </div>
                     <Button type="submit" className="h-12 w-full font-medium" disabled={loading}>
-                      {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Validating…</> : <>Continue <ArrowRight className="ml-2 h-4 w-4" /></>}
+                      {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Validation…</> : <>Continuer <ArrowRight className="ml-2 h-4 w-4" /></>}
                     </Button>
                   </form>
                 </motion.div>
@@ -188,19 +188,19 @@ export default function Join() {
               {/* Step 2 — account */}
               {step === 1 && (
                 <motion.div key="s2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                  <h1 className="text-2xl font-bold tracking-tight text-slate-900">Create your account</h1>
-                  <p className="mt-1 text-sm text-slate-500">Secure your access with a password.</p>
+                  <h1 className="text-2xl font-bold tracking-tight text-slate-900">Créez votre compte</h1>
+                  <p className="mt-1 text-sm text-slate-500">Sécurisez votre accès avec un mot de passe (8 caractères min.).</p>
                   {error && <div className="mt-4 rounded-lg bg-rose-50 p-3 text-sm text-rose-600">{error}</div>}
                   <form onSubmit={createAccount} className="mt-5 space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="password">Create password</Label>
+                      <Label htmlFor="password">Mot de passe</Label>
                       <div className="relative">
                         <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                         <Input id="password" type="password" autoComplete="new-password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className="h-12 pl-10" required />
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="confirm">Confirm password</Label>
+                      <Label htmlFor="confirm">Confirmer le mot de passe</Label>
                       <div className="relative">
                         <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                         <Input id="confirm" type="password" autoComplete="new-password" placeholder="••••••••" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="h-12 pl-10" required />
@@ -209,7 +209,7 @@ export default function Join() {
                     <div className="flex gap-3">
                       <Button type="button" variant="outline" className="h-12 px-4" onClick={() => { setStep(0); setError(""); }}><ArrowLeft className="h-4 w-4" /></Button>
                       <Button type="submit" className="h-12 flex-1 font-medium" disabled={loading}>
-                        {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating…</> : <>Continue <ArrowRight className="ml-2 h-4 w-4" /></>}
+                        {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Création…</> : <>Continue <ArrowRight className="ml-2 h-4 w-4" /></>}
                       </Button>
                     </div>
                   </form>
@@ -219,8 +219,8 @@ export default function Join() {
               {/* Step 3 — verify */}
               {step === 2 && (
                 <motion.div key="s3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                  <h1 className="text-2xl font-bold tracking-tight text-slate-900">Verify your email</h1>
-                  <p className="mt-1 text-sm text-slate-500">We sent a 6-digit code to {email}</p>
+                  <h1 className="text-2xl font-bold tracking-tight text-slate-900">Vérifiez votre email</h1>
+                  <p className="mt-1 text-sm text-slate-500">Nous avons envoyé un code à 6 chiffres à {email}</p>
                   {error && <div className="mt-4 rounded-lg bg-rose-50 p-3 text-sm text-rose-600">{error}</div>}
                   <div className="mt-6 flex justify-center">
                     <InputOTP maxLength={6} value={otpCode} onChange={setOtpCode} autoFocus autoComplete="one-time-code">
@@ -231,11 +231,11 @@ export default function Join() {
                     </InputOTP>
                   </div>
                   <Button className="mt-6 h-12 w-full font-medium" onClick={verify} disabled={loading || (!verified && otpCode.length < 6)}>
-                    {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Verifying…</> : <>Verify & join <ArrowRight className="ml-2 h-4 w-4" /></>}
+                    {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Vérification…</> : <>Vérifier et rejoindre <ArrowRight className="ml-2 h-4 w-4" /></>}
                   </Button>
                   <p className="mt-4 text-center text-sm text-slate-500">
-                    Didn't receive the code?{" "}
-                    <button onClick={resend} className="font-medium text-blue-600 hover:underline">Resend</button>
+                    Code non reçu ?{" "}
+                    <button onClick={resend} className="font-medium text-blue-600 hover:underline">Renvoyer</button>
                   </p>
                 </motion.div>
               )}
@@ -244,12 +244,12 @@ export default function Join() {
 
           {/* 30-day trial note */}
           <div className="mt-5 flex items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-            <Sparkles className="h-4 w-4" /> Every plan includes a 30-day free trial — no charge until it ends.
+            <Sparkles className="h-4 w-4" /> Votre accès est couvert par l'abonnement de votre entreprise : aucun paiement ne vous est demandé.
           </div>
 
           <p className="mt-6 text-center text-sm text-slate-500">
-            Already have an account?{" "}
-            <Link to="/login" className="font-medium text-blue-600 hover:underline">Log in</Link>
+            Déjà un compte ?{" "}
+            <Link to="/login" className="font-medium text-blue-600 hover:underline">Se connecter</Link>
           </p>
         </div>
       </div>

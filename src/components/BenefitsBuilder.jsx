@@ -41,7 +41,6 @@ export default function BenefitsBuilder() {
     if (data?.policies) {
       setRows(data.policies.map((p) => ({ ...p, amount: String(Math.round(money.fromUsd(p.monthly_amount_usd, currency) * 100) / 100) })));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.policies, currency]);
 
   const employees = (data?.people || []).filter((p) => p.role === "EMPLOYEE");

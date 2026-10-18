@@ -190,7 +190,7 @@ export default function AdminPspSettings() {
 
   if (loading && !providers.length) return <Spinner />;
 
-  const enabled = providers.filter((p) => p.enabled).map((p) => ({ id: p.id, methods: p.methods }));
+  const enabled = providers.filter((p) => p.enabled).map((p) => ({ id: p.id, methods: p.methods, has_secret: Object.keys(p.secret_hints || {}).length > 0 }));
   let route = null;
   let routeError = "";
   try {

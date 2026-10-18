@@ -95,7 +95,7 @@ function Clusters({ merchants, selectedId, onSelect }) {
     setView({ bounds: [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()], zoom: map.getZoom() });
   };
   useMapEvents({ moveend: refresh, zoomend: refresh });
-  useEffect(refresh, [index]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(refresh, [index]);
 
   if (!view.bounds) return null;
   return index.getClusters(view.bounds, Math.round(view.zoom)).map((f) => {
@@ -131,10 +131,10 @@ function Framing({ merchants, selected, me, fitKey }) {
   const selLng = selected ? Number(selected.lng) : null;
   useEffect(() => {
     if (selLat != null) map.flyTo([selLat, selLng], Math.max(map.getZoom(), 15), { duration: 0.6 });
-  }, [selected?.id, selLat, selLng, map]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selected?.id, selLat, selLng, map]);
   useEffect(() => {
     if (me) map.flyTo(me, 13, { duration: 0.8 });
-  }, [me?.[0], me?.[1], map]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [me?.[0], me?.[1], map]);
   return null;
 }
 

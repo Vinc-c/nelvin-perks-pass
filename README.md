@@ -158,6 +158,7 @@ Secrets (`supabase secrets set NOM=valeur`) :
 | `APP_URL` | URL du site (redirections de paiement et invitations) |
 | `ALLOWED_ORIGINS` | Optionnel : autres origines autorisées pour les retours de paiement |
 | `STRIPE_SECRET_KEY`, `PAYSTACK_SECRET_KEY`, `FLUTTERWAVE_SECRET_KEY`, `PADDLE_API_KEY`, `KORAPAY_SECRET_KEY`, `PAYUNIT_API_KEY`, `PAYUNIT_API_USERNAME`, `PAYUNIT_API_PASSWORD` | Repli si les clés ne sont pas saisies dans l'admin |
+| `STRIPE_WEBHOOK_SECRET`, `FLUTTERWAVE_WEBHOOK_HASH`, `PADDLE_WEBHOOK_SECRET` | Repli pour la signature des webhooks (`payment-webhook`) ; Paystack et Korapay signent avec leur clé secrète |
 | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` (optionnel) | Assistant IA |
 | `GITHUB_TOKEN` | Page Pull requests |
 
@@ -168,6 +169,7 @@ Secrets (`supabase secrets set NOM=valeur`) :
    `<p>Votre code Nelvin : <strong>{{ .Token }}</strong></p>`
 3. **Authentication → Providers → Google** : activer et renseigner le client OAuth.
 4. **Authentication → Multi-Factor** : laisser TOTP activé (2FA dans *Sécurité*).
+5. **Authentication → Sign In / Providers → Email** : régler la longueur minimale du mot de passe sur **8** (c'est la règle appliquée par l'interface à l'inscription, à la réinitialisation et dans *Sécurité*).
 
 ### Storage
 

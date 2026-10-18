@@ -33,7 +33,6 @@ export default function WithdrawWalletModal({ open, onClose }) {
       setDone(null);
       setCurrency(user?.wallet_currency || "USD");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const balanceUsd = Number(user?.wallet_balance || 0);

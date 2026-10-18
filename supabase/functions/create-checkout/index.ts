@@ -99,7 +99,13 @@ serve(async (req) => {
   }
 
   const psp = await PspContext.load(admin);
-  const route = routePayment({ audience, method, country, currency }, psp.enabled);
+  let route: ReturnType<typeof routePayment>;
+  try {
+    route = routePayment({ audience, method, country, currency }, psp.enabled);
+  } catch (e) {
+    // No enabled provider supports this method: a business answer, not a crash.
+    return json({ error: errorMessage(e) }, 503);
+  }
   const provider = route.primary;
   const reference = genRef(provider.id);
 
