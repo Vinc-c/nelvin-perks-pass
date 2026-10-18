@@ -43,8 +43,8 @@ export function useCatalog() {
 export function offerBadge(offer, format) {
   const v = Number(offer.discount_value || 0);
   switch (offer.discount_type) {
-    case "BOGO":
-      return "2 pour 1";
+    case "PERK":
+      return offer.perk_label || "Privilège offert";
     case "FIXED":
       return `-${format ? format(v) : `$${v}`}`;
     case "CASHBACK":

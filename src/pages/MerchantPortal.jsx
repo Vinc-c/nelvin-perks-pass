@@ -5,6 +5,7 @@ import PortalLayout from "@/components/PortalLayout";
 import MerchantStatusGate from "@/components/merchant/MerchantStatusGate";
 import MerchantPinCard from "@/components/merchant/MerchantPinCard";
 import MerchantLocationCard from "@/components/merchant/MerchantLocationCard";
+import MerchantProfileEditor from "@/components/merchant/MerchantProfileEditor";
 import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/lib/AuthContext";
 import { entities } from "@/api/entities";
@@ -224,7 +225,14 @@ export default function MerchantPortal() {
         )}
 
         {show("offers") && merchant && (
-          <div className="mt-6"><MerchantLocationCard key={merchant.id} merchant={merchant} onSaved={(u) => u && setMerchant(u)} /></div>
+          <>
+            <div className="mt-6"><MerchantLocationCard key={merchant.id} merchant={merchant} onSaved={(u) => u && setMerchant(u)} /></div>
+            <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h3 className="font-semibold text-slate-900">Profil public & référencement</h3>
+              <p className="mb-4 text-sm text-slate-500">Modifiable à tout moment, même après validation de votre dossier.</p>
+              <MerchantProfileEditor key={merchant.id} merchant={merchant} onSaved={(u) => u && setMerchant(u)} />
+            </div>
+          </>
         )}
 
         {show("offers") && (

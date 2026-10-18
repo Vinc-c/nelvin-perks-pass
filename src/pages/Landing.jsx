@@ -33,8 +33,8 @@ export default function Landing() {
   const content = usePublicContent();
   const heroBg = imageByKey(content?.images, "hero_background", SAVANNA);
   const savannaBand = imageByKey(content?.images, "savanna_band", SAVANNA);
-  const heroBadge = copyByKey(content?.copy, "hero.badge", "Buy 1 Get 1 Free across Africa");
-  const heroTitle = copyByKey(content?.copy, "hero.title", "Buy 1 Get 1 Free at the best spots across Africa");
+  const heroBadge = copyByKey(content?.copy, "hero.badge", "Premium perks across Africa");
+  const heroTitle = copyByKey(content?.copy, "hero.title", "Premium perks at the best spots across Africa");
   const heroSubtitle = copyByKey(content?.copy, "hero.subtitle", "Dining, hotels, spas, fitness and more, from Dakar to Nairobi. Show your Nelvin pass at the till and save on every visit.");
 
   // Live figures from the catalogue (a CMS value, when set, takes precedence).

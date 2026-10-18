@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import PortalLayout from "@/components/PortalLayout";
 import QrRedemption from "@/components/QrRedemption";
@@ -15,15 +15,17 @@ import { useCurrencies } from "@/hooks/useCurrencies";
 import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
 import { offerBadge } from "@/hooks/useCatalog";
 import { categoryImage } from "@/data/offerCategories";
+import { useSeo } from "@/lib/seo";
 import { useAuth } from "@/lib/AuthContext";
 import { EmptyState, Spinner } from "@/components/UiFeedback";
-import { MapPin, Clock, ShieldCheck, ArrowLeft, Tag, Wallet, Globe, Instagram, Phone, KeyRound, Repeat } from "lucide-react";
+import { MapPin, Clock, ShieldCheck, ArrowLeft, Tag, Wallet, Globe, Instagram, Phone, KeyRound, Repeat, MessageCircle, Gift } from "lucide-react";
 
 const PERIOD = { DAY: "par jour", WEEK: "par semaine", MONTH: "par mois", YEAR: "par an", LIFETIME: "au total" };
 const AUDIENCE = { B2C: "Membres Pass", B2B_ONLY: "Salariés d'entreprises clientes", ALL: "Tous les membres" };
 
 export default function OfferDetails() {
   const [params] = useSearchParams();
+  const { slug } = useParams();
   const id = params.get("id");
   const { user } = useAuth();
   const { meta } = useCategories();
@@ -33,8 +35,10 @@ export default function OfferDetails() {
   const [pinOpen, setPinOpen] = useState(false);
 
   const { data, loading, reload } = useAsync(async () => {
-    if (!id) return null;
-    const offer = await entities.Offer.get(id).catch(() => null);
+    if (!id && !slug) return null;
+    const offer = id
+      ? await entities.Offer.get(id).catch(() => null)
+      : (await entities.Offer.filter({ slug }, "-created_date", 1).catch(() => []))[0] || null;
     if (!offer) return null;
     const merchant = await entities.Merchant.get(offer.merchant_id).catch(() => null);
     let usage = null;
@@ -48,7 +52,36 @@ export default function OfferDetails() {
       usedOnce = mine.length > 0;
     }
     return { offer, merchant, usage, usedOnce };
-  }, [id, user?.id]);
+  }, [id, slug, user?.id]);
+
+  const seoOffer = data?.offer;
+  const seoMerchant = data?.merchant;
+  const seoBadge = seoOffer ? offerBadge(seoOffer, (v) => money.format(v, currency)) : "";
+  const seoTitle = seoOffer ? (seoOffer.seo_title || `${seoOffer.title}${seoMerchant ? ` — ${seoMerchant.name}` : ""} | Nelvin`) : "";
+  const seoDesc = seoOffer ? (seoOffer.seo_description || `${seoBadge}${seoMerchant?.city ? ` à ${seoMerchant.city}` : ""} avec le Pass Nelvin. ${seoOffer.description || ""}`.trim().slice(0, 200)) : "";
+  const seoPath = seoOffer ? `/offre/${seoOffer.slug || ""}` : undefined;
+  const seoImage = seoOffer ? (seoOffer.image_url || seoMerchant?.cover_image_url || undefined) : undefined;
+  useSeo({
+    title: seoTitle,
+    description: seoDesc,
+    image: seoImage,
+    path: seoOffer?.slug ? seoPath : undefined,
+    jsonLd: seoOffer && {
+      "@context": "https://schema.org",
+      "@type": "Offer",
+      name: seoOffer.title,
+      description: seoDesc,
+      image: seoImage,
+      priceValidUntil: seoOffer.expires_at || undefined,
+      seller: seoMerchant ? {
+        "@type": "LocalBusiness",
+        name: seoMerchant.name,
+        image: seoMerchant.logo_url || undefined,
+        address: { "@type": "PostalAddress", addressLocality: seoMerchant.city || undefined, addressCountry: seoMerchant.country || undefined, streetAddress: seoMerchant.address || undefined },
+        ...(seoMerchant.lat != null ? { geo: { "@type": "GeoCoordinates", latitude: seoMerchant.lat, longitude: seoMerchant.lng } } : {}),
+      } : undefined,
+    },
+  });
 
   if (loading) return <PortalLayout title="Offre" theme="light"><Spinner /></PortalLayout>;
   if (!data) {
@@ -96,6 +129,16 @@ export default function OfferDetails() {
               )}
             </div>
 
+            {offer.discount_type === "PERK" && offer.perk_label && (
+              <div className="mt-5 flex items-center gap-3 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 p-4 ring-1 ring-amber-200">
+                <Gift className="h-6 w-6 shrink-0 text-amber-600" />
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Privilège membre</p>
+                  <p className="font-semibold text-slate-900">{offer.perk_label}</p>
+                </div>
+              </div>
+            )}
+
             {offer.description && <p className="mt-5 whitespace-pre-line text-sm leading-relaxed text-slate-600">{offer.description}</p>}
 
             <h2 className="mt-6 font-semibold text-slate-900">Conditions</h2>
@@ -121,6 +164,15 @@ export default function OfferDetails() {
                 </>
               ) : (
                 <Link to="/register" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white hover:bg-emerald-600">Créer un compte pour en profiter</Link>
+              )}
+              {offer.booking_required && merchant?.whatsapp && (
+                <a
+                  href={`https://wa.me/${String(merchant.whatsapp).replace(/\D/g, "")}?text=${encodeURIComponent(`Bonjour, je suis membre Nelvin et je souhaite réserver pour l'offre « ${offer.title} ».`)}`}
+                  target="_blank" rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 rounded-xl border border-green-200 px-5 py-3 font-medium text-green-700 hover:bg-green-50"
+                >
+                  <MessageCircle className="h-4 w-4" /> Réserver sur WhatsApp
+                </a>
               )}
               {merchant?.lat != null && (
                 <Link to={`/merchant-map?m=${merchant.id}`} className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-5 py-3 font-medium text-slate-700 hover:bg-slate-50"><MapPin className="h-4 w-4" /> Carte</Link>

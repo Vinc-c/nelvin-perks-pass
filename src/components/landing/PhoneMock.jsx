@@ -11,7 +11,7 @@ export default function PhoneMock({ className = "" }) {
       <div className="flex h-full flex-col overflow-hidden rounded-[2.1rem] bg-[#f4f9fc]">
         <div className="flex items-center justify-between px-4 pb-2 pt-10">
           <NelvinLogo className="h-6" />
-          <span className="rounded-full bg-[#D4A13A] px-2 py-0.5 text-[9px] font-bold text-[#0E1A3B]">Buy 1 Get 1</span>
+          <span className="rounded-full bg-[#D4A13A] px-2 py-0.5 text-[9px] font-bold text-[#0E1A3B]">Free perk</span>
         </div>
         <div className="px-3">
           <div className="relative h-32 overflow-hidden rounded-2xl">

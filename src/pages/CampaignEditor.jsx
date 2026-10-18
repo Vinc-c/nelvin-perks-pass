@@ -11,6 +11,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { Image as ImageIcon, Plus, Pencil, Trash2, X, Loader2, Star, Tag, Upload, TrendingUp } from "lucide-react";
 import { EmptyState } from "@/components/UiFeedback";
 import RoleWelcomeHeader from "@/components/RoleWelcomeHeader";
+import SeoFields from "@/components/seo/SeoFields";
 
 const EMPTY = {
   title: "",
@@ -25,6 +26,11 @@ const EMPTY = {
   is_featured: false,
   usage_limit: "",
   usage_period: "YEAR",
+  perk_label: "",
+  booking_required: false,
+  slug: "",
+  seo_title: "",
+  seo_description: "",
 };
 
 export default function CampaignEditor() {
@@ -75,6 +81,11 @@ export default function CampaignEditor() {
       is_featured: !!o.is_featured,
       usage_limit: o.usage_limit ?? "",
       usage_period: o.usage_period || "YEAR",
+      perk_label: o.perk_label || "",
+      booking_required: !!o.booking_required,
+      slug: o.slug || "",
+      seo_title: o.seo_title || "",
+      seo_description: o.seo_description || "",
     });
     setEditing(o.id);
   };
@@ -95,6 +106,7 @@ export default function CampaignEditor() {
 
   const save = async () => {
     if (!form.title.trim()) { toast({ title: "Titre requis", variant: "destructive" }); return; }
+    if (form.discount_type === "PERK" && !form.perk_label.trim()) { toast({ title: "Décrivez le privilège offert", description: "Ex. Dessert offert, surclassement de chambre, accès VIP.", variant: "destructive" }); return; }
     setSaving(true);
     const payload = {
       merchant_id: merchantId,
@@ -110,6 +122,11 @@ export default function CampaignEditor() {
       is_featured: !!form.is_featured,
       usage_limit: form.usage_limit === "" || form.usage_limit == null ? null : Math.max(1, Math.round(Number(form.usage_limit))),
       usage_period: form.usage_period || "YEAR",
+      perk_label: form.discount_type === "PERK" ? form.perk_label.trim() : null,
+      booking_required: !!form.booking_required,
+      slug: form.slug || "",
+      seo_title: form.seo_title.trim() || null,
+      seo_description: form.seo_description.trim() || null,
     };
     try {
       if (editing === "new") {
@@ -186,7 +203,7 @@ export default function CampaignEditor() {
                   {o.description && <p className="mt-1 line-clamp-2 text-xs text-slate-500">{o.description}</p>}
                   <div className="mt-2 flex flex-wrap gap-1.5 text-xs">
                     <span className="rounded-lg bg-emerald-50 px-2 py-1 font-medium text-emerald-700">
-                      {o.discount_type === "BOGO" ? "2 pour 1" : o.discount_type === "FIXED" ? `-${o.discount_value} $` : `${o.discount_value}%${o.discount_type === "CASHBACK" ? " cashback" : ""}`}
+                      {o.discount_type === "PERK" ? (o.perk_label || "Privilège") : o.discount_type === "FIXED" ? `-${o.discount_value} $` : `${o.discount_value}%${o.discount_type === "CASHBACK" ? " cashback" : ""}`}
                     </span>
                     {o.cashback_rate > 0 && <span className="rounded-lg bg-amber-50 px-2 py-1 font-medium text-amber-700">{o.cashback_rate}% cashback</span>}
                     <span className="rounded-lg bg-slate-100 px-2 py-1 text-slate-600">{o.target_audience === "ALL" ? "Tous" : o.target_audience === "B2C" ? "Particuliers" : "Employés"}</span>
@@ -271,10 +288,21 @@ export default function CampaignEditor() {
                     </select>
                   </label>
                   <label className="block text-sm">
-                    <span className="text-slate-500">Valeur {form.discount_type === "FIXED" ? "(USD)" : form.discount_type === "BOGO" ? "(valeur max. offerte, USD — 0 = moitié de l'addition)" : dType?.suffix ? `(${dType.suffix})` : ""}</span>
+                    <span className="text-slate-500">Valeur {form.discount_type === "FIXED" ? "(USD)" : form.discount_type === "PERK" ? "(valeur estimée du privilège, USD — déduite de l'addition)" : dType?.suffix ? `(${dType.suffix})` : ""}</span>
                     <input type="number" min={0} value={form.discount_value} onChange={(e) => setForm({ ...form, discount_value: Number(e.target.value) })} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-emerald-500" />
                   </label>
                 </div>
+
+                {form.discount_type === "PERK" && (
+                  <label className="block text-sm">
+                    <span className="text-slate-500">Privilège offert aux membres</span>
+                    <input value={form.perk_label} maxLength={120} onChange={(e) => setForm({ ...form, perk_label: e.target.value })} placeholder="Ex. Dessert offert, surclassement de chambre, accès salon VIP" className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-emerald-500" />
+                  </label>
+                )}
+                <label className="flex items-start gap-2 text-sm text-slate-600">
+                  <input type="checkbox" checked={form.booking_required} onChange={(e) => setForm({ ...form, booking_required: e.target.checked })} className="mt-0.5 h-4 w-4 accent-emerald-500" />
+                  <span>Réservation recommandée : le membre vous écrit sur WhatsApp avant de venir.</span>
+                </label>
 
                 <div className="grid grid-cols-2 gap-3">
                   <label className="block text-sm">
@@ -292,7 +320,7 @@ export default function CampaignEditor() {
                 <div className="grid grid-cols-2 gap-3">
                   <label className="block text-sm">
                     <span className="text-slate-500">Utilisations par membre (vide = illimité)</span>
-                    <input type="number" min={1} max={1000} value={form.usage_limit} onChange={(e) => setForm({ ...form, usage_limit: e.target.value })} placeholder={form.discount_type === "BOGO" ? "Conseillé : 1" : "Illimité"} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-emerald-500" />
+                    <input type="number" min={1} max={1000} value={form.usage_limit} onChange={(e) => setForm({ ...form, usage_limit: e.target.value })} placeholder={form.discount_type === "PERK" ? "Conseillé : 1" : "Illimité"} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-emerald-500" />
                   </label>
                   <label className="block text-sm">
                     <span className="text-slate-500">Période</span>
@@ -321,6 +349,13 @@ export default function CampaignEditor() {
                   )}
                 </div>
               </div>
+
+              <details className="mt-4 rounded-xl border border-slate-200 p-3" open={!!(form.seo_title || form.seo_description)}>
+                <summary className="cursor-pointer text-sm font-medium text-slate-700">Référencement de l'offre (SEO)</summary>
+                <div className="mt-3">
+                  <SeoFields value={form} onChange={(v) => setForm({ ...form, ...v })} fallbackTitle={form.title} fallbackDescription={form.description} basePath="/offre/" />
+                </div>
+              </details>
 
               <div className="mt-6 flex gap-2">
                 <button onClick={() => setEditing(null)} className="not-pill flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50">Annuler</button>

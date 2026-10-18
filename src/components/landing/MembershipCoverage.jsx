@@ -10,21 +10,21 @@ const categoryLabels = Object.fromEntries(OFFER_CATEGORIES.map((c) => [c.value, 
 
 
 const categoryText = {
-  FOOD_DINING: "Two mains for the price of one, from cafes to weekend brunch.",
-  TRAVEL_HOLIDAYS: "Second traveller free on getaways across the continent.",
-  HOTELS_HOSPITALITY: "A second night free across stays from city hotels to resorts.",
-  FITNESS_SPORTS: "Gym passes and sports sessions, Buy 1 Get 1 Free all year.",
+  FOOD_DINING: "A complimentary dish or drink, from maquis to rooftop dinners.",
+  TRAVEL_HOLIDAYS: "Upgrades and VIP extras on getaways across the continent.",
+  HOTELS_HOSPITALITY: "Room upgrades, late checkout and welcome extras, from city hotels to resorts.",
+  FITNESS_SPORTS: "Gym passes and sports sessions with premium member perks.",
   WELLNESS_MENTAL: "Spa, salon and mindfulness, at half the bill.",
   HEALTHCARE: "Health check-ups and clinics with member-only savings.",
   FINANCIAL_WELLNESS: "Free consultations and perks from trusted advisors.",
   SHOPPING_RETAIL: "Mall-wide and store discounts that stack with sales.",
   TECHNOLOGY: "Gadgets and gear at member prices.",
-  FAMILY_PARENTING: "Theme parks and family days out, two for one.",
+  FAMILY_PARENTING: "Theme parks and family days out with free extras.",
   EDUCATION_LEARNING: "Courses and learning programs at a discount.",
   HOME_LIVING: "Furniture and home essentials for less.",
   AUTOMOTIVE_MOBILITY: "Car service and mobility offers, discounted.",
   BEAUTY_CARE: "Beauty packages and self-care, half price.",
-  ENTERTAINMENT: "Cinema, events and attractions, Buy 1 Get 1 Free.",
+  ENTERTAINMENT: "Cinema, events and attractions with VIP access and free extras.",
 };
 
 const keys = Object.keys(categoryLabels);
@@ -41,7 +41,7 @@ function Card({ k, hidden }) {
         <Image src={categoryImages[k]} fittingType="fill" className="h-full w-full transition duration-500 group-hover:scale-105" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
         <Motif category={k} className="absolute left-3 top-3 h-9 w-9 shadow ring-2 ring-white" rounded="rounded-full" />
-        <span className="absolute bottom-3 left-3 rounded-full bg-blue-600 px-2.5 py-1 text-[11px] font-bold text-white shadow">Buy 1 Get 1</span>
+        <span className="absolute bottom-3 left-3 rounded-full bg-blue-600 px-2.5 py-1 text-[11px] font-bold text-white shadow">Premium perk</span>
       </div>
       <div className="p-4">
         <p className="text-sm font-bold text-slate-900">{categoryLabels[k]}</p>
@@ -71,7 +71,7 @@ export default function MembershipCoverage() {
     <section className="py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <motion.h2 initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center text-2xl font-bold text-slate-900 sm:text-3xl">What your membership covers</motion.h2>
-        <p className="mx-auto mt-2 max-w-xl text-center text-sm text-slate-500">15 lifestyle categories, all Buy 1 Get 1 Free, all year — tap any card to browse offers.</p>
+        <p className="mx-auto mt-2 max-w-xl text-center text-sm text-slate-500">15 lifestyle categories with premium perks, discounts and cashback, all year — tap any card to browse offers.</p>
       </div>
       <div className="mt-8 space-y-4">
         <Row items={rowA} />

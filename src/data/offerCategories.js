@@ -23,7 +23,7 @@ export const DISCOUNT_TYPES = [
   { value: "PERCENTAGE", label: "Pourcentage (%)", suffix: "%" },
   { value: "FIXED", label: "Montant fixe", suffix: "" },
   { value: "CASHBACK", label: "Cashback", suffix: "%" },
-  { value: "BOGO", label: "2 pour 1 (BOGO)", suffix: "" },
+  { value: "PERK", label: "Privilège premium (extra offert)", suffix: "" },
 ];
 
 export const AUDIENCES = [
