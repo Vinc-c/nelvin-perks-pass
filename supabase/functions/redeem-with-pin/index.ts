@@ -26,7 +26,7 @@ serve(async (req) => {
 
   const { data: offer } = await admin
     .from("offers")
-    .select("id, expires_at, target_audience, merchants!inner(verified_status)")
+    .select("id, expires_at, target_audience, required_plan, merchants!inner(verified_status)")
     .eq("id", offerId)
     .maybeSingle();
   if (!offer) return json({ ok: false, reason: "INVALID" });
@@ -34,6 +34,11 @@ serve(async (req) => {
   if ((offer as any).merchants?.verified_status !== "VERIFIED") return json({ ok: false, reason: "MERCHANT_INACTIVE" });
   if (offer.expires_at && new Date(offer.expires_at) < new Date()) return json({ ok: false, reason: "EXPIRED" });
   if (offer.target_audience === "B2B_ONLY" && !caller.profile.company_id) return json({ ok: false, reason: "B2B_ONLY" });
+
+  if (offer.required_plan) {
+    const { data: planOk } = await admin.rpc("offer_plan_ok", { p_user: caller.user.id, p_offer: offerId });
+    if (!planOk) return json({ ok: false, reason: "PLAN_REQUIRED", required_plan: offer.required_plan });
+  }
 
   const { data, error } = await admin.rpc("redeem_offer_with_pin", {
     p_user_id: caller.user.id,

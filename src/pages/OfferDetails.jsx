@@ -52,7 +52,9 @@ export default function OfferDetails() {
       usage = u?.[0] || null;
       usedOnce = mine.length > 0;
     }
-    return { offer, merchant, usage, usedOnce };
+    let planRank = null;
+    if (user?.id && offer.required_plan) planRank = await callRpc("my_plan_rank").catch(() => null);
+    return { offer, merchant, usage, usedOnce, planRank };
   }, [id, slug, user?.id]);
 
   const seoOffer = data?.offer;
@@ -93,11 +95,14 @@ export default function OfferDetails() {
     );
   }
 
-  const { offer, merchant, usage, usedOnce } = data;
+  const { offer, merchant, usage, usedOnce, planRank } = data;
+  const NEED = { PASS_PREMIUM: 2, PASS_VIP: 3 };
+  const planLocked = !!offer.required_plan && planRank != null && planRank < NEED[offer.required_plan];
+  const planName = offer.required_plan === "PASS_VIP" ? "VIP Gold" : "Premium";
   const limitReached = usage?.remaining === 0;
   const expired = offer.expires_at && new Date(offer.expires_at) < new Date();
   const employeesOnly = offer.target_audience === "B2B_ONLY" && !user?.company_id;
-  const canRedeem = user && !expired && !employeesOnly && !limitReached && merchant?.verified_status === "VERIFIED";
+  const canRedeem = user && !expired && !employeesOnly && !limitReached && !planLocked && merchant?.verified_status === "VERIFIED";
   const cat = meta(offer.category);
 
   return (
@@ -121,6 +126,7 @@ export default function OfferDetails() {
               {Number(offer.cashback_rate) > 0 && offer.discount_type !== "CASHBACK" && (
                 <span className="flex items-center gap-1.5 rounded-lg bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-700"><Wallet className="h-4 w-4" /> {offer.cashback_rate}% de cashback</span>
               )}
+              {offer.required_plan && <span className="rounded-lg bg-amber-100 px-3 py-1.5 text-sm font-semibold text-amber-800">Privilège {planName}</span>}
               {expired && <span className="rounded-lg bg-rose-50 px-3 py-1.5 text-sm font-semibold text-rose-700">Expirée</span>}
               {offer.usage_limit && (
                 <span className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold ${limitReached ? "bg-slate-100 text-slate-500" : "bg-blue-50 text-blue-700"}`}>
@@ -152,10 +158,13 @@ export default function OfferDetails() {
             </ul>
 
             <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+              {planLocked && (
+                <Link to="/membership-plans" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-amber-500 py-3 font-medium text-white hover:bg-amber-600">Passer à {planName}</Link>
+              )}
               {user ? (
                 <>
                   <button onClick={() => setRedeem(true)} disabled={!canRedeem} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white transition hover:bg-emerald-600 disabled:opacity-50">
-                    <Tag className="h-4 w-4" /> {employeesOnly ? "Réservée aux salariés" : expired ? "Offre expirée" : limitReached ? "Limite atteinte" : "Afficher mon code"}
+                    <Tag className="h-4 w-4" /> {planLocked ? `Réservée aux membres ${planName}` : employeesOnly ? "Réservée aux salariés" : expired ? "Offre expirée" : limitReached ? "Limite atteinte" : "Afficher mon code"}
                   </button>
                   {canRedeem && (
                     <button onClick={() => setPinOpen(true)} className="flex items-center justify-center gap-2 rounded-xl border border-emerald-200 px-5 py-3 font-medium text-emerald-700 hover:bg-emerald-50">

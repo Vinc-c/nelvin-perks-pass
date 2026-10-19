@@ -18,7 +18,7 @@ function Editor({ offer, onClose, onSaved }) {
   const [f, setF] = useState({
     title: offer.title || "", description: offer.description || "",
     discount_type: offer.discount_type, discount_value: offer.discount_value ?? 0,
-    cashback_rate: offer.cashback_rate ?? 0, perk_label: offer.perk_label || "",
+    cashback_rate: offer.cashback_rate ?? 0, perk_label: offer.perk_label || "", required_plan: offer.required_plan || "",
     booking_required: !!offer.booking_required, is_featured: !!offer.is_featured,
     expires_at: offer.expires_at ? offer.expires_at.slice(0, 10) : "",
     slug: offer.slug || "", seo_title: offer.seo_title || "", seo_description: offer.seo_description || "",
@@ -33,7 +33,7 @@ function Editor({ offer, onClose, onSaved }) {
         title: f.title.trim(), description: f.description.trim() || null,
         discount_type: f.discount_type, discount_value: Number(f.discount_value) || 0,
         cashback_rate: Number(f.cashback_rate) || 0,
-        perk_label: f.discount_type === "PERK" ? f.perk_label.trim() : null,
+        perk_label: f.discount_type === "PERK" ? f.perk_label.trim() : null, required_plan: f.required_plan || null,
         booking_required: f.booking_required, is_featured: f.is_featured,
         expires_at: f.expires_at ? new Date(f.expires_at + "T23:59:59").toISOString() : null,
         slug: f.slug || "", seo_title: f.seo_title.trim() || null, seo_description: f.seo_description.trim() || null,
@@ -62,6 +62,10 @@ function Editor({ offer, onClose, onSaved }) {
       {f.discount_type === "PERK" && (
         <label className="block text-sm"><span className="text-slate-500">Privilège offert</span><input value={f.perk_label} maxLength={120} onChange={(e) => setF({ ...f, perk_label: e.target.value })} className={input} /></label>
       )}
+      <label className="block text-sm"><span className="text-slate-500">Niveau d'abonnement requis</span>
+        <select value={f.required_plan} onChange={(e) => setF({ ...f, required_plan: e.target.value })} className={input}>
+          <option value="">Tous les membres</option><option value="PASS_PREMIUM">Premium et VIP Gold</option><option value="PASS_VIP">VIP Gold uniquement</option>
+        </select></label>
       <div className="flex flex-wrap items-end gap-4">
         <label className="block text-sm"><span className="text-slate-500">Expire le</span><input type="date" value={f.expires_at} onChange={(e) => setF({ ...f, expires_at: e.target.value })} className={input} /></label>
         <label className="flex items-center gap-2 pb-2 text-sm text-slate-600"><input type="checkbox" checked={f.is_featured} onChange={(e) => setF({ ...f, is_featured: e.target.checked })} className="h-4 w-4 accent-amber-500" /> À la une</label>

@@ -103,6 +103,9 @@ export default function MerchantDirectory() {
           Connexion faible : affichage de la dernière liste enregistrée{cachedAt ? ` (${new Date(cachedAt).toLocaleDateString("fr-FR")})` : ""}.
         </p>
       )}
+      {!location && topCities.length > 0 && !loading && (
+        <p className="mt-3 text-xs text-slate-500">Astuce : choisissez votre ville ci-dessus, elle sera mémorisée pour vos prochaines visites.</p>
+      )}
       <p className="mt-4 text-sm text-slate-500">{filtered.length} partenaire{filtered.length > 1 ? "s" : ""}</p>
 
       {loading ? (

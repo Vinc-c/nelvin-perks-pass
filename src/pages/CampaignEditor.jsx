@@ -27,6 +27,7 @@ const EMPTY = {
   usage_limit: "",
   usage_period: "YEAR",
   perk_label: "",
+  required_plan: "",
   booking_required: false,
   slug: "",
   seo_title: "",
@@ -82,6 +83,7 @@ export default function CampaignEditor() {
       usage_limit: o.usage_limit ?? "",
       usage_period: o.usage_period || "YEAR",
       perk_label: o.perk_label || "",
+      required_plan: o.required_plan || "",
       booking_required: !!o.booking_required,
       slug: o.slug || "",
       seo_title: o.seo_title || "",
@@ -123,6 +125,7 @@ export default function CampaignEditor() {
       usage_limit: form.usage_limit === "" || form.usage_limit == null ? null : Math.max(1, Math.round(Number(form.usage_limit))),
       usage_period: form.usage_period || "YEAR",
       perk_label: form.discount_type === "PERK" ? form.perk_label.trim() : null,
+      required_plan: form.required_plan || null,
       booking_required: !!form.booking_required,
       slug: form.slug || "",
       seo_title: form.seo_title.trim() || null,
@@ -316,6 +319,15 @@ export default function CampaignEditor() {
                     </select>
                   </label>
                 </div>
+
+                <label className="block text-sm">
+                  <span className="text-slate-500">Niveau d'abonnement requis</span>
+                  <select value={form.required_plan} onChange={(e) => setForm({ ...form, required_plan: e.target.value })} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none">
+                    <option value="">Tous les membres</option>
+                    <option value="PASS_PREMIUM">Premium et VIP Gold</option>
+                    <option value="PASS_VIP">VIP Gold uniquement</option>
+                  </select>
+                </label>
 
                 <div className="grid grid-cols-2 gap-3">
                   <label className="block text-sm">

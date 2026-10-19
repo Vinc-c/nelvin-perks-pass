@@ -28,7 +28,7 @@ serve(async (req) => {
 
   const { data: offer } = await admin
     .from("offers")
-    .select("id, merchant_id, expires_at, target_audience, merchants!inner(verified_status)")
+    .select("id, merchant_id, expires_at, target_audience, required_plan, merchants!inner(verified_status)")
     .eq("id", offerId)
     .maybeSingle();
   if (!offer || !offer.merchant_id) return json({ error: "Offre introuvable" }, 404);
@@ -39,6 +39,16 @@ serve(async (req) => {
   if (offer.expires_at && new Date(offer.expires_at) < new Date()) return json({ error: "Offre expirée" }, 410);
   if (offer.target_audience === "B2B_ONLY" && !caller.profile.company_id) {
     return json({ error: "Offre réservée aux salariés des entreprises partenaires" }, 403);
+  }
+
+  if (offer.required_plan) {
+    const { data: planOk } = await admin.rpc("offer_plan_ok", { p_user: caller.user.id, p_offer: offer.id });
+    if (!planOk) {
+      return json({
+        error: `Ce privilège est réservé aux membres ${offer.required_plan === "PASS_VIP" ? "VIP Gold" : "Premium"} : passez à la formule supérieure pour en profiter.`,
+        reason: "PLAN_REQUIRED", required_plan: offer.required_plan,
+      }, 403);
+    }
   }
 
   // Per-member usage limit (e.g. buy-one-get-one once a year).
