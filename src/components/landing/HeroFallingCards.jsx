@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Image } from "@/components/ui/image";
-import Motif from "@/components/brand/Motif";
 import { OFFER_CATEGORIES, CATEGORY_LABELS_EN } from "@/data/offerCategories";
 import { CATEGORY_IMAGES } from "@/data/categoryImages";
 
@@ -18,7 +17,6 @@ function MiniCard({ k, count, hidden }) {
     >
       <div className="relative h-24 w-full">
         <Image src={CATEGORY_IMAGES[k]} fittingType="fill" className="h-full w-full" />
-        <Motif category={k} className="absolute left-2 top-2 h-7 w-7 shadow ring-2 ring-white" rounded="rounded-full" />
         <span className="absolute bottom-2 left-2 rounded-full bg-nv-gold px-2 py-0.5 text-[10px] font-bold text-nv-ink shadow">
           Member offer
         </span>
