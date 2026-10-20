@@ -18,6 +18,12 @@ window.addEventListener('appinstalled', () => {
   window.dispatchEvent(new Event('nelvin:installable'));
 });
 
+// Data saver / slow 2G-3G: switch off decorative animations and parallax.
+try {
+  const c = navigator.connection;
+  if (c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || ''))) document.documentElement.classList.add('data-saver');
+} catch { /* Network Information API unavailable */ }
+
 // Register the Service Worker for offline-first PWA (QR redemption without network)
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

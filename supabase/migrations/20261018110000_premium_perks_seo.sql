@@ -47,12 +47,13 @@ declare
   base text;
   candidate text;
   taken boolean;
+  j jsonb := to_jsonb(new);
 begin
   -- Keep a slug that is already set and unchanged.
   if tg_op = 'UPDATE' and coalesce(new.slug, '') <> '' and new.slug is not distinct from old.slug then
     return new;
   end if;
-  base := public.slugify(coalesce(nullif(new.slug, ''), case tg_table_name when 'offers' then new.title else new.name end));
+  base := public.slugify(coalesce(nullif(new.slug, ''), j ->> case tg_table_name when 'offers' then 'title' else 'name' end));
   if base = '' then base := left(new.id::text, 8); end if;
   base := left(base, 80);
   candidate := base;
@@ -66,10 +67,8 @@ begin
   return new;
 end $$;
 
-drop trigger if exists fill_offer_slug on public.offers;
 create trigger fill_offer_slug before insert or update on public.offers
   for each row execute function public.fill_slug();
-drop trigger if exists fill_merchant_slug on public.merchants;
 create trigger fill_merchant_slug before insert or update on public.merchants
   for each row execute function public.fill_slug();
 
@@ -183,3 +182,5 @@ begin
                             'bill_usd', v_bill_usd, 'discount_applied', v_discount, 'net_usd', v_net,
                             'cashback_credited', v_cashback, 'paid_with_wallet', coalesce(p_pay_with_wallet, false));
 end $$;
+
+revoke execute on function public.fill_slug() from public, anon, authenticated;

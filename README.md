@@ -126,6 +126,8 @@ supabase db push
 | `20261006200000_family_gift_memberships.sql` | Abonnement famille et abonnement offert (codes cadeaux) |
 | `20261018100000_payment_methods_env_fallback.sql` | Moyens de paiement proposés alignés sur le routeur (repli sur les secrets d'environnement) |
 | `20261018110000_premium_perks_seo.sql` | Type d'offre « Privilège » (remplace le 2-pour-1), réservation WhatsApp, slugs et champs SEO éditables (offres et partenaires), pages `/offre/:slug` et `/partenaire/:slug` |
+| `20261019100000_tier_perks.sql` | Privilèges réservés à un niveau d'abonnement (Premium / VIP Gold), contrôlés à la génération du code et par un déclencheur |
+| `20261019110000_merchant_redemption_notifications.sql` | Notification dans l'app du marchand à chaque code validé |
 
 ### Edge Functions
 

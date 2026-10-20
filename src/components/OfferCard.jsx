@@ -15,6 +15,7 @@ export default function OfferCard({ offer, meta, format, onRedeem, index = 0, ct
     <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: Math.min(index, 9) * 0.04 }} className="relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       <Link to={offerPath(offer)} className="relative block h-28">
         <Image src={offer.image_url || offer.merchant?.cover_image_url || cat.image_url || categoryImage(offer.category)} alt={offer.title} className="h-full w-full" />
+        {offer.required_plan && <span className="absolute left-3 bottom-3 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-800">{offer.required_plan === "PASS_VIP" ? "VIP Gold" : "Premium"}</span>}
         {offer.is_featured && <span className="absolute left-3 top-3 rounded-full bg-amber-500 px-2 py-0.5 text-xs font-bold text-white">⭐ À la une</span>}
         <span className="absolute bottom-3 right-3 rounded-lg bg-white/85 px-2 py-1 text-xs text-slate-700">{cat.label}</span>
       </Link>

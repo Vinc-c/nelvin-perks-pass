@@ -16,13 +16,19 @@ import { Search, MapPin, ShieldCheck, Tag, Store, Heart, Star } from "lucide-rea
 
 export default function MerchantDirectory() {
   const { categories, meta } = useCategories();
-  const { merchants, offers, loading } = useCatalog();
+  const { merchants, offers, loading, offline, cachedAt } = useCatalog();
   const money = useCurrencies();
   const [currency] = useDisplayCurrency();
   const params = new URLSearchParams(window.location.search);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState(params.get("category") || "ALL");
-  const [location, setLocation] = useState("");
+  const [location, setLocationState] = useState(() => {
+    try { return params.get("city") || localStorage.getItem("nelvin_city") || ""; } catch { return ""; }
+  });
+  const setLocation = (v) => {
+    setLocationState(v);
+    try { localStorage.setItem("nelvin_city", v); } catch { /* storage unavailable */ }
+  };
   const { user } = useAuth();
   const { ids: favoriteIds } = useFavorites();
   const [favOnly, setFavOnly] = useState(params.get("favorites") === "1");
@@ -44,6 +50,13 @@ export default function MerchantDirectory() {
     );
   }, [merchants, query, category, location, favOnly, favoriteIds, offersByMerchant]);
 
+  // Cities with the most partners, as one-tap chips (people think "my city" first).
+  const topCities = useMemo(() => {
+    const n = new Map();
+    merchants.forEach((m) => { const c = (m.city || "").trim(); if (c) n.set(c, (n.get(c) || 0) + 1); });
+    return [...n.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8).map(([c]) => c);
+  }, [merchants]);
+
   const usedCategories = ["ALL", ...categories.map((c) => c.value).filter((v) => merchants.some((m) => m.category === v))];
 
   return (
@@ -61,6 +74,16 @@ export default function MerchantDirectory() {
           </div>
           <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Ville ou pays" aria-label="Ville ou pays" className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
         </div>
+        {topCities.length > 0 && (
+          <div className="mt-3 flex flex-wrap items-center gap-2" aria-label="Villes">
+            <MapPin className="h-4 w-4 text-slate-400" aria-hidden="true" />
+            {topCities.map((c) => (
+              <button key={c} onClick={() => setLocation(location.toLowerCase() === c.toLowerCase() ? "" : c)} aria-pressed={location.toLowerCase() === c.toLowerCase()} className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${location.toLowerCase() === c.toLowerCase() ? "bg-slate-900 text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
+                {c}
+              </button>
+            ))}
+          </div>
+        )}
         <div className="mt-3 flex flex-wrap gap-2">
           {user && (
             <button onClick={() => setFavOnly((v) => !v)} aria-pressed={favOnly} className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition ${favOnly ? "bg-rose-500 text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
@@ -75,6 +98,14 @@ export default function MerchantDirectory() {
         </div>
       </div>
 
+      {offline && (
+        <p role="status" className="mt-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-800">
+          Connexion faible : affichage de la dernière liste enregistrée{cachedAt ? ` (${new Date(cachedAt).toLocaleDateString("fr-FR")})` : ""}.
+        </p>
+      )}
+      {!location && topCities.length > 0 && !loading && (
+        <p className="mt-3 text-xs text-slate-500">Astuce : choisissez votre ville ci-dessus, elle sera mémorisée pour vos prochaines visites.</p>
+      )}
       <p className="mt-4 text-sm text-slate-500">{filtered.length} partenaire{filtered.length > 1 ? "s" : ""}</p>
 
       {loading ? (
