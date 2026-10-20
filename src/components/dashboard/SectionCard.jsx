@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { BrandIcon } from "@/components/brand/NvIcon";
 
 export default function SectionCard({ icon: Icon, title, action, children, className = "" }) {
   return (
@@ -13,7 +14,7 @@ export default function SectionCard({ icon: Icon, title, action, children, class
         <div className="mb-4 flex items-center justify-between gap-3">
           {title && (
             <h3 className="flex items-center gap-2 font-semibold text-slate-900">
-              {Icon && <Icon className="h-5 w-5 text-slate-400" />}
+              <BrandIcon icon={Icon} className="h-5 w-5 text-slate-400" glyphClassName="h-5 w-5 text-emerald-600" />
               {title}
             </h3>
           )}

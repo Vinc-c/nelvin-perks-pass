@@ -1,17 +1,18 @@
 import React from "react";
 import { Loader2 } from "lucide-react";
+import NvIcon, { glyphFor } from "@/components/brand/NvIcon";
 
 /* Friendly, consistent empty state with optional CTA */
-export function EmptyState({ icon: Icon, title, description, action }) {
+export function EmptyState({ icon: Icon, glyph, title, description, action }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-12 text-center">
-      {Icon && (
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-50">
-          <Icon className="h-6 w-6 text-slate-400" />
+    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-nv-line bg-white px-6 py-12 text-center">
+      {(glyph || Icon) && (
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-nv-ivory-2 text-nv-emerald ring-1 ring-nv-line">
+          {glyph || glyphFor(Icon) ? <NvIcon name={glyph || glyphFor(Icon)} className="h-8 w-8" /> : <Icon className="h-6 w-6 text-slate-400" />}
         </div>
       )}
-      {title && <p className="mt-4 font-semibold text-slate-900">{title}</p>}
-      {description && <p className="mt-1 max-w-sm text-sm text-slate-500">{description}</p>}
+      {title && <p className="mt-4 font-semibold text-nv-ink">{title}</p>}
+      {description && <p className="mt-1 max-w-sm text-sm text-nv-muted">{description}</p>}
       {action && <div className="mt-5">{action}</div>}
     </div>
   );

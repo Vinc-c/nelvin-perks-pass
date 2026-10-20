@@ -1,3 +1,4 @@
+import NvIcon from "@/components/brand/NvIcon";
 import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import PortalLayout from "@/components/PortalLayout";
@@ -11,12 +12,12 @@ import { EmptyState, ListSkeleton } from "@/components/UiFeedback";
 import { Award, Send, Loader2, Trophy, Heart } from "lucide-react";
 
 export const RECOGNITION_BADGES = {
-  TEAM_PLAYER: { label: "Esprit d'équipe", emoji: "🤝" },
-  INNOVATOR: { label: "Innovation", emoji: "💡" },
-  CUSTOMER_HERO: { label: "Héros client", emoji: "🦸" },
-  LEADERSHIP: { label: "Leadership", emoji: "🧭" },
-  GOING_EXTRA_MILE: { label: "Au-delà des attentes", emoji: "🚀" },
-  MENTOR: { label: "Mentor", emoji: "🎓" },
+  TEAM_PLAYER: { label: "Esprit d'équipe", glyph: "FAMILY_PARENTING" },
+  INNOVATOR: { label: "Innovation", glyph: "SPARK" },
+  CUSTOMER_HERO: { label: "Héros client", glyph: "VERIFIED" },
+  LEADERSHIP: { label: "Leadership", glyph: "PASS_VIP" },
+  GOING_EXTRA_MILE: { label: "Au-delà des attentes", glyph: "STAR_MARK" },
+  MENTOR: { label: "Mentor", glyph: "EDUCATION_LEARNING" },
 };
 
 const initials = (name) => (name || "?").split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
@@ -96,7 +97,7 @@ export default function RecognitionWall() {
                 <div className="mt-1 grid grid-cols-2 gap-2">
                   {Object.entries(RECOGNITION_BADGES).map(([id, b]) => (
                     <button type="button" key={id} onClick={() => setBadge(id)} className={`not-pill flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-xs font-medium ${badge === id ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-600"}`}>
-                      <span>{b.emoji}</span>{b.label}
+                      <NvIcon name={b.glyph} className="h-4 w-4" />{b.label}
                     </button>
                   ))}
                 </div>
@@ -146,7 +147,7 @@ export default function RecognitionWall() {
                           <span className="font-semibold text-slate-900">{nameOf(r.from_user_id)}</span> a reconnu{" "}
                           <span className="font-semibold text-slate-900">{nameOf(r.to_user_id)}</span>
                         </p>
-                        <span className="ml-auto rounded-full bg-white px-2 py-0.5 text-xs text-slate-600 ring-1 ring-slate-200">{b.emoji} {b.label}</span>
+                        <span className="ml-auto inline-flex items-center rounded-full bg-white px-2 py-0.5 text-xs text-slate-600 ring-1 ring-slate-200"><NvIcon name={b.glyph} className="h-3.5 w-3.5" /> {b.label}</span>
                       </div>
                       <p className="mt-2 text-sm text-slate-600">« {r.message} »</p>
                       <p className="mt-1 text-xs text-slate-400">{new Date(r.created_date).toLocaleDateString("fr-FR", { dateStyle: "medium" })} · +{r.points} pts</p>

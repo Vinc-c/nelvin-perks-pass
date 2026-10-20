@@ -12,7 +12,8 @@ import { categoryImage } from "@/data/offerCategories";
 import { EmptyState, ListSkeleton } from "@/components/UiFeedback";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useAuth } from "@/lib/AuthContext";
-import { Search, MapPin, ShieldCheck, Tag, Store, Heart, Star } from "lucide-react";
+import { Search, Heart } from "lucide-react";
+import NvIcon, { CategoryIcon } from "@/components/brand/NvIcon";
 
 export default function MerchantDirectory() {
   const { categories, meta } = useCategories();
@@ -76,9 +77,9 @@ export default function MerchantDirectory() {
         </div>
         {topCities.length > 0 && (
           <div className="mt-3 flex flex-wrap items-center gap-2" aria-label="Villes">
-            <MapPin className="h-4 w-4 text-slate-400" aria-hidden="true" />
+            <NvIcon name="CITY_PIN" className="h-5 w-5 text-nv-emerald" />
             {topCities.map((c) => (
-              <button key={c} onClick={() => setLocation(location.toLowerCase() === c.toLowerCase() ? "" : c)} aria-pressed={location.toLowerCase() === c.toLowerCase()} className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${location.toLowerCase() === c.toLowerCase() ? "bg-slate-900 text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
+              <button key={c} onClick={() => setLocation(location.toLowerCase() === c.toLowerCase() ? "" : c)} aria-pressed={location.toLowerCase() === c.toLowerCase()} className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${location.toLowerCase() === c.toLowerCase() ? "bg-nv-deep text-white shadow" : "border border-nv-line bg-white text-slate-600 hover:bg-nv-ivory"}`}>
                 {c}
               </button>
             ))}
@@ -91,7 +92,8 @@ export default function MerchantDirectory() {
             </button>
           )}
           {usedCategories.map((c) => (
-            <button key={c} onClick={() => setCategory(c)} className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${category === c ? "bg-emerald-500 text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
+            <button key={c} onClick={() => setCategory(c)} className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition ${category === c ? "bg-nv-deep text-white shadow" : "border border-nv-line bg-white text-slate-600 hover:bg-nv-ivory"}`}>
+              {c === "ALL" ? <NvIcon name="AFRICA" tone={category === c ? "dark" : "light"} className="h-4 w-4" /> : <CategoryIcon category={c} tone={category === c ? "dark" : "light"} className="h-4 w-4" />}
               {c === "ALL" ? "Toutes" : meta(c).label}
             </button>
           ))}
@@ -111,7 +113,7 @@ export default function MerchantDirectory() {
       {loading ? (
         <div className="mt-3"><ListSkeleton rows={4} /></div>
       ) : filtered.length === 0 ? (
-        <div className="mt-3"><EmptyState icon={Store} title="Aucun partenaire trouvé" description={merchants.length ? "Modifiez vos filtres." : "Les premiers partenaires arrivent très bientôt."} /></div>
+        <div className="mt-3"><EmptyState glyph="AFRICA" title="Aucun partenaire trouvé" description={merchants.length ? "Modifiez vos filtres." : "Les premiers partenaires arrivent très bientôt."} /></div>
       ) : (
         <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((m, i) => {
@@ -122,24 +124,24 @@ export default function MerchantDirectory() {
                 <div className="relative h-36 overflow-hidden">
                   <Image src={m.cover_image_url || meta(m.category).image_url || categoryImage(m.category)} alt={m.name} className="h-full w-full transition duration-500 hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent" />
-                  <span className="absolute left-3 top-3 rounded-full bg-white/85 px-2.5 py-1 text-xs font-medium text-slate-700 backdrop-blur-sm">{meta(m.category).label}</span>
+                  <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-nv-ink backdrop-blur-sm"><CategoryIcon category={m.category} className="h-3.5 w-3.5 text-nv-emerald" /> {meta(m.category).label}</span>
                   {m.logo_url && <img src={m.logo_url} alt="" className="absolute bottom-3 left-3 h-10 w-10 rounded-lg bg-white object-contain p-1 shadow" />}
                 </div>
                 <div className="flex flex-1 flex-col p-4">
                   <div className="flex items-center justify-between gap-2">
                     <h3 className="truncate font-semibold text-slate-900">{m.name}</h3>
-                    <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-600" aria-label="Partenaire vérifié" />
+                    <NvIcon name="VERIFIED" className="h-5 w-5 shrink-0 text-nv-emerald" label="Partenaire vérifié" />
                   </div>
-                  <p className="mt-1 flex items-center gap-1 text-sm text-slate-500"><MapPin className="h-3.5 w-3.5" /> {[m.city, m.country].filter(Boolean).join(", ") || "—"}</p>
-                  {m.reviews_count > 0 && <p className="mt-1 flex items-center gap-1 text-xs text-slate-500"><Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" /> {Number(m.rating).toFixed(1)} · {m.reviews_count} avis</p>}
+                  <p className="mt-1 flex items-center gap-1 text-sm text-slate-500"><NvIcon name="CITY_PIN" className="h-4 w-4" /> {[m.city, m.country].filter(Boolean).join(", ") || "—"}</p>
+                  {m.reviews_count > 0 && <p className="mt-1 flex items-center gap-1 text-xs text-slate-500"><NvIcon name="STAR_MARK" className="h-4 w-4 text-nv-bronze" /> {Number(m.rating).toFixed(1)} · {m.reviews_count} avis</p>}
                   {best ? (
-                    <p className="mt-2 flex items-center gap-1.5 text-sm text-emerald-700"><Tag className="h-3.5 w-3.5" /> {best.title} · <span className="font-semibold">{offerBadge(best, (v) => money.format(v, currency))}</span></p>
+                    <p className="mt-2 flex items-center gap-1.5 text-sm text-emerald-700"><NvIcon name={best.discount_type === "PERK" ? "PERK_GIFT" : "PERCENT"} className="h-4 w-4 shrink-0" /> {best.title} · <span className="font-semibold">{offerBadge(best, (v) => money.format(v, currency))}</span></p>
                   ) : (
                     <p className="mt-2 text-sm text-slate-400">Offre bientôt disponible</p>
                   )}
                   <div className="flex-1" />
                   {best && (
-                    <Link to={offerPath(best)} className="mt-3 block w-full rounded-xl bg-emerald-500 py-2 text-center text-sm font-medium text-white hover:bg-emerald-600">
+                    <Link to={offerPath(best)} className="mt-3 block w-full rounded-xl bg-nv-emerald py-2 text-center text-sm font-semibold text-white hover:bg-nv-deep">
                       Voir l'offre{list.length > 1 ? ` (+${list.length - 1})` : ""}
                     </Link>
                   )}

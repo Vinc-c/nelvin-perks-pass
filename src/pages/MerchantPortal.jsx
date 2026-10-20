@@ -1,3 +1,4 @@
+import NvIcon from "@/components/brand/NvIcon";
 import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useSearchParams } from "react-router-dom";
@@ -187,7 +188,7 @@ export default function MerchantPortal() {
               <div className={`mt-3 rounded-lg p-3 text-sm ${scanResult.valid ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-700"}`}>
                 {scanResult.valid ? (
                   <>
-                    <p className="font-semibold">✓ {scanResult.offer_title}</p>
+                    <p className="flex items-center gap-1.5 font-semibold"><NvIcon name="VERIFIED" className="h-5 w-5" /> {scanResult.offer_title}</p>
                     <p>Addition {money.format(scanResult.bill_usd, scanResult.currency)} · remise {money.format(scanResult.discount_applied, scanResult.currency)} · <strong>à encaisser {money.format(scanResult.net_usd, scanResult.currency)}</strong></p>
                     <p className="text-xs">{scanResult.paid_with_wallet ? "Payé avec le wallet du membre — montant ajouté à votre solde." : "À encaisser par vos moyens habituels."} Cashback membre : {money.format(scanResult.cashback_credited, scanResult.currency)}.</p>
                   </>
