@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Image } from "@/components/ui/image";
-import Motif from "@/components/brand/Motif";
 import { OFFER_CATEGORIES, CATEGORY_LABELS_EN } from "@/data/offerCategories";
 import { CATEGORY_IMAGES as categoryImages } from "@/data/categoryImages";
 
@@ -40,7 +39,6 @@ function Card({ k, hidden }) {
       <div className="relative h-32 w-full">
         <Image src={categoryImages[k]} fittingType="fill" className="h-full w-full transition duration-500 group-hover:scale-105" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-        <Motif category={k} className="absolute left-3 top-3 h-9 w-9 shadow ring-2 ring-white" rounded="rounded-full" />
         <span className="absolute bottom-3 left-3 rounded-full bg-nv-gold px-2.5 py-1 text-[11px] font-bold text-nv-ink shadow">Member offer</span>
       </div>
       <div className="p-4">
