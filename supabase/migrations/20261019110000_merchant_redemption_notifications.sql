@@ -16,6 +16,7 @@ begin
   return new;
 end $$;
 
-drop trigger if exists notify_merchant_redemption on public.redemptions;
 create trigger notify_merchant_redemption after update on public.redemptions
   for each row execute function public.notify_merchant_redemption();
+
+revoke execute on function public.notify_merchant_redemption() from public, anon, authenticated;

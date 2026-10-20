@@ -57,6 +57,7 @@ begin
   end if;
   return new;
 end $$;
-drop trigger if exists guard_redemption_plan on public.redemptions;
 create trigger guard_redemption_plan before insert on public.redemptions
   for each row execute function public.guard_redemption_plan();
+
+revoke execute on function public.guard_redemption_plan() from public, anon, authenticated;
