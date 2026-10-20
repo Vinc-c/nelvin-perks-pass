@@ -1,3 +1,4 @@
+import BadgeMedal from "@/components/brand/BadgeMedal";
 import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -8,7 +9,7 @@ import { useCurrencies } from "@/hooks/useCurrencies";
 import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
 import StatCard from "@/components/dashboard/StatCard";
 import { Spinner } from "@/components/UiFeedback";
-import { Crown, Lock, Award, TrendingUp, Gift, Star, Info } from "lucide-react";
+import { Crown, Award, TrendingUp, Gift, Star, Info } from "lucide-react";
 
 export default function MyRewards() {
   const { user } = useAuth();
@@ -58,9 +59,7 @@ export default function MyRewards() {
         {[...earned, ...next].map((b, i) => (
           <motion.div key={b.id} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: Math.min(i, 8) * 0.04 }}
             className={`flex items-center gap-3 rounded-2xl border p-4 shadow-sm ${b.earned ? "border-amber-200 bg-white" : "border-slate-200 bg-slate-50"}`}>
-            <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-2xl ${b.earned ? "bg-amber-50" : "bg-slate-200 grayscale"}`}>
-              {b.earned ? b.emoji : <Lock className="h-5 w-5 text-slate-400" />}
-            </div>
+            <BadgeMedal glyph={b.glyph} earned={b.earned} />
             <div className="min-w-0 flex-1">
               <p className="font-medium text-slate-900">{b.name}</p>
               <p className="text-xs text-slate-500">{b.desc}</p>

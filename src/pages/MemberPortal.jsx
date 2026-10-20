@@ -18,12 +18,14 @@ import { useCurrencies } from "@/hooks/useCurrencies";
 import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
 import { usePlans } from "@/hooks/usePlans";
 import { TX_LABELS, walletEffect } from "@/pages/WalletActivity";
-import { Wallet, ArrowDownLeft, ArrowUpRight, Crown, Star, TrendingUp, Loader2, Search } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, Crown, Loader2, Search, Star, TrendingUp, Wallet } from "lucide-react";
 import RoleWelcomeHeader from "@/components/RoleWelcomeHeader";
 import StatCard from "@/components/dashboard/StatCard";
 import SectionCard from "@/components/dashboard/SectionCard";
 import { EmptyState } from "@/components/UiFeedback";
 import AccessGate from "@/components/AccessGate";
+import NvIcon, { CategoryIcon } from "@/components/brand/NvIcon";
+import NelvinPassCard from "@/components/brand/NelvinPassCard";
 
 export default function MemberPortal() {
   const navigate = useNavigate();
@@ -55,6 +57,7 @@ export default function MemberPortal() {
 
   const activeSub = (activity?.subs || []).find((s) => s.status === "ACTIVE" && (!s.expires_at || new Date(s.expires_at) > new Date()));
   const planName = activeSub ? byCode(activeSub.plan_type)?.name || activeSub.plan_type : "Accès gratuit";
+  const memberCode = user?.id ? `NLV · ${String(user.id).replace(/-/g, "").slice(0, 4).toUpperCase()} ${String(user.id).replace(/-/g, "").slice(4, 8).toUpperCase()}` : "";
   const cashback = (activity?.txs || []).filter((x) => x.status === "COMPLETED").reduce((s, x) => s + Number(x.cashback_amount || 0), 0);
 
   const offers = useMemo(() => {
@@ -75,16 +78,21 @@ export default function MemberPortal() {
       <RoleWelcomeHeader />
       <div className="[&>*:first-child]:mt-0">
       {show("wallet") && (<>
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 p-6 shadow-lg">
-        <div className="absolute -right-8 -top-8 h-40 w-40 rounded-full bg-white/10" />
-        <div className="relative">
-          <div className="flex items-center justify-between">
-            <span className="flex items-center gap-2 text-sm text-emerald-50"><Wallet className="h-4 w-4" /> {t("wallet.title")}</span>
-            <CurrencySelect value={currency} onChange={setCurrency} tone="dark" />
+      <div className="grid gap-4 lg:grid-cols-2">
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+          <NelvinPassCard tier={activeSub?.plan_type || "PASS_FREE"} name={(user?.full_name || "").toUpperCase()} code={memberCode} showQr={false} />
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="relative flex flex-col justify-between overflow-hidden rounded-[1.6rem] bg-gradient-to-br from-emerald-500 to-emerald-700 p-6 shadow-lg">
+          <NvIcon name="AFRICA" tone="dark" strokeWidth={0.5} className="pointer-events-none absolute -right-8 -top-8 h-44 w-44 text-nv-gold" faint={0.15} />
+          <div className="relative">
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-2 text-sm text-emerald-50"><NvIcon name="WALLET" tone="dark" className="h-5 w-5" /> {t("wallet.title")}</span>
+              <CurrencySelect value={currency} onChange={setCurrency} tone="dark" />
+            </div>
+            <p className="mt-4 text-4xl font-bold text-white">{fmt(user?.wallet_balance)}</p>
+            <p className="mt-1 text-sm text-emerald-50">{t("wallet.balance")}</p>
           </div>
-          <p className="mt-4 text-4xl font-bold text-white">{fmt(user?.wallet_balance)}</p>
-          <p className="mt-1 text-sm text-emerald-50">{t("wallet.balance")}</p>
-          <div className="mt-4 flex gap-2">
+          <div className="relative mt-4 flex gap-2">
             <button onClick={() => setRechargeOpen(true)} className="flex items-center gap-1.5 rounded-lg bg-white/20 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/30 active:scale-95">
               <ArrowDownLeft className="h-4 w-4" /> {t("wallet.recharge")}
             </button>
@@ -92,8 +100,8 @@ export default function MemberPortal() {
               <ArrowUpRight className="h-4 w-4" /> {t("wallet.withdraw")}
             </button>
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
 
       <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
         <StatCard icon={TrendingUp} label={t("wallet.cashback")} value={fmt(cashback)} tone="emerald" />
@@ -106,7 +114,8 @@ export default function MemberPortal() {
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-2">
           {usedCategories.map((c) => (
-            <button key={c} onClick={() => setCategory(c)} className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${category === c ? "bg-emerald-500 text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
+            <button key={c} onClick={() => setCategory(c)} className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition ${category === c ? "bg-nv-deep text-white shadow" : "border border-nv-line bg-white text-slate-600 hover:bg-nv-ivory"}`}>
+              {c === "ALL" ? <NvIcon name="AFRICA" tone={category === c ? "dark" : "light"} className="h-4 w-4" /> : <CategoryIcon category={c} tone={category === c ? "dark" : "light"} className="h-4 w-4" />}
               {c === "ALL" ? "Toutes les offres" : meta(c).label}
             </button>
           ))}

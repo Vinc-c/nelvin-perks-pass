@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { navHref, isNavActive } from "@/lib/portalNav";
+import { BrandIcon } from "@/components/brand/NvIcon";
 
 export default function PortalNavLinks({ items, onNavigate }) {
   const { pathname, search } = useLocation();
@@ -19,10 +20,10 @@ export default function PortalNavLinks({ items, onNavigate }) {
           to={navHref(item)}
           onClick={onNavigate}
           className={`flex items-center gap-3 rounded-full px-4 py-2 text-sm font-medium transition ${
-            active ? "bg-amber-50 text-amber-700" : "text-slate-600 hover:bg-slate-100"
+            active ? "bg-nv-ivory-2 font-semibold text-nv-deep ring-1 ring-nv-line" : "text-slate-600 hover:bg-nv-ivory"
           }`}
         >
-          <Icon className="h-[18px] w-[18px] shrink-0" />
+          <BrandIcon icon={Icon} className="h-[18px] w-[18px] shrink-0" glyphClassName="h-[20px] w-[20px] shrink-0" />
           <span className="truncate">{item.label}</span>
         </Link>
       </React.Fragment>

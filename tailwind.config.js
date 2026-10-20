@@ -51,17 +51,17 @@ module.exports = {
   				DEFAULT: 'hsl(var(--accent))',
   				foreground: 'hsl(var(--accent-foreground))'
   			},
-  			'nv-deep': 'var(--emerald-deep)',
-  			'nv-emerald': 'var(--emerald)',
-  			'nv-gold': 'var(--gold-hex)',
-  			'nv-gold-light': 'var(--gold-light)',
-  			'nv-bronze': 'var(--bronze)',
-  			'nv-terracotta': 'var(--terracotta)',
-  			'nv-ivory': 'var(--ivory)',
-  			'nv-ivory-2': 'var(--ivory-2)',
-  			'nv-line': 'var(--line)',
-  			'nv-ink': 'var(--ink)',
-  			'nv-muted': 'var(--muted-ink)',
+  			'nv-deep': '#08261D',
+  			'nv-emerald': '#0F4A38',
+  			'nv-gold': '#C8A24A',
+  			'nv-gold-light': '#E6CF8B',
+  			'nv-bronze': '#84631A',
+  			'nv-terracotta': '#A8472A',
+  			'nv-ivory': '#FAF6EC',
+  			'nv-ivory-2': '#F2EBDA',
+  			'nv-line': '#E4DAC3',
+  			'nv-ink': '#14201B',
+  			'nv-muted': '#55625B',
   			gold: {
   				DEFAULT: 'hsl(var(--gold))',
   				foreground: 'hsl(var(--gold-foreground))'
@@ -69,6 +69,18 @@ module.exports = {
   			brand: {
   				DEFAULT: 'hsl(var(--brand))',
   				foreground: 'hsl(var(--brand-foreground))'
+  			},
+  			slate: {
+  				50: '#FBF8F0', 100: '#F4EEDF', 200: '#E8DFCB', 300: '#D3C7AC', 400: '#8E968F',
+  				500: '#5F6B64', 600: '#4A564F', 700: '#35413B', 800: '#1F2E27', 900: '#14201B', 950: '#0B1612'
+  			},
+  			emerald: {
+  				50: '#EAF3EE', 100: '#D2E7DC', 200: '#A8CFBB', 300: '#74B096', 400: '#3F8F72',
+  				500: '#0F4A38', 600: '#0B3A2C', 700: '#08261D', 800: '#061C15', 900: '#04130E'
+  			},
+  			amber: {
+  				50: '#FBF5E3', 100: '#F4E8C3', 200: '#EBD79A', 300: '#E6CF8B', 400: '#C8A24A',
+  				500: '#84631A', 600: '#6F5314', 700: '#5A430F', 800: '#43320B', 900: '#2E2208'
   			},
   			blue: {
   				500: '#14B8D2',

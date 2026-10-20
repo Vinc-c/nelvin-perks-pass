@@ -1,4 +1,5 @@
 import Motif from "@/components/brand/Motif";
+import BadgeMedal from "@/components/brand/BadgeMedal";
 import React, { useMemo, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Link, useSearchParams } from "react-router-dom";
@@ -16,7 +17,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { useCurrencies } from "@/hooks/useCurrencies";
 import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
 import { useRewards } from "@/hooks/useRewards";
-import { Wallet, Gift, QrCode, TrendingUp, Loader2, Award, Lock, ArrowUpRight } from "lucide-react";
+import { Wallet, Gift, QrCode, TrendingUp, Loader2, Award, ArrowUpRight } from "lucide-react";
 import RoleWelcomeHeader from "@/components/RoleWelcomeHeader";
 import StatCard from "@/components/dashboard/StatCard";
 import SectionCard from "@/components/dashboard/SectionCard";
@@ -116,7 +117,7 @@ export default function EmployeePortal() {
           <div className="flex flex-wrap gap-3">
             {rewards.badges.map((b) => (
               <div key={b.id} title={b.desc} className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm ${b.earned ? "bg-amber-50 text-amber-800" : "bg-slate-50 text-slate-400"}`}>
-                <span className="text-lg">{b.earned ? b.emoji : <Lock className="h-4 w-4" />}</span>
+                <BadgeMedal glyph={b.glyph} earned={b.earned} className="h-8 w-8" iconClassName="h-4 w-4" />
                 <span className="font-medium">{b.name}</span>
                 {!b.earned && <span className="text-xs">{b.progress}%</span>}
               </div>

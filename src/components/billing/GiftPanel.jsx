@@ -1,3 +1,4 @@
+import NvIcon from "@/components/brand/NvIcon";
 import React, { useState } from "react";
 import { Gift, Loader2, Copy, Check, Ticket } from "lucide-react";
 import SectionCard from "@/components/dashboard/SectionCard";
@@ -131,7 +132,7 @@ export default function GiftPanel({ initialCode = "", onRedeemed }) {
       <SectionCard icon={Ticket} title="J'ai un code cadeau">
         {received.map((g) => (
           <div key={g.id} className="mb-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">
-            <p>🎁 On vous offre un abonnement{g.message ? ` : « ${g.message} »` : "."}</p>
+            <p className="flex items-center gap-2"><NvIcon name="PERK_GIFT" className="h-5 w-5 shrink-0" /> On vous offre un abonnement{g.message ? ` : « ${g.message} »` : "."}</p>
             <button onClick={() => redeem(g.code)} disabled={busy} className="mt-2 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-medium text-white">Activer mon cadeau</button>
           </div>
         ))}

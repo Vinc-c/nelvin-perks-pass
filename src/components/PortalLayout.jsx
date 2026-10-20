@@ -34,11 +34,11 @@ export default function PortalLayout({ children, title }) {
             <div className="flex items-center gap-2">
               <LanguageSwitcher compact variant="light" />
               {isAuthenticated ? (
-                <Link to="/app" className="rounded-full bg-amber-500 px-5 py-2 text-sm font-semibold text-white">Dashboard</Link>
+                <Link to="/app" className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white">Mon espace</Link>
               ) : (
                 <>
-                  <Link to="/login" className="hidden rounded-full px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 sm:inline-flex">Log in</Link>
-                  <Link to="/register" className="rounded-full bg-amber-500 px-5 py-2 text-sm font-semibold text-white">Get started</Link>
+                  <Link to="/login" className="hidden rounded-full px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 sm:inline-flex">Se connecter</Link>
+                  <Link to="/register" className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white">Commencer</Link>
                 </>
               )}
             </div>

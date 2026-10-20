@@ -13,6 +13,9 @@ import AppDownloadCta from "@/components/landing/AppDownloadCta";
 import HeroFallingCards from "@/components/landing/HeroFallingCards";
 import HeroLifestyleStrip from "@/components/landing/HeroLifestyleStrip";
 import SiteFooter from "@/components/landing/SiteFooter";
+import PassShowcase from "@/components/landing/PassShowcase";
+import AfricaPillars from "@/components/landing/AfricaPillars";
+import HowItWorks from "@/components/landing/HowItWorks";
 import NelvinLogo from "@/components/NelvinLogo";
 import { useAuth } from "@/lib/AuthContext";
 import { usePublicContent, imageByKey, copyByKey } from "@/hooks/usePublicContent";
@@ -193,6 +196,15 @@ export default function Landing() {
         </section>
       )}
 
+
+      {/* The digital card and the three passes */}
+      <PassShowcase />
+
+      {/* Built for Africa */}
+      <AfricaPillars />
+
+      {/* How it works */}
+      <HowItWorks />
 
       {/* African landscape band (ken-burns video feel) */}
       <section className="relative mt-20 h-64 overflow-hidden sm:h-80">

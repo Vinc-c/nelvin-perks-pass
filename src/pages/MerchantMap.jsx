@@ -139,8 +139,7 @@ export default function MerchantMap() {
               <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 text-xs" role="group" aria-label="Catégorie">
                 {["ALL", ...categories].map((c) => (
                   <button key={c} onClick={() => setCategory(c)} aria-pressed={category === c}
-                    className={`nv-focus flex shrink-0 items-center gap-1.5 rounded-full py-1 pl-1 pr-3 font-medium ${category === c ? "bg-[#08261D] text-white" : "bg-[#F2EBDA] text-slate-700 hover:bg-slate-200"}`}>
-                    {c !== "ALL" ? <Motif category={c} className="h-5 w-5" rounded="rounded-full" /> : <span className="w-2" />}
+                    className={`nv-focus flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 font-medium ${category === c ? "bg-[#08261D] text-white" : "bg-[#F2EBDA] text-slate-700 hover:bg-slate-200"}`}>
                     {c === "ALL" ? "Toutes" : meta(c).label}
                   </button>
                 ))}

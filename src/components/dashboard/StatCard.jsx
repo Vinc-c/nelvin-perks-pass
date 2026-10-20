@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { BrandIcon } from "@/components/brand/NvIcon";
 
 const TONES = {
   emerald: { chip: "bg-emerald-50", text: "text-emerald-600" },
@@ -19,7 +20,7 @@ export default function StatCard({ icon: Icon, label, value, tone = "emerald", d
       className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
     >
       <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${t.chip}`}>
-        {Icon && <Icon className={`h-5 w-5 ${t.text}`} />}
+        <BrandIcon icon={Icon} className={`h-5 w-5 ${t.text}`} glyphClassName={`h-6 w-6 ${t.text}`} />
       </div>
       <p className="mt-3 text-2xl font-bold tracking-tight text-slate-900">{value}</p>
       <p className="text-sm text-slate-500">{label}</p>
