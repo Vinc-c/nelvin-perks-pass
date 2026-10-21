@@ -1,4 +1,5 @@
 import React from "react";
+import { useI18n } from "@/i18n/I18nContext";
 import { usePublicContent } from "@/hooks/usePublicContent";
 
 const initials = (name) => String(name || "?").split(/\s+/).map((n) => n[0]).join("").slice(0, 2).toUpperCase();
@@ -9,6 +10,7 @@ const https = (u) => (/^https:\/\//.test(u || "") ? u : "");
  * merchants from the catalogue. Hidden while the network is empty.
  */
 export default function PartnerLogos({ merchants = [] }) {
+  const { t } = useI18n();
   const content = usePublicContent();
   const cms = (content?.logos || []).filter((l) => l.active !== false && https(l.logo_url)).map((l) => ({ name: l.name, sub: l.category || "", logo: l.logo_url }));
   const seen = new Set(cms.map((l) => l.name.toLowerCase()));
@@ -21,9 +23,9 @@ export default function PartnerLogos({ merchants = [] }) {
 
   return (
     <section className="bg-white/60 py-10">
-      <h2 className="px-4 text-center text-2xl font-bold text-nv-ink sm:px-6 sm:text-3xl">Your favorites are already in</h2>
+      <h2 className="px-4 text-center text-2xl font-bold text-nv-ink sm:px-6 sm:text-3xl">{t("land.partners.title")}</h2>
       <p className="mt-2 px-4 text-center text-nv-muted">
-        {merchants.length > 0 ? `${merchants.length} verified partner${merchants.length > 1 ? "s" : ""} across Africa, and counting.` : "Verified partners across Africa."}
+        {merchants.length > 1 ? t("land.partners.count", { n: merchants.length }) : merchants.length === 1 ? t("land.partners.count1") : t("land.partners.generic")}
       </p>
       <div className="relative mt-8 overflow-hidden">
         <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-white to-transparent" />

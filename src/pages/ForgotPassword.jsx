@@ -6,8 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, ArrowLeft, Loader2 } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
+import { useI18n } from "@/i18n/I18nContext";
 
 export default function ForgotPassword() {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -28,22 +30,22 @@ export default function ForgotPassword() {
   return (
     <AuthLayout
       icon={Mail}
-      title="Réinitialiser le mot de passe"
-      subtitle="Nous vous enverrons un lien de réinitialisation"
+      title={t("auth.forgot.title")}
+      subtitle={t("auth.forgot.subtitle")}
       footer={
         <Link to="/login" className="text-primary font-medium hover:underline">
-          <ArrowLeft className="w-3 h-3 inline mr-1" />Retour à la connexion
+          <ArrowLeft className="w-3 h-3 inline mr-1" />{t("auth.forgot.back")}
         </Link>
       }
     >
       {sent ? (
         <p className="text-sm text-foreground text-center">
-          Si un compte existe avec cet email, vous recevrez bientôt un lien de réinitialisation.
+          {t("auth.forgot.sent")}
         </p>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Adresse email</Label>
+            <Label htmlFor="email">{t("auth.forgot.address")}</Label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
               <Input
@@ -51,7 +53,7 @@ export default function ForgotPassword() {
                 type="email"
                 autoComplete="email"
                 autoFocus
-                placeholder="vous@exemple.com"
+                placeholder={t("auth.placeholderEmail")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="pl-10 h-12"
@@ -63,10 +65,10 @@ export default function ForgotPassword() {
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Envoi…
+                {t("auth.forgot.sending")}
               </>
             ) : (
-              "Envoyer le lien"
+              t("auth.forgot.send")
             )}
           </Button>
         </form>

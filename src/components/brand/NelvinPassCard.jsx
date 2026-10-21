@@ -3,6 +3,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { NelvinMark } from "@/components/NelvinLogo";
 import KenteBand from "@/components/brand/KenteBand";
 import NvIcon from "@/components/brand/NvIcon";
+import { useI18n } from "@/i18n/I18nContext";
 
 const TIERS = {
   PASS_FREE: { label: "Member", glyph: "PASS_FREE", bg: "from-nv-emerald via-nv-emerald to-nv-deep", ring: "ring-white/10" },
@@ -16,14 +17,15 @@ const TIERS = {
  * marketing version never looks like a real person's card.
  */
 export default function NelvinPassCard({ tier = "PASS_PREMIUM", name, code, qrValue, showQr = true, illustration = false, className = "" }) {
+  const { t: tr } = useI18n();
   const t = TIERS[tier] || TIERS.PASS_FREE;
-  const holder = name || (illustration ? "YOUR NAME" : "MEMBER");
+  const holder = name || tr(illustration ? "pass.yourName" : "pass.member");
   const shown = code || (illustration ? "NLV · 0000 0000" : "");
   return (
     <div
       className={`relative aspect-[1.586/1] w-full overflow-hidden rounded-[1.6rem] bg-gradient-to-br ${t.bg} p-5 text-white shadow-2xl shadow-nv-deep/40 ring-1 ${t.ring} ${className}`}
       role="img"
-      aria-label={`Carte Nelvin ${t.label}${illustration ? " (illustration)" : ""}`}
+      aria-label={tr("pass.aria", { tier: `${t.label}${illustration ? ` (${tr("pass.illustration")})` : ""}` })}
     >
       <NvIcon name="AFRICA" tone="dark" className="pointer-events-none absolute -right-6 -top-6 h-44 w-44 text-nv-gold" faint={0.15} strokeWidth={0.5} />
       <div className="relative flex items-start justify-between">
@@ -37,11 +39,11 @@ export default function NelvinPassCard({ tier = "PASS_PREMIUM", name, code, qrVa
       </div>
       <div className="relative mt-4 flex items-end justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-white/60">Titulaire</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-white/60">{tr("pass.holder")}</p>
           <p className="truncate text-lg font-bold tracking-wide">{holder}</p>
           {shown && <p className="mt-1 font-mono text-xs tracking-widest text-nv-gold-light">{shown}</p>}
           <p className="mt-3 flex items-center gap-1.5 text-[11px] text-white/70">
-            <NvIcon name="VERIFIED" tone="dark" className="h-4 w-4 text-nv-gold-light" /> Valable chez tous les partenaires vérifiés
+            <NvIcon name="VERIFIED" tone="dark" className="h-4 w-4 text-nv-gold-light" /> {tr("pass.valid")}
           </p>
         </div>
         {showQr && (

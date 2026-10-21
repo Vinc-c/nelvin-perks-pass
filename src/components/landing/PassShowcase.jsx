@@ -3,17 +3,15 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import NelvinPassCard from "@/components/brand/NelvinPassCard";
 import NvIcon from "@/components/brand/NvIcon";
+import { useI18n } from "@/i18n/I18nContext";
 import { usePlans } from "@/hooks/usePlans";
 
 const GLYPH = { PASS_BASIC: "PASS_FREE", PASS_PREMIUM: "PASS_PREMIUM", PASS_VIP: "PASS_VIP" };
-const PERK = {
-  PASS_BASIC: "Offers on everyday spots, cashback on every visit.",
-  PASS_PREMIUM: "Everything in Basic, plus premium perks: free extras, upgrades, priority offers.",
-  PASS_VIP: "Everything in Premium, plus luxury hotels, VIP events and a concierge.",
-};
+const PERK = { PASS_BASIC: "land.pass.basic", PASS_PREMIUM: "land.pass.premium", PASS_VIP: "land.pass.vip" };
 
 /** Landing: the digital card and what each Pass unlocks (names and prices come from the live plans). */
 export default function PassShowcase() {
+  const { t } = useI18n();
   const { plans } = usePlans("B2C");
   return (
     <section className="mx-auto mt-20 max-w-7xl px-4 sm:px-6">
@@ -26,10 +24,10 @@ export default function PassShowcase() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}>
-          <p className="text-sm font-semibold text-nv-bronze">Your Nelvin Pass</p>
-          <h2 className="mt-2 text-3xl font-bold leading-tight text-nv-ink sm:text-4xl">One card. Every city. Three levels of privilege.</h2>
+          <p className="text-sm font-semibold text-nv-bronze">{t("land.pass.kicker")}</p>
+          <h2 className="mt-2 text-3xl font-bold leading-tight text-nv-ink sm:text-4xl">{t("land.pass.title")}</h2>
           <p className="mt-3 max-w-xl text-nv-muted">
-            Show your code or tell the partner your PIN at the till. Higher levels unlock premium perks that lower levels never see.
+            {t("land.pass.text")}
           </p>
           <ul className="mt-6 space-y-3">
             {plans.map((p) => (
@@ -40,15 +38,15 @@ export default function PassShowcase() {
                 <span className="min-w-0 flex-1">
                   <span className="flex items-baseline justify-between gap-2">
                     <span className="font-bold text-nv-ink">{p.name}</span>
-                    <span className="text-sm font-semibold text-nv-bronze">${p.price_monthly}<span className="font-normal text-nv-muted">/mo</span></span>
+                    <span className="text-sm font-semibold text-nv-bronze">${p.price_monthly}<span className="font-normal text-nv-muted">{t("land.pass.perMonth")}</span></span>
                   </span>
-                  <span className="mt-0.5 block text-sm text-nv-muted">{PERK[p.code] || p.tagline}</span>
+                  <span className="mt-0.5 block text-sm text-nv-muted">{PERK[p.code] ? t(PERK[p.code]) : p.tagline}</span>
                 </span>
               </li>
             ))}
           </ul>
           <Link to="/pricing" className="mt-6 inline-flex items-center rounded-full bg-nv-deep px-7 py-3 font-semibold text-white transition hover:bg-nv-emerald">
-            Compare the passes
+            {t("land.pass.compare")}
           </Link>
         </motion.div>
       </div>

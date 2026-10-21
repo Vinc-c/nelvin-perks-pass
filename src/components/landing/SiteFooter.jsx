@@ -1,38 +1,40 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import NelvinLogo from "@/components/NelvinLogo";
+import { useI18n } from "@/i18n/I18nContext";
 
 const columns = [
   {
-    title: "Société",
+    title: "foot.company",
     links: [
-      { label: "Adhésion", to: "/pricing" },
-      { label: "VIP Key", to: "/member" },
-      { label: "Devenir Partenaire", to: "/merchant" },
-      { label: "Espace Entreprise / RH", to: "/hr" },
+      { label: "foot.membership", to: "/pricing" },
+      { label: "foot.vipKey", to: "/member" },
+      { label: "foot.becomePartner", to: "/merchant" },
+      { label: "foot.hr", to: "/hr" },
     ],
   },
   {
-    title: "Aide & Support",
+    title: "foot.help",
     links: [
-      { label: "FAQs", to: "/help-center" },
-      { label: "Règles d'utilisation", to: "/terms" },
-      { label: "Centre d'aide", to: "/help-center" },
+      { label: "foot.faq", to: "/help-center" },
+      { label: "foot.rules", to: "/terms" },
+      { label: "foot.helpCenter", to: "/help-center" },
     ],
   },
   {
-    title: "Légal",
+    title: "foot.legal",
     links: [
-      { label: "Conditions d'utilisation", to: "/terms" },
-      { label: "Politique de confidentialité", to: "/privacy" },
-      { label: "Politique des cookies", to: "/cookies" },
-      { label: "Remboursement & annulation", to: "/refund-policy" },
+      { label: "foot.terms", to: "/terms" },
+      { label: "foot.privacy", to: "/privacy" },
+      { label: "foot.cookies", to: "/cookies" },
+      { label: "foot.refund", to: "/refund-policy" },
     ],
   },
 ];
 
 
 export default function SiteFooter() {
+  const { t } = useI18n();
   return (
     <footer className="bg-nv-deep text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
@@ -42,18 +44,18 @@ export default function SiteFooter() {
               <NelvinLogo className="h-7" />
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/70">
-              Daily offers for individuals, benefits for employees and simple tools for HR teams. Built for Africa.
+              {t("foot.tagline")}
             </p>
           </div>
 
           {columns.map((col) => (
             <div key={col.title}>
-              <h4 className="text-sm font-bold text-white">{col.title}</h4>
+              <h4 className="text-sm font-bold text-white">{t(col.title)}</h4>
               <ul className="mt-4 space-y-2.5 text-sm">
                 {col.links.map((l) => (
                   <li key={l.to + l.label}>
                     <Link to={l.to} className="text-white/70 transition-colors hover:text-nv-gold-light">
-                      {l.label}
+                      {t(l.label)}
                     </Link>
                   </li>
                 ))}
@@ -64,14 +66,14 @@ export default function SiteFooter() {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/15 pt-6 sm:flex-row">
           <p className="text-sm text-white/60">
-            © {new Date().getFullYear()} Nelvin Benefits, conçu pour l'Afrique. Développé par{" "}
+            © {new Date().getFullYear()} {t("foot.copy")}{" "}
             <a href="https://liafrik.com" target="_blank" rel="noopener noreferrer" className="font-medium text-white/70 hover:text-nv-gold-light">liafrik.com</a>
           </p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/60">
-            <Link to="/terms" className="hover:text-nv-gold-light">Conditions</Link>
-            <Link to="/privacy" className="hover:text-nv-gold-light">Confidentialité</Link>
-            <Link to="/cookies" className="hover:text-nv-gold-light">Cookies</Link>
-            <Link to="/refund-policy" className="hover:text-nv-gold-light">Remboursement</Link>
+            <Link to="/terms" className="hover:text-nv-gold-light">{t("foot.termsShort")}</Link>
+            <Link to="/privacy" className="hover:text-nv-gold-light">{t("foot.privacyShort")}</Link>
+            <Link to="/cookies" className="hover:text-nv-gold-light">{t("foot.cookiesShort")}</Link>
+            <Link to="/refund-policy" className="hover:text-nv-gold-light">{t("foot.refundShort")}</Link>
           </div>
         </div>
       </div>

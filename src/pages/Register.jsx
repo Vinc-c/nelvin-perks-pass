@@ -45,15 +45,15 @@ export default function Register() {
     e.preventDefault();
     setError("");
     if (password !== confirmPassword) {
-      setError("Les mots de passe ne correspondent pas.");
+      setError(t("auth.err.mismatch"));
       return;
     }
     if (!phone.trim() || phone.replace(/\D/g, "").length < 6) {
-      setError("Indiquez un numéro de téléphone valide.");
+      setError(t("auth.err.phone"));
       return;
     }
     if (password.length < 8) {
-      setError("Le mot de passe doit contenir au moins 8 caractères.");
+      setError(t("auth.err.pwShort"));
       return;
     }
     setLoading(true);
@@ -67,7 +67,7 @@ export default function Register() {
       }
       setStep(1);
     } catch (err) {
-      setError(err.message || "Inscription impossible.");
+      setError(err.message || t("auth.err.signup"));
     } finally {
       setLoading(false);
     }
@@ -83,7 +83,7 @@ export default function Register() {
       const dest = onboardingDest(accountType);
       window.location.href = safeReturnTo() !== "/" ? safeReturnTo() : dest;
     } catch (err) {
-      setError(err.message || "Code de vérification invalide.");
+      setError(err.message || t("auth.err.code"));
     } finally {
       setLoading(false);
     }
@@ -91,7 +91,7 @@ export default function Register() {
 
   const resend = async () => {
     setError("");
-    try { await resendSignupOtp(email); } catch (err) { setError(err.message || "Impossible de renvoyer le code."); }
+    try { await resendSignupOtp(email); } catch (err) { setError(err.message || t("auth.err.resend")); }
   };
 
   const handleGoogle = async () => {
@@ -99,23 +99,23 @@ export default function Register() {
     try {
       await signInWithGoogle(returnTo !== "/" ? returnTo : onboardingDest(accountType));
     } catch (err) {
-      setError(err.message || "Connexion Google impossible");
+      setError(err.message || t("auth.err.google"));
     }
   };
 
   return (
     <AuthLayout
       icon={UserPlus}
-      title="Créer votre compte"
-      subtitle="Inscrivez-vous pour commencer"
+      title={t("auth.reg.title")}
+      subtitle={t("auth.reg.subtitle")}
       footer={
         <>
-          Déjà un compte ?{" "}
+          {t("auth.hasAccount")}{" "}
           <Link
             to={"/login" + (safeReturnTo() !== "/" ? "?returnTo=" + encodeURIComponent(safeReturnTo()) : "")}
             className="text-primary font-medium hover:underline"
           >
-            Se connecter
+            {t("auth.signIn")}
           </Link>
         </>
       }
@@ -134,7 +134,7 @@ export default function Register() {
 
             <Button variant="outline" className="w-full h-12 text-sm font-medium mb-6" onClick={handleGoogle}>
               <GoogleIcon className="w-5 h-5 mr-2" />
-              Continuer avec Google
+              {t("auth.google")}
             </Button>
 
             <div className="relative mb-6">
@@ -155,7 +155,7 @@ export default function Register() {
                 <Label htmlFor="email">{t("reg.email")}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
-                  <Input id="email" type="email" autoComplete="email" autoFocus placeholder="vous@exemple.com" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-10 h-12" required />
+                  <Input id="email" type="email" autoComplete="email" autoFocus placeholder={t("auth.placeholderEmail")} value={email} onChange={(e) => setEmail(e.target.value)} className="pl-10 h-12" required />
                 </div>
               </div>
               <div className="space-y-2">
@@ -177,7 +177,7 @@ export default function Register() {
                 </div>
               </div>
               <Button type="submit" className="w-full h-12 font-medium" disabled={loading}>
-                {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Création du compte…</> : <>Créer mon compte <ArrowRight className="ml-2 h-4 w-4" /></>}
+                {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {t("auth.creating")}</> : <>{t("auth.createBtn")} <ArrowRight className="ml-2 h-4 w-4" /></>}
               </Button>
             </form>
           </motion.div>
@@ -185,8 +185,8 @@ export default function Register() {
 
         {step === 1 && (
           <motion.div key="otp" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
-            <h2 className="text-xl font-bold tracking-tight text-nv-ink">Vérifiez votre email</h2>
-            <p className="mt-1 text-sm text-nv-muted">Nous avons envoyé un code à 6 chiffres à {email}</p>
+            <h2 className="text-xl font-bold tracking-tight text-nv-ink">{t("auth.verifyTitle")}</h2>
+            <p className="mt-1 text-sm text-nv-muted">{t("auth.verifySent", { email })}</p>
             {error && <div className="mt-4 rounded-lg bg-rose-50 p-3 text-sm text-rose-600">{error}</div>}
             <div className="mt-6 flex justify-center">
               <InputOTP maxLength={6} value={otpCode} onChange={setOtpCode} autoFocus autoComplete="one-time-code">
@@ -197,11 +197,11 @@ export default function Register() {
               </InputOTP>
             </div>
             <Button className="mt-6 h-12 w-full font-medium" onClick={verify} disabled={loading || otpCode.length < 6}>
-              {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Vérification…</> : <>Vérifier et continuer <ArrowRight className="ml-2 h-4 w-4" /></>}
+              {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {t("auth.verifying")}</> : <>{t("auth.verifyBtn")} <ArrowRight className="ml-2 h-4 w-4" /></>}
             </Button>
             <p className="mt-4 text-center text-sm text-nv-muted">
-              Code non reçu ?{" "}
-              <button onClick={resend} className="font-medium text-primary hover:underline">Renvoyer</button>
+              {t("auth.noCode")}{" "}
+              <button onClick={resend} className="font-medium text-primary hover:underline">{t("auth.resend")}</button>
             </p>
           </motion.div>
         )}

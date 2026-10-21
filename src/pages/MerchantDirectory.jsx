@@ -14,8 +14,10 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { useAuth } from "@/lib/AuthContext";
 import { Search, Heart } from "lucide-react";
 import NvIcon, { CategoryIcon } from "@/components/brand/NvIcon";
+import { useI18n } from "@/i18n/I18nContext";
 
 export default function MerchantDirectory() {
+  const { t, lang } = useI18n();
   const { categories, meta } = useCategories();
   const { merchants, offers, loading, offline, cachedAt } = useCatalog();
   const money = useCurrencies();
@@ -61,22 +63,22 @@ export default function MerchantDirectory() {
   const usedCategories = ["ALL", ...categories.map((c) => c.value).filter((v) => merchants.some((m) => m.category === v))];
 
   return (
-    <PortalLayout title="Annuaire des partenaires" theme="light">
+    <PortalLayout title={t("dir.title")} theme="light">
       <div className="mb-4">
-        <h1 className="text-xl font-bold text-slate-900">Partenaires Nelvin</h1>
-        <p className="text-sm text-slate-500">Tous les partenaires vérifiés, par catégorie et par ville.</p>
+        <h1 className="text-xl font-bold text-slate-900">{t("dir.heading")}</h1>
+        <p className="text-sm text-slate-500">{t("dir.sub")}</p>
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex flex-col gap-3 sm:flex-row">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Rechercher un partenaire" aria-label="Rechercher un partenaire" className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-900 outline-none focus:border-emerald-500" />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("dir.search")} aria-label={t("dir.search")} className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-900 outline-none focus:border-emerald-500" />
           </div>
-          <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Ville ou pays" aria-label="Ville ou pays" className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
+          <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder={t("dir.cityOrCountry")} aria-label={t("dir.cityOrCountry")} className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
         </div>
         {topCities.length > 0 && (
-          <div className="mt-3 flex flex-wrap items-center gap-2" aria-label="Villes">
+          <div className="mt-3 flex flex-wrap items-center gap-2" aria-label={t("dir.cities")}>
             <NvIcon name="CITY_PIN" className="h-5 w-5 text-nv-emerald" />
             {topCities.map((c) => (
               <button key={c} onClick={() => setLocation(location.toLowerCase() === c.toLowerCase() ? "" : c)} aria-pressed={location.toLowerCase() === c.toLowerCase()} className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${location.toLowerCase() === c.toLowerCase() ? "bg-nv-deep text-white shadow" : "border border-nv-line bg-white text-slate-600 hover:bg-nv-ivory"}`}>
@@ -88,13 +90,13 @@ export default function MerchantDirectory() {
         <div className="mt-3 flex flex-wrap gap-2">
           {user && (
             <button onClick={() => setFavOnly((v) => !v)} aria-pressed={favOnly} className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition ${favOnly ? "bg-rose-500 text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
-              <Heart className={`h-3.5 w-3.5 ${favOnly ? "fill-white" : ""}`} /> Mes favoris ({favoriteIds.size})
+              <Heart className={`h-3.5 w-3.5 ${favOnly ? "fill-white" : ""}`} /> {t("dir.favorites", { n: favoriteIds.size })}
             </button>
           )}
           {usedCategories.map((c) => (
             <button key={c} onClick={() => setCategory(c)} className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition ${category === c ? "bg-nv-deep text-white shadow" : "border border-nv-line bg-white text-slate-600 hover:bg-nv-ivory"}`}>
               {c === "ALL" ? <NvIcon name="AFRICA" tone={category === c ? "dark" : "light"} className="h-4 w-4" /> : <CategoryIcon category={c} tone={category === c ? "dark" : "light"} className="h-4 w-4" />}
-              {c === "ALL" ? "Toutes" : meta(c).label}
+              {c === "ALL" ? t("dir.all") : meta(c).label}
             </button>
           ))}
         </div>
@@ -102,18 +104,18 @@ export default function MerchantDirectory() {
 
       {offline && (
         <p role="status" className="mt-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-800">
-          Connexion faible : affichage de la dernière liste enregistrée{cachedAt ? ` (${new Date(cachedAt).toLocaleDateString("fr-FR")})` : ""}.
+          {cachedAt ? t("dir.offlineDate", { date: new Date(cachedAt).toLocaleDateString(lang) }) : t("dir.offline")}
         </p>
       )}
       {!location && topCities.length > 0 && !loading && (
-        <p className="mt-3 text-xs text-slate-500">Astuce : choisissez votre ville ci-dessus, elle sera mémorisée pour vos prochaines visites.</p>
+        <p className="mt-3 text-xs text-slate-500">{t("dir.tip")}</p>
       )}
-      <p className="mt-4 text-sm text-slate-500">{filtered.length} partenaire{filtered.length > 1 ? "s" : ""}</p>
+      <p className="mt-4 text-sm text-slate-500">{filtered.length > 1 ? t("dir.countN", { n: filtered.length }) : t("dir.count1", { n: filtered.length })}</p>
 
       {loading ? (
         <div className="mt-3"><ListSkeleton rows={4} /></div>
       ) : filtered.length === 0 ? (
-        <div className="mt-3"><EmptyState glyph="AFRICA" title="Aucun partenaire trouvé" description={merchants.length ? "Modifiez vos filtres." : "Les premiers partenaires arrivent très bientôt."} /></div>
+        <div className="mt-3"><EmptyState glyph="AFRICA" title={t("dir.emptyTitle")} description={merchants.length ? t("dir.emptyFilters") : t("dir.emptySoon")} /></div>
       ) : (
         <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((m, i) => {
@@ -130,19 +132,19 @@ export default function MerchantDirectory() {
                 <div className="flex flex-1 flex-col p-4">
                   <div className="flex items-center justify-between gap-2">
                     <h3 className="truncate font-semibold text-slate-900">{m.name}</h3>
-                    <NvIcon name="VERIFIED" className="h-5 w-5 shrink-0 text-nv-emerald" label="Partenaire vérifié" />
+                    <NvIcon name="VERIFIED" className="h-5 w-5 shrink-0 text-nv-emerald" label={t("dir.verified")} />
                   </div>
                   <p className="mt-1 flex items-center gap-1 text-sm text-slate-500"><NvIcon name="CITY_PIN" className="h-4 w-4" /> {[m.city, m.country].filter(Boolean).join(", ") || "—"}</p>
-                  {m.reviews_count > 0 && <p className="mt-1 flex items-center gap-1 text-xs text-slate-500"><NvIcon name="STAR_MARK" className="h-4 w-4 text-nv-bronze" /> {Number(m.rating).toFixed(1)} · {m.reviews_count} avis</p>}
+                  {m.reviews_count > 0 && <p className="mt-1 flex items-center gap-1 text-xs text-slate-500"><NvIcon name="STAR_MARK" className="h-4 w-4 text-nv-bronze" /> {t("dir.reviews", { rating: Number(m.rating).toFixed(1), n: m.reviews_count })}</p>}
                   {best ? (
-                    <p className="mt-2 flex items-center gap-1.5 text-sm text-emerald-700"><NvIcon name={best.discount_type === "PERK" ? "PERK_GIFT" : "PERCENT"} className="h-4 w-4 shrink-0" /> {best.title} · <span className="font-semibold">{offerBadge(best, (v) => money.format(v, currency))}</span></p>
+                    <p className="mt-2 flex items-center gap-1.5 text-sm text-emerald-700"><NvIcon name={best.discount_type === "PERK" ? "PERK_GIFT" : "PERCENT"} className="h-4 w-4 shrink-0" /> {best.title} · <span className="font-semibold">{offerBadge(best, (v) => money.format(v, currency), t)}</span></p>
                   ) : (
-                    <p className="mt-2 text-sm text-slate-400">Offre bientôt disponible</p>
+                    <p className="mt-2 text-sm text-slate-400">{t("dir.soon")}</p>
                   )}
                   <div className="flex-1" />
                   {best && (
                     <Link to={offerPath(best)} className="mt-3 block w-full rounded-xl bg-nv-emerald py-2 text-center text-sm font-semibold text-white hover:bg-nv-deep">
-                      Voir l'offre{list.length > 1 ? ` (+${list.length - 1})` : ""}
+                      {list.length > 1 ? t("dir.viewOfferMore", { n: list.length - 1 }) : t("dir.viewOffer")}
                     </Link>
                   )}
                 </div>

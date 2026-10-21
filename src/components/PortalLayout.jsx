@@ -9,6 +9,8 @@ import PortalNavLinks from "./PortalNavLinks";
 import PortalUserCard from "./PortalUserCard";
 import NelvinSupportWidget from "@/components/NelvinSupportWidget";
 import { Menu, X } from "lucide-react";
+import { useI18n } from "@/i18n/I18nContext";
+import { navKey } from "@/lib/portalNav";
 import NelvinLogo from "@/components/NelvinLogo";
 
 const Logo = ({ to }) => (
@@ -19,6 +21,7 @@ const Logo = ({ to }) => (
 
 export default function PortalLayout({ children, title }) {
   const { user, isAuthenticated } = useAuth();
+  const { t, dir } = useI18n();
   const location = useLocation();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const items = navFor(user, location.pathname, location.search);
@@ -34,11 +37,11 @@ export default function PortalLayout({ children, title }) {
             <div className="flex items-center gap-2">
               <LanguageSwitcher compact variant="light" />
               {isAuthenticated ? (
-                <Link to="/app" className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white">Mon espace</Link>
+                <Link to="/app" className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white">{t("nav.mySpace")}</Link>
               ) : (
                 <>
-                  <Link to="/login" className="hidden rounded-full px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 sm:inline-flex">Se connecter</Link>
-                  <Link to="/register" className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white">Commencer</Link>
+                  <Link to="/login" className="hidden rounded-full px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 sm:inline-flex">{t("cta.login")}</Link>
+                  <Link to="/register" className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white">{t("cta.getStarted")}</Link>
                 </>
               )}
             </div>
@@ -56,7 +59,7 @@ export default function PortalLayout({ children, title }) {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-slate-200 bg-white md:flex">
+      <aside className="fixed inset-y-0 start-0 z-30 hidden w-64 flex-col border-e border-slate-200 bg-white md:flex">
         <div className="flex h-16 items-center px-6"><Logo to={items[0].to} /></div>
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
           <PortalNavLinks items={items} />
@@ -82,11 +85,11 @@ export default function PortalLayout({ children, title }) {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-40 md:hidden">
             <div className="absolute inset-0 bg-slate-900/30" onClick={() => setMobileNavOpen(false)} />
             <motion.div
-              initial={{ x: "-100%" }}
+              initial={{ x: dir === "rtl" ? "100%" : "-100%" }}
               animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
+              exit={{ x: dir === "rtl" ? "100%" : "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 250 }}
-              className="absolute inset-y-0 left-0 flex w-72 flex-col bg-white p-4"
+              className="absolute inset-y-0 start-0 flex w-72 flex-col bg-white p-4"
             >
               <div className="mb-4 px-2"><Logo to={items[0].to} /></div>
               <nav className="flex-1 space-y-1 overflow-y-auto"><PortalNavLinks items={items} onNavigate={() => setMobileNavOpen(false)} /></nav>
@@ -97,7 +100,7 @@ export default function PortalLayout({ children, title }) {
       </AnimatePresence>
 
       {/* Main content */}
-      <div className="md:pl-64">
+      <div className="md:ps-64">
         <div className="hidden h-16 items-center justify-between px-8 md:flex">
           <h1 className="text-xl font-bold text-slate-900">{title}</h1>
           <div className="flex items-center gap-2">
@@ -116,7 +119,7 @@ export default function PortalLayout({ children, title }) {
           return (
             <Link key={`${item.to}-${item.section || ""}-${i}`} to={navHref(item)} className={`flex min-w-0 flex-col items-center gap-1 rounded-full px-1 py-1.5 text-xs ${active ? "text-amber-700" : "text-slate-500"}`}>
               <Icon className="h-5 w-5" />
-              <span className="max-w-full truncate">{item.label}</span>
+              <span className="max-w-full truncate">{(() => { const k = navKey(item.label); const v = t(k); return v === k ? item.label : v; })()}</span>
             </Link>
           );
         })}

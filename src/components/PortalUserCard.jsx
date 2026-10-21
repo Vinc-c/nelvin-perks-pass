@@ -5,8 +5,10 @@ import { signOut } from "@/api/auth";
 import { useAuth } from "@/lib/AuthContext";
 import { ROLE_LABELS } from "@/lib/roles";
 import { LogOut, Bell } from "lucide-react";
+import { useI18n } from "@/i18n/I18nContext";
 
 export default function PortalUserCard() {
+  const { t } = useI18n();
   const { user } = useAuth();
   const [unread, setUnread] = useState(0);
   const name = user?.full_name || user?.email || "";
@@ -34,9 +36,9 @@ export default function PortalUserCard() {
       </div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold text-slate-900">{name}</p>
-        <p className="truncate text-xs text-slate-500">{ROLE_LABELS[user?.role] || "Particulier"}</p>
+        <p className="truncate text-xs text-slate-500">{ROLE_LABELS[user?.role] ? (t(`role.${user.role}`) !== `role.${user.role}` ? t(`role.${user.role}`) : ROLE_LABELS[user.role]) : t("role.MEMBER")}</p>
       </div>
-      <Link to="/notifications" title="Notifications" className="relative rounded-full p-2 text-slate-500 transition hover:bg-white hover:text-emerald-600">
+      <Link to="/notifications" title={t("ui.notifications")} className="relative rounded-full p-2 text-slate-500 transition hover:bg-white hover:text-emerald-600">
         <Bell className="h-4 w-4" />
         {unread > 0 && (
           <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-emerald-500 px-1 text-[10px] font-bold text-white">{unread > 9 ? "9+" : unread}</span>
@@ -44,7 +46,7 @@ export default function PortalUserCard() {
       </Link>
       <button
         onClick={() => signOut("/")}
-        title="Se déconnecter"
+        title={t("ui.signOut")}
         className="rounded-full p-2 text-slate-500 transition hover:bg-white hover:text-rose-600"
       >
         <LogOut className="h-4 w-4" />
