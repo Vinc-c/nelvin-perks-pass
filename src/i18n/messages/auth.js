@@ -1,0 +1,20 @@
+// [key, en, fr, sw, ar, yo]  (sign-up / sign-in strings missing from the base dictionaries)
+export default [
+  ["cta.login", "Log in", "Se connecter", "Ingia", "تسجيل الدخول", "Wọlé"],
+  ["reg.chooseType", "Choose your account type", "Choisissez votre type de compte", "Chagua aina ya akaunti yako", "اختر نوع حسابك", "Yan irú àkọọ́lẹ̀ rẹ"],
+  ["reg.individual", "Individual", "Particulier", "Mtu binafsi", "فرد", "Ẹnìkọ̀ọ̀kan"],
+  ["reg.individualSub", "Get access to offers", "Accéder aux offres", "Pata ufikiaji wa ofa", "احصل على العروض", "Rí àwọn ìpèsè gbà"],
+  ["reg.merchant", "Merchant", "Marchand", "Mfanyabiashara", "تاجر", "Oníṣòwò"],
+  ["reg.merchantSub", "Publish your offers", "Publier vos offres", "Chapisha ofa zako", "انشر عروضك", "Gbé àwọn ìpèsè rẹ jáde"],
+  ["reg.company", "Company or HR", "Entreprise ou RH", "Kampuni au Rasilimali Watu", "شركة أو موارد بشرية", "Ilé-iṣẹ́ tàbí HR"],
+  ["reg.companySub", "Manage your employees", "Gérer vos employés", "Simamia wafanyakazi wako", "أدر موظفيك", "Ṣàkóso àwọn òṣìṣẹ́ rẹ"],
+  ["reg.invited", "Invited by your employer?", "Invité par votre employeur ?", "Umealikwa na mwajiri wako?", "هل دعاك صاحب عملك؟", "Agbanisíṣẹ́ rẹ ló pè ọ́?"],
+  ["reg.inviteLink", "Use your invitation code", "Utilisez votre code d'invitation", "Tumia msimbo wako wa mwaliko", "استخدم رمز الدعوة", "Lo kóòdù ìkésí rẹ"],
+  ["reg.email", "Email address", "Adresse e-mail", "Barua pepe", "البريد الإلكتروني", "Àdírẹ́sì ímeèlì"],
+  ["reg.phone", "Phone number", "Numéro de téléphone", "Namba ya simu", "رقم الهاتف", "Nọ́ńbà fóònù"],
+  ["reg.password", "Password (at least 8 characters)", "Mot de passe (8 caractères minimum)", "Nenosiri (angalau herufi 8)", "كلمة المرور (8 أحرف على الأقل)", "Ọ̀rọ̀ aṣínà (o kéré jù ohun kikọ 8)"],
+  ["reg.confirm", "Confirm password", "Confirmer le mot de passe", "Thibitisha nenosiri", "تأكيد كلمة المرور", "Jẹ́rìí ọ̀rọ̀ aṣínà"],
+  ["reg.or", "or", "ou", "au", "أو", "tàbí"],
+  ["reg.panelTitle", "Everyday savings, across Africa.", "Des économies au quotidien, partout en Afrique.", "Akiba ya kila siku, kote Afrika.", "توفير يومي في كل أنحاء أفريقيا.", "Ìfowópamọ́ ojoojúmọ́, jákèjádò Áfíríkà."],
+  ["reg.panelText", "One account for offers, employee benefits and merchant tools.", "Un seul compte pour les offres, les avantages salariés et les outils marchands.", "Akaunti moja kwa ofa, marupurupu ya wafanyakazi na zana za wafanyabiashara.", "حساب واحد للعروض ومزايا الموظفين وأدوات التجار.", "Àkọọ́lẹ̀ kan fún àwọn ìpèsè, àǹfààní òṣìṣẹ́ àti irinṣẹ́ oníṣòwò."],
+];

@@ -25,8 +25,9 @@ export function I18nProvider({ children }) {
   }, [lang, currentLang.dir]);
 
   const t = useCallback(
-    (key) => {
-      return (translations[lang] && translations[lang][key]) || translations.en[key] || key;
+    (key, vars) => {
+      const text = (translations[lang] && translations[lang][key]) || translations.en[key] || key;
+      return vars ? text.replace(/\{(\w+)\}/g, (m, k) => (vars[k] ?? m)) : text;
     },
     [lang]
   );

@@ -4,6 +4,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { Image } from "@/components/ui/image";
 import InstallAppButton from "@/components/InstallAppButton";
 import PhoneMock from "@/components/landing/PhoneMock";
+import { useI18n } from "@/i18n/I18nContext";
 import { usePublicContent, imageByKey } from "@/hooks/usePublicContent";
 
 const SAVANNA = "/images/savanna.webp";
@@ -15,6 +16,7 @@ function Phone({ src, className }) {
 }
 
 export default function AppDownloadCta() {
+  const { t } = useI18n();
   const content = usePublicContent();
   // A real screenshot uploaded in the CMS replaces the drawn phone.
   const screenshot = imageByKey(content?.images, "app_phone_mockup", null);
@@ -29,15 +31,15 @@ export default function AppDownloadCta() {
       <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-8 sm:px-6 md:min-h-[276px] md:grid-cols-2 lg:min-h-[288px] lg:py-10">
         <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="md:pr-6">
           <span className="inline-flex items-center rounded-full border border-nv-line bg-nv-ivory-2 px-3 py-1 text-xs font-semibold text-nv-emerald">
-            No app store needed
+            {t("land.app.badge")}
           </span>
-          <h2 className="mt-3 text-2xl font-bold text-nv-ink sm:text-3xl">Start saving today.</h2>
+          <h2 className="mt-3 text-2xl font-bold text-nv-ink sm:text-3xl">{t("land.app.title")}</h2>
           <p className="mt-2 max-w-md text-sm text-nv-muted">
-            Scan the code with your phone's camera to open Nelvin, then add it to your home screen in one tap.
+            {t("land.app.text")}
           </p>
           <div className="mt-5 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-            <div className="rounded-2xl bg-white p-2 shadow-lg ring-1 ring-nv-line" title="Open Nelvin on your phone">
-              <QRCodeSVG value={appUrl} size={80} level="M" fgColor="#08261D" aria-label="QR code that opens Nelvin on your phone" />
+            <div className="rounded-2xl bg-white p-2 shadow-lg ring-1 ring-nv-line" title={t("land.app.qrTitle")}>
+              <QRCodeSVG value={appUrl} size={80} level="M" fgColor="#08261D" aria-label={t("land.app.qrTitle")} />
             </div>
             <InstallAppButton />
           </div>

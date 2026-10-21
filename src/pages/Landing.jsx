@@ -26,19 +26,17 @@ import KenteBand from "@/components/brand/KenteBand";
 
 const SAVANNA = "/images/savanna.webp";
 
-const ANNOUNCE =
-  "Savings for everyone: daily offers for individuals, benefits for employees and easy administration for HR teams. One platform, built for Africa.";
-
 export default function Landing() {
   const { t } = useI18n();
+  const ANNOUNCE = t("land.announce");
   const [menuOpen, setMenuOpen] = useState(false);
   const { isAuthenticated } = useAuth();
   const content = usePublicContent();
   const heroBg = imageByKey(content?.images, "hero_background", SAVANNA);
   const savannaBand = imageByKey(content?.images, "savanna_band", SAVANNA);
-  const heroBadge = copyByKey(content?.copy, "hero.badge", "Member savings across Africa");
-  const heroTitle = copyByKey(content?.copy, "hero.title", "Save at the best places across Africa");
-  const heroSubtitle = copyByKey(content?.copy, "hero.subtitle", "Restaurants, hotels, spas, gyms and shops, from Dakar to Nairobi. Show your Nelvin pass at the till and save on every visit.");
+  const heroBadge = copyByKey(content?.copy, "hero.badge", t("land.hero.badge"));
+  const heroTitle = copyByKey(content?.copy, "hero.title", t("land.hero.title"));
+  const heroSubtitle = copyByKey(content?.copy, "hero.subtitle", t("land.hero.subtitle"));
 
   // Live figures from the catalogue (a CMS value, when set, takes precedence).
   const { merchants, offers } = useCatalog();
@@ -51,17 +49,19 @@ export default function Landing() {
     .slice(0, 15)
     .map((r) => {
       const m = merchantById.get(r.merchant_id);
-      return { ...r, author: r.author_name || "Nelvin member", where: [m.name, m.city].filter(Boolean).join(", ") };
+      return { ...r, author: r.author_name || t("land.reviews.member"), where: [m.name, m.city].filter(Boolean).join(", ") };
     });
   const fmt = (n) => n.toLocaleString("en-US");
   const stats = [
-    { value: copyByKey(content?.copy, "stats.brands", merchants.length ? fmt(merchants.length) : ""), label: "Verified partners" },
-    { value: copyByKey(content?.copy, "stats.offers", offers.length ? fmt(offers.length) : ""), label: "Live offers" },
-    { value: copyByKey(content?.copy, "stats.cities", cities ? fmt(cities) : ""), label: "Cities" },
-    { value: copyByKey(content?.copy, "stats.collections", "15"), label: "Lifestyle categories" },
+    { value: copyByKey(content?.copy, "stats.brands", merchants.length ? fmt(merchants.length) : ""), label: t("land.stats.partners") },
+    { value: copyByKey(content?.copy, "stats.offers", offers.length ? fmt(offers.length) : ""), label: t("land.stats.offers") },
+    { value: copyByKey(content?.copy, "stats.cities", cities ? fmt(cities) : ""), label: t("land.stats.cities") },
+    { value: copyByKey(content?.copy, "stats.collections", "15"), label: t("land.stats.categories") },
   ].filter((s) => s.value);
   const renderHeroTitle = () =>
-    heroTitle.split(/(across Africa|\d[\d,]*\+\s*brands)/i).map((part, i) =>
+    /\*[^*]+\*/.test(heroTitle)
+      ? heroTitle.split(/\*([^*]+)\*/).map((part, i) => (i % 2 ? <span key={i} className="text-nv-bronze">{part}</span> : part))
+      : heroTitle.split(/(across Africa|\d[\d,]*\+\s*brands)/i).map((part, i) =>
       /across Africa|\d[\d,]*\+\s*brands/i.test(part)
         ? <span key={i} className="text-nv-bronze">{part}</span>
         : part
@@ -69,7 +69,7 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen overflow-x-clip bg-[radial-gradient(ellipse_at_top,_#F2EBDA_0%,_#FAF6EC_45%,_#ffffff_100%)] font-body text-nv-ink">
-      <a href="#contenu" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">Aller au contenu</a>
+      <a href="#contenu" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">{t("nav.skip")}</a>
       {/* Nav */}
       <header className="sticky top-0 z-40 border-b border-nv-line bg-white/70 backdrop-blur-lg">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
@@ -77,16 +77,16 @@ export default function Landing() {
             <NelvinLogo className="h-12" />
           </div>
           <nav className="hidden items-center gap-7 text-sm font-medium text-nv-muted lg:flex">
-            <Link to="/merchant-directory" className="hover:text-brand">Les offres</Link>
-            <Link to="/merchant-map" className="hover:text-brand">La carte</Link>
-            <Link to="/pricing" className="hover:text-brand">Tarifs</Link>
-            <Link to="/merchant" className="hover:text-brand">Commerçants</Link>
+            <Link to="/merchant-directory" className="hover:text-brand">{t("nav.offers")}</Link>
+            <Link to="/merchant-map" className="hover:text-brand">{t("nav.map")}</Link>
+            <Link to="/pricing" className="hover:text-brand">{t("nav.pricing")}</Link>
+            <Link to="/merchant" className="hover:text-brand">{t("nav.merchants")}</Link>
           </nav>
           <div className="flex items-center gap-2">
             <div className="hidden lg:block"><LanguageSwitcher compact variant="light" /></div>
             {isAuthenticated ? (
               <Link to="/app" className="hidden rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-brand/30 transition hover:bg-brand/90 sm:inline-flex">
-                Mon espace
+                {t("nav.mySpace")}
               </Link>
             ) : (
               <>
@@ -98,7 +98,7 @@ export default function Landing() {
                 </Link>
               </>
             )}
-            <button onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"} aria-expanded={menuOpen} className="rounded-full p-2 text-nv-ink hover:bg-nv-ivory-2 lg:hidden">
+            <button onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? t("nav.closeMenu") : t("nav.openMenu")} aria-expanded={menuOpen} className="rounded-full p-2 text-nv-ink hover:bg-nv-ivory-2 lg:hidden">
               {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
@@ -106,16 +106,16 @@ export default function Landing() {
         {menuOpen && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="border-t border-nv-line bg-white px-4 py-4 lg:hidden">
             <div className="mb-3 flex items-center justify-between rounded-full border border-nv-line px-3 py-1.5">
-              <span className="text-xs font-medium text-nv-muted">Langue</span>
+              <span className="text-xs font-medium text-nv-muted">{t("nav.language")}</span>
               <LanguageSwitcher variant="light" />
             </div>
             <nav className="flex flex-col gap-1 text-sm font-medium text-nv-ink">
-              <Link to="/merchant-directory" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-nv-ivory-2">Les offres</Link>
-              <Link to="/merchant-map" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-nv-ivory-2">La carte</Link>
-              <Link to="/pricing" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-nv-ivory-2">Tarifs</Link>
-              <Link to="/merchant" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-nv-ivory-2">Commerçants</Link>
+              <Link to="/merchant-directory" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-nv-ivory-2">{t("nav.offers")}</Link>
+              <Link to="/merchant-map" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-nv-ivory-2">{t("nav.map")}</Link>
+              <Link to="/pricing" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-nv-ivory-2">{t("nav.pricing")}</Link>
+              <Link to="/merchant" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-nv-ivory-2">{t("nav.merchants")}</Link>
               {isAuthenticated ? (
-                <Link to="/app" onClick={() => setMenuOpen(false)} className="mt-2 rounded-full bg-brand px-4 py-2.5 text-center font-semibold text-white">Mon espace</Link>
+                <Link to="/app" onClick={() => setMenuOpen(false)} className="mt-2 rounded-full bg-brand px-4 py-2.5 text-center font-semibold text-white">{t("nav.mySpace")}</Link>
               ) : (
                 <>
                   <Link to="/login" onClick={() => setMenuOpen(false)} className="mt-2 rounded-full border border-nv-line px-4 py-2.5 text-center font-semibold text-nv-ink">{t("cta.login")}</Link>
@@ -156,10 +156,10 @@ export default function Landing() {
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link to="/pricing" className="flex items-center justify-center gap-2 rounded-full bg-brand px-7 py-3.5 font-semibold text-white shadow-lg shadow-brand/30 transition hover:bg-brand/90">
-                View memberships <ArrowRight className="h-4 w-4" />
+                {t("land.hero.cta")} <ArrowRight className="h-4 w-4" />
               </Link>
               <a href="#app-download" className="flex items-center justify-center gap-2 rounded-full border border-nv-line bg-white px-7 py-3.5 font-semibold text-nv-ink transition hover:bg-nv-ivory-2">
-                Get the app
+                {t("land.hero.app")}
               </a>
             </div>
           </motion.div>
@@ -174,7 +174,7 @@ export default function Landing() {
       {/* Lifestyle collections marquee — image-rich hero extension */}
       <section className="relative py-10">
         <div className="mx-auto mb-4 max-w-7xl px-4 sm:px-6">
-          <p className="text-sm font-semibold text-brand">Lifestyle collections</p>
+          <p className="text-sm font-semibold text-brand">{t("land.lifestyle")}</p>
         </div>
         <HeroLifestyleStrip />
       </section>
@@ -213,8 +213,8 @@ export default function Landing() {
         <div className="absolute inset-0 flex items-center">
           <div className="mx-auto w-full max-w-7xl px-6">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-              <p className="text-sm font-semibold text-brand">Built for the continent</p>
-              <h2 className="mt-2 max-w-xl text-3xl font-bold text-nv-ink sm:text-4xl">Savings in the cities where you live and travel.</h2>
+              <p className="text-sm font-semibold text-brand">{t("land.band.kicker")}</p>
+              <h2 className="mt-2 max-w-xl text-3xl font-bold text-nv-ink sm:text-4xl">{t("land.band.title")}</h2>
             </motion.div>
           </div>
         </div>

@@ -1,6 +1,10 @@
 // Nelvin Benefits — i18n dictionary
 // Languages: English (en), French (fr), Swahili (sw), Arabic (ar), Yoruba (yo)
 
+import categories from "./messages/categories";
+import landing from "./messages/landing";
+import auth from "./messages/auth";
+
 export const LANGUAGES = [
   { code: "en", label: "English", flag: "🇬🇧", dir: "ltr" },
   { code: "fr", label: "Français", flag: "🇫🇷", dir: "ltr" },
@@ -325,3 +329,11 @@ export const translations = {
     "common.search": "Wa...",
   },
 };
+// Longer screen-by-screen copy lives in ./messages as [key, en, fr, sw, ar, yo]
+// rows (easier to review a translation side by side than per-language blocks).
+const ORDER = ["en", "fr", "sw", "ar", "yo"];
+for (const rows of [categories, landing, auth]) {
+  for (const [key, ...texts] of rows) {
+    ORDER.forEach((code, i) => { if (texts[i]) translations[code][key] = texts[i]; });
+  }
+}

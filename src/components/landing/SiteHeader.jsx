@@ -11,10 +11,10 @@ export default function SiteHeader() {
   const { t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
   const nav = [
-    { to: "/merchant-directory", label: "Les offres" },
-    { to: "/merchant-map", label: "La carte" },
-    { to: "/pricing", label: "Tarifs" },
-    { to: "/merchant", label: "Commerçants" },
+    { to: "/merchant-directory", label: t("nav.offers") },
+    { to: "/merchant-map", label: t("nav.map") },
+    { to: "/pricing", label: t("nav.pricing") },
+    { to: "/merchant", label: t("nav.merchants") },
   ];
 
   return (
@@ -27,7 +27,7 @@ export default function SiteHeader() {
         <div className="flex items-center gap-2">
           <div className="hidden sm:block"><LanguageSwitcher compact variant="dark" /></div>
           {isAuthenticated ? (
-            <Link to="/app" className="nv-focus rounded-full bg-[#C8A24A] px-5 py-2 text-sm font-semibold text-[#08261D] hover:bg-[#E6CF8B]">Mon espace</Link>
+            <Link to="/app" className="nv-focus rounded-full bg-[#C8A24A] px-5 py-2 text-sm font-semibold text-[#08261D] hover:bg-[#E6CF8B]">{t("nav.mySpace")}</Link>
           ) : (
             <>
               <Link to="/login" className="nv-focus hidden rounded-full px-4 py-2 text-sm font-semibold text-white hover:bg-white/10 sm:inline-flex">{t("cta.login")}</Link>
@@ -35,7 +35,7 @@ export default function SiteHeader() {
             </>
           )}
           <button onClick={() => setMenuOpen((v) => !v)} aria-expanded={menuOpen} aria-controls="menu-mobile" className="nv-focus rounded-full px-3 py-2 text-sm font-semibold hover:bg-white/10 lg:hidden">
-            {menuOpen ? "Fermer" : "Menu"}
+            {menuOpen ? t("nav.closeMenu") : t("nav.openMenu")}
           </button>
         </div>
       </div>
