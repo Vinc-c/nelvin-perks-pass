@@ -188,3 +188,6 @@ export function navFor(user, pathname = "", search = "") {
   if (!isAdmin(user) || portal === "ADMIN") return NAV[portal];
   return NAV[portal].map((item) => ({ ...item, portal }));
 }
+/** Translation key for a navigation label (French source label -> "nav.l.<slug>"). */
+export const navKey = (label) =>
+  "nav.l." + String(label).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");

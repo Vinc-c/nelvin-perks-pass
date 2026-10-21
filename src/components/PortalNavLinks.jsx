@@ -1,9 +1,13 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { navHref, isNavActive } from "@/lib/portalNav";
+import { navHref, isNavActive, navKey } from "@/lib/portalNav";
+import { useI18n } from "@/i18n/I18nContext";
 import { BrandIcon } from "@/components/brand/NvIcon";
 
 export default function PortalNavLinks({ items, onNavigate }) {
+  const { t } = useI18n();
+  // Labels without a translation (admin screens) keep their French text.
+  const tr = (label) => { const k = navKey(label); const v = t(k); return v === k ? label : v; };
   const { pathname, search } = useLocation();
   return items.map((item, i) => {
     const Icon = item.icon;
@@ -13,7 +17,7 @@ export default function PortalNavLinks({ items, onNavigate }) {
       <React.Fragment key={`${item.to}-${item.section || ""}-${i}`}>
         {showGroup && (
           <p className={`px-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400 ${i > 0 ? "pt-4" : ""}`}>
-            {item.group}
+            {tr(item.group)}
           </p>
         )}
         <Link
@@ -24,7 +28,7 @@ export default function PortalNavLinks({ items, onNavigate }) {
           }`}
         >
           <BrandIcon icon={Icon} className="h-[18px] w-[18px] shrink-0" glyphClassName="h-[20px] w-[20px] shrink-0" />
-          <span className="truncate">{item.label}</span>
+          <span className="truncate">{tr(item.label)}</span>
         </Link>
       </React.Fragment>
     );
