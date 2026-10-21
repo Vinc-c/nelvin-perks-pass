@@ -21,6 +21,7 @@ import StatCard from "@/components/dashboard/StatCard";
 import SectionCard from "@/components/dashboard/SectionCard";
 import { useToast } from "@/components/ui/use-toast";
 import { EmptyState } from "@/components/UiFeedback";
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { ScanLine, Tag, Wallet, TrendingUp, Plus, Check, Loader2, Star, Banknote, X } from "lucide-react";
 
 const REASONS = {
@@ -98,6 +99,17 @@ export default function MerchantPortal() {
   const salesMonth = month.reduce((s, r) => s + Number(r.bill_amount_usd || 0), 0);
   const avgBasket = month.length ? salesMonth / month.length : 0;
   const payoutBalance = Number(merchant?.payout_balance || 0);
+  const week = useMemo(() => {
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - i);
+      days.push({ key: d.toDateString(), label: d.toLocaleDateString(undefined, { weekday: "short" }), sales: 0 });
+    }
+    redeemed.forEach((r) => { const k = new Date(r.redeemed_at).toDateString(); const d = days.find((x) => x.key === k); if (d) d.sales += Number(money.fromUsd ? money.fromUsd(r.bill_amount_usd || 0, currency) : r.bill_amount_usd || 0); });
+    return days.map((d) => ({ ...d, sales: Math.round(d.sales * 100) / 100 }));
+  }, [redeemed, currency]);
+  const shareUrl = merchant?.slug ? `https://nelvinbenefits.com/partenaire/${merchant.slug}` : "";
+  const shareHref = shareUrl ? `https://wa.me/?text=${encodeURIComponent(`${t("dash.merchant.shareText", { name: merchant.name || "" })} ${shareUrl}`)}` : "";
 
   const validateCode = async (e) => {
     e?.preventDefault();
@@ -158,6 +170,20 @@ export default function MerchantPortal() {
           <StatCard icon={Wallet} label="Solde à reverser" value={money.format(payoutBalance, currency)} tone="blue" delay={0.1} hint="Paiements reçus via wallet Nelvin" />
           <StatCard icon={Tag} label="Panier moyen (mois)" value={money.format(avgBasket, currency)} tone="rose" delay={0.15} />
         </div>
+        )}
+
+        {show("payout") && (
+        <SectionCard className="mt-6" title={t("dash.merchant.week")} icon={TrendingUp} action={shareHref && <a href={shareHref} target="_blank" rel="noreferrer" className="rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-600">{t("dash.merchant.share")}</a>}>
+          <div className="h-40">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={week} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
+                <XAxis dataKey="label" tickLine={false} axisLine={false} fontSize={11} />
+                <Tooltip formatter={(v) => [`${v} ${currency}`, ""]} cursor={{ fill: "rgba(200,162,74,0.12)" }} />
+                <Bar dataKey="sales" fill="#0F4A38" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </SectionCard>
         )}
 
         {(show("scan") || show("redemptions")) && (
