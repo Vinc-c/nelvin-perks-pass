@@ -52,15 +52,15 @@ export function useCatalog() {
 }
 
 /** Human label for an offer's advantage, in the viewer's currency. */
-export function offerBadge(offer, format) {
+export function offerBadge(offer, format, t) {
   const v = Number(offer.discount_value || 0);
   switch (offer.discount_type) {
     case "PERK":
-      return offer.perk_label || "Privilège offert";
+      return offer.perk_label || (t ? t("offer.perkDefault") : "Privilège offert");
     case "FIXED":
       return `-${format ? format(v) : `$${v}`}`;
     case "CASHBACK":
-      return `${Math.max(v, Number(offer.cashback_rate || 0))}% cashback`;
+      return t ? t("offer.cashbackBadge", { n: Math.max(v, Number(offer.cashback_rate || 0)) }) : `${Math.max(v, Number(offer.cashback_rate || 0))}% cashback`;
     default:
       return `-${v}%`;
   }

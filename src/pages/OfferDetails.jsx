@@ -19,12 +19,12 @@ import { categoryImage } from "@/data/offerCategories";
 import { useSeo } from "@/lib/seo";
 import { useAuth } from "@/lib/AuthContext";
 import { EmptyState, Spinner } from "@/components/UiFeedback";
+import { useI18n } from "@/i18n/I18nContext";
 import { MapPin, Clock, ShieldCheck, ArrowLeft, Tag, Wallet, Globe, Instagram, Phone, KeyRound, Repeat, MessageCircle, Gift } from "lucide-react";
 
-const PERIOD = { DAY: "par jour", WEEK: "par semaine", MONTH: "par mois", YEAR: "par an", LIFETIME: "au total" };
-const AUDIENCE = { B2C: "Membres Pass", B2B_ONLY: "Salariés d'entreprises clientes", ALL: "Tous les membres" };
-
 export default function OfferDetails() {
+  const { t, lang } = useI18n();
+  const PERIOD = (p) => t(`offer.per.${p}`);
   const [params] = useSearchParams();
   const { slug } = useParams();
   const id = params.get("id");
@@ -59,7 +59,7 @@ export default function OfferDetails() {
 
   const seoOffer = data?.offer;
   const seoMerchant = data?.merchant;
-  const seoBadge = seoOffer ? offerBadge(seoOffer, (v) => money.format(v, currency)) : "";
+  const seoBadge = seoOffer ? offerBadge(seoOffer, (v) => money.format(v, currency), t) : "";
   const seoTitle = seoOffer ? (seoOffer.seo_title || `${seoOffer.title}${seoMerchant ? ` — ${seoMerchant.name}` : ""} | Nelvin`) : "";
   const seoDesc = seoOffer ? (seoOffer.seo_description || `${seoBadge}${seoMerchant?.city ? ` à ${seoMerchant.city}` : ""} avec le Pass Nelvin. ${seoOffer.description || ""}`.trim().slice(0, 200)) : "";
   const seoPath = seoOffer ? `/offre/${seoOffer.slug || ""}` : undefined;
@@ -86,11 +86,11 @@ export default function OfferDetails() {
     },
   });
 
-  if (loading) return <PortalLayout title="Offre" theme="light"><Spinner /></PortalLayout>;
+  if (loading) return <PortalLayout title={t("offer.pageTitle")} theme="light"><Spinner /></PortalLayout>;
   if (!data) {
     return (
-      <PortalLayout title="Offre" theme="light">
-        <EmptyState icon={Tag} title="Offre introuvable" description="Cette offre a expiré ou n'est plus disponible." action={<Link to="/merchant-directory" className="text-sm font-medium text-emerald-600 hover:underline">Voir les partenaires</Link>} />
+      <PortalLayout title={t("offer.pageTitle")} theme="light">
+        <EmptyState icon={Tag} title={t("offer.notFound")} description={t("offer.notFoundText")} action={<Link to="/merchant-directory" className="text-sm font-medium text-emerald-600 hover:underline">{t("offer.seePartners")}</Link>} />
       </PortalLayout>
     );
   }
@@ -106,9 +106,9 @@ export default function OfferDetails() {
   const cat = meta(offer.category);
 
   return (
-    <PortalLayout title="Offre" theme="light">
+    <PortalLayout title={t("offer.pageTitle")} theme="light">
       <Link to="/merchant-directory" className="mb-4 inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-emerald-600">
-        <ArrowLeft className="h-4 w-4" /> Retour aux partenaires
+        <ArrowLeft className="h-4 w-4" /> {t("offer.back")}
       </Link>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -122,16 +122,16 @@ export default function OfferDetails() {
           </div>
           <div className="p-6">
             <div className="flex flex-wrap items-center gap-3">
-              <span className="rounded-lg bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-700">{offerBadge(offer, (v) => money.format(v, currency))}</span>
+              <span className="rounded-lg bg-emerald-50 px-3 py-1.5 text-sm font-semibold text-emerald-700">{offerBadge(offer, (v) => money.format(v, currency), t)}</span>
               {Number(offer.cashback_rate) > 0 && offer.discount_type !== "CASHBACK" && (
-                <span className="flex items-center gap-1.5 rounded-lg bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-700"><Wallet className="h-4 w-4" /> {offer.cashback_rate}% de cashback</span>
+                <span className="flex items-center gap-1.5 rounded-lg bg-amber-50 px-3 py-1.5 text-sm font-semibold text-amber-700"><Wallet className="h-4 w-4" /> {t("offer.cashbackBadge", { n: offer.cashback_rate })}</span>
               )}
-              {offer.required_plan && <span className="rounded-lg bg-amber-100 px-3 py-1.5 text-sm font-semibold text-amber-800">Privilège {planName}</span>}
-              {expired && <span className="rounded-lg bg-rose-50 px-3 py-1.5 text-sm font-semibold text-rose-700">Expirée</span>}
+              {offer.required_plan && <span className="rounded-lg bg-amber-100 px-3 py-1.5 text-sm font-semibold text-amber-800">{t("offer.privilege", { plan: planName })}</span>}
+              {expired && <span className="rounded-lg bg-rose-50 px-3 py-1.5 text-sm font-semibold text-rose-700">{t("offer.expired")}</span>}
               {offer.usage_limit && (
                 <span className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold ${limitReached ? "bg-slate-100 text-slate-500" : "bg-blue-50 text-blue-700"}`}>
                   <Repeat className="h-4 w-4" />
-                  {usage ? (limitReached ? `Déjà utilisée (${offer.usage_limit} ${PERIOD[offer.usage_period]})` : `Encore ${usage.remaining} utilisation${usage.remaining > 1 ? "s" : ""} ${PERIOD[offer.usage_period]}`) : `${offer.usage_limit} utilisation${offer.usage_limit > 1 ? "s" : ""} ${PERIOD[offer.usage_period]}`}
+                  {usage ? (limitReached ? t("offer.alreadyUsed", { n: offer.usage_limit, period: PERIOD(offer.usage_period) }) : t(usage.remaining > 1 ? "offer.leftN" : "offer.leftOne", { n: usage.remaining, period: PERIOD(offer.usage_period) })) : t(offer.usage_limit > 1 ? "offer.usesN" : "offer.usesOne", { n: offer.usage_limit, period: PERIOD(offer.usage_period) })}
                 </span>
               )}
             </div>
@@ -140,7 +140,7 @@ export default function OfferDetails() {
               <div className="mt-5 flex items-center gap-3 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 p-4 ring-1 ring-amber-200">
                 <Gift className="h-6 w-6 shrink-0 text-amber-600" />
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Privilège membre</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">{t("offer.memberPerk")}</p>
                   <p className="font-semibold text-slate-900">{offer.perk_label}</p>
                 </div>
               </div>
@@ -148,45 +148,45 @@ export default function OfferDetails() {
 
             {offer.description && <p className="mt-5 whitespace-pre-line text-sm leading-relaxed text-slate-600">{offer.description}</p>}
 
-            <h2 className="mt-6 font-semibold text-slate-900">Conditions</h2>
+            <h2 className="mt-6 font-semibold text-slate-900">{t("offer.conditions")}</h2>
             <ul className="mt-3 space-y-2 text-sm text-slate-600">
               {offer.deal_terms && <li className="flex items-start gap-2"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" /> {offer.deal_terms}</li>}
               {merchant?.offer_terms && <li className="flex items-start gap-2"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" /> {merchant.offer_terms}</li>}
-              <li className="flex items-start gap-2"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" /> Deux façons de valider : un code personnel à présenter en caisse (valable quelques minutes, usage unique), ou le PIN du partenaire saisi sur votre téléphone.</li>
-              <li className="flex items-start gap-2"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" /> La remise est calculée sur le montant de l'addition saisi par le partenaire ; le cashback est crédité immédiatement sur votre wallet.</li>
-              {offer.off_peak_hours && <li className="flex items-start gap-2"><Clock className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" /> Créneaux : {offer.off_peak_hours}</li>}
+              <li className="flex items-start gap-2"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" /> {t("offer.cond.validate")}</li>
+              <li className="flex items-start gap-2"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" /> {t("offer.cond.calc")}</li>
+              {offer.off_peak_hours && <li className="flex items-start gap-2"><Clock className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" /> {t("offer.slots", { slots: offer.off_peak_hours })}</li>}
             </ul>
 
             <div className="mt-6 flex flex-col gap-2 sm:flex-row">
               {planLocked && (
-                <Link to="/membership-plans" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-amber-500 py-3 font-medium text-white hover:bg-amber-600">Passer à {planName}</Link>
+                <Link to="/membership-plans" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-amber-500 py-3 font-medium text-white hover:bg-amber-600">{t("offer.upgrade", { plan: planName })}</Link>
               )}
               {user ? (
                 <>
                   <button onClick={() => setRedeem(true)} disabled={!canRedeem} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white transition hover:bg-emerald-600 disabled:opacity-50">
-                    <Tag className="h-4 w-4" /> {planLocked ? `Réservée aux membres ${planName}` : employeesOnly ? "Réservée aux salariés" : expired ? "Offre expirée" : limitReached ? "Limite atteinte" : "Afficher mon code"}
+                    <Tag className="h-4 w-4" /> {planLocked ? t("offer.lockedPlan", { plan: planName }) : employeesOnly ? t("offer.lockedEmployees") : expired ? t("offer.expiredBtn") : limitReached ? t("offer.limitBtn") : t("offer.showCode")}
                   </button>
                   {canRedeem && (
                     <button onClick={() => setPinOpen(true)} className="flex items-center justify-center gap-2 rounded-xl border border-emerald-200 px-5 py-3 font-medium text-emerald-700 hover:bg-emerald-50">
-                      <KeyRound className="h-4 w-4" /> PIN du partenaire
+                      <KeyRound className="h-4 w-4" /> {t("offer.partnerPin")}
                     </button>
                   )}
                 </>
               ) : (
-                <Link to="/register" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white hover:bg-emerald-600">Créer un compte pour en profiter</Link>
+                <Link to="/register" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white hover:bg-emerald-600">{t("offer.signupCta")}</Link>
               )}
               <ShareButton title={offer.title} path={offer.slug ? `/offre/${offer.slug}` : `/offer-details?id=${offer.id}`} />
               {offer.booking_required && merchant?.whatsapp && (
                 <a
-                  href={`https://wa.me/${String(merchant.whatsapp).replace(/\D/g, "")}?text=${encodeURIComponent(`Bonjour, je suis membre Nelvin et je souhaite réserver pour l'offre « ${offer.title} ».`)}`}
+                  href={`https://wa.me/${String(merchant.whatsapp).replace(/\D/g, "")}?text=${encodeURIComponent(t("offer.waText", { title: offer.title }))}`}
                   target="_blank" rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 rounded-xl border border-green-200 px-5 py-3 font-medium text-green-700 hover:bg-green-50"
                 >
-                  <MessageCircle className="h-4 w-4" /> Réserver sur WhatsApp
+                  <MessageCircle className="h-4 w-4" /> {t("offer.bookWa")}
                 </a>
               )}
               {merchant?.lat != null && (
-                <Link to={`/merchant-map?m=${merchant.id}`} className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-5 py-3 font-medium text-slate-700 hover:bg-slate-50"><MapPin className="h-4 w-4" /> Carte</Link>
+                <Link to={`/merchant-map?m=${merchant.id}`} className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-5 py-3 font-medium text-slate-700 hover:bg-slate-50"><MapPin className="h-4 w-4" /> {t("offer.mapBtn")}</Link>
               )}
             </div>
           </div>
@@ -199,13 +199,13 @@ export default function OfferDetails() {
                 {merchant.logo_url && <img src={merchant.logo_url} alt="" className="h-12 w-12 rounded-xl border border-slate-100 object-contain p-1" />}
                 <div className="min-w-0">
                   <p className="truncate font-semibold text-slate-900">{merchant.name}</p>
-                  <p className="flex items-center gap-1 text-xs text-emerald-600"><ShieldCheck className="h-3.5 w-3.5" /> Partenaire vérifié</p>
-                  {merchant.reviews_count > 0 && <p className="mt-0.5 flex items-center gap-1 text-xs text-slate-500"><Stars value={Number(merchant.rating)} size="h-3 w-3" /> {Number(merchant.rating).toFixed(1)} ({merchant.reviews_count} avis)</p>}
+                  <p className="flex items-center gap-1 text-xs text-emerald-600"><ShieldCheck className="h-3.5 w-3.5" /> {t("dir.verified")}</p>
+                  {merchant.reviews_count > 0 && <p className="mt-0.5 flex items-center gap-1 text-xs text-slate-500"><Stars value={Number(merchant.rating)} size="h-3 w-3" /> {Number(merchant.rating).toFixed(1)} ({t("offer.reviewsN", { n: merchant.reviews_count })})</p>}
                 </div>
               </div>
               <dl className="mt-4 space-y-2 text-sm">
                 <div className="flex items-start gap-2 text-slate-600"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" /> {[merchant.address, merchant.city, merchant.country].filter(Boolean).join(", ") || "—"}</div>
-                {merchant.website && <a href={merchant.website.startsWith("http") ? merchant.website : `https://${merchant.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-emerald-600 hover:underline"><Globe className="h-4 w-4" /> Site web</a>}
+                {merchant.website && <a href={merchant.website.startsWith("http") ? merchant.website : `https://${merchant.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-emerald-600 hover:underline"><Globe className="h-4 w-4" /> {t("offer.website")}</a>}
                 {merchant.instagram && <p className="flex items-center gap-2 text-slate-600"><Instagram className="h-4 w-4 text-slate-400" /> {merchant.instagram}</p>}
                 {merchant.contact_phone && <p className="flex items-center gap-2 text-slate-600"><Phone className="h-4 w-4 text-slate-400" /> {merchant.contact_phone}</p>}
               </dl>
@@ -213,12 +213,12 @@ export default function OfferDetails() {
             </div>
           )}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 className="font-semibold text-slate-900">En bref</h3>
+            <h3 className="font-semibold text-slate-900">{t("offer.brief")}</h3>
             <dl className="mt-3 space-y-2 text-sm">
-              <div className="flex justify-between"><dt className="text-slate-500">Pour</dt><dd className="font-medium text-slate-900">{AUDIENCE[offer.target_audience]}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500">Avantage</dt><dd className="font-medium text-emerald-600">{offerBadge(offer, (v) => money.format(v, currency))}</dd></div>
-              {offer.usage_limit && <div className="flex justify-between"><dt className="text-slate-500">Utilisation</dt><dd className="font-medium text-slate-900">{offer.usage_limit}× {PERIOD[offer.usage_period]}</dd></div>}
-              <div className="flex justify-between"><dt className="text-slate-500">Valable jusqu'au</dt><dd className="font-medium text-slate-900">{offer.expires_at ? new Date(offer.expires_at).toLocaleDateString("fr-FR") : "Sans limite"}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500">{t("offer.for")}</dt><dd className="font-medium text-slate-900">{t(`offer.aud.${offer.target_audience}`)}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500">{t("offer.advantage")}</dt><dd className="font-medium text-emerald-600">{offerBadge(offer, (v) => money.format(v, currency), t)}</dd></div>
+              {offer.usage_limit && <div className="flex justify-between"><dt className="text-slate-500">{t("offer.usage")}</dt><dd className="font-medium text-slate-900">{offer.usage_limit}× {PERIOD(offer.usage_period)}</dd></div>}
+              <div className="flex justify-between"><dt className="text-slate-500">{t("offer.validUntil")}</dt><dd className="font-medium text-slate-900">{offer.expires_at ? new Date(offer.expires_at).toLocaleDateString(lang) : t("offer.noLimit")}</dd></div>
             </dl>
           </div>
           <OfferReviews offerId={offer.id} canReview={!!user && usedOnce} />

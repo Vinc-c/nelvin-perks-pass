@@ -4,6 +4,7 @@
 import categories from "./messages/categories";
 import landing from "./messages/landing";
 import auth from "./messages/auth";
+import catalog from "./messages/catalog";
 
 export const LANGUAGES = [
   { code: "en", label: "English", flag: "🇬🇧", dir: "ltr" },
@@ -332,7 +333,7 @@ export const translations = {
 // Longer screen-by-screen copy lives in ./messages as [key, en, fr, sw, ar, yo]
 // rows (easier to review a translation side by side than per-language blocks).
 const ORDER = ["en", "fr", "sw", "ar", "yo"];
-for (const rows of [categories, landing, auth]) {
+for (const rows of [categories, landing, auth, catalog]) {
   for (const [key, ...texts] of rows) {
     ORDER.forEach((code, i) => { if (texts[i]) translations[code][key] = texts[i]; });
   }

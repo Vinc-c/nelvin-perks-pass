@@ -8,8 +8,10 @@ import { LogIn, Mail, Lock, Loader2 } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import { safeReturnTo } from "@/lib/authReturnTo";
+import { useI18n } from "@/i18n/I18nContext";
 
 export default function Login() {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -28,7 +30,7 @@ export default function Login() {
       // returnTo destination was requested).
       window.location.href = returnTo !== "/" ? returnTo : "/app";
     } catch (err) {
-      setError(err.message || "Email ou mot de passe invalide.");
+      setError(err.message || t("auth.err.login"));
     } finally {
       setLoading(false);
     }
@@ -39,23 +41,23 @@ export default function Login() {
     try {
       await signInWithGoogle(returnTo !== "/" ? returnTo : "/app");
     } catch (err) {
-      setError(err.message || "Connexion Google impossible");
+      setError(err.message || t("auth.err.google"));
     }
   };
 
   return (
     <AuthLayout
       icon={LogIn}
-      title="Bon retour"
-      subtitle="Connectez-vous à votre compte"
+      title={t("auth.login.title")}
+      subtitle={t("auth.login.subtitle")}
       footer={
         <>
-          Pas encore de compte ?{" "}
+          {t("auth.noAccount")}{" "}
           <Link
             to={"/register" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : "")}
             className="text-primary font-medium hover:underline"
           >
-            Créer un compte
+            {t("auth.createAccount")}
           </Link>
         </>
       }
@@ -66,7 +68,7 @@ export default function Login() {
         onClick={handleGoogle}
       >
         <GoogleIcon className="w-5 h-5 mr-2" />
-        Continuer avec Google
+        {t("auth.google")}
       </Button>
 
       <div className="relative mb-6">
@@ -74,7 +76,7 @@ export default function Login() {
           <div className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-card px-3 text-muted-foreground">ou</span>
+          <span className="bg-card px-3 text-muted-foreground">{t("reg.or")}</span>
         </div>
       </div>
 
@@ -86,7 +88,7 @@ export default function Login() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t("auth.email")}</Label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <Input
@@ -94,7 +96,7 @@ export default function Login() {
               type="email"
               autoComplete="email"
               autoFocus
-              placeholder="vous@exemple.com"
+              placeholder={t("auth.placeholderEmail")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="pl-10 h-12"
@@ -104,9 +106,9 @@ export default function Login() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Mot de passe</Label>
+            <Label htmlFor="password">{t("auth.password")}</Label>
             <Link to="/forgot-password" className="text-xs text-primary hover:underline">
-              Forgot password?
+              {t("auth.forgot")}
             </Link>
           </div>
           <div className="relative">
@@ -127,18 +129,18 @@ export default function Login() {
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Connexion…
+              {t("auth.signingIn")}
             </>
           ) : (
-            "Se connecter"
+            t("auth.signIn")
           )}
         </Button>
       </form>
 
       <p className="text-center text-sm text-muted-foreground mt-5">
-        Vous rejoignez votre entreprise ?{" "}
+        {t("auth.joining")}{" "}
         <Link to="/join" className="text-primary font-medium hover:underline">
-          Utilisez votre code d'invitation RH
+          {t("auth.useHrCode")}
         </Link>
       </p>
     </AuthLayout>
