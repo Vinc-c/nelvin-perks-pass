@@ -26,6 +26,7 @@ import { EmptyState } from "@/components/UiFeedback";
 import AccessGate from "@/components/AccessGate";
 import NvIcon, { CategoryIcon } from "@/components/brand/NvIcon";
 import NelvinPassCard from "@/components/brand/NelvinPassCard";
+import SavingsPanel from "@/components/dashboard/SavingsPanel";
 
 export default function MemberPortal() {
   const navigate = useNavigate();
@@ -59,6 +60,15 @@ export default function MemberPortal() {
   const planName = activeSub ? byCode(activeSub.plan_type)?.name || activeSub.plan_type : "Accès gratuit";
   const memberCode = user?.id ? `NLV · ${String(user.id).replace(/-/g, "").slice(0, 4).toUpperCase()} ${String(user.id).replace(/-/g, "").slice(4, 8).toUpperCase()}` : "";
   const cashback = (activity?.txs || []).filter((x) => x.status === "COMPLETED").reduce((s, x) => s + Number(x.cashback_amount || 0), 0);
+
+  const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  const doneTx = (activity?.txs || []).filter((x) => x.status === "COMPLETED");
+  const savedOf = (x) => Number(x.savings_usd || 0) + Number(x.cashback_amount || 0);
+  const totalSaved = doneTx.reduce((s, x) => s + savedOf(x), 0);
+  const monthSaved = doneTx.filter((x) => new Date(x.created_date) >= monthStart).reduce((s, x) => s + savedOf(x), 0);
+  const currentPlan = activeSub ? byCode(activeSub.plan_type) : null;
+  const passCost = Number(currentPlan?.price_monthly || 0);
+  const nextPlan = ["PASS_BASIC", "PASS_PREMIUM", "PASS_VIP"].map((c) => byCode(c)).filter(Boolean).find((p) => Number(p.price_monthly) > passCost) || null;
 
   const offers = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -102,6 +112,8 @@ export default function MemberPortal() {
           </div>
         </motion.div>
       </div>
+
+      <SavingsPanel total={totalSaved} month={monthSaved} passCost={passCost} next={passCost > 0 ? nextPlan : null} fmt={fmt} />
 
       <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
         <StatCard icon={TrendingUp} label={t("wallet.cashback")} value={fmt(cashback)} tone="emerald" />
