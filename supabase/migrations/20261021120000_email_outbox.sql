@@ -105,3 +105,13 @@ end $$;
 drop trigger if exists outbox_dispatch on public.email_outbox;
 create trigger outbox_dispatch after insert on public.email_outbox
   for each row execute function public.trg_outbox_dispatch();
+
+-- Edge Function authentication: the hook secret lives only in Vault
+-- (select vault.create_secret('<random>', 'email_hook_secret')).
+create or replace function public.email_hook_ok(p_secret text) returns boolean
+language sql security definer set search_path = public as $$
+  select exists (select 1 from vault.decrypted_secrets where name = 'email_hook_secret' and decrypted_secret = p_secret and p_secret is not null and p_secret <> '');
+$$;
+revoke execute on function public.email_hook_ok(text) from public, anon, authenticated;
+grant execute on function public.email_hook_ok(text) to service_role;
+revoke execute on function public.trg_notification_email(), public.trg_welcome_email(), public.trg_outbox_dispatch() from public, anon, authenticated;
