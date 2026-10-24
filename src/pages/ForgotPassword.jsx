@@ -13,17 +13,23 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
     try {
       await requestPasswordReset(email);
-    } catch {
-      // Always show success regardless
+      setSent(true);
+    } catch (err) {
+      // Supabase answers success for unknown emails (no account enumeration), so
+      // a real error here means the email could not be sent: tell the user.
+      if (err?.status === 429 || /rate limit|too many/i.test(err?.message || "")) setError(t("auth.forgot.rate"));
+      else if (/connexion au serveur/i.test(err?.message || "")) setError(err.message);
+      else setError(t("auth.forgot.fail"));
     } finally {
       setLoading(false);
-      setSent(true);
     }
   };
 
@@ -44,6 +50,7 @@ export default function ForgotPassword() {
         </p>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && <div role="alert" className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</div>}
           <div className="space-y-2">
             <Label htmlFor="email">{t("auth.forgot.address")}</Label>
             <div className="relative">
