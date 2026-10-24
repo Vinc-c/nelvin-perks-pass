@@ -3,18 +3,28 @@ import { translations, LANGUAGES } from "./translations";
 
 const I18nContext = createContext(null);
 
-export function I18nProvider({ children }) {
-  // The platform copy is French (see index.html lang="fr"): default to French
-  // and keep English as the per-key fallback (see `t`). Storage can throw
-  // (private mode, blocked site data), so every access is guarded.
-  const [lang, setLang] = useState(() => {
-    try {
-      const saved = localStorage.getItem("nelvin_lang");
-      return LANGUAGES.some((l) => l.code === saved) ? saved : "fr";
-    } catch {
-      return "fr";
+const LOCALES = { en: "en-GB", fr: "fr-FR", sw: "sw-KE", ar: "ar-u-nu-latn", yo: "yo-NG" };
+
+/** English is the platform's main language. A returning visitor keeps their saved
+ *  choice; a first-time visitor gets their browser language when we support it
+ *  (important for francophone / Arabic-speaking Africa), otherwise English. */
+function detectLang() {
+  try {
+    const saved = localStorage.getItem("nelvin_lang");
+    if (LANGUAGES.some((l) => l.code === saved)) return saved;
+  } catch { /* storage unavailable */ }
+  try {
+    const prefs = [...(navigator.languages || []), navigator.language].filter(Boolean);
+    for (const p of prefs) {
+      const code = String(p).slice(0, 2).toLowerCase();
+      if (LANGUAGES.some((l) => l.code === code)) return code;
     }
-  });
+  } catch { /* no navigator */ }
+  return "en";
+}
+
+export function I18nProvider({ children }) {
+  const [lang, setLang] = useState(detectLang);
 
   const currentLang = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
 
@@ -32,7 +42,7 @@ export function I18nProvider({ children }) {
     [lang]
   );
 
-  const value = { lang, setLang, t, dir: currentLang.dir, languages: LANGUAGES };
+  const value = { lang, setLang, t, dir: currentLang.dir, locale: LOCALES[lang] || "en-GB", languages: LANGUAGES };
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 
