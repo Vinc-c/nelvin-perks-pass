@@ -232,4 +232,7 @@ export default [
   ["mc.camp.deleteConfirm", "Delete this offer? Generated codes will no longer be validated.", "Supprimer cette offre ? Les codes générés ne pourront plus être validés.", "Futa ofa hii? Misimbo iliyotengenezwa haitathibitishwa tena.", "هل تريد حذف هذا العرض؟ لن يمكن التحقق من الرموز التي تم إنشاؤها.", "Pa ìpèsè yìí rẹ́? A kò ní lè fọwọ́ sí àwọn koodu tí a ti ṣẹ̀dá mọ́."],
   ["mc.camp.deleted", "Offer deleted", "Offre supprimée", "Ofa imefutwa", "تم حذف العرض", "A ti pa ìpèsè rẹ́"],
   ["mc.camp.failed", "Failed", "Échec", "Imeshindwa", "فشل", "Ó kùnà"],
+
+  // Misc
+  ["mc.cat.other", "Other", "Autre", "Nyingine", "أخرى", "Òmíràn"],
 ];

@@ -7,8 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Lock, Loader2, AlertTriangle } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
+import { useI18n } from "@/i18n/I18nContext";
 
 export default function ResetPassword() {
+  const { t } = useI18n();
   // The reset email link opens a temporary recovery session (handled by the
   // Supabase client on load); the user just picks a new password.
   const { isAuthenticated, authChecked } = useAuth();
@@ -22,11 +24,11 @@ export default function ResetPassword() {
     e.preventDefault();
     setError("");
     if (newPassword !== confirmPassword) {
-      setError("Les mots de passe ne correspondent pas.");
+      setError(t("auth.err.mismatch"));
       return;
     }
     if (newPassword.length < 8) {
-      setError("Le mot de passe doit contenir au moins 8 caractères.");
+      setError(t("auth.err.pwShort"));
       return;
     }
     setLoading(true);
@@ -34,7 +36,7 @@ export default function ResetPassword() {
       await updatePassword(newPassword);
       window.location.href = "/app";
     } catch (err) {
-      setError(err.message || "Impossible de modifier le mot de passe.");
+      setError(err.message || t("ac.reset.fail"));
     } finally {
       setLoading(false);
     }
@@ -42,7 +44,7 @@ export default function ResetPassword() {
 
   if (!authChecked) {
     return (
-      <AuthLayout icon={Lock} title="Nouveau mot de passe" subtitle="Vérification du lien…">
+      <AuthLayout icon={Lock} title={t("ac.reset.title")} subtitle={t("ac.reset.checking")}>
         <div className="flex justify-center py-4"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>
       </AuthLayout>
     );
@@ -52,16 +54,16 @@ export default function ResetPassword() {
     return (
       <AuthLayout
         icon={AlertTriangle}
-        title="Lien de réinitialisation invalide"
-        subtitle="Ce lien de réinitialisation est absent ou invalide"
+        title={t("ac.reset.invalidTitle")}
+        subtitle={t("ac.reset.invalidSub")}
         footer={
           <Link to="/forgot-password" className="text-primary font-medium hover:underline">
-            Demander un nouveau lien
+            {t("ac.reset.requestNew")}
           </Link>
         }
       >
         <p className="text-sm text-foreground text-center">
-          Le lien utilisé semble incomplet. Demandez un nouvel email de réinitialisation.
+          {t("ac.reset.incomplete")}
         </p>
       </AuthLayout>
     );
@@ -70,8 +72,8 @@ export default function ResetPassword() {
   return (
     <AuthLayout
       icon={Lock}
-      title="Nouveau mot de passe"
-      subtitle="Saisissez votre nouveau mot de passe (8 caractères min.)"
+      title={t("ac.reset.title")}
+      subtitle={t("ac.reset.sub")}
     >
       {error && (
         <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
@@ -80,7 +82,7 @@ export default function ResetPassword() {
       )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="password">Nouveau mot de passe</Label>
+          <Label htmlFor="password">{t("ac.sec.newPw")}</Label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <Input
@@ -97,7 +99,7 @@ export default function ResetPassword() {
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="confirm">Confirmer le mot de passe</Label>
+          <Label htmlFor="confirm">{t("ac.reset.confirmPw")}</Label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <Input
@@ -116,10 +118,10 @@ export default function ResetPassword() {
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Modification…
+              {t("ac.reset.updating")}
             </>
           ) : (
-            "Modifier le mot de passe"
+            t("ac.reset.submit")
           )}
         </Button>
       </form>

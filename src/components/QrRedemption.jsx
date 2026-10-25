@@ -6,10 +6,12 @@ import { supabase } from "@/api/supabaseClient";
 import { invokeFunction } from "@/api/functions";
 import { useAuth } from "@/lib/AuthContext";
 import { useCurrencies } from "@/hooks/useCurrencies";
+import { useI18n } from "@/i18n/I18nContext";
 
 const DEFAULT_TTL = 180; // 3 minutes
 
 export default function QrRedemption({ offer, onClose }) {
+  const { t } = useI18n();
   const { user } = useAuth();
   const money = useCurrencies();
   const [started, setStarted] = useState(false);
@@ -48,14 +50,14 @@ export default function QrRedemption({ offer, onClose }) {
     try {
       const res = await invokeFunction("generate-redemption", { offer_id: offer.id, allow_wallet_payment: allowWallet });
       const d = res.data || {};
-      if (!d.ok || !d.code) throw new Error(d.error || "Échec de génération");
+      if (!d.ok || !d.code) throw new Error(d.error || t("mb.qr.genFailed"));
       if (!mounted.current) return;
       setCode(d.code);
       setRedemptionId(d.redemption_id);
       setTtl(d.ttl || DEFAULT_TTL);
       setSecondsLeft(d.ttl || DEFAULT_TTL);
     } catch (e) {
-      if (mounted.current) setError(e.message || "Échec de génération du code");
+      if (mounted.current) setError(e.message || t("mb.qr.genCodeFailed"));
     } finally {
       if (mounted.current) setLoading(false);
     }
@@ -110,31 +112,31 @@ export default function QrRedemption({ offer, onClose }) {
       >
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-lg font-bold">{offer.title}</h3>
-          <button onClick={onClose} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100">✕</button>
+          <button onClick={onClose} aria-label={t("mb.common.close")} className="rounded-lg p-1 text-slate-400 hover:bg-slate-100">✕</button>
         </div>
 
         <div className="mb-4 flex items-center gap-2 text-sm">
           {online ? (
-            <span className="flex items-center gap-1.5 text-emerald-600"><Wifi className="h-4 w-4" /> En ligne</span>
+            <span className="flex items-center gap-1.5 text-emerald-600"><Wifi className="h-4 w-4" /> {t("mb.qr.online")}</span>
           ) : (
-            <span className="flex items-center gap-1.5 text-amber-600"><WifiOff className="h-4 w-4" /> Mode hors-ligne</span>
+            <span className="flex items-center gap-1.5 text-amber-600"><WifiOff className="h-4 w-4" /> {t("mb.qr.offline")}</span>
           )}
           <span className={`ml-auto flex items-center gap-1 ${expired ? "text-rose-500" : "text-slate-500"}`}>
-            <Clock className="h-4 w-4" /> {expired ? "Expiré" : `${minutes}:${secs.toString().padStart(2, "0")}`}
+            <Clock className="h-4 w-4" /> {expired ? t("mb.qr.expiredShort") : `${minutes}:${secs.toString().padStart(2, "0")}`}
           </span>
         </div>
 
         {!started ? (
           <div className="space-y-4">
-            <p className="text-sm text-slate-600">Générez votre code personnel et présentez-le en caisse. Le partenaire saisit le montant de l'addition : la remise et votre cashback sont calculés automatiquement.</p>
+            <p className="text-sm text-slate-600">{t("mb.qr.intro")}</p>
             <label className="flex items-start gap-3 rounded-xl border border-slate-200 p-3 text-sm">
               <input type="checkbox" checked={allowWallet} onChange={(e) => setAllowWallet(e.target.checked)} className="mt-1 h-4 w-4 accent-emerald-500" />
               <span>
-                <span className="font-medium text-slate-900">Payer avec mon wallet Nelvin</span>
-                <span className="block text-xs text-slate-500">Le partenaire pourra débiter le montant à payer de votre wallet (solde : {money.format(user?.wallet_balance, user?.wallet_currency || "USD")}).</span>
+                <span className="font-medium text-slate-900">{t("mb.qr.payWallet")}</span>
+                <span className="block text-xs text-slate-500">{t("mb.qr.payWalletDesc", { balance: money.format(user?.wallet_balance, user?.wallet_currency || "USD") })}</span>
               </span>
             </label>
-            <button onClick={start} className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white hover:bg-emerald-600">Générer mon code</button>
+            <button onClick={start} className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white hover:bg-emerald-600">{t("mb.qr.generate")}</button>
           </div>
         ) : (<>
         <div className="mb-4 flex flex-col items-center rounded-xl bg-slate-50 p-6">
@@ -149,7 +151,7 @@ export default function QrRedemption({ offer, onClose }) {
           ) : expired ? (
             <div className="flex h-40 w-40 flex-col items-center justify-center text-center">
               <Clock className="h-10 w-10 text-rose-400" />
-              <p className="mt-2 text-sm text-slate-500">Code expiré</p>
+              <p className="mt-2 text-sm text-slate-500">{t("mb.qr.codeExpired")}</p>
             </div>
           ) : online ? (
             <>
@@ -163,7 +165,7 @@ export default function QrRedemption({ offer, onClose }) {
               <div className="mb-3 rounded-xl bg-brand px-6 py-4">
                 <p className="font-mono text-3xl font-bold tracking-widest text-emerald-400">{code}</p>
               </div>
-              <p className="text-center text-xs text-slate-500">Présentez ce code au marchand</p>
+              <p className="text-center text-xs text-slate-500">{t("mb.qr.showMerchant")}</p>
             </>
           )}
         </div>
@@ -173,14 +175,14 @@ export default function QrRedemption({ offer, onClose }) {
             onClick={createRedemption}
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white transition hover:bg-emerald-600 active:scale-95"
           >
-            <RefreshCw className="h-4 w-4" /> Réessayer
+            <RefreshCw className="h-4 w-4" /> {t("mb.qr.retry")}
           </button>
         ) : expired ? (
           <button
             onClick={createRedemption}
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white transition hover:bg-emerald-600 active:scale-95"
           >
-            <RefreshCw className="h-4 w-4" /> Générer un nouveau code
+            <RefreshCw className="h-4 w-4" /> {t("mb.qr.regenerate")}
           </button>
         ) : (
           <button
@@ -189,12 +191,12 @@ export default function QrRedemption({ offer, onClose }) {
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white transition hover:bg-emerald-600 active:scale-95 disabled:opacity-50"
           >
             {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-            {copied ? "Copié !" : "Copier le code"}
+            {copied ? t("mb.qr.copied") : t("mb.qr.copy")}
           </button>
         )}
 
         <p className="mt-3 text-center text-xs text-slate-400">
-          {online ? `QR dynamique • valide ${minsLabel} minutes` : `Code hors-ligne • valide ${minsLabel} minutes`}
+          {online ? t("mb.qr.validOnline", { min: minsLabel }) : t("mb.qr.validOffline", { min: minsLabel })}
         </p>
         </>)}
       </motion.div>

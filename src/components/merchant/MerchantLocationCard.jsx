@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 import { entities } from "@/api/entities";
 import { useToast } from "@/components/ui/use-toast";
 import LocationPicker from "@/components/map/LocationPicker";
+import { useI18n } from "@/i18n/I18nContext";
 import { Loader2 } from "lucide-react";
 
 /** Lets a merchant place their own shop on the public partner map. */
 export default function MerchantLocationCard({ merchant, onSaved }) {
+  const { t } = useI18n();
   const { toast } = useToast();
   const [loc, setLoc] = useState({
     address: merchant?.address || "",
@@ -20,7 +22,7 @@ export default function MerchantLocationCard({ merchant, onSaved }) {
 
   const save = async () => {
     if (loc.lat == null || loc.lng == null) {
-      toast({ title: "Placez d'abord le repère", description: "Cherchez l'adresse ou touchez la carte.", variant: "destructive" });
+      toast({ title: t("mc.loc.needPinTitle"), description: t("mc.loc.needPinDesc"), variant: "destructive" });
       return;
     }
     setSaving(true);
@@ -32,9 +34,9 @@ export default function MerchantLocationCard({ merchant, onSaved }) {
         lng: Number(loc.lng),
       });
       onSaved?.(updated);
-      toast({ title: "Emplacement enregistré", description: "Votre commerce apparaît sur la carte des partenaires." });
+      toast({ title: t("mc.loc.savedTitle"), description: t("mc.loc.savedDesc") });
     } catch (e) {
-      toast({ title: "Enregistrement impossible", description: e.message, variant: "destructive" });
+      toast({ title: t("mc.loc.saveFailed"), description: e.message, variant: "destructive" });
     } finally {
       setSaving(false);
     }
@@ -44,18 +46,18 @@ export default function MerchantLocationCard({ merchant, onSaved }) {
     <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold text-slate-900">Mon commerce sur la carte</h2>
+          <h2 className="text-base font-semibold text-slate-900">{t("mc.loc.title")}</h2>
           <p className="mt-1 max-w-prose text-sm text-slate-500">
-            Les membres trouvent les partenaires autour d'eux. Placez le repère sur l'entrée de votre commerce.
+            {t("mc.loc.desc")}
           </p>
         </div>
         <span className={`rounded-full px-3 py-1 text-xs font-medium ${onMap ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
-          {onMap ? "Visible sur la carte" : "Pas encore sur la carte"}
+          {onMap ? t("mc.loc.onMap") : t("mc.loc.notOnMap")}
         </span>
       </div>
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         <label className="text-sm text-slate-600">
-          Ville
+          {t("mc.loc.city")}
           <input value={loc.city} onChange={(e) => setLoc({ ...loc, city: e.target.value })} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" />
         </label>
       </div>
@@ -64,9 +66,9 @@ export default function MerchantLocationCard({ merchant, onSaved }) {
       </div>
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <button onClick={save} disabled={saving} className="inline-flex items-center gap-2 rounded-lg bg-[#08261D] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#0F4A38] disabled:opacity-60">
-          {saving && <Loader2 className="h-4 w-4 animate-spin" />} Enregistrer l'emplacement
+          {saving && <Loader2 className="h-4 w-4 animate-spin" />} {t("mc.loc.save")}
         </button>
-        {onMap && <Link to={`/merchant-map?m=${merchant.id}`} className="text-sm font-medium text-[#08261D] underline underline-offset-4">Voir sur la carte publique</Link>}
+        {onMap && <Link to={`/merchant-map?m=${merchant.id}`} className="text-sm font-medium text-[#08261D] underline underline-offset-4">{t("mc.loc.viewPublic")}</Link>}
       </div>
     </section>
   );

@@ -17,7 +17,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { useCurrencies } from "@/hooks/useCurrencies";
 import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
 import { usePlans } from "@/hooks/usePlans";
-import { TX_LABELS, walletEffect } from "@/pages/WalletActivity";
+import { txLabel, walletEffect } from "@/pages/WalletActivity";
 import { ArrowDownLeft, ArrowUpRight, Crown, Loader2, Search, Star, TrendingUp, Wallet } from "lucide-react";
 import RoleWelcomeHeader from "@/components/RoleWelcomeHeader";
 import StatCard from "@/components/dashboard/StatCard";
@@ -30,7 +30,7 @@ import SavingsPanel from "@/components/dashboard/SavingsPanel";
 
 export default function MemberPortal() {
   const navigate = useNavigate();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { user } = useAuth();
   const money = useCurrencies();
   const [currency, setCurrency] = useDisplayCurrency();
@@ -57,7 +57,7 @@ export default function MemberPortal() {
   }, [user?.id], { initial: { txs: [], subs: [], redeemed: 0 } });
 
   const activeSub = (activity?.subs || []).find((s) => s.status === "ACTIVE" && (!s.expires_at || new Date(s.expires_at) > new Date()));
-  const planName = activeSub ? byCode(activeSub.plan_type)?.name || activeSub.plan_type : "Accès gratuit";
+  const planName = activeSub ? byCode(activeSub.plan_type)?.name || activeSub.plan_type : t("mb.portal.freeAccess");
   const memberCode = user?.id ? `NLV · ${String(user.id).replace(/-/g, "").slice(0, 4).toUpperCase()} ${String(user.id).replace(/-/g, "").slice(4, 8).toUpperCase()}` : "";
   const cashback = (activity?.txs || []).filter((x) => x.status === "COMPLETED").reduce((s, x) => s + Number(x.cashback_amount || 0), 0);
 
@@ -117,8 +117,8 @@ export default function MemberPortal() {
 
       <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
         <StatCard icon={TrendingUp} label={t("wallet.cashback")} value={fmt(cashback)} tone="emerald" />
-        <Link to="/billing-settings" className="block"><StatCard icon={Crown} label="Mon Pass" value={planName} tone="amber" delay={0.05} hint={activeSub ? `Jusqu'au ${new Date(activeSub.expires_at).toLocaleDateString("fr-FR")}` : "Découvrir les Pass"} /></Link>
-        <StatCard icon={Star} label="Offres utilisées" value={activity?.redeemed || 0} tone="emerald" delay={0.1} />
+        <Link to="/billing-settings" className="block"><StatCard icon={Crown} label={t("mb.portal.myPass")} value={planName} tone="amber" delay={0.05} hint={activeSub ? t("mb.portal.passUntil", { date: new Date(activeSub.expires_at).toLocaleDateString(locale) }) : t("mb.portal.discoverPasses")} /></Link>
+        <StatCard icon={Star} label={t("mb.portal.offersUsed")} value={activity?.redeemed || 0} tone="emerald" delay={0.1} />
       </div>
       </>)}
 
@@ -128,20 +128,20 @@ export default function MemberPortal() {
           {usedCategories.map((c) => (
             <button key={c} onClick={() => setCategory(c)} className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition ${category === c ? "bg-nv-deep text-white shadow" : "border border-nv-line bg-white text-slate-600 hover:bg-nv-ivory"}`}>
               {c === "ALL" ? <NvIcon name="AFRICA" tone={category === c ? "dark" : "light"} className="h-4 w-4" /> : <CategoryIcon category={c} tone={category === c ? "dark" : "light"} className="h-4 w-4" />}
-              {c === "ALL" ? "Toutes les offres" : meta(c).label}
+              {c === "ALL" ? t("mb.portal.allOffers") : meta(c).label}
             </button>
           ))}
         </div>
         <div className="relative">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Offre, partenaire, ville" aria-label="Rechercher une offre" className="rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500" />
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("mb.portal.searchPlaceholder")} aria-label={t("mb.portal.searchAria")} className="rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500" />
         </div>
       </div>
 
       {catalog.loading ? (
         <div className="mt-10 flex justify-center"><Loader2 className="h-6 w-6 animate-spin text-slate-400" /></div>
       ) : offers.length === 0 ? (
-        <div className="mt-6"><EmptyState icon={Star} title="Aucune offre pour le moment" description="De nouveaux partenaires rejoignent Nelvin chaque semaine." /></div>
+        <div className="mt-6"><EmptyState icon={Star} title={t("mb.portal.noOffers")} description={t("mb.portal.noOffersDesc")} /></div>
       ) : (
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {offers.map((o, i) => <OfferCard key={o.id} offer={o} meta={meta} format={fmt} index={i} onRedeem={setSelectedOffer} ctaLabel={t("cta.redeem")} />)}
@@ -152,8 +152,8 @@ export default function MemberPortal() {
       {section === "overview" && catalog.merchants.some((m) => m.lat != null) && (
         <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="flex items-center justify-between px-5 py-4">
-            <h2 className="font-semibold text-slate-900">Partenaires sur la carte</h2>
-            <Link to="/merchant-map" className="text-sm font-medium text-emerald-600 hover:underline">Ouvrir la carte</Link>
+            <h2 className="font-semibold text-slate-900">{t("mb.portal.mapTitle")}</h2>
+            <Link to="/merchant-map" className="text-sm font-medium text-emerald-600 hover:underline">{t("mb.portal.openMap")}</Link>
           </div>
           <div className="h-72">
             <PartnerMap merchants={catalog.merchants} onSelect={(m) => navigate(`/merchant-map?m=${m.id}`)} />
@@ -162,11 +162,11 @@ export default function MemberPortal() {
       )}
 
       {show("activity") && (
-      <SectionCard title="Transactions récentes" className="mt-6" action={<Link to="/wallet-activity" className="text-sm font-medium text-emerald-600 hover:underline">Tout voir</Link>}>
+      <SectionCard title={t("mb.portal.recentTx")} className="mt-6" action={<Link to="/wallet-activity" className="text-sm font-medium text-emerald-600 hover:underline">{t("mb.portal.seeAll")}</Link>}>
         {loading ? (
           <div className="flex justify-center py-6"><Loader2 className="h-5 w-5 animate-spin text-slate-400" /></div>
         ) : activity.txs.length === 0 ? (
-          <EmptyState icon={Wallet} title="Aucune transaction" description="Utilisez votre première offre pour voir votre activité ici." />
+          <EmptyState icon={Wallet} title={t("mb.portal.noTx")} description={t("mb.portal.noTxDesc")} />
         ) : (
           <div className="space-y-2">
             {activity.txs.slice(0, 8).map((tx) => {
@@ -174,12 +174,12 @@ export default function MemberPortal() {
               return (
                 <div key={tx.id} className="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3">
                   <div>
-                    <p className="text-sm font-medium text-slate-900">{tx.description || TX_LABELS[tx.type]}</p>
-                    <p className="text-xs text-slate-500">{new Date(tx.created_date).toLocaleDateString("fr-FR")} · {TX_LABELS[tx.type]}{tx.status === "PENDING" ? " · en attente" : ""}</p>
+                    <p className="text-sm font-medium text-slate-900">{tx.description || txLabel(t, tx.type)}</p>
+                    <p className="text-xs text-slate-500">{new Date(tx.created_date).toLocaleDateString(locale)} · {txLabel(t, tx.type)}{tx.status === "PENDING" ? ` · ${t("mb.tx.status.PENDING")}` : ""}</p>
                   </div>
                   <div className="text-right">
                     <p className={`text-sm font-semibold ${effect > 0 ? "text-emerald-600" : effect < 0 ? "text-rose-600" : "text-slate-900"}`}>{effect > 0 ? "+" : effect < 0 ? "-" : ""}{fmt(Math.abs(effect) || tx.amount_usd || tx.amount)}</p>
-                    {Number(tx.savings_usd) > 0 && <p className="text-xs text-amber-600">{fmt(tx.savings_usd)} économisés</p>}
+                    {Number(tx.savings_usd) > 0 && <p className="text-xs text-amber-600">{t("mb.portal.saved", { amount: fmt(tx.savings_usd) })}</p>}
                   </div>
                 </div>
               );

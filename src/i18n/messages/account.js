@@ -256,4 +256,8 @@ export default [
   ["ac.st.imagesOnly", "Only images are accepted", "Seules les images sont acceptées", "Picha pekee ndizo zinazokubaliwa", "يتم قبول الصور فقط", "Àwọn àwòrán nìkan la gbà"],
   ["ac.st.uploadFail", "Upload failed", "Échec du téléversement", "Imeshindwa kupakia", "فشل الرفع", "Ìgbéṣókè kò yọrí"],
   ["ac.st.kycFormats", "Accepted formats: PDF, PNG, JPEG, WEBP", "Formats acceptés : PDF, PNG, JPEG, WEBP", "Miundo inayokubaliwa: PDF, PNG, JPEG, WEBP", "الصيغ المقبولة: PDF وPNG وJPEG وWEBP", "Àwọn ọ̀nà tí a gbà: PDF, PNG, JPEG, WEBP"],
+  ["ac.reset.confirmPw", "Confirm password", "Confirmer le mot de passe", "Thibitisha nenosiri", "تأكيد كلمة المرور", "Jẹ́rìísí ọ̀rọ̀ aṣínà"],
+  ["ac.sec.title", "Security", "Sécurité", "Usalama", "الأمان", "Ààbò"],
+  ["ac.set.title", "Settings", "Paramètres", "Mipangilio", "الإعدادات", "Àwọn ètò"],
+  ["ac.set.company", "Company", "Entreprise", "Kampuni", "الشركة", "Ilé-iṣẹ́"],
 ];

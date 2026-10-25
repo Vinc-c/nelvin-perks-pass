@@ -1,3 +1,5 @@
+import { translate } from "@/i18n/translate";
+
 const ADMIN_ROLES = ["SUPER_ADMIN", "admin"];
 
 const HOME_BY_ROLE = {
@@ -7,15 +9,25 @@ const HOME_BY_ROLE = {
   MEMBER: "/member",
 };
 
-export const ROLE_LABELS = {
-  SUPER_ADMIN: "Super Admin",
-  admin: "Super Admin",
-  HR_ADMIN: "Entreprise / RH",
-  EMPLOYEE: "Employé",
-  MERCHANT: "Marchand",
-  MEMBER: "Particulier",
-  user: "Particulier",
+// Role -> i18n key (role.* keys live in messages/nav.js).
+const ROLE_KEYS = {
+  SUPER_ADMIN: "role.SUPER_ADMIN",
+  admin: "role.SUPER_ADMIN",
+  HR_ADMIN: "role.HR_ADMIN",
+  EMPLOYEE: "role.EMPLOYEE",
+  MERCHANT: "role.MERCHANT",
+  MEMBER: "role.MEMBER",
+  user: "role.MEMBER",
 };
+
+/** Translated role label (falls back to the raw role). */
+export const roleLabel = (role) => (ROLE_KEYS[role] ? translate(ROLE_KEYS[role]) : role);
+
+// Kept for existing consumers: values resolve in the current language on access.
+export const ROLE_LABELS = {};
+Object.keys(ROLE_KEYS).forEach((role) => {
+  Object.defineProperty(ROLE_LABELS, role, { enumerable: true, get: () => translate(ROLE_KEYS[role]) });
+});
 
 export const isAdmin = (user) => !!user && ADMIN_ROLES.includes(user.role);
 
