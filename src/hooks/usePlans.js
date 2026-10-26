@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { entities } from "@/api/entities";
+import { useI18n } from "@/i18n/I18nContext";
 
 // Pricing lives in the `plans` table (Admin → Plans & tarifs). These defaults
 // mirror the seeded rows and only cover the first paint.
@@ -13,6 +14,16 @@ export const DEFAULT_PLANS = [
   { code: "MERCHANT_BASIC", audience: "MERCHANT", name: "Merchant Basic", tagline: "Visibilité et validation des codes", price_monthly: 29, price_annual: 295, features: ["Fiche marchand", "Validation des codes", "Campagnes standard", "Paiements mensuels"], popular: false, sort_order: 20 },
   { code: "MERCHANT_PRO", audience: "MERCHANT", name: "Merchant Pro", tagline: "Croissance et analytics avancés", price_monthly: 49, price_annual: 497, features: ["Tout Merchant Basic", "Campagnes avancées", "Demandes de paiement illimitées", "Analytics détaillés"], popular: true, sort_order: 21 },
 ];
+
+export function localizePlan(p, t) {
+  const def = DEFAULT_PLANS.find((d) => d.code === p.code);
+  if (!def) return p;
+  return {
+    ...p,
+    tagline: p.tagline === def.tagline ? t(`pl.${p.code}.tag`) : p.tagline,
+    features: (p.features || []).map((f, i) => (f === def.features[i] ? t(`pl.${p.code}.f${i}`) : f)),
+  };
+}
 
 let cache = null;
 let inflight = null;
@@ -35,10 +46,14 @@ export function loadPlans(force = false) {
 
 /** Active plans, optionally filtered by audience ("B2C" | "B2B" | "MERCHANT"). */
 export function usePlans(audience) {
-  const [plans, setPlans] = useState(cache || DEFAULT_PLANS);
+  const { t, lang } = useI18n();
+  const [raw, setRaw] = useState(cache || DEFAULT_PLANS);
   useEffect(() => {
-    loadPlans().then(setPlans);
+    loadPlans().then(setRaw);
   }, []);
+  // Texts still equal to the seeded defaults follow the visitor's language;
+  // anything an admin has customised is shown exactly as stored.
+  const plans = useMemo(() => raw.map((p) => localizePlan(p, t)), [raw, lang]);
   const list = audience ? plans.filter((p) => p.audience === audience) : plans;
   return { plans: list, byCode: (code) => plans.find((p) => p.code === code) };
 }
