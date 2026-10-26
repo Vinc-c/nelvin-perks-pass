@@ -9,6 +9,16 @@ function pdfLang() {
   return l === "ar" || l === "yo" ? "en" : l;
 }
 
+/** Translator + locale for generated PDFs (Latin-script languages only). */
+export function pdfI18n() {
+  const lang = pdfLang();
+  const tr = (key, vars) => {
+    const text = (translations[lang] && translations[lang][key]) || translations.en[key] || key;
+    return vars ? text.replace(/\{(\w+)\}/g, (m, k) => (vars[k] ?? m)) : text;
+  };
+  return { tr, locale: { en: "en-GB", fr: "fr-FR", sw: "sw-KE" }[lang] || "en-GB" };
+}
+
 export async function downloadReceipt(tx, { user, company } = {}) {
   const { jsPDF } = await import("jspdf");
   const lang = pdfLang();
