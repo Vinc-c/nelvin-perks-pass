@@ -1,9 +1,12 @@
 import React, { useMemo, useState } from "react";
 import { Search, Check, X, MapPin } from "lucide-react";
+import { useI18n } from "@/i18n/I18nContext";
+import { countryLabel } from "@/lib/countryName";
 import { AFRICAN_REGIONS, AFRICAN_COUNTRIES } from "@/data/africanCountries";
 
 // All 54 African countries grouped by AU region — Nelvin only serves Africa.
 export default function AfricanCountrySelect({ value, onChange }) {
+  const { t, locale } = useI18n();
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
@@ -11,9 +14,9 @@ export default function AfricanCountrySelect({ value, onChange }) {
     if (!q) return AFRICAN_REGIONS;
     return AFRICAN_REGIONS.map((r) => ({
       ...r,
-      countries: r.countries.filter((c) => c.toLowerCase().includes(q)),
+      countries: r.countries.filter((c) => c.toLowerCase().includes(q) || countryLabel(c, locale).toLowerCase().includes(q)),
     })).filter((r) => r.countries.length > 0);
-  }, [query]);
+  }, [query, locale]);
 
   const toggle = (c) =>
     onChange(value.includes(c) ? value.filter((x) => x !== c) : [...value, c]);
@@ -25,7 +28,7 @@ export default function AfricanCountrySelect({ value, onChange }) {
         <div className="mb-3 flex flex-wrap gap-2">
           {value.map((c) => (
             <span key={c} className="inline-flex items-center gap-1.5 rounded-full bg-blue-600 px-3 py-1.5 text-sm font-medium text-white">
-              {c}
+              {countryLabel(c, locale)}
               <button type="button" onClick={() => toggle(c)} className="rounded-full hover:bg-blue-700">
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -40,7 +43,7 @@ export default function AfricanCountrySelect({ value, onChange }) {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Rechercher un pays…"
+          placeholder={t("ac.ctry.search")}
           className="w-full rounded-full border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
         />
       </div>
@@ -49,12 +52,12 @@ export default function AfricanCountrySelect({ value, onChange }) {
       <div className="mt-3 max-h-72 space-y-4 overflow-y-auto rounded-xl border border-slate-100 bg-slate-50/50 p-4">
         {filtered.length === 0 && (
           <p className="flex items-center gap-2 py-6 text-center text-sm text-slate-400">
-            <MapPin className="h-4 w-4" /> Aucun pays trouvé.
+            <MapPin className="h-4 w-4" /> {t("ac.ctry.notFound")}
           </p>
         )}
         {filtered.map((region) => (
           <div key={region.name}>
-            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">{region.name}</p>
+            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">{t(`ac.ctry.r.${region.name}`)}</p>
             <div className="grid gap-2 sm:grid-cols-2">
               {region.countries.map((c) => {
                 const active = value.includes(c);
@@ -70,7 +73,7 @@ export default function AfricanCountrySelect({ value, onChange }) {
                     <span className={`flex h-4 w-4 items-center justify-center rounded border ${active ? "border-blue-600 bg-blue-600" : "border-slate-300"}`}>
                       {active && <Check className="h-3 w-3 text-white" />}
                     </span>
-                    {c}
+                    {countryLabel(c, locale)}
                   </button>
                 );
               })}
@@ -78,7 +81,7 @@ export default function AfricanCountrySelect({ value, onChange }) {
           </div>
         ))}
       </div>
-      <p className="mt-2 text-xs text-slate-400">{value.length} / {AFRICAN_COUNTRIES.length} pays sélectionnés — Nelvin ne couvre que l'Afrique.</p>
+      <p className="mt-2 text-xs text-slate-400">{t("ac.ctry.count", { n: value.length, total: AFRICAN_COUNTRIES.length })}</p>
     </div>
   );
 }
