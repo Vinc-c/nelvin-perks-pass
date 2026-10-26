@@ -8,12 +8,9 @@ import {
 import AfricanCountrySelect from "./AfricanCountrySelect";
 import LocationPicker from "@/components/map/LocationPicker";
 import { useCategories } from "@/hooks/useCategories";
+import { useI18n } from "@/i18n/I18nContext";
 
-const REDEEM = [
-  { v: "ONLINE", l: "En ligne, via mon site" },
-  { v: "OFFLINE", l: "En personne, dans mes points de vente" },
-  { v: "BOTH", l: "En ligne et en point de vente" },
-];
+const REDEEM = ["ONLINE", "OFFLINE", "BOTH"];
 
 function SectionHeader({ icon: Icon, title, subtitle }) {
   return (
@@ -45,6 +42,7 @@ const inputCls =
   "w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
 
 function FileDrop({ label, hint, file, onPick }) {
+  const { t } = useI18n();
   return (
     <label className="block">
       <p className="text-sm font-medium text-slate-700">
@@ -65,8 +63,8 @@ function FileDrop({ label, hint, file, onPick }) {
         ) : (
           <div className="text-sm text-slate-400">
             <Upload className="mx-auto mb-1 h-5 w-5" />
-            Glissez un fichier ou parcourez
-            <span className="mt-1 block text-xs">PNG, JPG, WebP, 10 Mo max</span>
+            {t("mc.pf.drop")}
+            <span className="mt-1 block text-xs">{t("mc.pf.dropHint")}</span>
           </div>
         )}
       </div>
@@ -87,6 +85,7 @@ const minExpiry = () => {
  * confirmation screen (e.g. to open the dashboard directly).
  */
 export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
+  const { t } = useI18n();
   const [form, setForm] = useState({
     email: defaults.email || "", brandName: "", contactName: defaults.contactName || "", contactPhone: defaults.contactPhone || "", city: "",
     category: "",
@@ -115,21 +114,21 @@ export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
     e.preventDefault();
     setError("");
     if (!form.email || !form.brandName || !form.contactName || !form.contactPhone || !form.city)
-      return setError("Complétez tous les champs obligatoires des informations de base.");
-    if (!form.category) return setError("Sélectionnez la catégorie de votre marque.");
+      return setError(t("mc.pf.e.basic"));
+    if (!form.category) return setError(t("mc.pf.e.category"));
     if (!form.description || !form.supportEmail || !form.website)
-      return setError("Complétez tous les champs obligatoires du détail de la marque.");
+      return setError(t("mc.pf.e.brand"));
     if (!files.logo || !files.cover || !files.product)
-      return setError("Téléversez le logo, l'image de couverture et l'image produit de votre marque.");
+      return setError(t("mc.pf.e.files"));
     if (!form.offerHeadline || !form.offerHowToUse || !form.offerExpiry)
-      return setError("Complétez tous les champs obligatoires de l'offre.");
+      return setError(t("mc.pf.e.offer"));
     if (form.offerExpiry < minExpiry())
-      return setError("L'offre doit être valable au moins 12 mois : choisissez une date d'expiration plus lointaine.");
+      return setError(t("mc.pf.e.expiry"));
     if (form.offerRedeemable !== "ONLINE" && (place.lat == null || place.lng == null))
-      return setError("Placez votre commerce sur la carte pour que les membres puissent vous trouver.");
-    if (form.countries.length === 0) return setError("Sélectionnez au moins un pays.");
+      return setError(t("mc.pf.e.map"));
+    if (form.countries.length === 0) return setError(t("mc.pf.e.countries"));
     if (!tc.multi || !tc.twelve || !tc.openAll || !tc.better)
-      return setError("Confirmez toutes les conditions générales.");
+      return setError(t("mc.pf.e.terms"));
 
     try {
       setBusy(true);
@@ -181,7 +180,7 @@ export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
       if (onSubmitted) { onSubmitted(); return; }
       setSubmitted(true);
     } catch (err) {
-      setError(err.message || "Envoi impossible. Réessayez.");
+      setError(err.message || t("mc.pf.e.send"));
     } finally {
       setBusy(false);
       setUploading(false);
@@ -194,17 +193,17 @@ export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
           <Check className="h-8 w-8 text-emerald-600" />
         </div>
-        <h2 className="mt-5 text-2xl font-bold text-slate-900">Candidature envoyée</h2>
+        <h2 className="mt-5 text-2xl font-bold text-slate-900">{t("mc.pf.done")}</h2>
         <p className="mt-2 text-sm text-slate-500">
-          Merci ! Votre marque est en cours d'examen. Notre équipe partenariats vous répond sous 2 à 3 jours ouvrés. En attendant, vous pouvez déposer vos documents de vérification (KYC).
+          {t("mc.pf.doneD")}
         </p>
         {/* Plain links (full reload): the account just became a MERCHANT server-side. */}
         <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
           <a href="/kyc-verification" className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700">
-            Envoyer mes documents KYC
+            {t("mc.pf.doneKyc")}
           </a>
           <a href="/merchant-dashboard" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">
-            Suivre ma candidature
+            {t("mc.pf.doneTrack")}
           </a>
         </div>
       </motion.div>
@@ -216,25 +215,25 @@ export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
 
       {/* Basic Information */}
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <SectionHeader icon={User} title="Informations de base" subtitle="Parlez-nous de vous" />
+        <SectionHeader icon={User} title={t("mc.pf.s.basic")} subtitle={t("mc.pf.s.basicSub")} />
         <div className="space-y-4 p-6">
-          <Field label="Votre adresse email" required>
-            <input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="vous@entreprise.com" className={inputCls} />
+          <Field label={t("mc.pf.f.email")} required>
+            <input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder={t("mc.pf.f.emailPh")} className={inputCls} />
           </Field>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Nom de votre marque" required>
-              <input value={form.brandName} onChange={(e) => set("brandName", e.target.value)} placeholder="Nom de la marque" className={inputCls} />
+            <Field label={t("mc.pf.f.brand")} required>
+              <input value={form.brandName} onChange={(e) => set("brandName", e.target.value)} placeholder={t("mc.pf.f.brandPh")} className={inputCls} />
             </Field>
-            <Field label="Nom de la personne de contact" required>
-              <input value={form.contactName} onChange={(e) => set("contactName", e.target.value)} placeholder="Nom complet" className={inputCls} />
+            <Field label={t("mc.pf.f.contact")} required>
+              <input value={form.contactName} onChange={(e) => set("contactName", e.target.value)} placeholder={t("mc.pf.f.contactPh")} className={inputCls} />
             </Field>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Numéro de la personne de contact" required>
+            <Field label={t("mc.pf.f.phone")} required>
               <input value={form.contactPhone} onChange={(e) => set("contactPhone", e.target.value)} placeholder="+237 ..." className={inputCls} />
             </Field>
-            <Field label="Ville" required>
-              <input value={form.city} onChange={(e) => set("city", e.target.value)} placeholder="Ex. Douala" className={inputCls} />
+            <Field label={t("mc.pf.f.city")} required>
+              <input value={form.city} onChange={(e) => set("city", e.target.value)} placeholder={t("mc.pf.f.cityPh")} className={inputCls} />
             </Field>
           </div>
         </div>
@@ -242,9 +241,9 @@ export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
 
       {/* Category */}
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <SectionHeader icon={Tag} title="Catégorie" subtitle="Dans quelle catégorie se situe votre marque ?" />
+        <SectionHeader icon={Tag} title={t("mc.pf.s.cat")} subtitle={t("mc.pf.s.catSub")} />
         <div className="p-6">
-          <p className="text-sm font-medium text-slate-700">Sélectionnez votre catégorie principale <span className="text-rose-500">*</span></p>
+          <p className="text-sm font-medium text-slate-700">{t("mc.pf.f.mainCat")} <span className="text-rose-500">*</span></p>
           <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {categories.map((c) => {
               const active = form.category === c.value;
@@ -260,63 +259,63 @@ export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
 
       {/* Brand Details */}
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <SectionHeader icon={Building2} title="Votre marque" subtitle="Présentez votre marque" />
+        <SectionHeader icon={Building2} title={t("mc.pf.s.brand")} subtitle={t("mc.pf.s.brandSub")} />
         <div className="space-y-4 p-6">
-          <Field label="Courte description de votre entreprise" required>
-            <textarea rows={3} value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="Quelques phrases sur votre activité" className={inputCls} />
+          <Field label={t("mc.pf.f.desc")} required>
+            <textarea rows={3} value={form.description} onChange={(e) => set("description", e.target.value)} placeholder={t("mc.pf.f.descPh")} className={inputCls} />
           </Field>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Email du support client" required>
+            <Field label={t("mc.pf.f.support")} required>
               <input type="email" value={form.supportEmail} onChange={(e) => set("supportEmail", e.target.value)} placeholder="support@company.com" className={inputCls} />
             </Field>
-            <Field label="Site web" required>
+            <Field label={t("mc.pf.f.web")} required>
               <input value={form.website} onChange={(e) => set("website", e.target.value)} placeholder="https://" className={inputCls} />
             </Field>
-            <Field label="Lien Instagram">
+            <Field label={t("mc.pf.f.ig")}>
               <input value={form.instagram} onChange={(e) => set("instagram", e.target.value)} placeholder="https://" className={inputCls} />
             </Field>
-            <Field label="Lien Facebook">
+            <Field label={t("mc.pf.f.fb")}>
               <input value={form.facebook} onChange={(e) => set("facebook", e.target.value)} placeholder="https://" className={inputCls} />
             </Field>
-            <Field label="Numéro WhatsApp">
+            <Field label={t("mc.pf.f.wa")}>
               <input value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} placeholder="+237 ..." className={inputCls} />
             </Field>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <FileDrop label="Logo de la marque (800x800 px, 10 Mo max)" hint="PNG, JPG, WebP" file={files.logo} onPick={(f) => setFiles((s) => ({ ...s, logo: f }))} />
-            <FileDrop label="Image de couverture (1200x600 px, 10 Mo max)" hint="Bannière de la page de votre marque" file={files.cover} onPick={(f) => setFiles((s) => ({ ...s, cover: f }))} />
+            <FileDrop label={t("mc.pf.f.logo")} hint={t("mc.pf.f.logoHint")} file={files.logo} onPick={(f) => setFiles((s) => ({ ...s, logo: f }))} />
+            <FileDrop label={t("mc.pf.f.cover")} hint={t("mc.pf.f.coverHint")} file={files.cover} onPick={(f) => setFiles((s) => ({ ...s, cover: f }))} />
           </div>
         </div>
       </div>
 
       {/* Offer Details */}
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <SectionHeader icon={Tag} title="Votre offre" subtitle="Présentez votre offre aux membres" />
+        <SectionHeader icon={Tag} title={t("mc.pf.s.offer")} subtitle={t("mc.pf.s.offerSub")} />
         <div className="space-y-4 p-6">
-          <Field label="Titre de votre offre" required hint="Exemple : -20 % sur votre addition en boutique">
-            <input value={form.offerHeadline} onChange={(e) => set("offerHeadline", e.target.value)} placeholder="-20 % sur votre addition en boutique" className={inputCls} />
+          <Field label={t("mc.pf.f.headline")} required hint={t("mc.pf.f.headlineHint")}>
+            <input value={form.offerHeadline} onChange={(e) => set("offerHeadline", e.target.value)} placeholder={t("mc.pf.f.headlinePh")} className={inputCls} />
           </Field>
-          <Field label="Comment utiliser l'offre ?" required hint="Exemple : 1. Présentez votre pass Nelvin 2. Donnez le code en caisse">
-            <textarea rows={2} value={form.offerHowToUse} onChange={(e) => set("offerHowToUse", e.target.value)} placeholder="1. Présentez votre pass 2. Donnez le code en caisse" className={inputCls} />
+          <Field label={t("mc.pf.f.how")} required hint={t("mc.pf.f.howHint")}>
+            <textarea rows={2} value={form.offerHowToUse} onChange={(e) => set("offerHowToUse", e.target.value)} placeholder={t("mc.pf.f.howPh")} className={inputCls} />
           </Field>
-          <FileDrop label="Image du produit / service (1440x810 px)" hint="Aucun texte ne doit apparaître sur l'image" file={files.product} onPick={(f) => setFiles((s) => ({ ...s, product: f }))} />
-          <Field label="L'offre est-elle valable en ligne / en point de vente ?" required>
+          <FileDrop label={t("mc.pf.f.product")} hint={t("mc.pf.f.productHint")} file={files.product} onPick={(f) => setFiles((s) => ({ ...s, product: f }))} />
+          <Field label={t("mc.pf.f.redeem")} required>
             <div className="grid gap-2 sm:grid-cols-3">
-              {REDEEM.map((r) => {
-                const active = form.offerRedeemable === r.v;
+              {REDEEM.map((rv) => {
+                const active = form.offerRedeemable === rv;
                 return (
-                  <button type="button" key={r.v} onClick={() => set("offerRedeemable", r.v)} className={`not-pill rounded-lg border px-3 py-2.5 text-xs font-medium transition ${active ? "border-blue-500 bg-blue-50 text-blue-700" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
-                    {r.l}
+                  <button type="button" key={rv} onClick={() => set("offerRedeemable", rv)} className={`not-pill rounded-lg border px-3 py-2.5 text-xs font-medium transition ${active ? "border-blue-500 bg-blue-50 text-blue-700" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
+                    {t(`mc.pf.red.${rv}`)}
                   </button>
                 );
               })}
             </div>
           </Field>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Conditions particulières ?" required>
-              <input value={form.offerTerms} onChange={(e) => set("offerTerms", e.target.value)} placeholder="Plafond de 50 $ par commande" className={inputCls} />
+            <Field label={t("mc.pf.f.terms")} required>
+              <input value={form.offerTerms} onChange={(e) => set("offerTerms", e.target.value)} placeholder={t("mc.pf.f.termsPh")} className={inputCls} />
             </Field>
-            <Field label="Date d'expiration de l'offre" required hint="Validité minimale de 12 mois">
+            <Field label={t("mc.pf.f.expiry")} required hint={t("mc.pf.f.expiryHint")}>
               <input type="date" min={minExpiry()} value={form.offerExpiry} onChange={(e) => set("offerExpiry", e.target.value)} className={inputCls} />
             </Field>
           </div>
@@ -325,33 +324,33 @@ export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
           {extraOffers.map((o, i) => (
             <div key={i} className="rounded-xl border border-slate-200 bg-slate-50/60 p-4">
               <div className="mb-3 flex items-center justify-between">
-                <p className="text-sm font-semibold text-slate-700">Offre supplémentaire n°{i + 2}</p>
+                <p className="text-sm font-semibold text-slate-700">{t("mc.pf.x.n", { n: i + 2 })}</p>
                 <button type="button" onClick={() => removeOffer(i)} className="rounded-full p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-500"><X className="h-4 w-4" /></button>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
-                <input value={o.headline} onChange={(e) => setExtra(i, "headline", e.target.value)} placeholder="Titre de l'offre" className={inputCls} />
+                <input value={o.headline} onChange={(e) => setExtra(i, "headline", e.target.value)} placeholder={t("mc.pf.x.title")} className={inputCls} />
                 <input type="date" value={o.expiry} onChange={(e) => setExtra(i, "expiry", e.target.value)} className={inputCls} />
               </div>
-              <textarea rows={2} value={o.howToUse} onChange={(e) => setExtra(i, "howToUse", e.target.value)} placeholder="Comment utiliser l'offre" className={`${inputCls} mt-3`} />
+              <textarea rows={2} value={o.howToUse} onChange={(e) => setExtra(i, "howToUse", e.target.value)} placeholder={t("mc.pf.x.how")} className={`${inputCls} mt-3`} />
             </div>
           ))}
           <button type="button" onClick={addOffer} className="flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-100">
-            <Plus className="h-4 w-4" /> Add Another Offer
+            <Plus className="h-4 w-4" /> {t("mc.pf.x.add")}
           </button>
         </div>
       </div>
 
       {/* Location on the partner map */}
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <SectionHeader icon={MapPin} title="Localisation" subtitle="Où les membres vous trouveront sur la carte des partenaires" />
+        <SectionHeader icon={MapPin} title={t("mc.pf.s.loc")} subtitle={t("mc.pf.s.locSub")} />
         <div className="p-6">
-          <LocationPicker value={place} onChange={setPlace} lang="en" />
+          <LocationPicker value={place} onChange={setPlace} />
         </div>
       </div>
 
       {/* Countries */}
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <SectionHeader icon={Globe} title="Pays" subtitle="Où vos offres sont-elles valables ? (Afrique uniquement)" />
+        <SectionHeader icon={Globe} title={t("mc.pf.s.countries")} subtitle={t("mc.pf.s.countriesSub")} />
         <div className="p-6">
           <AfricanCountrySelect value={form.countries} onChange={(v) => set("countries", v)} />
         </div>
@@ -359,17 +358,17 @@ export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
 
       {/* Terms confirmations */}
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <SectionHeader icon={Shield} title="Conditions Nelvin" subtitle="Confirmez les exigences suivantes" />
+        <SectionHeader icon={Shield} title={t("mc.pf.s.terms")} subtitle={t("mc.pf.s.termsSub")} />
         <div className="space-y-3 p-6">
           {[
-            { k: "multi", t: "L'offre peut être utilisée plusieurs fois sur une période convenue." },
-            { k: "twelve", t: "L'offre est valable au moins 12 mois." },
-            { k: "openAll", t: "L'offre est ouverte à tous les membres, pas seulement aux nouveaux clients." },
-            { k: "better", t: "L'offre est meilleure que ce qui est affiché publiquement." },
+            { k: "multi" },
+            { k: "twelve" },
+            { k: "openAll" },
+            { k: "better" },
           ].map((row) => (
             <label key={row.k} className="flex items-start gap-3 rounded-lg p-2 hover:bg-slate-50">
               <input type="checkbox" checked={tc[row.k]} onChange={(e) => setTc((s) => ({ ...s, [row.k]: e.target.checked }))} className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
-              <span className="text-sm text-slate-700">{row.t} <span className="text-rose-500">*</span></span>
+              <span className="text-sm text-slate-700">{t(`mc.pf.t.${row.k}`)} <span className="text-rose-500">*</span></span>
             </label>
           ))}
         </div>
@@ -377,9 +376,9 @@ export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
 
       {/* Additional notes */}
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <SectionHeader icon={FileText} title="Notes complémentaires" subtitle="Toute autre information utile" />
+        <SectionHeader icon={FileText} title={t("mc.pf.s.notes")} subtitle={t("mc.pf.s.notesSub")} />
         <div className="p-6">
-          <textarea rows={3} value={form.notes} onChange={(e) => set("notes", e.target.value)} placeholder="Ex. : codes uniques, horaires, jours exclus" className={inputCls} />
+          <textarea rows={3} value={form.notes} onChange={(e) => set("notes", e.target.value)} placeholder={t("mc.pf.f.notesPh")} className={inputCls} />
         </div>
       </div>
 
@@ -393,14 +392,14 @@ export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
         className="flex w-full items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition hover:bg-blue-700 disabled:opacity-70"
       >
         {busy ? (
-          <><Loader2 className="h-5 w-5 animate-spin" /> {uploading ? "Envoi des fichiers…" : "Envoi de la candidature…"}</>
+          <><Loader2 className="h-5 w-5 animate-spin" /> {uploading ? t("mc.pf.sending.files") : t("mc.pf.sending")}</>
         ) : (
-          <><Sparkles className="h-5 w-5" /> Envoyer ma candidature</>
+          <><Sparkles className="h-5 w-5" /> {t("mc.pf.submit")}</>
         )}
       </button>
 
       <p className="text-center text-sm text-slate-400">
-        Besoin d'aide ? Écrivez-nous à <a href="mailto:partners@nelvinbenefits.com" className="font-medium text-blue-600 hover:underline">partners@nelvinbenefits.com</a>
+        {t("mc.pf.help", { email: "partners@nelvinbenefits.com" }).split("partners@nelvinbenefits.com").flatMap((s, i, arr) => (i < arr.length - 1 ? [s, <a key={i} href="mailto:partners@nelvinbenefits.com" className="font-medium text-blue-600 hover:underline">partners@nelvinbenefits.com</a>] : [s]))}
       </p>
     </form>
   );
