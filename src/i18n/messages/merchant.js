@@ -235,4 +235,18 @@ export default [
 
   // Misc
   ["mc.cat.other", "Other", "Autre", "Nyingine", "أخرى", "Òmíràn"],
+  ["mc.an.title", "Analytics", "Analytics", "Uchanganuzi", "التحليلات", "Ìtúpalẹ̀"],
+  ["mc.an.mine", "My statistics", "Mes statistiques", "Takwimu zangu", "إحصاءاتي", "Àwọn ìṣirò mi"],
+  ["mc.an.unavail", "Statistics unavailable", "Statistiques indisponibles", "Takwimu hazipatikani", "الإحصاءات غير متاحة", "Ìṣirò kò sí"],
+  ["mc.an.unavailDesc", "This page is reserved for partners, HR and the Nelvin team.", "Cette page est réservée aux partenaires, aux RH et à l'équipe Nelvin.", "Ukurasa huu umetengwa kwa washirika, HR na timu ya Nelvin.", "هذه الصفحة مخصصة للشركاء والموارد البشرية وفريق نيلفين.", "Ojú-ìwé yìí wà fún àwọn alábàáṣiṣẹ́pọ̀, HR àti ẹgbẹ́ Nelvin."],
+  ["mc.an.noSales", "No sales yet", "Pas encore de ventes", "Hakuna mauzo bado", "لا توجد مبيعات بعد", "Kò sí títà síbẹ̀"],
+  ["mc.an.noSalesDesc", "Your statistics appear as soon as the first code is validated.", "Vos statistiques apparaissent dès la première validation de code.", "Takwimu zako zitaonekana mara msimbo wa kwanza utakapothibitishwa.", "تظهر إحصاءاتك فور التحقق من أول رمز.", "Àwọn ìṣirò rẹ yóò hàn ní kété tí a bá jẹ́rìí kóòdù àkọ́kọ́."],
+  ["mc.an.sales", "Sales via Nelvin", "Ventes via Nelvin", "Mauzo kupitia Nelvin", "المبيعات عبر نيلفين", "Títà nípasẹ̀ Nelvin"],
+  ["mc.an.codes", "Codes validated", "Codes validés", "Misimbo iliyothibitishwa", "الرموز المُتحقق منها", "Àwọn kóòdù tí a jẹ́rìí"],
+  ["mc.an.customers", "Unique customers", "Clients uniques", "Wateja tofauti", "عملاء فريدون", "Àwọn oníbàárà kọ̀ọ̀kan"],
+  ["mc.an.repeat", "{n} came back at least twice", "{n} revenus au moins 2 fois", "{n} walirudi angalau mara 2", "عاد {n} مرتين على الأقل", "{n} padà wá ó kéré tán ìgbà méjì"],
+  ["mc.an.wallet", "Paid by wallet", "Payés par wallet", "Zilizolipwa kwa wallet", "مدفوع بالمحفظة", "A fi wallet san"],
+  ["mc.an.byMonth", "Sales per month ({currency})", "Ventes par mois ({currency})", "Mauzo kwa mwezi ({currency})", "المبيعات شهرياً ({currency})", "Títà oṣooṣù ({currency})"],
+  ["mc.an.salesName", "Sales", "Ventes", "Mauzo", "المبيعات", "Títà"],
+  ["mc.an.byOffer", "Performance by offer", "Performance par offre", "Utendaji kwa ofa", "الأداء حسب العرض", "Ìṣiṣẹ́ ní ìpèsè kọ̀ọ̀kan"],
 ];

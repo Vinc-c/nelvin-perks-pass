@@ -24,10 +24,10 @@ import SectionCard from "@/components/dashboard/SectionCard";
 import { EmptyState } from "@/components/UiFeedback";
 import AccessGate from "@/components/AccessGate";
 
-const STATUS = { REDEEMED: ["Utilisée", "bg-emerald-100 text-emerald-700"], EXPIRED: ["Expirée", "bg-rose-100 text-rose-700"], GENERATED: ["Générée", "bg-amber-100 text-amber-700"], INVALID: ["Invalide", "bg-slate-100 text-slate-600"] };
+const STATUS = { REDEEMED: "bg-emerald-100 text-emerald-700", EXPIRED: "bg-rose-100 text-rose-700", GENERATED: "bg-amber-100 text-amber-700", INVALID: "bg-slate-100 text-slate-600" };
 
 export default function EmployeePortal() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { user } = useAuth();
   const money = useCurrencies();
   const [currency, setCurrency] = useDisplayCurrency();
@@ -76,33 +76,33 @@ export default function EmployeePortal() {
       <div className="[&>*:first-child]:mt-0">
       {show("wallet") && (<>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard icon={Wallet} label="Solde wallet" value={fmt(user?.wallet_balance)} tone="emerald" />
-        <StatCard icon={TrendingUp} label="Cashback cumulé" value={fmt(cashback)} tone="emerald" delay={0.05} />
-        <StatCard icon={QrCode} label="Offres utilisées" value={redeemedCount} tone="amber" delay={0.1} />
-        <StatCard icon={Gift} label="Points" value={rewards.points ?? "…"} tone="rose" delay={0.15} hint={rewards.tier ? `Niveau ${rewards.tier.label}` : undefined} />
+        <StatCard icon={Wallet} label={t("hr.e.balance")} value={fmt(user?.wallet_balance)} tone="emerald" />
+        <StatCard icon={TrendingUp} label={t("hr.e.cashback")} value={fmt(cashback)} tone="emerald" delay={0.05} />
+        <StatCard icon={QrCode} label={t("hr.e.used")} value={redeemedCount} tone="amber" delay={0.1} />
+        <StatCard icon={Gift} label={t("hr.e.points")} value={rewards.points ?? "…"} tone="rose" delay={0.15} hint={rewards.tier ? t("mb.rw.level", { tier: rewards.tier.label }) : undefined} />
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <CurrencySelect value={currency} onChange={setCurrency} />
-        <button onClick={() => setWithdrawOpen(true)} className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"><ArrowUpRight className="h-4 w-4" /> Retirer</button>
-        <Link to="/wallet-activity" className="text-sm font-medium text-emerald-600 hover:underline">Historique du wallet</Link>
+        <button onClick={() => setWithdrawOpen(true)} className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"><ArrowUpRight className="h-4 w-4" /> {t("hr.e.withdraw")}</button>
+        <Link to="/wallet-activity" className="text-sm font-medium text-emerald-600 hover:underline">{t("hr.e.walletHistory")}</Link>
       </div>
 
-      <SectionCard title="Mes allocations du mois" className="mt-4" icon={Gift}>
+      <SectionCard title={t("hr.e.allowTitle")} className="mt-4" icon={Gift}>
         {loading ? (
           <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
         ) : allowances.length === 0 ? (
-          <EmptyState icon={Gift} title="Aucune allocation" description="Votre entreprise n'a pas encore défini de politique d'avantages." />
+          <EmptyState icon={Gift} title={t("hr.e.noAllow")} description={t("hr.e.noAllowDesc")} />
         ) : (
           <div className="grid gap-4 sm:grid-cols-3">
             {allowances.map((a) => (
               <div key={a.id} className="rounded-2xl border border-slate-200 bg-white p-5">
                 <div className="flex items-center justify-between">
                   <Motif category={a.category} className="h-10 w-10 shrink-0" />
-                  <span className="text-xs text-slate-400">{a.pct}% utilisé</span>
+                  <span className="text-xs text-slate-400">{t("hr.e.pctUsed", { n: a.pct })}</span>
                 </div>
                 <p className="mt-3 text-sm text-slate-500">{a.label}</p>
                 <p className="text-xl font-bold text-slate-900">{fmt(Math.max(a.base - a.spent, 0))} <span className="text-sm font-normal text-slate-400">/ {fmt(a.base)}</span></p>
-                {!a.received && <p className="mt-1 text-xs text-amber-600">Pas encore versée ce mois-ci</p>}
+                {!a.received && <p className="mt-1 text-xs text-amber-600">{t("hr.e.notYet")}</p>}
                 <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full bg-emerald-500" style={{ width: `${a.pct}%` }} /></div>
               </div>
             ))}
@@ -112,7 +112,7 @@ export default function EmployeePortal() {
       </>)}
 
       {show("badges") && (
-      <SectionCard title="Mes badges" className="mt-6" icon={Award} action={<Link to="/my-rewards" className="text-sm font-medium text-emerald-600 hover:underline">Tout voir</Link>}>
+      <SectionCard title={t("hr.e.badges")} className="mt-6" icon={Award} action={<Link to="/my-rewards" className="text-sm font-medium text-emerald-600 hover:underline">{t("hr.e.seeAll")}</Link>}>
         {!rewards.ready ? <Loader2 className="h-5 w-5 animate-spin text-slate-400" /> : (
           <div className="flex flex-wrap gap-3">
             {rewards.badges.map((b) => (
@@ -133,7 +133,7 @@ export default function EmployeePortal() {
         {catalog.loading ? (
           <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-slate-400" /></div>
         ) : offers.length === 0 ? (
-          <EmptyState icon={QrCode} title="Aucune offre disponible" description="Les offres partenaires apparaîtront ici dès leur publication." />
+          <EmptyState icon={QrCode} title={t("hr.e.noOffers")} description={t("hr.e.noOffersDesc")} />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {offers.map((o, i) => <OfferCard key={o.id} offer={o} meta={meta} format={fmt} index={i} onRedeem={setSelectedOffer} ctaLabel={t("cta.redeem")} />)}
@@ -143,21 +143,22 @@ export default function EmployeePortal() {
       )}
 
       {show("history") && (
-      <SectionCard title="Offres utilisées récemment" className="mt-6">
+      <SectionCard title={t("hr.e.recent")} className="mt-6">
         {loading ? (
           <div className="flex justify-center py-6"><Loader2 className="h-5 w-5 animate-spin text-slate-400" /></div>
         ) : data.redemptions.length === 0 ? (
-          <EmptyState icon={QrCode} title="Aucun code" description="Utilisez votre première offre pour voir votre historique ici." />
+          <EmptyState icon={QrCode} title={t("hr.e.noCode")} description={t("hr.e.noCodeDesc")} />
         ) : (
           <div className="space-y-2">
             {data.redemptions.map((r) => {
               const o = offerById.get(r.offer_id);
-              const [label, tone] = STATUS[r.status] || STATUS.INVALID;
+              const st = r.status in STATUS ? r.status : "INVALID";
+              const [label, tone] = [t(`hr.e.st.${st}`), STATUS[st]];
               return (
                 <div key={r.id} className="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3">
                   <div>
-                    <p className="text-sm font-medium text-slate-900">{o?.title || "Offre"}</p>
-                    <p className="text-xs text-slate-500">{o?.merchant_name || "—"} · {new Date(r.redeemed_at || r.created_date).toLocaleDateString("fr-FR")}</p>
+                    <p className="text-sm font-medium text-slate-900">{o?.title || t("hr.e.offer")}</p>
+                    <p className="text-xs text-slate-500">{o?.merchant_name || "—"} · {new Date(r.redeemed_at || r.created_date).toLocaleDateString(locale)}</p>
                   </div>
                   <div className="text-right">
                     <span className={`rounded-full px-2 py-1 text-xs ${tone}`}>{label}</span>
