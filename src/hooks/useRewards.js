@@ -2,16 +2,17 @@ import { useMemo } from "react";
 import { entities } from "@/api/entities";
 import { callRpc } from "@/api/rpc";
 import { useAsync } from "@/hooks/useAsync";
+import { useI18n } from "@/i18n/I18nContext";
 
 // Points and badges are derived from real, auditable activity — nothing is
 // stored separately, so they can never drift from the ledger.
 export const POINTS = { redemption: 10, perUsdSaved: 1, recognitionReceived: 10, referral: 50 };
 
 export const TIERS = [
-  { id: "BRONZE", label: "Bronze", min: 0 },
-  { id: "SILVER", label: "Argent", min: 250 },
-  { id: "GOLD", label: "Or", min: 750 },
-  { id: "PLATINUM", label: "Platine", min: 2000 },
+  { id: "BRONZE", min: 0 },
+  { id: "SILVER", min: 250 },
+  { id: "GOLD", min: 750 },
+  { id: "PLATINUM", min: 2000 },
 ];
 
 const WELLNESS = new Set(["WELLNESS_MENTAL", "FITNESS_SPORTS", "HEALTHCARE", "BEAUTY_CARE"]);
@@ -30,6 +31,7 @@ export const BADGES = [
 ];
 
 export function useRewards(user) {
+  const { t, lang } = useI18n();
   const { data, loading, reload } = useAsync(async () => {
     if (!user) return null;
     const [redemptions, txs, received, sent, referrals, catalog] = await Promise.all([
@@ -70,24 +72,26 @@ export function useRewards(user) {
       recognitionPoints +
       data.referrals.filter((r) => r.rewarded).length * POINTS.referral
     );
-    const tier = [...TIERS].reverse().find((t) => points >= t.min) || TIERS[0];
-    const nextTier = TIERS.find((t) => t.min > points) || null;
+    const tierOf = (x) => ({ ...x, label: t(`mb.rw.tier.${x.id}`) });
+    const tier = tierOf([...TIERS].reverse().find((x) => points >= x.min) || TIERS[0]);
+    const nextTier = TIERS.find((x) => x.min > points);
+    const nextTierL = nextTier ? tierOf(nextTier) : null;
 
     const badges = BADGES.filter((b) => !b.company || user?.company_id).map((b) => {
       const value = metrics[b.metric] || 0;
-      return { ...b, value, earned: value >= b.target, progress: Math.min(100, Math.round((value / b.target) * 100)) };
+      return { ...b, name: t(`mb.rw.b.${b.id}.name`), desc: t(`mb.rw.b.${b.id}.desc`), value, earned: value >= b.target, progress: Math.min(100, Math.round((value / b.target) * 100)) };
     });
 
     // Reward timeline: cashback, allocations, bonuses, recognitions.
     const timeline = [
       ...data.txs
         .filter((t) => Number(t.cashback_amount) > 0 || ["ALLOCATION", "REFERRAL_BONUS"].includes(t.type))
-        .map((t) => ({
-          id: `tx-${t.id}`,
-          date: t.created_date,
-          kind: t.type === "REDEMPTION" ? "CASHBACK" : t.type,
-          title: t.type === "REDEMPTION" ? `Cashback — ${t.description || "offre partenaire"}` : t.description || t.type,
-          usd: t.type === "REDEMPTION" ? Number(t.cashback_amount) : Number(t.amount_usd || t.amount),
+        .map((tx) => ({
+          id: `tx-${tx.id}`,
+          date: tx.created_date,
+          kind: tx.type === "REDEMPTION" ? "CASHBACK" : tx.type,
+          title: tx.type === "REDEMPTION" ? t("mb.rw.cashbackFor", { name: tx.description || t("mb.rw.partnerOffer") }) : tx.description || tx.type,
+          usd: tx.type === "REDEMPTION" ? Number(tx.cashback_amount) : Number(tx.amount_usd || tx.amount),
         })),
       ...data.received.map((r) => ({
         id: `rec-${r.id}`,
@@ -99,8 +103,8 @@ export function useRewards(user) {
       })),
     ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    return { metrics, points, tier, nextTier, badges, timeline, cashback, saved, recognitionPoints, received: data.received };
-  }, [data, user?.company_id]);
+    return { metrics, points, tier, nextTier: nextTierL, badges, timeline, cashback, saved, recognitionPoints, received: data.received };
+  }, [data, user?.company_id, lang]);
 
   return { ...(computed || {}), loading, reload, ready: !!computed };
 }
