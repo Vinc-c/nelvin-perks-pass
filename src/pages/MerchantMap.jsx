@@ -12,6 +12,7 @@ import { useCurrencies } from "@/hooks/useCurrencies";
 import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
 import { useAuth } from "@/lib/AuthContext";
 import { currentPosition } from "@/lib/geocode";
+import { useI18n } from "@/i18n/I18nContext";
 
 const RADII = [2, 5, 10, 25];
 const initials = (name) => String(name || "?").split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
@@ -35,6 +36,7 @@ function MerchantFace({ m, size = "h-12 w-12" }) {
 /** Public partner map: real verified partners, real positions, real distances. */
 export default function MerchantMap() {
   const { user } = useAuth();
+  const { t } = useI18n();
   const { merchants, offers, loading } = useCatalog();
   const { meta } = useCategories();
   const money = useCurrencies();
@@ -84,17 +86,13 @@ export default function MerchantMap() {
       const p = await currentPosition();
       setMe([p.lat, p.lng]);
     } catch (err) {
-      setGeoError({
-        denied: "Autorisez la localisation dans votre navigateur pour voir les partenaires autour de vous.",
-        unsupported: "Votre navigateur ne permet pas la géolocalisation.",
-        timeout: "Pas de réponse de la localisation. Autorisez l'accès à votre position, puis réessayez.",
-      }[err.code] || "Position introuvable pour le moment, réessayez.");
+      setGeoError(err.message);
     } finally {
       setLocating(false);
     }
   };
 
-  useEffect(() => { document.title = "Carte des partenaires · Nelvin"; }, []);
+  useEffect(() => { document.title = t("mc.map.title"); }, [t]);
 
   const selOffers = selected ? offersByMerchant.get(selected.id) || [] : [];
   const fmt = (v) => money.format(v, currency);
@@ -105,8 +103,8 @@ export default function MerchantMap() {
       <header className="z-[500] flex h-16 shrink-0 items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 sm:px-6">
         <Link to="/" className="nv-focus shrink-0 rounded"><NelvinLogo className="h-9" /></Link>
         <div className="flex items-center gap-2 text-sm font-semibold">
-          <Link to="/merchant-directory" className="nv-focus hidden rounded-full px-4 py-2 hover:bg-[#F2EBDA] sm:inline-flex">Toutes les offres</Link>
-          <Link to={user ? "/app" : "/register"} className="nv-focus rounded-full bg-[#08261D] px-4 py-2 text-white hover:bg-[#0F4A38]">{user ? "Mon espace" : "Créer mon compte"}</Link>
+          <Link to="/merchant-directory" className="nv-focus hidden rounded-full px-4 py-2 hover:bg-[#F2EBDA] sm:inline-flex">{t("mc.map.all")}</Link>
+          <Link to={user ? "/app" : "/register"} className="nv-focus rounded-full bg-[#08261D] px-4 py-2 text-white hover:bg-[#0F4A38]">{user ? t("mc.map.mine") : t("mc.map.create")}</Link>
         </div>
       </header>
       <KenteBand height={8} />
@@ -115,32 +113,32 @@ export default function MerchantMap() {
         {/* List / details */}
         <aside className="flex min-h-0 flex-1 flex-col border-slate-200 lg:w-[420px] lg:flex-none lg:border-r">
           <div className="space-y-3 border-b border-slate-200 p-4">
-            <h1 className="nv-display text-xl font-semibold">Partenaires près de chez vous</h1>
+            <h1 className="nv-display text-xl font-semibold">{t("mc.map.h1")}</h1>
             <div className="flex gap-2">
-              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Nom, ville, quartier, catégorie" aria-label="Rechercher un partenaire"
+              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("mc.map.ph")} aria-label={t("mc.map.searchAria")}
                 className="nv-focus min-w-0 flex-1 rounded-xl border border-slate-300 px-3 py-2.5 text-sm" />
               <button onClick={locate} disabled={locating} className="nv-focus shrink-0 rounded-xl bg-[#0F4A38] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#0b6553] disabled:opacity-60">
-                {locating ? "Localisation…" : me ? "Actualiser" : "Autour de moi"}
+                {locating ? t("mc.map.locating") : me ? t("mc.map.refresh") : t("mc.map.nearMe")}
               </button>
             </div>
             {geoError && <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-900">{geoError}</p>}
             {me && (
-              <div className="flex flex-wrap items-center gap-1.5 text-xs" role="group" aria-label="Rayon">
-                <span className="mr-1 text-slate-500">Rayon</span>
+              <div className="flex flex-wrap items-center gap-1.5 text-xs" role="group" aria-label={t("mc.map.radiusAria")}>
+                <span className="mr-1 text-slate-500">{t("mc.map.radius")}</span>
                 {[null, ...RADII].map((r) => (
                   <button key={r ?? "all"} onClick={() => setRadius(r)} aria-pressed={radius === r}
                     className={`nv-focus rounded-full px-3 py-1 font-medium ${radius === r ? "bg-[#08261D] text-white" : "bg-[#F2EBDA] text-slate-700 hover:bg-slate-200"}`}>
-                    {r ? `${r} km` : "Tout"}
+                    {r ? `${r} km` : t("mc.map.any")}
                   </button>
                 ))}
               </div>
             )}
             {categories.length > 1 && (
-              <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 text-xs" role="group" aria-label="Catégorie">
+              <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 text-xs" role="group" aria-label={t("mc.map.catAria")}>
                 {["ALL", ...categories].map((c) => (
                   <button key={c} onClick={() => setCategory(c)} aria-pressed={category === c}
                     className={`nv-focus flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 font-medium ${category === c ? "bg-[#08261D] text-white" : "bg-[#F2EBDA] text-slate-700 hover:bg-slate-200"}`}>
-                    {c === "ALL" ? "Toutes" : meta(c).label}
+                    {c === "ALL" ? t("mc.map.allCats") : meta(c).label}
                   </button>
                 ))}
               </div>
@@ -149,23 +147,23 @@ export default function MerchantMap() {
 
           <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto">
             {selected && (
-              <section className="border-b border-slate-200 bg-[#08261D] text-white" aria-label={`Partenaire ${selected.name}`}>
+              <section className="border-b border-slate-200 bg-[#08261D] text-white" aria-label={t("mc.map.partnerAria", { name: selected.name })}>
                 {selected.cover_image_url && <img src={selected.cover_image_url} alt="" className="h-36 w-full object-cover" />}
                 <div className="space-y-3 p-4">
                   <div className="flex items-start gap-3">
                     <MerchantFace m={selected} />
                     <div className="min-w-0 flex-1">
                       <h2 className="nv-display text-lg font-semibold leading-tight">{selected.name}</h2>
-                      <p className="text-sm text-white/70">{meta(selected.category).label}{selected.km != null ? ` — à ${selected.km < 1 ? `${Math.round(selected.km * 1000)} m` : `${selected.km.toFixed(1)} km`}` : ""}</p>
-                      {selected.reviews_count > 0 && <p className="mt-0.5 text-sm text-[#C8A24A]">{Number(selected.rating).toFixed(1)} / 5 sur {selected.reviews_count} avis vérifiés</p>}
+                      <p className="text-sm text-white/70">{selected.km != null ? t("mc.map.away", { cat: meta(selected.category).label, dist: selected.km < 1 ? `${Math.round(selected.km * 1000)} m` : `${selected.km.toFixed(1)} km` }) : meta(selected.category).label}</p>
+                      {selected.reviews_count > 0 && <p className="mt-0.5 text-sm text-[#C8A24A]">{t("mc.map.rating", { rating: Number(selected.rating).toFixed(1), n: selected.reviews_count })}</p>}
                     </div>
-                    <button onClick={() => select(null)} className="nv-focus rounded-full px-2 text-white/60 hover:text-white" aria-label="Fermer la fiche">✕</button>
+                    <button onClick={() => select(null)} className="nv-focus rounded-full px-2 text-white/60 hover:text-white" aria-label={t("mc.map.closeAria")}>✕</button>
                   </div>
                   <p className="text-sm text-white/80">{[selected.address, selected.city, selected.country].filter(Boolean).join(", ")}</p>
                   <div className="flex flex-wrap gap-2 text-sm font-semibold">
-                    <a href={`https://www.google.com/maps/dir/?api=1&destination=${selected.lat},${selected.lng}`} target="_blank" rel="noopener noreferrer" className="nv-focus rounded-full bg-[#C8A24A] px-4 py-2 text-[#08261D] hover:bg-[#E6CF8B]">Itinéraire</a>
+                    <a href={`https://www.google.com/maps/dir/?api=1&destination=${selected.lat},${selected.lng}`} target="_blank" rel="noopener noreferrer" className="nv-focus rounded-full bg-[#C8A24A] px-4 py-2 text-[#08261D] hover:bg-[#E6CF8B]">{t("mc.map.directions")}</a>
                     {selected.whatsapp && <a href={`https://wa.me/${selected.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer" className="nv-focus rounded-full border border-white/30 px-4 py-2 hover:bg-white/10">WhatsApp</a>}
-                    {httpsUrl(selected.website) && <a href={httpsUrl(selected.website)} target="_blank" rel="noopener noreferrer" className="nv-focus rounded-full border border-white/30 px-4 py-2 hover:bg-white/10">Site web</a>}
+                    {httpsUrl(selected.website) && <a href={httpsUrl(selected.website)} target="_blank" rel="noopener noreferrer" className="nv-focus rounded-full border border-white/30 px-4 py-2 hover:bg-white/10">{t("mc.map.website")}</a>}
                   </div>
                   {selOffers.length > 0 ? (
                     <ul className="space-y-2">
@@ -173,13 +171,13 @@ export default function MerchantMap() {
                         <li key={o.id} className="flex items-center gap-2 rounded-xl bg-white p-3 text-[#08261D]">
                           <Link to={offerPath(o)} className="nv-focus min-w-0 flex-1 rounded">
                             <p className="truncate text-sm font-semibold">{o.title}</p>
-                            <p className="text-sm font-bold text-[#0F4A38]">{offerBadge(o, fmt)}{Number(o.cashback_rate) > 0 && o.discount_type !== "CASHBACK" ? ` + ${o.cashback_rate}% de cashback` : ""}</p>
+                            <p className="text-sm font-bold text-[#0F4A38]">{offerBadge(o, fmt)}{Number(o.cashback_rate) > 0 && o.discount_type !== "CASHBACK" ? t("mc.map.plusCashback", { n: o.cashback_rate }) : ""}</p>
                           </Link>
                           <FavoriteButton offerId={o.id} className="shrink-0 border border-slate-200" />
                         </li>
                       ))}
                     </ul>
-                  ) : <p className="text-sm text-white/70">Ses offres arrivent bientôt.</p>}
+                  ) : <p className="text-sm text-white/70">{t("mc.map.soon")}</p>}
                 </div>
               </section>
             )}
@@ -190,16 +188,16 @@ export default function MerchantMap() {
               </ul>
             ) : located.length === 0 ? (
               <div className="space-y-3 p-6">
-                <h2 className="nv-display text-lg font-semibold">La carte se remplit avec nos premiers partenaires</h2>
-                <p className="text-sm text-slate-600">Chaque commerce apparaît ici dès que son adresse est vérifiée par l'équipe Nelvin. Restaurants, salons, salles de sport, hôtels : rejoignez le réseau et gagnez de nouveaux clients.</p>
-                <Link to="/merchant" className="nv-focus inline-flex rounded-full bg-[#08261D] px-5 py-2.5 text-sm font-semibold text-white">Inscrire mon commerce</Link>
+                <h2 className="nv-display text-lg font-semibold">{t("mc.map.emptyT")}</h2>
+                <p className="text-sm text-slate-600">{t("mc.map.emptyD")}</p>
+                <Link to="/merchant" className="nv-focus inline-flex rounded-full bg-[#08261D] px-5 py-2.5 text-sm font-semibold text-white">{t("mc.map.emptyCta")}</Link>
               </div>
             ) : list.length === 0 ? (
-              <p className="p-6 text-sm text-slate-600">Aucun partenaire ne correspond. Élargissez le rayon ou changez de catégorie.</p>
+              <p className="p-6 text-sm text-slate-600">{t("mc.map.noMatch")}</p>
             ) : (
               <>
                 <p className="px-4 pt-3 text-xs text-slate-500">
-                  {list.length} partenaire{list.length > 1 ? "s" : ""}{me ? ", du plus proche au plus loin" : ""}{countries.length > 1 && !me ? ` dans ${countries.length} pays` : ""}
+                  {t(list.length === 1 ? "mc.map.count.one" : "mc.map.count.other", { n: list.length })}{me ? t("mc.map.nearest") : ""}{countries.length > 1 && !me ? t("mc.map.inCountries", { n: countries.length }) : ""}
                 </p>
                 <ul className="divide-y divide-slate-100">
                   {list.map((m) => {
