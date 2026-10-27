@@ -51,7 +51,7 @@ const REMINDERS: Record<string, { title: L5; body: L5; cta: L5; path: string }> 
 const COLS = "id,to_email,template,lang,data,attempts";
 
 function build(row: Row, appUrl: string): { subject: string; html: string } {
-  const lang: Lang = row.lang in COPY.open ? (row.lang as Lang) : "fr";
+  const lang: Lang = row.lang in COPY.open ? (row.lang as Lang) : "en";
   const d = row.data || {};
   if (row.template === "welcome") {
     const first = d.name ? ` ${esc(String(d.name).split(" ")[0])}` : "";
