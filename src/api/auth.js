@@ -1,13 +1,14 @@
 // Authentication helpers on top of Supabase Auth.
 // The app-level "user" is the auth user merged with their `profiles` row.
 import { supabase } from "./supabaseClient";
+import { translate } from "@/i18n/translate";
 
 const NETWORK_RE = /failed to fetch|networkerror|load failed|network request failed|fetch failed/i;
 
 const authError = (error, fallback) => {
   const network = NETWORK_RE.test(error?.message || "") || error?.name === "AuthRetryableFetchError";
   const err = new Error(network
-    ? "Connexion au serveur impossible. Vérifiez votre connexion internet puis réessayez."
+    ? translate("err.network")
     : error?.message || fallback);
   err.status = error?.status;
   return err;
@@ -37,7 +38,7 @@ export async function getCurrentUser() {
 /** Updates the signed-in user's own profile (protected fields are blocked server-side). */
 export async function updateMe(values) {
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Non connecté");
+  if (!user) throw new Error(translate("err.notSignedIn"));
   const { data, error } = await supabase.from("profiles").update(values).eq("id", user.id).select().maybeSingle();
   if (error) throw authError(error, "Impossible d'enregistrer");
   return data;
@@ -66,14 +67,14 @@ export async function signUp({ email, password, metadata = {} }) {
   if (error) throw authError(error, "Inscription impossible");
   // Supabase returns a user with no identities when the email already exists.
   if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
-    throw new Error("Un compte existe déjà avec cet email. Connectez-vous.");
+    throw new Error(translate("err.emailExists"));
   }
   return { needsVerification: !data.session, session: data.session };
 }
 
 export async function verifySignupOtp(email, token) {
   const { data, error } = await supabase.auth.verifyOtp({ email: email.trim(), token: token.trim(), type: "signup" });
-  if (error) throw authError(error, "Code de vérification invalide");
+  if (error) throw authError(error, translate("err.badCode"));
   return data;
 }
 
@@ -115,7 +116,7 @@ export async function signOut(redirectTo) {
 /** { currentLevel, nextLevel } — nextLevel "aal2" means a TOTP code is required. */
 export async function getAssuranceLevel() {
   const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-  if (error) throw authError(error, "Impossible de vérifier la double authentification");
+  if (error) throw authError(error, translate("err.mfaVerify"));
   return data;
 }
 
@@ -143,7 +144,7 @@ export async function verifyTotp(factorId, code) {
 
 export async function unenrollTotp(factorId) {
   const { error } = await supabase.auth.mfa.unenroll({ factorId });
-  if (error) throw authError(error, "Désactivation impossible");
+  if (error) throw authError(error, translate("err.mfaOff"));
 }
 
 /** Signs out every other device/session of this account. */
@@ -162,7 +163,7 @@ export async function getMfaPolicy() {
 /** Generates 10 fresh single-use recovery codes (needs an AAL2 session). */
 export async function generateRecoveryCodes() {
   const { data, error } = await supabase.rpc("generate_mfa_recovery_codes");
-  if (error) throw authError(error, "Impossible de générer les codes de secours");
+  if (error) throw authError(error, translate("err.backupGen"));
   return data || [];
 }
 
@@ -172,7 +173,7 @@ export async function redeemRecoveryCode(code) {
   if (error) {
     let message = error.message;
     try { message = (await error.context?.json())?.error || message; } catch { /* keep default */ }
-    throw authError({ message }, "Code de secours refusé");
+    throw authError({ message }, translate("err.backupBad"));
   }
   await supabase.auth.refreshSession();
   return data;
