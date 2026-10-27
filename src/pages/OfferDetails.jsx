@@ -61,7 +61,7 @@ export default function OfferDetails() {
   const seoMerchant = data?.merchant;
   const seoBadge = seoOffer ? offerBadge(seoOffer, (v) => money.format(v, currency), t) : "";
   const seoTitle = seoOffer ? (seoOffer.seo_title || `${seoOffer.title}${seoMerchant ? ` — ${seoMerchant.name}` : ""} | Nelvin`) : "";
-  const seoDesc = seoOffer ? (seoOffer.seo_description || `${seoBadge}${seoMerchant?.city ? ` à ${seoMerchant.city}` : ""} avec le Pass Nelvin. ${seoOffer.description || ""}`.trim().slice(0, 200)) : "";
+  const seoDesc = seoOffer ? (seoOffer.seo_description || (seoMerchant?.city ? t("offer.seoDescCity", { badge: seoBadge, city: seoMerchant.city, desc: seoOffer.description || "" }) : t("offer.seoDesc", { badge: seoBadge, desc: seoOffer.description || "" })).trim().slice(0, 200)) : "";
   const seoPath = seoOffer ? `/offre/${seoOffer.slug || ""}` : undefined;
   const seoImage = seoOffer ? (seoOffer.image_url || seoMerchant?.cover_image_url || undefined) : undefined;
   useSeo({
