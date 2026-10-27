@@ -9,12 +9,14 @@ import AccountTypePicker, { ACCOUNT_TYPES } from "@/components/AccountTypePicker
 import CompanyFields from "@/components/CompanyFields";
 import PartnerApplicationForm from "@/components/partner/PartnerApplicationForm";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/i18n/I18nContext";
 import { Sparkles, Loader2, ArrowRight, Store, ShieldCheck } from "lucide-react";
 
 export default function Onboarding() {
   const { user } = useAuth();
+  const { t } = useI18n();
   const requested = new URLSearchParams(window.location.search).get("type");
-  const [type, setType] = useState(ACCOUNT_TYPES.some((t) => t.v === requested) ? requested : "particulier");
+  const [type, setType] = useState(ACCOUNT_TYPES.some((a) => a.v === requested) ? requested : "particulier");
   const [company, setCompany] = useState({ name: "", country: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -32,15 +34,15 @@ export default function Onboarding() {
         await updateMe({ onboarded: true });
         window.location.href = "/employee";
       } catch (err) {
-        setError(err.response?.data?.error || err.message || "Impossible de finaliser votre accès");
+        setError(err.response?.data?.error || err.message || t("mb.ob.empFail"));
         setLoading(false);
       }
     };
     return (
-      <AuthLayout icon={ShieldCheck} title="Bienvenue dans votre espace employé" subtitle="Une dernière étape pour activer vos avantages Nelvin.">
+      <AuthLayout icon={ShieldCheck} title={t("mb.ob.empTitle")} subtitle={t("mb.ob.empSub")}>
         {error && <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</div>}
         <Button className="h-12 w-full font-medium" disabled={loading} onClick={completeEmployee}>
-          {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Configuration…</> : <>Accéder à mon espace <ArrowRight className="h-4 w-4" /></>}
+          {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("mb.ob.setting")}</> : <>{t("mb.ob.goSpace")} <ArrowRight className="h-4 w-4" /></>}
         </Button>
       </AuthLayout>
     );
@@ -50,7 +52,7 @@ export default function Onboarding() {
   const submit = async (e) => {
     e.preventDefault();
     setError("");
-    if (type === "entreprise" && !company.name.trim()) return setError("Indiquez le nom de votre entreprise.");
+    if (type === "entreprise" && !company.name.trim()) return setError(t("mb.ob.needCompany"));
     setLoading(true);
     try {
       const res = await invokeFunction("setup-account", {
@@ -60,7 +62,7 @@ export default function Onboarding() {
       });
       window.location.href = res.data?.home || "/app";
     } catch (err) {
-      setError(err.response?.data?.error || err.message || "Impossible de configurer le compte");
+      setError(err.response?.data?.error || err.message || t("mb.ob.setupFail"));
       setLoading(false);
     }
   };
@@ -74,9 +76,9 @@ export default function Onboarding() {
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white">
               <Store className="h-6 w-6" />
             </div>
-            <h1 className="mt-3 text-2xl font-bold text-slate-900">Devenez partenaire Nelvin</h1>
+            <h1 className="mt-3 text-2xl font-bold text-slate-900">{t("mb.ob.partnerTitle")}</h1>
             <p className="mt-1 text-sm text-slate-500">
-              Renseignez votre marque et votre offre. Notre équipe valide votre candidature sous 2 à 3 jours ouvrés.
+              {t("mb.ob.partnerSub")}
             </p>
           </div>
           <AccountTypePicker value={type} onChange={setType} />
@@ -92,13 +94,13 @@ export default function Onboarding() {
   }
 
   return (
-    <AuthLayout icon={Sparkles} title="Bienvenue sur Nelvin" subtitle="Dites-nous qui vous êtes pour ouvrir le bon espace">
+    <AuthLayout icon={Sparkles} title={t("mb.ob.title")} subtitle={t("mb.ob.sub")}>
       <form onSubmit={submit} className="space-y-5">
         <AccountTypePicker value={type} onChange={setType} />
         {type === "entreprise" && <CompanyFields value={company} onChange={setCompany} />}
         {error && <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</div>}
         <Button type="submit" className="h-12 w-full font-medium" disabled={loading}>
-          {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Configuration…</> : <>Continuer <ArrowRight className="h-4 w-4" /></>}
+          {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("mb.ob.setting")}</> : <>{t("mb.ob.continue")} <ArrowRight className="h-4 w-4" /></>}
         </Button>
       </form>
     </AuthLayout>

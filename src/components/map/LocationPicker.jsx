@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 import { geocodeAddress, currentPosition } from "@/lib/geocode";
 import { AFRICA_BOUNDS, TILES, MapChrome } from "@/components/map/PartnerMap";
 import { NV } from "@/data/offerCategories";
+import { useI18n } from "@/i18n/I18nContext";
 
 const pin = L.divIcon({
   className: "nelvin-pin",
@@ -16,43 +17,6 @@ const pin = L.divIcon({
     <div style="position:absolute;left:50%;bottom:2px;width:10px;height:10px;transform:translateX(-50%) rotate(45deg);background:${NV.gold}"></div>
   </div>`,
 });
-
-const TEXT = {
-  fr: {
-    placeholder: "Rue, quartier, repère (ex. Rue Njo-Njo, Bonapriso)",
-    address: "Adresse du commerce",
-    search: "Localiser l'adresse",
-    here: "Je suis sur place",
-    notFound: "Adresse introuvable. Essayez avec le quartier et la ville, ou placez le repère sur la carte.",
-    searchFail: "La recherche d'adresse ne répond pas. Réessayez dans un instant ou placez le repère sur la carte.",
-    denied: "Autorisez l'accès à votre position dans le navigateur.",
-    unavailable: "Position introuvable. Utilisez la recherche d'adresse.",
-    unsupported: "Votre navigateur ne permet pas la géolocalisation.",
-    timeout: "Pas de réponse de la localisation. Autorisez l'accès à votre position, ou cherchez l'adresse.",
-    drag: "Faites glisser jusqu'à l'entrée exacte",
-    placed: (a, b) => `Repère placé (${a}, ${b}). Faites-le glisser jusqu'à l'entrée exacte du commerce.`,
-    hint: "Cherchez l'adresse, utilisez votre position, ou touchez la carte à l'emplacement du commerce.",
-    clear: "Retirer le repère",
-    map: "Carte : touchez pour placer le commerce",
-  },
-  en: {
-    placeholder: "Street, area, landmark (e.g. Rue Njo-Njo, Bonapriso)",
-    address: "Shop address",
-    search: "Find address",
-    here: "I'm at the shop",
-    notFound: "Address not found. Try with the area and city, or place the pin on the map.",
-    searchFail: "Address search is not responding. Try again shortly or place the pin on the map.",
-    denied: "Allow location access in your browser.",
-    unavailable: "Location unavailable. Use the address search instead.",
-    unsupported: "Your browser does not support location.",
-    timeout: "No response from location. Allow location access, or search the address.",
-    drag: "Drag to the exact entrance",
-    placed: (a, b) => `Pin placed (${a}, ${b}). Drag it to the shop's exact entrance.`,
-    hint: "Search the address, use your location, or tap the map where the shop is.",
-    clear: "Remove pin",
-    map: "Map: tap to place the shop",
-  },
-};
 
 function Follow({ point }) {
   const map = useMap();
@@ -72,8 +36,15 @@ function ClickToPlace({ onPick }) {
  * use the device position, or click / drag the pin to the exact door.
  * value = { address, city, lat, lng }
  */
-export default function LocationPicker({ value, onChange, dark = false, lang = "fr" }) {
-  const T = TEXT[lang] || TEXT.fr;
+export default function LocationPicker({ value, onChange, dark = false }) {
+  const { t } = useI18n();
+  const T = useMemo(() => ({
+    placeholder: t("mc.pf.loc.placeholder"), address: t("mc.pf.loc.address"), search: t("mc.pf.loc.search"), here: t("mc.pf.loc.here"),
+    notFound: t("mc.pf.loc.notFound"), searchFail: t("mc.pf.loc.searchFail"), denied: t("mc.pf.loc.denied"),
+    unavailable: t("mc.pf.loc.unavailable"), unsupported: t("mc.pf.loc.unsupported"), timeout: t("mc.pf.loc.timeout"),
+    drag: t("mc.pf.loc.drag"), placed: (a, b) => t("mc.pf.loc.placed", { a, b }), hint: t("mc.pf.loc.hint"),
+    clear: t("mc.pf.loc.clear"), map: t("mc.pf.loc.map"),
+  }), [t]);
   const [query, setQuery] = useState(value?.address || "");
   const [results, setResults] = useState([]);
   const [busy, setBusy] = useState(null);

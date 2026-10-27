@@ -23,6 +23,7 @@ import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, AreaChart, A
 
 /** Company analytics shared by the HR portal and the HR reports. */
 export function useCompanyAnalytics(companyId) {
+  const { locale } = useI18n();
   const { data, loading, reload } = useAsync(async () => {
     if (!companyId) return null;
     const [employees, company, txs] = await Promise.all([
@@ -43,7 +44,7 @@ export function useCompanyAnalytics(companyId) {
     const now = new Date();
     for (let i = 11; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      months.push({ key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`, label: d.toLocaleString("fr-FR", { month: "short" }), saved: 0, users: new Set(), count: 0, allocated: 0 });
+      months.push({ key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`, label: d.toLocaleString(locale, { month: "short" }), saved: 0, users: new Set(), count: 0, allocated: 0 });
     }
     const byKey = new Map(months.map((m) => [m.key, m]));
     redemptions.forEach((t) => {
@@ -78,7 +79,7 @@ export function useCompanyAnalytics(companyId) {
       perEmployee,
       byCategory: redemptions.reduce((acc, t) => { acc[t.category || "AUTRE"] = (acc[t.category || "AUTRE"] || 0) + savedOf(t); return acc; }, {}),
     };
-  }, [data]);
+  }, [data, locale]);
 
   return { ...(computed || {}), loading, reload, ready: !!computed };
 }
@@ -101,14 +102,14 @@ export default function HRPortal() {
   const filtered = (a.employees || []).filter((e) => [e.full_name, e.email, e.department].some((v) => (v || "").toLowerCase().includes(query.toLowerCase())));
 
   const remove = async (e) => {
-    if (!window.confirm(`Retirer ${e.full_name || e.email} de l'entreprise ? Son compte reste actif en tant que particulier.`)) return;
+    if (!window.confirm(t("hr.p.confirmRemove", { name: e.full_name || e.email }))) return;
     setBusyId(e.id);
     try {
       await callRpc("hr_remove_employee", { p_user_id: e.id });
-      toast({ title: "Employé retiré" });
+      toast({ title: t("hr.p.removed") });
       a.reload();
     } catch (err) {
-      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+      toast({ title: t("hr.p.error"), description: err.message, variant: "destructive" });
     } finally {
       setBusyId(null);
     }
@@ -120,7 +121,7 @@ export default function HRPortal() {
       await callRpc("hr_set_department", { p_user_id: e.id, p_department: value });
       a.reload();
     } catch (err) {
-      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+      toast({ title: t("hr.p.error"), description: err.message, variant: "destructive" });
     }
   };
 
@@ -139,14 +140,14 @@ export default function HRPortal() {
       <div className="[&>*:first-child]:mt-0">
       {show("analytics") && (<>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard icon={Users} label="Collaborateurs" value={a.employees.length} tone="blue" hint={a.company ? `${a.company.seats_used} / ${a.company.max_employees >= 100000 ? "∞" : a.company.max_employees} sièges` : undefined} />
-        <StatCard icon={Check} label="Adoption ce mois" value={`${a.adoptionRate}%`} tone="emerald" delay={0.05} hint={`${a.activeThisMonth} collaborateur(s) ont utilisé une offre`} />
-        <StatCard icon={PiggyBank} label="Total économisé" value={fmt(a.totalSaved)} tone="amber" delay={0.1} hint="Remises + cashback" />
-        <StatCard icon={Activity} label="Offres utilisées" value={a.redemptionCount} tone="rose" delay={0.15} />
+        <StatCard icon={Users} label={t("hr.p.staff")} value={a.employees.length} tone="blue" hint={a.company ? t("hr.p.seatsHint", { used: a.company.seats_used, max: a.company.max_employees >= 100000 ? "∞" : a.company.max_employees }) : undefined} />
+        <StatCard icon={Check} label={t("hr.p.adoption")} value={`${a.adoptionRate}%`} tone="emerald" delay={0.05} hint={t("hr.p.adoptionHint", { n: a.activeThisMonth })} />
+        <StatCard icon={PiggyBank} label={t("hr.p.saved")} value={fmt(a.totalSaved)} tone="amber" delay={0.1} hint={t("hr.p.discCash")} />
+        <StatCard icon={Activity} label={t("hr.p.offersUsed")} value={a.redemptionCount} tone="rose" delay={0.15} />
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        <SectionCard title="Taux d'adoption (6 mois)">
+        <SectionCard title={t("hr.p.adoptionChart")}>
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chart}>
@@ -159,25 +160,25 @@ export default function HRPortal() {
                 <XAxis dataKey="label" stroke="#94a3b8" fontSize={12} />
                 <YAxis stroke="#94a3b8" fontSize={12} unit="%" />
                 <Tooltip formatter={(v) => `${v}%`} contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0" }} />
-                <Area type="monotone" dataKey="rate" name="Adoption" stroke="#10B981" fill="url(#adoptionGrad)" strokeWidth={2} />
+                <Area type="monotone" dataKey="rate" name={t("hr.p.adoptionName")} stroke="#10B981" fill="url(#adoptionGrad)" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </SectionCard>
-        <SectionCard title="Économies par mois">
+        <SectionCard title={t("hr.p.savingsChart")}>
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chart.map((m) => ({ ...m, savedDisplay: Math.round(money.fromUsd(m.saved, currency)) }))}>
                 <XAxis dataKey="label" stroke="#94a3b8" fontSize={12} />
                 <YAxis stroke="#94a3b8" fontSize={12} />
                 <Tooltip formatter={(v) => money.formatIn(v, currency)} contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0" }} />
-                <Bar dataKey="savedDisplay" name="Économies" fill="#F59E0B" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="savedDisplay" name={t("hr.p.savingsName")} fill="#F59E0B" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </SectionCard>
       </div>
-      <p className="mt-3 text-right text-sm"><Link to="/hr-savings-report" className="font-medium text-emerald-600 hover:underline">Rapport détaillé →</Link></p>
+      <p className="mt-3 text-right text-sm"><Link to="/hr-savings-report" className="font-medium text-emerald-600 hover:underline">{t("hr.p.detail")}</Link></p>
       </>)}
 
       {show("benefits") && <div className="mt-6"><BenefitsBuilder /></div>}
@@ -185,24 +186,24 @@ export default function HRPortal() {
       {show("invitations") && <div className="mt-6"><InviteEmployees /></div>}
 
       {show("employees") && (
-      <SectionCard title="Collaborateurs" className="mt-6" action={
+      <SectionCard title={t("hr.p.staff")} className="mt-6" action={
         <div className="relative w-36 sm:w-56">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("common.search")} aria-label="Rechercher un collaborateur" className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500" />
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("common.search")} aria-label={t("hr.p.searchAria")} className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500" />
         </div>
       }>
         {filtered.length === 0 ? (
-          <EmptyState icon={Users} title="Aucun collaborateur" description="Invitez votre équipe pour lancer votre programme d'avantages." />
+          <EmptyState icon={Users} title={t("hr.p.noStaff")} description={t("hr.p.noStaffDesc")} />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-100 text-left text-slate-500">
-                  <th className="pb-3 font-medium">Nom</th>
-                  <th className="pb-3 font-medium">Département</th>
-                  <th className="pb-3 font-medium">Rôle</th>
-                  <th className="pb-3 font-medium">Économies</th>
-                  <th className="pb-3 font-medium">Statut</th>
+                  <th className="pb-3 font-medium">{t("hr.p.colName")}</th>
+                  <th className="pb-3 font-medium">{t("hr.p.colDept")}</th>
+                  <th className="pb-3 font-medium">{t("hr.p.colRole")}</th>
+                  <th className="pb-3 font-medium">{t("hr.p.colSaved")}</th>
+                  <th className="pb-3 font-medium">{t("hr.p.colStatus")}</th>
                   <th className="pb-3"></th>
                 </tr>
               </thead>
@@ -216,15 +217,15 @@ export default function HRPortal() {
                         <p className="text-xs text-slate-400">{e.email}</p>
                       </td>
                       <td className="py-3">
-                        <input defaultValue={e.department || ""} onBlur={(ev) => setDepartment(e, ev.target.value)} placeholder="—" aria-label="Département" className="w-32 rounded-md border border-transparent bg-transparent px-2 py-1 text-sm hover:border-slate-200 focus:border-emerald-500 focus:bg-white focus:outline-none" />
+                        <input defaultValue={e.department || ""} onBlur={(ev) => setDepartment(e, ev.target.value)} placeholder="—" aria-label={t("hr.p.colDept")} className="w-32 rounded-md border border-transparent bg-transparent px-2 py-1 text-sm hover:border-slate-200 focus:border-emerald-500 focus:bg-white focus:outline-none" />
                       </td>
-                      <td className="py-3 text-slate-600">{e.role === "HR_ADMIN" ? "RH" : "Employé"}</td>
+                      <td className="py-3 text-slate-600">{e.role === "HR_ADMIN" ? t("hr.p.roleHr") : t("hr.p.roleEmp")}</td>
                       <td className="py-3 text-slate-700">{fmt(stats?.saved || 0)}</td>
-                      <td className="py-3"><span className={`rounded-full px-2 py-1 text-xs ${e.onboarded ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"}`}>{e.onboarded ? "actif" : "en attente"}</span></td>
+                      <td className="py-3"><span className={`rounded-full px-2 py-1 text-xs ${e.onboarded ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"}`}>{e.onboarded ? t("hr.p.active") : t("hr.p.pending")}</span></td>
                       <td className="py-3 text-right">
                         {e.id !== user.id && (
-                          <button onClick={() => remove(e)} disabled={busyId === e.id} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-rose-600 hover:bg-rose-50 disabled:opacity-50" title="Retirer de l'entreprise">
-                            <UserMinus className="h-3.5 w-3.5" /> Retirer
+                          <button onClick={() => remove(e)} disabled={busyId === e.id} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-rose-600 hover:bg-rose-50 disabled:opacity-50" title={t("hr.p.removeTitle")}>
+                            <UserMinus className="h-3.5 w-3.5" /> {t("hr.p.remove")}
                           </button>
                         )}
                       </td>
@@ -241,10 +242,10 @@ export default function HRPortal() {
       {section === "overview" && a.company && (
         <div className="mt-6 flex flex-col items-start justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-5 sm:flex-row sm:items-center">
           <div>
-            <p className="font-semibold text-amber-900">{plan?.name || a.company.plan_tier} — {a.company.seats_used} / {a.company.max_employees >= 100000 ? "∞" : a.company.max_employees} sièges · budget {fmt(a.company.wallet_balance)}</p>
-            <p className="text-sm text-amber-700">{a.company.subscription_status === "TRIAL" ? "Essai gratuit en cours — choisissez un plan pour continuer après l'essai." : a.company.subscription_status === "ACTIVE" ? "Abonnement actif." : "Abonnement à renouveler."}</p>
+            <p className="font-semibold text-amber-900">{t("hr.p.planLine", { plan: plan?.name || a.company.plan_tier, used: a.company.seats_used, max: a.company.max_employees >= 100000 ? "∞" : a.company.max_employees, budget: fmt(a.company.wallet_balance) })}</p>
+            <p className="text-sm text-amber-700">{a.company.subscription_status === "TRIAL" ? t("hr.p.trial") : a.company.subscription_status === "ACTIVE" ? t("hr.p.subActive") : t("hr.p.subRenew")}</p>
           </div>
-          <Link to="/billing-settings" className="rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600">Gérer l'abonnement</Link>
+          <Link to="/billing-settings" className="rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600">{t("hr.p.manageSub")}</Link>
         </div>
       )}
       </div>

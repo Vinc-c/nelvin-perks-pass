@@ -7,6 +7,13 @@ import { Plus, Trash2, Loader2, ImageIcon } from "lucide-react";
 
 const inputCls = "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-amber-500";
 const SECTIONS = ["HERO", "LANDING", "MARKETING", "APP"];
+// Keys are matched without regard to case/spaces ("Hero Background" = hero_background).
+const slug = (k) => String(k || "").trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
+const PRESETS = [
+  { key: "hero_background", section: "HERO", hint: "Hero — add SEVERAL images with this key: they play as a slideshow" },
+  { key: "savanna_band", section: "LANDING", hint: "Landscape band" },
+  { key: "app_phone_mockup", section: "APP", hint: "Phone mockup (app section)" },
+];
 
 export default function AdminCmsImages() {
   const { toast } = useToast();
@@ -23,7 +30,12 @@ export default function AdminCmsImages() {
   const add = async (e) => {
     e.preventDefault();
     if (!draft.key.trim() || !draft.image_url) return;
-    await entities.SiteImage.create({ ...draft, key: draft.key.trim(), active: true });
+    try {
+      await entities.SiteImage.create({ ...draft, key: slug(draft.key), active: true });
+    } catch (err) {
+      toast({ title: "Ajout impossible", description: err.message, variant: "destructive" });
+      return;
+    }
     setDraft({ key: "", label: "", image_url: "", section: "LANDING" });
     toast({ title: "Image ajoutée" });
     load();
@@ -43,9 +55,14 @@ export default function AdminCmsImages() {
       <div>
         <h2 className="flex items-center gap-2 text-xl font-bold text-slate-900"><ImageIcon className="h-5 w-5 text-amber-500" /> Images de la plateforme</h2>
         <p className="text-sm text-slate-500">Gérez le visuel du hero, des bandes paysage, des bannières marketing et du mockup téléphone. Clés connues : <code>hero_background</code>, <code>savanna_band</code>, <code>app_phone_mockup</code>.</p>
+        <p className="mt-1 text-sm text-slate-500"><strong>Hero :</strong> ajoutez plusieurs images avec la clé <code>hero_background</code> (section HERO) : elles défilent en diaporama sur la page d'accueil, de la plus ancienne à la plus récente. Désactivez une image pour la retirer.</p>
       </div>
 
       <form onSubmit={add} className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
+        <select className={inputCls} value={PRESETS.some((p) => p.key === slug(draft.key)) ? slug(draft.key) : ""} onChange={(e) => { const p = PRESETS.find((x) => x.key === e.target.value); if (p) setDraft({ ...draft, key: p.key, section: p.section, label: draft.label || p.hint }); }} aria-label="Emplacement">
+          <option value="">Emplacement…</option>
+          {PRESETS.map((p) => <option key={p.key} value={p.key}>{p.key} — {p.hint}</option>)}
+        </select>
         <input className={inputCls} placeholder="Clé * (ex. hero_background)" value={draft.key} onChange={(e) => setDraft({ ...draft, key: e.target.value })} required />
         <input className={inputCls} placeholder="Libellé" value={draft.label} onChange={(e) => setDraft({ ...draft, label: e.target.value })} />
         <select className={inputCls} value={draft.section} onChange={(e) => setDraft({ ...draft, section: e.target.value })}>

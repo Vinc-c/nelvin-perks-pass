@@ -11,10 +11,12 @@ import { offerBadge } from "@/hooks/useCatalog";
 import { offerPath, useSeo } from "@/lib/seo";
 import { Spinner } from "@/components/UiFeedback";
 import ShareButton from "@/components/ShareButton";
+import { useI18n } from "@/i18n/I18nContext";
 
 /** Public, indexable page of a verified partner (/partenaire/:slug). */
 export default function PartnerPage() {
   const { slug } = useParams();
+  const { t } = useI18n();
   const money = useCurrencies();
   const [currency] = useDisplayCurrency();
   const { data, loading } = useAsync(async () => {
@@ -25,7 +27,7 @@ export default function PartnerPage() {
   }, [slug]);
 
   const m = data?.merchant;
-  const title = m ? (m.seo_title || `${m.name}${m.city ? ` à ${m.city}` : ""} — offres Nelvin`) : "";
+  const title = m ? (m.seo_title || (m.city ? t("mc.pp.title", { name: m.name, city: m.city }) : t("mc.pp.titleNoCity", { name: m.name }))) : "";
   const description = m ? (m.seo_description || (m.description || m.offer_headline || "").slice(0, 200)) : "";
   useSeo({
     title,
@@ -51,23 +53,23 @@ export default function PartnerPage() {
       <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
         {loading ? <Spinner /> : !m ? (
           <div className="rounded-2xl bg-white p-10 text-center ring-1 ring-slate-200">
-            <p className="font-semibold">Partenaire introuvable</p>
-            <Link to="/merchant-directory" className="mt-3 inline-block text-sm text-blue-600 hover:underline">Voir tous les partenaires</Link>
+            <p className="font-semibold">{t("mc.pp.notFound")}</p>
+            <Link to="/merchant-directory" className="mt-3 inline-block text-sm text-blue-600 hover:underline">{t("mc.pp.seeAll")}</Link>
           </div>
         ) : (
           <>
             <div className="flex items-center gap-4">
-              {m.logo_url && <img src={m.logo_url} alt={`Logo ${m.name}`} className="h-16 w-16 rounded-2xl border border-slate-200 bg-white object-contain p-1" />}
+              {m.logo_url && <img src={m.logo_url} alt={t("mc.pp.logoAlt", { name: m.name })} className="h-16 w-16 rounded-2xl border border-slate-200 bg-white object-contain p-1" />}
               <div>
                 <h1 className="text-2xl font-bold">{m.name}</h1>
                 <p className="flex items-center gap-1 text-sm text-slate-500"><MapPin className="h-4 w-4" /> {[m.city, m.country].filter(Boolean).join(", ")}</p>
-                {m.verified_status === "VERIFIED" && <p className="mt-0.5 flex items-center gap-1 text-xs text-emerald-600"><ShieldCheck className="h-3.5 w-3.5" /> Partenaire vérifié</p>}
+                {m.verified_status === "VERIFIED" && <p className="mt-0.5 flex items-center gap-1 text-xs text-emerald-600"><ShieldCheck className="h-3.5 w-3.5" /> {t("mc.pp.verified")}</p>}
               </div>
             </div>
             <div className="mt-4"><ShareButton title={m.name} path={`/partenaire/${m.slug}`} /></div>
             {m.offer_headline && <p className="mt-5 text-lg font-medium text-slate-800">{m.offer_headline}</p>}
             {m.description && <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-slate-600">{m.description}</p>}
-            <h2 className="mt-8 text-lg font-bold">Offres Nelvin</h2>
+            <h2 className="mt-8 text-lg font-bold">{t("mc.pp.offers")}</h2>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               {data.offers.map((o) => (
                 <Link key={o.id} to={offerPath(o)} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:border-emerald-300">
@@ -75,7 +77,7 @@ export default function PartnerPage() {
                   <p className="mt-1 text-sm font-bold text-emerald-600">{offerBadge(o, (v) => money.format(v, currency))}</p>
                 </Link>
               ))}
-              {data.offers.length === 0 && <p className="text-sm text-slate-500">Aucune offre active pour le moment.</p>}
+              {data.offers.length === 0 && <p className="text-sm text-slate-500">{t("mc.pp.none")}</p>}
             </div>
           </>
         )}

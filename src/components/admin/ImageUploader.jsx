@@ -2,16 +2,20 @@ import React, { useState } from "react";
 import { uploadPublicFile } from "@/api/storage";
 
 import { Upload, Loader2, X } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 // Public upload — marketing/brand images shown publicly across the site.
 export default function ImageUploader({ value, onChange, label = "Image" }) {
   const [busy, setBusy] = useState(false);
+  const { toast } = useToast();
   const pick = async (file) => {
     if (!file) return;
     setBusy(true);
     try {
       const { file_url } = await uploadPublicFile(file, "cms");
       onChange(file_url);
+    } catch (err) {
+      toast({ title: "Téléversement impossible", description: err.message, variant: "destructive" });
     } finally {
       setBusy(false);
     }

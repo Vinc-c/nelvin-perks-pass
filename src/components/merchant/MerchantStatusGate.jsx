@@ -4,9 +4,11 @@ import { useAuth } from "@/lib/AuthContext";
 import { isAdmin } from "@/lib/roles";
 import { Loader2, Store, Clock, XCircle } from "lucide-react";
 import MerchantStatusCard from "./MerchantStatusCard";
+import { useI18n } from "@/i18n/I18nContext";
 
 // Shows the merchant's application status until their brand is VERIFIED.
 export default function MerchantStatusGate({ children }) {
+  const { t } = useI18n();
   const { user } = useAuth();
   const merchantId = user?.merchant_id;
   const [merchant, setMerchant] = useState(null);
@@ -28,25 +30,25 @@ export default function MerchantStatusGate({ children }) {
 
   if (!merchant) {
     return (
-      <MerchantStatusCard icon={Store} tone="blue" title="Finalisez votre candidature partenaire"
-        text="Présentez votre marque et votre première offre. Notre équipe la valide, puis votre tableau de bord marchand s'active."
-        cta={{ href: "/merchant#apply", label: "Remplir la candidature" }} />
+      <MerchantStatusCard icon={Store} tone="blue" title={t("mc.gate.noMerchantTitle")}
+        text={t("mc.gate.noMerchantText")}
+        cta={{ href: "/merchant#apply", label: t("mc.gate.noMerchantCta") }} />
     );
   }
 
   if (merchant.verified_status === "PENDING") {
     return (
-      <MerchantStatusCard icon={Clock} tone="amber" title="Candidature en cours d'examen"
-        text={`Merci ! « ${merchant.name} » est en cours de validation par notre équipe (2 à 3 jours ouvrés). Vous serez notifié dès l'activation. Vous pouvez déjà déposer vos documents de vérification.`}
-        cta={{ href: "/kyc-verification", label: "Envoyer mes documents KYC" }} />
+      <MerchantStatusCard icon={Clock} tone="amber" title={t("mc.gate.pendingTitle")}
+        text={t("mc.gate.pendingText", { name: merchant.name })}
+        cta={{ href: "/kyc-verification", label: t("mc.gate.pendingCta") }} />
     );
   }
 
   if (merchant.verified_status === "REJECTED") {
     return (
-      <MerchantStatusCard icon={XCircle} tone="rose" title="Candidature non retenue"
-        text={`La candidature de « ${merchant.name} » n'a pas été validée. Contactez le support pour en savoir plus.`}
-        cta={{ href: "/support-center", label: "Contacter le support" }} />
+      <MerchantStatusCard icon={XCircle} tone="rose" title={t("mc.gate.rejectedTitle")}
+        text={t("mc.gate.rejectedText", { name: merchant.name })}
+        cta={{ href: "/support-center", label: t("mc.gate.rejectedCta") }} />
     );
   }
 

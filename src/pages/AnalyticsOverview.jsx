@@ -12,12 +12,13 @@ import { useAsync } from "@/hooks/useAsync";
 import { useCurrencies } from "@/hooks/useCurrencies";
 import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
 import { Spinner, EmptyState } from "@/components/UiFeedback";
+import { useI18n } from "@/i18n/I18nContext";
 import { Users, TrendingUp, Store, Wallet, ScanLine, Tag, Crown, BarChart3, Building2 } from "lucide-react";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from "recharts";
 
-const monthLabel = (key) => {
+const monthLabel = (key, locale = "fr-FR") => {
   const [y, m] = key.split("-").map(Number);
-  return new Date(y, m - 1, 1).toLocaleDateString("fr-FR", { month: "short" });
+  return new Date(y, m - 1, 1).toLocaleDateString(locale, { month: "short" });
 };
 
 function AdminAnalytics({ money, currency }) {
@@ -77,6 +78,7 @@ function AdminAnalytics({ money, currency }) {
 }
 
 function MerchantAnalytics({ user, money, currency }) {
+  const { t, locale } = useI18n();
   const { data, loading } = useAsync(async () => {
     const [reds, offers] = await Promise.all([
       entities.Redemption.filter({ merchant_id: user.merchant_id, status: "REDEEMED" }, "-redeemed_at", 5000),
@@ -109,7 +111,7 @@ function MerchantAnalytics({ user, money, currency }) {
       return [...c.values()].filter((n) => n > 1).length;
     })();
     return {
-      months: months.map((m) => ({ label: monthLabel(m.key), sales: Math.round(money.fromUsd(m.sales, currency)), count: m.count })),
+      months: months.map((m) => ({ label: monthLabel(m.key, locale), sales: Math.round(money.fromUsd(m.sales, currency)), count: m.count })),
       total: data.reds.reduce((s, r) => s + Number(r.bill_amount_usd || 0), 0),
       count: data.reds.length,
       customers,
@@ -117,32 +119,32 @@ function MerchantAnalytics({ user, money, currency }) {
       walletShare: data.reds.length ? Math.round((data.reds.filter((r) => r.paid_with_wallet).length / data.reds.length) * 100) : 0,
       byOffer,
     };
-  }, [data, money, currency]);
+  }, [data, money, currency, locale]);
 
   if (loading || !stats) return <Spinner />;
-  if (stats.count === 0) return <EmptyState icon={BarChart3} title="Pas encore de ventes" description="Vos statistiques apparaissent dès la première validation de code." />;
+  if (stats.count === 0) return <EmptyState icon={BarChart3} title={t("mc.an.noSales")} description={t("mc.an.noSalesDesc")} />;
   return (
     <>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard icon={TrendingUp} label="Ventes via Nelvin" value={money.format(stats.total, currency)} tone="emerald" />
-        <StatCard icon={ScanLine} label="Codes validés" value={stats.count} tone="amber" delay={0.05} />
-        <StatCard icon={Users} label="Clients uniques" value={stats.customers} tone="blue" delay={0.1} hint={`${stats.repeat} revenus au moins 2 fois`} />
-        <StatCard icon={Wallet} label="Payés par wallet" value={`${stats.walletShare}%`} tone="rose" delay={0.15} />
+        <StatCard icon={TrendingUp} label={t("mc.an.sales")} value={money.format(stats.total, currency)} tone="emerald" />
+        <StatCard icon={ScanLine} label={t("mc.an.codes")} value={stats.count} tone="amber" delay={0.05} />
+        <StatCard icon={Users} label={t("mc.an.customers")} value={stats.customers} tone="blue" delay={0.1} hint={t("mc.an.repeat", { n: stats.repeat })} />
+        <StatCard icon={Wallet} label={t("mc.an.wallet")} value={`${stats.walletShare}%`} tone="rose" delay={0.15} />
       </div>
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        <SectionCard title={`Ventes par mois (${currency})`}>
+        <SectionCard title={t("mc.an.byMonth", { currency })}>
           <div className="h-60">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={stats.months}>
                 <XAxis dataKey="label" stroke="#94a3b8" fontSize={12} />
                 <YAxis stroke="#94a3b8" fontSize={12} />
-                <Tooltip formatter={(v, n) => (n === "Ventes" ? money.formatIn(v, currency) : v)} contentStyle={{ borderRadius: 12 }} />
-                <Bar dataKey="sales" name="Ventes" fill="#10B981" radius={[6, 6, 0, 0]} />
+                <Tooltip formatter={(v, n) => (n === t("mc.an.salesName") ? money.formatIn(v, currency) : v)} contentStyle={{ borderRadius: 12 }} />
+                <Bar dataKey="sales" name={t("mc.an.salesName")} fill="#10B981" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </SectionCard>
-        <SectionCard title="Performance par offre">
+        <SectionCard title={t("mc.an.byOffer")}>
           <div className="space-y-2">
             {stats.byOffer.map((o) => (
               <div key={o.title} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-sm">
@@ -159,15 +161,16 @@ function MerchantAnalytics({ user, money, currency }) {
 
 export default function AnalyticsOverview() {
   const { user } = useAuth();
+  const { t } = useI18n();
   const money = useCurrencies();
   const [currency, setCurrency] = useDisplayCurrency();
 
   if (user?.role === "HR_ADMIN" && !isAdmin(user)) return <Navigate to="/hr-savings-report" replace />;
 
   return (
-    <PortalLayout title="Analytics" theme="light">
+    <PortalLayout title={t("mc.an.title")} theme="light">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold text-slate-900">{isAdmin(user) ? "Analytics plateforme" : "Mes statistiques"}</h1>
+        <h1 className="text-xl font-bold text-slate-900">{isAdmin(user) ? "Analytics plateforme" : t("mc.an.mine")}</h1>
         <CurrencySelect value={currency} onChange={setCurrency} />
       </div>
       {isAdmin(user) ? (
@@ -175,7 +178,7 @@ export default function AnalyticsOverview() {
       ) : user?.merchant_id ? (
         <MerchantAnalytics user={user} money={money} currency={currency} />
       ) : (
-        <EmptyState icon={BarChart3} title="Statistiques indisponibles" description="Cette page est réservée aux partenaires, aux RH et à l'équipe Nelvin." />
+        <EmptyState icon={BarChart3} title={t("mc.an.unavail")} description={t("mc.an.unavailDesc")} />
       )}
     </PortalLayout>
   );

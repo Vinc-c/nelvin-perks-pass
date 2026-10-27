@@ -18,7 +18,8 @@ import AfricaPillars from "@/components/landing/AfricaPillars";
 import HowItWorks from "@/components/landing/HowItWorks";
 import NelvinLogo from "@/components/NelvinLogo";
 import { useAuth } from "@/lib/AuthContext";
-import { usePublicContent, imageByKey, copyByKey } from "@/hooks/usePublicContent";
+import { usePublicContent, imageByKey, heroImages, copyByKey } from "@/hooks/usePublicContent";
+import HeroSlides from "@/components/landing/HeroSlides";
 import { useCatalog } from "@/hooks/useCatalog";
 import { useAsync } from "@/hooks/useAsync";
 import { entities } from "@/api/entities";
@@ -32,7 +33,7 @@ export default function Landing() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { isAuthenticated } = useAuth();
   const content = usePublicContent();
-  const heroBg = imageByKey(content?.images, "hero_background", SAVANNA);
+  const heroSlides = useMemo(() => { const l = heroImages(content?.images); return l.length ? l : [SAVANNA]; }, [content?.images]);
   const savannaBand = imageByKey(content?.images, "savanna_band", SAVANNA);
   const heroBadge = copyByKey(content?.copy, "hero.badge", t("land.hero.badge"));
   const heroTitle = copyByKey(content?.copy, "hero.title", t("land.hero.title"));
@@ -139,7 +140,7 @@ export default function Landing() {
       <section className="relative overflow-hidden">
         {/* African landscape background */}
         <div className="absolute inset-0">
-          <Image src={heroBg} fittingType="fill" className="h-full w-full animate-kenburns" />
+          <HeroSlides images={heroSlides} />
           <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/50 to-white/25" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#F2EBDA_0%,_transparent_70%)]" />
         </div>

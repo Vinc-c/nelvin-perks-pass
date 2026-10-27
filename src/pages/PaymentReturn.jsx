@@ -7,15 +7,17 @@ import { homeFor } from "@/lib/roles";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import PortalLayout from "@/components/PortalLayout";
+import { useI18n } from "@/i18n/I18nContext";
 
 const SUCCESS = {
-  RECHARGE: { text: "Votre wallet Nelvin a été rechargé avec succès.", to: "/wallet-activity", cta: "Voir mon activité" },
-  SUBSCRIPTION: { text: "Votre abonnement est actif.", to: "/billing-settings", cta: "Voir mon abonnement" },
-  COMPANY_TOPUP: { text: "Le budget avantages de votre entreprise a été crédité.", to: "/hr?section=benefits", cta: "Gérer les allocations" },
-  GIFT: { text: "Votre cadeau est prêt : le code est disponible dans Abonnement → Offrir Nelvin.", to: "/billing-settings", cta: "Voir mon cadeau" },
+  RECHARGE: { text: "mb.ret.recharge.text", to: "/wallet-activity", cta: "mb.ret.recharge.cta" },
+  SUBSCRIPTION: { text: "mb.ret.subscription.text", to: "/billing-settings", cta: "mb.ret.subscription.cta" },
+  COMPANY_TOPUP: { text: "mb.ret.topup.text", to: "/hr?section=benefits", cta: "mb.ret.topup.cta" },
+  GIFT: { text: "mb.ret.gift.text", to: "/billing-settings", cta: "mb.ret.gift.cta" },
 };
 
 export default function PaymentReturn() {
+  const { t } = useI18n();
   const [params] = useSearchParams();
   const { user, refreshUser } = useAuth();
   const { toast } = useToast();
@@ -47,26 +49,26 @@ export default function PaymentReturn() {
           setKind(data.type || "RECHARGE");
           setState("success");
           await refreshUser();
-          toast({ title: "Paiement confirmé", description: SUCCESS[data.type || "RECHARGE"]?.text });
+          toast({ title: t("mb.ret.confirmed"), description: t(SUCCESS[data.type || "RECHARGE"]?.text) });
         } else {
           setState("failed");
-          toast({ title: "Paiement non confirmé", description: data.error || data.status || "Réessayez.", variant: "destructive" });
+          toast({ title: t("mb.ret.notConfirmed"), description: data.error || data.status || t("mb.ret.retry"), variant: "destructive" });
         }
       } catch (e) {
         setState("failed");
-        toast({ title: "Vérification échouée", description: e.message || "Réessayez.", variant: "destructive" });
+        toast({ title: t("mb.ret.verifyFailed"), description: e.message || t("mb.ret.retry"), variant: "destructive" });
       }
     })();
   }, []);
 
   return (
-    <PortalLayout title="Confirmation de paiement">
+    <PortalLayout title={t("mb.ret.pageTitle")}>
       <div className="mx-auto flex max-w-md flex-col items-center py-16 text-center">
         {state === "verifying" && (
           <>
             <Loader2 className="h-10 w-10 animate-spin text-emerald-600" />
-            <p className="mt-4 text-lg font-semibold text-slate-900">Vérification du paiement…</p>
-            <p className="mt-1 text-sm text-slate-500">Nous confirmons votre transaction auprès du PSP.</p>
+            <p className="mt-4 text-lg font-semibold text-slate-900">{t("mb.ret.verifying")}</p>
+            <p className="mt-1 text-sm text-slate-500">{t("mb.ret.verifyingSub")}</p>
           </>
         )}
 
@@ -75,10 +77,10 @@ export default function PaymentReturn() {
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
               <CheckCircle2 className="h-9 w-9 text-emerald-600" />
             </div>
-            <p className="mt-4 text-xl font-bold text-slate-900">Paiement confirmé</p>
-            <p className="mt-1 text-sm text-slate-500">{SUCCESS[kind]?.text}</p>
+            <p className="mt-4 text-xl font-bold text-slate-900">{t("mb.ret.confirmed")}</p>
+            <p className="mt-1 text-sm text-slate-500">{SUCCESS[kind]?.text ? t(SUCCESS[kind].text) : ""}</p>
             <Link to={SUCCESS[kind]?.to || "/wallet-activity"} className="mt-6 inline-block rounded-full bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-600">
-              {SUCCESS[kind]?.cta || "Voir mon activité"}
+              {t(SUCCESS[kind]?.cta || "mb.ret.recharge.cta")}
             </Link>
           </motion.div>
         )}
@@ -88,10 +90,10 @@ export default function PaymentReturn() {
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-rose-100">
               <XCircle className="h-9 w-9 text-rose-600" />
             </div>
-            <p className="mt-4 text-xl font-bold text-slate-900">Paiement non abouti</p>
-            <p className="mt-1 text-sm text-slate-500">Le paiement n’a pas pu être confirmé. Vous pouvez réessayer.</p>
+            <p className="mt-4 text-xl font-bold text-slate-900">{t("mb.ret.failedTitle")}</p>
+            <p className="mt-1 text-sm text-slate-500">{t("mb.ret.failedSub")}</p>
             <Link to={homeFor(user)} className="mt-6 inline-block rounded-full bg-brand px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand">
-              Retour à mon espace
+              {t("mb.ret.back")}
             </Link>
           </>
         )}

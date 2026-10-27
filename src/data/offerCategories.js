@@ -1,3 +1,5 @@
+import { translate } from "@/i18n/translate";
+
 export const OFFER_CATEGORIES = [
   { value: "FOOD_DINING", label: "Restaurants et cafés", emoji: "🍽️" },
   { value: "TRAVEL_HOLIDAYS", label: "Voyages & vacances", emoji: "✈️" },
@@ -26,7 +28,7 @@ export const CATEGORY_LABELS_EN = {
 };
 
 export const categoryMeta = (value) =>
-  OFFER_CATEGORIES.find((c) => c.value === value) || { value, label: value || "Autre", emoji: "🏷️" };
+  OFFER_CATEGORIES.find((c) => c.value === value) || { value, label: value || translate("mc.cat.other"), emoji: "🏷️" };
 
 export const DISCOUNT_TYPES = [
   { value: "PERCENTAGE", label: "Pourcentage (%)", suffix: "%" },

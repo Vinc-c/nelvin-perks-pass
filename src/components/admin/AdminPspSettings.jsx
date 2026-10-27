@@ -97,7 +97,8 @@ function ProviderCard({ p, onChange }) {
 
   const patch = async (values) => {
     try {
-      await entities.PspProvider.update(p.id, values);
+      const row = await entities.PspProvider.update(p.id, values);
+      if (!row) throw new Error("Modification refusée : reconnectez-vous (validation 2FA requise) puis réessayez.");
       onChange();
     } catch (e) {
       toast({ title: "Erreur", description: e.message, variant: "destructive" });
@@ -129,8 +130,8 @@ function ProviderCard({ p, onChange }) {
         </div>
         <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-slate-600">
           <span>{p.enabled ? "Actif" : "Inactif"}</span>
-          <button type="button" role="switch" aria-checked={p.enabled} disabled={!hasSecret && !p.enabled} onClick={() => patch({ enabled: !p.enabled })}
-            className={`relative h-6 w-11 rounded-full transition disabled:opacity-40 ${p.enabled ? "bg-emerald-500" : "bg-slate-300"}`} title={!hasSecret ? "Renseignez d'abord une clé" : ""}>
+          <button type="button" role="switch" aria-checked={p.enabled} onClick={() => patch({ enabled: !p.enabled })}
+            className={`relative h-6 w-11 rounded-full transition ${p.enabled ? "bg-emerald-500" : "bg-slate-300"}`} title={!hasSecret ? "Aucune clé dans le coffre : les secrets d'environnement du serveur seront utilisés" : ""}>
             <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition ${p.enabled ? "left-5" : "left-0.5"}`} />
           </button>
         </label>
@@ -148,6 +149,9 @@ function ProviderCard({ p, onChange }) {
         {!p.live_mode && <span className="rounded-full bg-amber-100 px-2 py-0.5 font-medium text-amber-700">Test / sandbox</span>}
       </div>
 
+      {!hasSecret && (
+        <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">Aucune clé dans le coffre : le serveur utilisera les secrets d'environnement (ex. {(PSP_FIELDS[p.id] || [])[0]?.key}) s'ils existent. Utilisez « Tester » pour vérifier.</p>
+      )}
       <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
         {(PSP_FIELDS[p.id] || []).map((f) => <SecretField key={f.key} provider={p.id} field={f} hint={p.secret_hints?.[f.key]} onSaved={onChange} />)}
         <div>
@@ -173,7 +177,7 @@ function ProviderCard({ p, onChange }) {
               : <><XCircle className="h-4 w-4 shrink-0 text-rose-500" /><span className="truncate text-rose-600">{p.last_test_message}</span></>
           ) : <span className="text-slate-400">Jamais testé</span>}
         </span>
-        <button onClick={test} disabled={testing || !hasSecret} className="flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40">
+        <button onClick={test} disabled={testing} className="flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40">
           {testing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <PlugZap className="h-3.5 w-3.5" />} Tester
         </button>
       </div>
@@ -236,7 +240,7 @@ export default function AdminPspSettings() {
             <p className="text-sm text-rose-600">{routeError}</p>
           )}
         </div>
-        <p className="mt-3 flex items-center gap-1.5 text-xs text-slate-400"><KeyRound className="h-3.5 w-3.5" /> Un PSP ne peut être activé qu'après avoir renseigné sa clé.</p>
+        <p className="mt-3 flex items-center gap-1.5 text-xs text-slate-400"><KeyRound className="h-3.5 w-3.5" /> Les clés viennent du coffre Vault, ou à défaut des secrets d'environnement des Edge Functions.</p>
       </div>
     </div>
   );

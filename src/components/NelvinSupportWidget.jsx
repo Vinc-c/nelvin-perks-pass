@@ -4,18 +4,15 @@ import { invokeFunction } from "@/api/functions";
 import { X, Send, Loader2 } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import { NELVIN_ICON } from "@/components/NelvinLogo";
+import { useI18n } from "@/i18n/I18nContext";
 
-const SUGGESTIONS = [
-  "Comment utiliser mon cashback ?",
-  "Où trouver mes offres ?",
-  "Comment inviter un employé ?",
-  "Comment se valide un partenaire ?",
-];
+const SUGGESTIONS = ["sp.w.s1", "sp.w.s2", "sp.w.s3", "sp.w.s4"];
 
 export default function NelvinSupportWidget() {
+  const { t, lang } = useI18n();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: "assistant", content: "Bonjour 👋 Je suis Nelvin Support, votre assistant IA. Comment puis-je vous aider aujourd'hui ?" },
+    { role: "assistant", greeting: true },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,12 +32,13 @@ export default function NelvinSupportWidget() {
     try {
       const res = await invokeFunction("nelvin-support", {
         message: content,
-        history: next.slice(-11),
+        history: next.filter((m) => !m.greeting).slice(-11),
+        lang,
       });
-      const reply = res.data?.reply || res.data?.error || "Désolé, une erreur est survenue. Réessayez.";
+      const reply = res.data?.reply || res.data?.error || t("sp.w.err");
       setMessages((m) => [...m, { role: "assistant", content: reply }]);
     } catch {
-      setMessages((m) => [...m, { role: "assistant", content: "Désolé, une erreur est survenue. Réessayez." }]);
+      setMessages((m) => [...m, { role: "assistant", content: t("sp.w.err") }]);
     } finally {
       setLoading(false);
     }
@@ -78,7 +76,7 @@ export default function NelvinSupportWidget() {
               <div className="flex-1">
                 <p className="text-sm font-bold tracking-tight">Nelvin AI Assistant</p>
                 <p className="flex items-center gap-1.5 text-xs text-amber-300/90">
-                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" /> En ligne · Premium
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" /> {t("sp.w.online")}
                 </p>
               </div>
             </div>
@@ -87,14 +85,14 @@ export default function NelvinSupportWidget() {
               {messages.map((m, i) => (
                 <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                   <div className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm ${m.role === "user" ? "bg-amber-500 text-white" : "bg-white text-slate-800 border border-slate-200"}`}>
-                    {m.content}
+                    {m.greeting ? t("sp.w.hello") : m.content}
                   </div>
                 </div>
               ))}
               {loading && (
                 <div className="flex justify-start">
                   <div className="flex items-center gap-2 rounded-2xl bg-white px-3.5 py-2.5 text-sm text-slate-500 border border-slate-200">
-                    <Loader2 className="h-4 w-4 animate-spin" /> Nelvin réfléchit…
+                    <Loader2 className="h-4 w-4 animate-spin" /> {t("sp.w.thinking")}
                   </div>
                 </div>
               )}
@@ -103,8 +101,8 @@ export default function NelvinSupportWidget() {
             {messages.length <= 1 && (
               <div className="flex flex-wrap gap-2 border-t border-slate-100 bg-white px-4 py-3">
                 {SUGGESTIONS.map((s) => (
-                  <button key={s} onClick={() => send(s)} className="not-pill rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-600 hover:border-amber-400 hover:text-amber-700">
-                    {s}
+                  <button key={s} onClick={() => send(t(s))} className="not-pill rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-600 hover:border-amber-400 hover:text-amber-700">
+                    {t(s)}
                   </button>
                 ))}
               </div>
@@ -115,7 +113,7 @@ export default function NelvinSupportWidget() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
-                placeholder="Écrivez votre message…"
+                placeholder={t("sp.w.ph")}
                 className="flex-1 rounded-full border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-amber-400"
               />
               <button onClick={() => send()} disabled={loading || !input.trim()} className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500 text-white transition hover:bg-amber-600 disabled:opacity-50 active:scale-95">

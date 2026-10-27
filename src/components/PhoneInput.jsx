@@ -1,5 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { AFRICAN_COUNTRIES, findAfricanCountry } from "@/data/africanCountries";
+import { useI18n } from "@/i18n/I18nContext";
+import { countryLabel, countryMatches } from "@/lib/countryName";
 import { ChevronDown, Search, Phone } from "lucide-react";
 
 // Professional phone input: African country flag + dial code dropdown + national number.
@@ -16,6 +18,7 @@ export default function PhoneInput({ value, onChange, placeholder = "6XX XXX XXX
     return { iso: "CM", num: digits };
   }, [value]);
 
+  const { t, locale } = useI18n();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const country = findAfricanCountry(parsed.iso);
@@ -23,8 +26,8 @@ export default function PhoneInput({ value, onChange, placeholder = "6XX XXX XXX
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return AFRICAN_COUNTRIES;
-    return AFRICAN_COUNTRIES.filter((c) => c.name.toLowerCase().includes(q) || c.dial.includes(q));
-  }, [query]);
+    return AFRICAN_COUNTRIES.filter((c) => countryMatches(c, q, locale) || c.dial.includes(q));
+  }, [query, locale]);
 
   const emit = (iso, num) => onChange(`+${findAfricanCountry(iso).dial} ${num}`.trim());
 
@@ -65,7 +68,7 @@ export default function PhoneInput({ value, onChange, placeholder = "6XX XXX XXX
                   autoFocus
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Rechercher un pays…"
+                  placeholder={t("ac.ctry.search")}
                   className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-8 pr-3 text-sm outline-none focus:border-blue-500"
                 />
               </div>
@@ -79,7 +82,7 @@ export default function PhoneInput({ value, onChange, placeholder = "6XX XXX XXX
                   className="flex w-full items-center gap-3 px-3 py-2 text-left text-sm hover:bg-slate-50"
                 >
                   <span className="text-xl leading-none">{c.flag}</span>
-                  <span className="flex-1 truncate text-slate-700">{c.name}</span>
+                  <span className="flex-1 truncate text-slate-700">{countryLabel(c.name, locale)}</span>
                   <span className="font-mono text-xs text-slate-400">+{c.dial}</span>
                 </button>
               ))}

@@ -1,9 +1,12 @@
 import React, { useMemo, useState } from "react";
 import { AFRICAN_COUNTRIES } from "@/data/africanCountries";
+import { useI18n } from "@/i18n/I18nContext";
+import { countryLabel, countryMatches } from "@/lib/countryName";
 import { ChevronDown, Search, Check, Globe } from "lucide-react";
 
 // Single-country picker scoped to the 54 African countries Nelvin serves.
-export default function WorldCountrySelect({ value, onChange, placeholder = "Sélectionnez un pays", className = "" }) {
+export default function WorldCountrySelect({ value, onChange, placeholder, className = "" }) {
+  const { t, locale } = useI18n();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const selected = AFRICAN_COUNTRIES.find((c) => c.name === value);
@@ -11,8 +14,8 @@ export default function WorldCountrySelect({ value, onChange, placeholder = "Sé
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return AFRICAN_COUNTRIES;
-    return AFRICAN_COUNTRIES.filter((c) => c.name.toLowerCase().includes(q) || c.iso.toLowerCase().includes(q));
-  }, [query]);
+    return AFRICAN_COUNTRIES.filter((c) => countryMatches(c, q, locale));
+  }, [query, locale]);
 
   return (
     <div className={`relative ${className}`}>
@@ -25,10 +28,10 @@ export default function WorldCountrySelect({ value, onChange, placeholder = "Sé
         {selected ? (
           <>
             <span className="text-xl leading-none">{selected.flag}</span>
-            <span className="flex-1 truncate font-medium">{selected.name}</span>
+            <span className="flex-1 truncate font-medium">{countryLabel(selected.name, locale)}</span>
           </>
         ) : (
-          <span className="flex-1 truncate text-muted-foreground">{placeholder}</span>
+          <span className="flex-1 truncate text-muted-foreground">{placeholder || t("ac.ctry.select")}</span>
         )}
         <ChevronDown className="h-4 w-4 text-muted-foreground" />
       </button>
@@ -44,13 +47,13 @@ export default function WorldCountrySelect({ value, onChange, placeholder = "Sé
                   autoFocus
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Rechercher un pays…"
+                  placeholder={t("ac.ctry.search")}
                   className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-8 pr-3 text-sm outline-none focus:border-blue-500"
                 />
               </div>
             </div>
             <div className="max-h-60 overflow-y-auto py-1">
-              {filtered.length === 0 && <p className="px-3 py-4 text-center text-sm text-slate-400">Aucun pays.</p>}
+              {filtered.length === 0 && <p className="px-3 py-4 text-center text-sm text-slate-400">{t("ac.ctry.none")}</p>}
               {filtered.map((c) => (
                 <button
                   type="button"
@@ -59,7 +62,7 @@ export default function WorldCountrySelect({ value, onChange, placeholder = "Sé
                   className="flex w-full items-center gap-3 px-3 py-2 text-left text-sm hover:bg-slate-50"
                 >
                   <span className="text-xl leading-none">{c.flag}</span>
-                  <span className="flex-1 truncate text-slate-700">{c.name}</span>
+                  <span className="flex-1 truncate text-slate-700">{countryLabel(c.name, locale)}</span>
                   {value === c.name && <Check className="h-4 w-4 text-blue-600" />}
                 </button>
               ))}

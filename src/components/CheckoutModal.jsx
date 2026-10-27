@@ -6,22 +6,23 @@ import { useAuth } from "@/lib/AuthContext";
 import { useCurrencies } from "@/hooks/useCurrencies";
 import { useToast } from "@/components/ui/use-toast";
 import CurrencySelect from "@/components/CurrencySelect";
+import { useI18n } from "@/i18n/I18nContext";
 import { X, Loader2, Check, CreditCard, Smartphone, Building2, Apple, Wallet, AlertTriangle } from "lucide-react";
 
 const METHODS = [
-  { v: "CARD", l: "Carte", icon: CreditCard },
+  { v: "CARD", l: "mb.co.card", icon: CreditCard },
   { v: "MOBILE_MONEY", l: "Mobile Money", icon: Smartphone },
   { v: "APPLE_PAY", l: "Apple Pay", icon: Apple },
   { v: "GOOGLE_PAY", l: "Google Pay", icon: Wallet },
-  { v: "BANK_TRANSFER", l: "Virement", icon: Building2 },
+  { v: "BANK_TRANSFER", l: "mb.co.transfer", icon: Building2 },
 ];
 const QUICK_USD = [10, 25, 50, 100];
 
 const TITLES = {
-  RECHARGE: "Recharger mon wallet",
-  COMPANY_TOPUP: "Alimenter le budget avantages",
-  SUBSCRIPTION: "Souscrire",
-  GIFT: "Offrir",
+  RECHARGE: "mb.co.title.RECHARGE",
+  COMPANY_TOPUP: "mb.co.title.COMPANY_TOPUP",
+  SUBSCRIPTION: "mb.co.title.SUBSCRIPTION",
+  GIFT: "mb.co.title.GIFT",
 };
 
 /**
@@ -32,6 +33,7 @@ const TITLES = {
  */
 export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", plan = null, cycle = "MONTHLY", gift = null, onPaid }) {
   const { user, refreshUser } = useAuth();
+  const { t, locale } = useI18n();
   const { toast } = useToast();
   const money = useCurrencies();
   const [currency, setCurrency] = useState(user?.wallet_currency || "USD");
@@ -58,7 +60,7 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
   const priceUsd = isPlan ? Number(cycle === "ANNUAL" ? plan.price_annual : plan.price_monthly) : 0;
   const payAmount = isPlan ? money.fromUsd(priceUsd, currency) : Number(amount);
   const companyPlan = isPlan && plan.audience === "B2B";
-  const walletLabel = companyPlan ? "Wallet entreprise" : "Mon wallet";
+  const walletLabel = companyPlan ? t("mb.co.companyWallet") : t("mb.co.myWallet");
 
   const close = () => {
     setAmount("");
@@ -80,10 +82,10 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
         ...(isGift ? { recipient_email: gift?.recipient_email || "", recipient_name: gift?.recipient_name || "", message: gift?.message || "" } : {}),
         callback_url: window.location.origin + "/payment-return",
       });
-      toast({ title: "Redirection vers le paiement sécurisé…", description: `${res.data.psp} — ${res.data.reason || ""}` });
+      toast({ title: t("mb.co.redirect"), description: `${res.data.psp} — ${res.data.reason || ""}` });
       window.location.href = res.data.authorization_url;
     } catch (e) {
-      toast({ title: "Paiement impossible", description: e.message || "Réessayez.", variant: "destructive" });
+      toast({ title: t("mb.co.failed"), description: e.message || t("mb.ret.retry"), variant: "destructive" });
       setLoading(false);
     }
   };
@@ -97,7 +99,7 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
       setDone({ expires_at: res.expires_at });
       onPaid?.(res);
     } catch (e) {
-      toast({ title: "Paiement refusé", description: e.message, variant: "destructive" });
+      toast({ title: t("mb.co.refused"), description: e.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -111,22 +113,22 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={close} className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
           <motion.div initial={{ scale: 0.95, y: 12 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 12 }} onClick={(e) => e.stopPropagation()} className="max-h-[92vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl" role="dialog" aria-modal="true">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-900">{isPlan ? `${isGift ? TITLES.GIFT : TITLES.SUBSCRIPTION} · ${plan.name}` : TITLES[purpose]}</h3>
-              <button onClick={close} aria-label="Fermer" className="rounded-full p-1 text-slate-400 hover:bg-slate-100"><X className="h-5 w-5" /></button>
+              <h3 className="text-lg font-bold text-slate-900">{isPlan ? `${t(isGift ? TITLES.GIFT : TITLES.SUBSCRIPTION)} · ${plan.name}` : t(TITLES[purpose])}</h3>
+              <button onClick={close} aria-label={t("mb.common.close")} className="rounded-full p-1 text-slate-400 hover:bg-slate-100"><X className="h-5 w-5" /></button>
             </div>
 
             {done ? (
               <div className="py-6 text-center">
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100"><Check className="h-7 w-7 text-emerald-600" /></div>
-                <p className="mt-3 text-lg font-bold text-slate-900">Abonnement activé</p>
-                {done.expires_at && <p className="mt-1 text-sm text-slate-500">Valable jusqu'au {new Date(done.expires_at).toLocaleDateString("fr-FR")}</p>}
-                <button onClick={close} className="mt-5 w-full rounded-full bg-emerald-500 py-2.5 text-sm font-medium text-white hover:bg-emerald-600">Terminer</button>
+                <p className="mt-3 text-lg font-bold text-slate-900">{t("mb.co.activated")}</p>
+                {done.expires_at && <p className="mt-1 text-sm text-slate-500">{t("mb.co.validUntil", { date: new Date(done.expires_at).toLocaleDateString(locale) })}</p>}
+                <button onClick={close} className="mt-5 w-full rounded-full bg-emerald-500 py-2.5 text-sm font-medium text-white hover:bg-emerald-600">{t("mb.pin.finish")}</button>
               </div>
             ) : (
               <>
                 <div className="flex items-end justify-between gap-3">
                   <div className="flex-1">
-                    <label className="text-sm font-medium text-slate-700" htmlFor="checkout-amount">Montant</label>
+                    <label className="text-sm font-medium text-slate-700" htmlFor="checkout-amount">{t("mb.wd.amount")}</label>
                     {isPlan ? (
                       <p id="checkout-amount" className="mt-2 text-2xl font-bold text-slate-900">{money.formatIn(payAmount, currency)}</p>
                     ) : (
@@ -141,27 +143,27 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
                       const v = Math.round(money.fromUsd(q, currency));
                       return (
                         <button key={q} onClick={() => setAmount(String(v))} className="not-pill rounded-lg border border-slate-200 py-2 text-sm font-medium text-slate-700 hover:border-emerald-400 hover:text-emerald-700">
-                          {v.toLocaleString("fr-FR")}
+                          {v.toLocaleString(locale)}
                         </button>
                       );
                     })}
                   </div>
                 )}
                 {currency !== "USD" && payAmount > 0 && (
-                  <p className="mt-2 text-xs text-slate-500">≈ {money.format(money.toUsd(payAmount, currency), "USD")} · taux Nelvin du jour</p>
+                  <p className="mt-2 text-xs text-slate-500">{t("mb.co.rateNote", { value: money.format(money.toUsd(payAmount, currency), "USD") })}</p>
                 )}
 
                 {isPlan && !isGift && (
                   <button onClick={payWithWallet} disabled={loading} className="mt-5 flex w-full items-center justify-between rounded-xl border-2 border-emerald-500 bg-emerald-50 px-4 py-3 text-left text-sm font-semibold text-emerald-800 hover:bg-emerald-100 disabled:opacity-50">
-                    <span className="flex items-center gap-2"><Wallet className="h-4 w-4" /> Payer avec {walletLabel.toLowerCase()}</span>
+                    <span className="flex items-center gap-2"><Wallet className="h-4 w-4" /> {t("mb.co.payWith", { wallet: walletLabel })}</span>
                     <span>{money.format(priceUsd, "USD")}</span>
                   </button>
                 )}
 
-                <p className="mt-5 text-sm font-medium text-slate-700">{isPlan && !isGift ? "Ou payer en ligne" : "Méthode de paiement"}</p>
+                <p className="mt-5 text-sm font-medium text-slate-700">{isPlan && !isGift ? t("mb.co.orOnline") : t("mb.co.payMethod")}</p>
                 {noPsp ? (
                   <div className="mt-2 flex items-start gap-2 rounded-xl bg-amber-50 p-3 text-sm text-amber-800">
-                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" /> Le paiement en ligne n'est pas encore activé. Contactez le support ou réessayez plus tard.
+                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" /> {t("mb.co.noPsp")}
                   </div>
                 ) : (
                   <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -170,7 +172,7 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
                       const active = method === m.v;
                       return (
                         <button key={m.v} onClick={() => setMethod(m.v)} className={`not-pill flex flex-col items-center gap-1 rounded-xl border-2 py-3 text-xs font-medium ${active ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
-                          <Icon className="h-5 w-5" /> {m.l}
+                          <Icon className="h-5 w-5" /> {m.l.startsWith("mb.") ? t(m.l) : m.l}
                         </button>
                       );
                     })}
@@ -178,9 +180,9 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
                 )}
 
                 <button onClick={payOnline} disabled={loading || noPsp || !payAmount || payAmount <= 0} className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50 active:scale-95">
-                  {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Traitement…</> : <>Payer {payAmount > 0 ? money.formatIn(payAmount, currency) : ""}</>}
+                  {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("mb.wd.processing")}</> : <>{t("mb.co.pay", { amount: payAmount > 0 ? money.formatIn(payAmount, currency) : "" })}</>}
                 </button>
-                <p className="mt-2 text-center text-[11px] text-slate-400">Paiement sécurisé chez notre partenaire de paiement. Aucune donnée bancaire n'est stockée par Nelvin.</p>
+                <p className="mt-2 text-center text-[11px] text-slate-400">{t("mb.co.secure")}</p>
               </>
             )}
           </motion.div>

@@ -9,13 +9,13 @@ import { useAuth } from "@/lib/AuthContext";
 import { updateMe } from "@/api/auth";
 import { entities } from "@/api/entities";
 import { useToast } from "@/components/ui/use-toast";
-import { ROLE_LABELS } from "@/lib/roles";
+import { roleLabel } from "@/lib/roles";
 import { User, Globe, Shield, Bell, Mail, Save, Loader2, Building2, ChevronRight } from "lucide-react";
 
 const input = "mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500";
 
 export default function Settings() {
-  const { lang, setLang, languages } = useI18n();
+  const { t, lang, setLang, languages } = useI18n();
   const { user, refreshUser } = useAuth();
   const { toast } = useToast();
   const [form, setForm] = useState({ full_name: "", phone: "", country: "", city: "", wallet_currency: "USD" });
@@ -58,36 +58,36 @@ export default function Settings() {
         });
       }
       await refreshUser();
-      toast({ title: "Paramètres enregistrés" });
+      toast({ title: t("ac.set.saved") });
     } catch (e) {
-      toast({ title: "Erreur", description: e.message || "Impossible d'enregistrer.", variant: "destructive" });
+      toast({ title: t("ac.common.error"), description: e.message || t("ac.set.saveFail"), variant: "destructive" });
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <PortalLayout title="Paramètres" theme="light">
+    <PortalLayout title={t("ac.set.title")} theme="light">
       <RoleWelcomeHeader />
       <div className="grid gap-6 lg:grid-cols-2">
-        <SectionCard icon={User} title="Profil">
+        <SectionCard icon={User} title={t("ac.set.profile")}>
           <div className="space-y-3">
-            <label className="block text-sm text-slate-500">Nom complet<input value={form.full_name} onChange={set("full_name")} className={input} /></label>
+            <label className="block text-sm text-slate-500">{t("ac.set.fullName")}<input value={form.full_name} onChange={set("full_name")} className={input} /></label>
             <div>
-              <span className="text-sm text-slate-500">Email</span>
+              <span className="text-sm text-slate-500">{t("auth.email")}</span>
               <div className="mt-1 flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700"><Mail className="h-4 w-4 text-slate-400" /> {user?.email || "—"}</div>
             </div>
-            <label className="block text-sm text-slate-500">Téléphone<input value={form.phone} onChange={set("phone")} placeholder="+225 …" className={input} /></label>
+            <label className="block text-sm text-slate-500">{t("ac.set.phone")}<input value={form.phone} onChange={set("phone")} placeholder="+225 …" className={input} /></label>
             <div className="grid grid-cols-2 gap-3">
-              <label className="block text-sm text-slate-500">Pays<input value={form.country} onChange={set("country")} className={input} /></label>
-              <label className="block text-sm text-slate-500">Ville<input value={form.city} onChange={set("city")} className={input} /></label>
+              <label className="block text-sm text-slate-500">{t("ac.common.country")}<input value={form.country} onChange={set("country")} className={input} /></label>
+              <label className="block text-sm text-slate-500">{t("ac.set.city")}<input value={form.city} onChange={set("city")} className={input} /></label>
             </div>
-            <p className="text-xs text-slate-400">Rôle : {ROLE_LABELS[user?.role] || user?.role}</p>
+            <p className="text-xs text-slate-400">{t("ac.set.role", { role: roleLabel(user?.role) })}</p>
           </div>
         </SectionCard>
 
-        <SectionCard icon={Globe} title="Langue & devise">
-          <p className="text-sm text-slate-500">Langue de l'application</p>
+        <SectionCard icon={Globe} title={t("ac.set.langCurrency")}>
+          <p className="text-sm text-slate-500">{t("ac.set.appLang")}</p>
           <div className="mt-2 grid grid-cols-2 gap-2">
             {languages.map((l) => (
               <button key={l.code} onClick={() => setLang(l.code)} className={`flex items-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium transition ${lang === l.code ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
@@ -95,34 +95,34 @@ export default function Settings() {
               </button>
             ))}
           </div>
-          <p className="mt-5 text-sm text-slate-500">Devise d'affichage</p>
+          <p className="mt-5 text-sm text-slate-500">{t("ac.set.displayCurrency")}</p>
           <div className="mt-2"><CurrencySelect value={form.wallet_currency} onChange={set("wallet_currency")} /></div>
-          <p className="mt-1 text-xs text-slate-400">Les soldes sont conservés en USD et convertis au taux Nelvin.</p>
+          <p className="mt-1 text-xs text-slate-400">{t("ac.set.currencyNote")}</p>
         </SectionCard>
 
         {isHr && company && (
-          <SectionCard icon={Building2} title="Entreprise">
+          <SectionCard icon={Building2} title={t("ac.set.company")}>
             <div className="space-y-3">
-              <label className="block text-sm text-slate-500">Raison sociale<input value={company.name || ""} onChange={setC("name")} className={input} /></label>
-              <label className="block text-sm text-slate-500">Secteur<input value={company.industry || ""} onChange={setC("industry")} className={input} /></label>
+              <label className="block text-sm text-slate-500">{t("ac.set.legalName")}<input value={company.name || ""} onChange={setC("name")} className={input} /></label>
+              <label className="block text-sm text-slate-500">{t("ac.set.industry")}<input value={company.industry || ""} onChange={setC("industry")} className={input} /></label>
               <div className="grid grid-cols-2 gap-3">
-                <label className="block text-sm text-slate-500">Pays<input value={company.country || ""} onChange={setC("country")} className={input} /></label>
-                <label className="block text-sm text-slate-500">Email de contact<input type="email" value={company.contact_email || ""} onChange={setC("contact_email")} className={input} /></label>
+                <label className="block text-sm text-slate-500">{t("ac.common.country")}<input value={company.country || ""} onChange={setC("country")} className={input} /></label>
+                <label className="block text-sm text-slate-500">{t("ac.set.contactEmail")}<input type="email" value={company.contact_email || ""} onChange={setC("contact_email")} className={input} /></label>
               </div>
             </div>
           </SectionCard>
         )}
 
-        <SectionCard icon={Shield} title="Sécurité & notifications">
+        <SectionCard icon={Shield} title={t("ac.set.secNotif")}>
           <div className="space-y-2">
-            <Link to="/security-settings" className="flex items-center justify-between rounded-lg border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50"><span className="flex items-center gap-2"><Shield className="h-4 w-4 text-slate-400" /> Mot de passe, double authentification, sessions</span><ChevronRight className="h-4 w-4 text-slate-400" /></Link>
-            <Link to="/notification-settings" className="flex items-center justify-between rounded-lg border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50"><span className="flex items-center gap-2"><Bell className="h-4 w-4 text-slate-400" /> Préférences de notification</span><ChevronRight className="h-4 w-4 text-slate-400" /></Link>
+            <Link to="/security-settings" className="flex items-center justify-between rounded-lg border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50"><span className="flex items-center gap-2"><Shield className="h-4 w-4 text-slate-400" /> {t("ac.set.secLink")}</span><ChevronRight className="h-4 w-4 text-slate-400" /></Link>
+            <Link to="/notification-settings" className="flex items-center justify-between rounded-lg border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50"><span className="flex items-center gap-2"><Bell className="h-4 w-4 text-slate-400" /> {t("ac.set.notifLink")}</span><ChevronRight className="h-4 w-4 text-slate-400" /></Link>
           </div>
         </SectionCard>
       </div>
 
       <button onClick={save} disabled={saving} className="mt-6 flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">
-        {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Enregistrer
+        {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {t("ac.common.save")}
       </button>
     </PortalLayout>
   );
