@@ -5,7 +5,7 @@
 // from a stale cache, and a failure there must surface to the app as a normal
 // fetch error rather than a broken service-worker response.
 
-const CACHE_VERSION = "nelvin-v3";
+const CACHE_VERSION = "nelvin-v4";
 const APP_SHELL = ["/", "/index.html", "/manifest.json"];
 
 self.addEventListener("install", (event) => {
@@ -25,13 +25,24 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-const offlinePage = () =>
-  new Response(
-    "<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Hors ligne</title>" +
-      "<body style='font-family:system-ui;display:grid;place-items:center;height:100vh;margin:0;background:#0F172A;color:#fff;text-align:center'>" +
-      "<div><h1>Vous êtes hors ligne</h1><p>Reconnectez-vous à internet puis rechargez la page.</p></div>",
+const OFFLINE = {
+  en: ["You are offline", "Reconnect to the internet, then reload the page."],
+  fr: ["Vous êtes hors ligne", "Reconnectez-vous à internet puis rechargez la page."],
+  sw: ["Huna mtandao", "Unganisha mtandao kisha pakia ukurasa upya."],
+  ar: ["أنت غير متصل بالإنترنت", "أعد الاتصال بالإنترنت ثم أعد تحميل الصفحة."],
+  yo: ["O kò sí lórí íntánẹ́ẹ̀tì", "Tún sopọ̀ mọ́ íntánẹ́ẹ̀tì kí o tún ojú ewé náà gbé."],
+};
+const offlinePage = (acceptLanguage = "") => {
+  const code = (acceptLanguage.split(",")[0] || "en").slice(0, 2).toLowerCase();
+  const [title, text] = OFFLINE[code] || OFFLINE.en;
+  const lang = OFFLINE[code] ? code : "en";
+  return new Response(
+    `<!doctype html><html lang="${lang}" dir="${lang === "ar" ? "rtl" : "ltr"}"><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>${title}</title>` +
+      "<body style='font-family:system-ui;display:grid;place-items:center;height:100vh;margin:0;background:#08261D;color:#fff;text-align:center'>" +
+      `<div><h1>${title}</h1><p>${text}</p></div>`,
     { status: 503, headers: { "Content-Type": "text/html; charset=utf-8" } }
   );
+};
 
 self.addEventListener("fetch", (event) => {
   const { request } = event;
@@ -50,7 +61,7 @@ self.addEventListener("fetch", (event) => {
           }
           return res;
         })
-        .catch(async () => (await caches.match("/index.html")) || (await caches.match("/")) || offlinePage())
+        .catch(async () => (await caches.match("/index.html")) || (await caches.match("/")) || offlinePage(request.headers.get("accept-language") || ""))
     );
     return;
   }

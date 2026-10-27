@@ -176,3 +176,9 @@ button:not(.not-pill) {
   .animate-marquee, .animate-marquee-reverse, .animate-kenburns { animation: none !important; }
   [data-fall] { animation: none !important; }
 }
+
+/* Installed PWA / native app: keep content clear of notches and home indicators. */
+@media (display-mode: standalone), (display-mode: fullscreen) {
+  body { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); padding-bottom: env(safe-area-inset-bottom); }
+}
+html.is-native body { padding-top: env(safe-area-inset-top); padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); padding-bottom: env(safe-area-inset-bottom); }
