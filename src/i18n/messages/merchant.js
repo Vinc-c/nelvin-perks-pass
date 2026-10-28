@@ -405,4 +405,10 @@ export default [
   ["mc.map.count.other", "{n} partners", "{n} partenaires", "Washirika {n}", "{n} شركاء", "Àwọn alábàáṣiṣẹ́pọ̀ {n}"],
   ["mc.map.nearest", ", nearest first", ", du plus proche au plus loin", ", wa karibu zaidi kwanza", ", الأقرب أولاً", ", èyí tó sún mọ́ jù kọ́kọ́"],
   ["mc.map.inCountries", " in {n} countries", " dans {n} pays", " katika nchi {n}", " في {n} دول", " ní orílẹ̀-èdè {n}"],
+  ["mc.scan.honour", "Offer to honour", "Offre à honorer", "Ofa ya kutekeleza", "العرض المطلوب تنفيذه", "Ìpèsè tí a gbọ́dọ̀ ṣe"],
+  ["mc.scan.giveItem", "Hand over: {item}", "À remettre : {item}", "Mkabidhi: {item}", "سلّم: {item}", "Fún un ní: {item}"],
+  ["mc.scan.pct", "{value}% discount applied", "{value} % de remise appliquée", "Punguzo la {value}% limetumika", "تم تطبيق خصم {value}%", "A ti lo ẹ̀dínwó {value}%"],
+  ["mc.scan.fixed", "{value} off applied", "{value} de remise appliqués", "Punguzo la {value} limetumika", "تم تطبيق خصم {value}", "A ti lo ẹ̀dínwó {value}"],
+  ["mc.scan.cashbackType", "{value}% cashback for the member", "{value} % de cashback pour le membre", "Cashback ya {value}% kwa mwanachama", "استرداد نقدي {value}% للعضو", "Owó padà {value}% fún ọmọ ẹgbẹ́"],
+  ["mc.scan.terms", "Conditions: {terms}", "Conditions : {terms}", "Masharti: {terms}", "الشروط: {terms}", "Àwọn ìlànà: {terms}"],
 ];

@@ -42,7 +42,6 @@ export default function Landing() {
   // Live figures from the catalogue (a CMS value, when set, takes precedence).
   const { merchants, offers } = useCatalog();
   const { data: rawReviews } = useAsync(() => entities.OfferReview.list("-created_date", 40).catch(() => []), [], { initial: [] });
-  const cities = new Set(merchants.map((m) => (m.city || "").trim().toLowerCase()).filter(Boolean)).size;
   const counts = useMemo(() => offers.reduce((acc, o) => ({ ...acc, [o.category]: (acc[o.category] || 0) + 1 }), {}), [offers]);
   const merchantById = useMemo(() => new Map(merchants.map((m) => [m.id, m])), [merchants]);
   const reviews = rawReviews
@@ -52,13 +51,6 @@ export default function Landing() {
       const m = merchantById.get(r.merchant_id);
       return { ...r, author: r.author_name || t("land.reviews.member"), where: [m.name, m.city].filter(Boolean).join(", ") };
     });
-  const fmt = (n) => n.toLocaleString("en-US");
-  const stats = [
-    { value: copyByKey(content?.copy, "stats.brands", merchants.length ? fmt(merchants.length) : ""), label: t("land.stats.partners") },
-    { value: copyByKey(content?.copy, "stats.offers", offers.length ? fmt(offers.length) : ""), label: t("land.stats.offers") },
-    { value: copyByKey(content?.copy, "stats.cities", cities ? fmt(cities) : ""), label: t("land.stats.cities") },
-    { value: copyByKey(content?.copy, "stats.collections", "15"), label: t("land.stats.categories") },
-  ].filter((s) => s.value);
   const renderHeroTitle = () =>
     /\*[^*]+\*/.test(heroTitle)
       ? heroTitle.split(/\*([^*]+)\*/).map((part, i) => (i % 2 ? <span key={i} className="text-nv-bronze">{part}</span> : part))
@@ -182,21 +174,6 @@ export default function Landing() {
 
       {/* Partner logos marquee — right below the hero */}
       <PartnerLogos merchants={merchants} />
-
-      {/* Stats bar: live figures only */}
-      {stats.length > 1 && (
-        <section className="mx-auto -mt-2 max-w-5xl px-4 sm:px-6">
-          <dl className={`grid grid-cols-2 gap-px overflow-hidden rounded-3xl bg-nv-ivory-2 shadow-xl shadow-slate-200/60 ring-1 ring-nv-line ${stats.length === 4 ? "sm:grid-cols-4" : stats.length === 3 ? "sm:grid-cols-3" : ""}`}>
-            {stats.map((s) => (
-              <div key={s.label} className="bg-white px-5 py-6 text-center">
-                <dd className="text-2xl font-extrabold text-nv-ink sm:text-3xl">{s.value}</dd>
-                <dt className="mt-1 text-xs font-medium text-nv-muted sm:text-sm">{s.label}</dt>
-              </div>
-            ))}
-          </dl>
-        </section>
-      )}
-
 
       {/* The digital card and the three passes */}
       <PassShowcase />

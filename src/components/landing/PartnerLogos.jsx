@@ -32,14 +32,14 @@ export default function PartnerLogos({ merchants = [] }) {
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-white to-transparent" />
         <ul className={`flex gap-4 ${loop.length > list.length ? "w-max animate-marquee" : "flex-wrap justify-center px-4"}`}>
           {loop.map((p, i) => (
-            <li key={`${p.name}-${i}`} aria-hidden={i >= list.length || undefined} className="flex h-20 w-56 flex-shrink-0 items-center gap-3 px-4">
+            <li key={`${p.name}-${i}`} aria-hidden={i >= list.length || undefined} className="flex min-h-20 w-64 flex-shrink-0 items-center gap-3 px-4 py-2">
               {p.logo ? (
                 <img src={p.logo} alt="" loading="lazy" className="h-12 w-12 rounded-xl bg-white object-contain" />
               ) : (
                 <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#08261D] text-sm font-bold text-[#C8A24A]">{initials(p.name)}</span>
               )}
-              <span className="min-w-0">
-                <span className="block truncate text-sm font-semibold text-nv-ink">{p.name}</span>
+              <span className="min-w-0 flex-1">
+                <span title={p.name} className="block break-words text-sm font-semibold leading-snug text-nv-ink [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden">{p.name}</span>
                 {p.sub && <span className="block truncate text-xs text-slate-400">{p.sub}</span>}
               </span>
             </li>

@@ -18,13 +18,9 @@ function MiniCard({ k, count, hidden }) {
     >
       <div className="relative h-24 w-full">
         <Image src={CATEGORY_IMAGES[k]} fittingType="fill" className="h-full w-full" />
-        <span className="absolute bottom-2 left-2 rounded-full bg-nv-gold px-2 py-0.5 text-[10px] font-bold text-nv-ink shadow">
-          {t("land.memberOffer")}
-        </span>
       </div>
       <div className="flex items-center justify-between gap-2 px-2 py-2 sm:px-3">
         <p className="min-w-0 break-words text-[11px] font-bold leading-tight text-nv-ink sm:text-xs">{t(`cat.${k}`)}</p>
-        {count > 0 && <span className="hidden shrink-0 text-[10px] font-semibold text-nv-muted sm:inline">{count > 1 ? t("land.offer.count", { n: count }) : t("land.offer.count1")}</span>}
       </div>
     </Link>
   );
