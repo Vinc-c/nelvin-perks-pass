@@ -403,4 +403,13 @@ export default [
   ["sp.h.message", "How can we help?", "Comment pouvons-nous vous aider ?", "Tukusaidieje?", "كيف يمكننا مساعدتك؟", "Báwo ni a ṣe lè ràn ọ́ lọ́wọ́?"],
   ["sp.h.send", "Send message", "Envoyer le message", "Tuma ujumbe", "إرسال الرسالة", "Fi ọ̀rọ̀ ránṣẹ́"],
   ["sp.h.sent", "Message sent — we'll reply within 24h.", "Message envoyé — nous répondons sous 24 h.", "Ujumbe umetumwa — tutajibu ndani ya saa 24.", "تم إرسال الرسالة — سنرد خلال 24 ساعة.", "A ti fi ọ̀rọ̀ ránṣẹ́ — a ó dáhùn láàrín wákàtí 24."],
+  ["dev.title", "Device limit reached", "Limite d'appareils atteinte", "Kikomo cha vifaa kimefikiwa", "تم بلوغ حد الأجهزة", "A ti dé ìdíwọ̀n ẹ̀rọ"],
+  ["dev.desc", "An account can be used on up to {n} devices. Remove one of your devices below to continue on this one.", "Un compte peut être utilisé sur {n} appareils maximum. Retirez l'un de vos appareils ci-dessous pour continuer sur celui-ci.", "Akaunti inaweza kutumika kwenye vifaa visivyozidi {n}. Ondoa kimoja hapa chini ili kuendelea kwenye hiki.", "يمكن استخدام الحساب على {n} أجهزة كحد أقصى. أزل أحد أجهزتك أدناه للمتابعة على هذا الجهاز.", "A lè lo àkọọ́lẹ̀ kan lórí ẹ̀rọ {n} ní àpapọ̀. Yọ ọ̀kan nínú àwọn ẹ̀rọ rẹ kúrò ní ìsàlẹ̀ láti tẹ̀síwájú lórí èyí."],
+  ["dev.retry", "Continue on this device", "Continuer sur cet appareil", "Endelea kwenye kifaa hiki", "المتابعة على هذا الجهاز", "Tẹ̀síwájú lórí ẹ̀rọ yìí"],
+  ["dev.signOut", "Sign out", "Se déconnecter", "Toka", "تسجيل الخروج", "Jáde"],
+  ["dev.current", "This device", "Cet appareil", "Kifaa hiki", "هذا الجهاز", "Ẹ̀rọ yìí"],
+  ["dev.remove", "Remove", "Retirer", "Ondoa", "إزالة", "Yọ kúrò"],
+  ["dev.unknown", "Unknown device", "Appareil inconnu", "Kifaa kisichojulikana", "جهاز غير معروف", "Ẹ̀rọ àìmọ̀"],
+  ["dev.lastSeen", "Last used {date}", "Dernière utilisation : {date}", "Ilitumika mwisho {date}", "آخر استخدام {date}", "Lílò gbẹ̀yìn {date}"],
+  ["dev.limitNote", "Maximum 4 devices per account.", "Maximum 4 appareils par compte.", "Vifaa 4 kwa akaunti kwa kiwango cha juu.", "4 أجهزة كحد أقصى لكل حساب.", "Ẹ̀rọ mẹ́rin ní púpọ̀ jùlọ fún àkọọ́lẹ̀ kan."],
 ];

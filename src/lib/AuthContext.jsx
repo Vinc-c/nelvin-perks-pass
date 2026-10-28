@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect, useCallback, use
 import { supabase } from '@/api/supabaseClient';
 import { getCurrentUser, signOut, getAssuranceLevel, getMfaPolicy } from '@/api/auth';
 import { callRpc } from '@/api/rpc';
+import { getDeviceId, resetDeviceId, deviceLabel } from '@/lib/device';
 
 // A referral link opened before a Google sign-up is attached afterwards.
 function claimPendingReferral(user) {
@@ -28,6 +29,25 @@ export const AuthProvider = ({ children }) => {
   // (verifying the new factor triggers an auth refresh that would hide it).
   const [mfaGateHold, setMfaGateHold] = useState(false);
   const loadSeq = useRef(0);
+  // Max 4 devices per account: set when this device is refused.
+  const [deviceBlock, setDeviceBlock] = useState(null);
+
+  const recheckDevice = useCallback(async () => {
+    try {
+      const res = await callRpc('register_device', { p_device_id: getDeviceId(), p_label: deviceLabel() });
+      if (res?.ok) { setDeviceBlock(null); return true; }
+      if (res?.reason === 'LIMIT') { setDeviceBlock(res); return false; }
+      if (res?.reason === 'REVOKED') {
+        // Removed from another device: sign out, and use a fresh id next time.
+        resetDeviceId();
+        setDeviceBlock(null);
+        setUser(null); setIsAuthenticated(false);
+        await signOut('/login');
+        return false;
+      }
+    } catch { /* never lock people out because the check itself failed */ }
+    return true;
+  }, []);
 
   // `silent` re-checks (auth events) don't flip the global loading state, so
   // the current page stays mounted.
@@ -58,6 +78,7 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(!!currentUser);
       setAuthError(null);
       claimPendingReferral(currentUser);
+      if (currentUser && !needsMfa) recheckDevice(); else setDeviceBlock(null);
     } catch (error) {
       if (seq !== loadSeq.current) return;
       console.error('User auth check failed:', error);
@@ -83,6 +104,15 @@ export const AuthProvider = ({ children }) => {
     });
     return () => subscription.unsubscribe();
   }, [checkUserAuth]);
+
+  // A device removed from another one is signed out within a few minutes.
+  useEffect(() => {
+    if (!isAuthenticated) return undefined;
+    const run = () => { if (document.visibilityState === 'visible') recheckDevice(); };
+    const timer = setInterval(run, 5 * 60 * 1000);
+    document.addEventListener('visibilitychange', run);
+    return () => { clearInterval(timer); document.removeEventListener('visibilitychange', run); };
+  }, [isAuthenticated, recheckDevice]);
 
   // Silently re-fetch the current user (e.g. after a wallet or profile update)
   // without toggling the global loading state, so the page stays mounted.
@@ -119,6 +149,8 @@ export const AuthProvider = ({ children }) => {
       navigateToLogin,
       checkUserAuth,
       refreshUser,
+      deviceBlock,
+      recheckDevice,
     }}>
       {children}
     </AuthContext.Provider>
