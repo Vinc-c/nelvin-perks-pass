@@ -1,0 +1,12 @@
+{
+  "appId": "com.nelvinbenefits.app",
+  "appName": "Nelvin",
+  "webDir": "dist",
+  "backgroundColor": "#08261D",
+  "server": { "androidScheme": "https" },
+  "plugins": {
+    "SplashScreen": { "launchShowDuration": 800, "backgroundColor": "#08261D", "showSpinner": false },
+    "StatusBar": { "style": "DARK", "backgroundColor": "#08261D" },
+    "Keyboard": { "resize": "body" }
+  }
+}

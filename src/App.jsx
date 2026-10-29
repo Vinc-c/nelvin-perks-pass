@@ -7,6 +7,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import ScrollToTop from './components/ScrollToTop';
 import { I18nProvider } from '@/i18n/I18nContext';
+import VpnBanner from '@/components/VpnBanner';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Login from '@/pages/Login';
 const Register = lazy(() => import('@/pages/Register'));
@@ -179,6 +180,7 @@ function App() {
         <QueryClientProvider client={queryClientInstance}>
           <Router>
             <ScrollToTop />
+            <VpnBanner />
             <AuthenticatedApp />
           </Router>
           <Toaster />

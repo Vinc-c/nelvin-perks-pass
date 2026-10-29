@@ -206,6 +206,22 @@ export default function MerchantPortal() {
                   <>
                     <p className="flex items-center gap-1.5 font-semibold"><NvIcon name="VERIFIED" className="h-5 w-5" /> {scanResult.offer_title}</p>
                     <p>{t("mc.scan.billLine", { bill: money.format(scanResult.bill_usd, scanResult.currency), discount: money.format(scanResult.discount_applied, scanResult.currency) })} · <strong>{t("mc.scan.toCollect", { net: money.format(scanResult.net_usd, scanResult.currency) })}</strong></p>
+                    {scanResult.offer && (
+                      <div className="my-2 rounded-lg border border-emerald-200 bg-white/70 p-2.5 text-emerald-900">
+                        <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-600">{t("mc.scan.honour")}</p>
+                        <p className="font-semibold">{scanResult.offer.title}</p>
+                        <p className="text-xs">
+                          {scanResult.offer.discount_type === "PERK"
+                            ? t("mc.scan.giveItem", { item: scanResult.offer.perk_label || scanResult.offer.title })
+                            : scanResult.offer.discount_type === "FIXED"
+                              ? t("mc.scan.fixed", { value: money.format(scanResult.offer.discount_value, currency) })
+                              : scanResult.offer.discount_type === "CASHBACK"
+                                ? t("mc.scan.cashbackType", { value: scanResult.offer.discount_value })
+                                : t("mc.scan.pct", { value: scanResult.offer.discount_value })}
+                        </p>
+                        {scanResult.offer.deal_terms && <p className="mt-1 text-xs text-emerald-700">{t("mc.scan.terms", { terms: scanResult.offer.deal_terms })}</p>}
+                      </div>
+                    )}
                     <p className="text-xs">{scanResult.paid_with_wallet ? t("mc.scan.paidWallet") : t("mc.scan.collectUsual")} {t("mc.scan.cashback", { amount: money.format(scanResult.cashback_credited, scanResult.currency) })}</p>
                   </>
                 ) : scanResult.reason}

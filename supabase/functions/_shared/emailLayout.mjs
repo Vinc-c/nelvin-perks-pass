@@ -37,7 +37,7 @@ export function paragraph(html) {
  * @param {{lang?:string, preheader?:string, title:string, bodyHtml:string, cta?:{label:string,url:string}, siteUrl?:string, footer?:boolean}} o
  */
 export function renderEmail(o) {
-  const lang = FOOT[o.lang] ? o.lang : "fr";
+  const lang = FOOT[o.lang] ? o.lang : "en";
   const f = FOOT[lang];
   const rtl = lang === "ar";
   const site = o.siteUrl || BRAND.site;

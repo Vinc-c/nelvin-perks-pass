@@ -4,7 +4,7 @@ import { translations } from "./translations";
 
 export function currentLang() {
   try {
-    const saved = localStorage.getItem("nelvin_lang");
+    const saved = localStorage.getItem("nelvin_lang_choice");
     if (saved && translations[saved]) return saved;
   } catch { /* storage unavailable */ }
   const html = typeof document !== "undefined" ? document.documentElement.lang : "";

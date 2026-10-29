@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from '@/App.jsx'
 import '@/index.css'
+import { initNative, isNative } from '@/lib/native';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <App />
@@ -25,7 +26,8 @@ try {
 } catch { /* Network Information API unavailable */ }
 
 // Register the Service Worker for offline-first PWA (QR redemption without network)
-if ('serviceWorker' in navigator) {
+initNative();
+if ('serviceWorker' in navigator && !isNative()) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   });

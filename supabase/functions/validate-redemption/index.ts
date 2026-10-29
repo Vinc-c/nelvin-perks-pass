@@ -32,5 +32,12 @@ serve(async (req) => {
     if (error.code === "22023") return json({ ok: false, reason: "CURRENCY", error: error.message });
     throw error;
   }
+  if (data?.ok) {
+    // Show the merchant exactly which offer was just honoured (what to hand over).
+    const { data: red } = await admin.from("redemptions")
+      .select("offers(title, description, discount_type, discount_value, perk_label, deal_terms, image_url)")
+      .eq("code_used", code).maybeSingle();
+    if (red?.offers) return json({ ...data, offer: red.offers });
+  }
   return json(data);
 });

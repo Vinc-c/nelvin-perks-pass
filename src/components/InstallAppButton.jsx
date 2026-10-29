@@ -3,7 +3,7 @@ import { Download, Share, X } from "lucide-react";
 import { useI18n } from "@/i18n/I18nContext";
 
 const isStandalone = () =>
-  window.matchMedia?.("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  window.matchMedia?.("(display-mode: standalone)").matches || window.navigator.standalone === true || document.documentElement.classList.contains("is-native");
 const isIos = () => /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
 
 /**

@@ -20,7 +20,6 @@ function Card({ k, hidden }) {
       <div className="relative h-32 w-full">
         <Image src={categoryImages[k]} fittingType="fill" className="h-full w-full transition duration-500 group-hover:scale-105" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-        <span className="absolute bottom-3 left-3 rounded-full bg-nv-gold px-2.5 py-1 text-[11px] font-bold text-nv-ink shadow">{t("land.memberOffer")}</span>
       </div>
       <div className="p-4">
         <p className="text-sm font-bold text-nv-ink">{t(`cat.${k}`)}</p>

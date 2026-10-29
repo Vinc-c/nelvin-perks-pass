@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PortalLayout from "@/components/PortalLayout";
 import SectionCard from "@/components/dashboard/SectionCard";
+import DevicesPanel from "@/components/DevicesPanel";
 import { useAuth } from "@/lib/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { useI18n } from "@/i18n/I18nContext";
@@ -170,6 +171,8 @@ export default function SecuritySettings() {
 
         <SectionCard icon={LogOut} title={t("ac.sec.devices")}>
           <p className="text-sm text-slate-500">{t("ac.sec.devicesText")}</p>
+          <p className="mb-3 mt-2 text-xs text-slate-400">{t("dev.limitNote")}</p>
+          <DevicesPanel />
           <button onClick={logoutOthers} disabled={sessionsBusy} className="mt-4 flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50">
             {sessionsBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogOut className="h-4 w-4" />} {t("ac.sec.logoutOthers")}
           </button>
