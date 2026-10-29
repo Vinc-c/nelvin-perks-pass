@@ -412,4 +412,5 @@ export default [
   ["dev.unknown", "Unknown device", "Appareil inconnu", "Kifaa kisichojulikana", "جهاز غير معروف", "Ẹ̀rọ àìmọ̀"],
   ["dev.lastSeen", "Last used {date}", "Dernière utilisation : {date}", "Ilitumika mwisho {date}", "آخر استخدام {date}", "Lílò gbẹ̀yìn {date}"],
   ["dev.limitNote", "Maximum 4 devices per account.", "Maximum 4 appareils par compte.", "Vifaa 4 kwa akaunti kwa kiwango cha juu.", "4 أجهزة كحد أقصى لكل حساب.", "Ẹ̀rọ mẹ́rin ní púpọ̀ jùlọ fún àkọọ́lẹ̀ kan."],
+  ["vpn.banner", "VPN or proxy detected. For your security, payments and withdrawals are paused. Turn it off to continue.", "VPN ou proxy détecté. Pour votre sécurité, les paiements et retraits sont suspendus. Désactivez-le pour continuer.", "VPN au proksi imegunduliwa. Kwa usalama wako, malipo na uondoaji vimesitishwa. Izime ili kuendelea.", "تم اكتشاف VPN أو وكيل. لأمانك، تم تعليق المدفوعات والسحوبات. أوقفه للمتابعة.", "A rí VPN tàbí proxy. Fún ààbò rẹ, a ti dá ìsanwó àti yíyọ owó dúró. Pa á kí o lè tẹ̀síwájú."],
 ];
