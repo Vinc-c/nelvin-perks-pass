@@ -157,6 +157,14 @@ function appendQuery(base: string, params: Record<string, string>): string {
 // deno-lint-ignore no-explicit-any
 type Any = any;
 
+// Currencies with no minor unit: PSPs expect the whole amount, not amount x 100.
+export const ZERO_DECIMAL = new Set(["XAF", "XOF", "UGX", "RWF", "KMF", "GNF", "DJF", "BIF", "MGA", "CLP", "JPY", "KRW", "VND", "PYG", "VUV", "XPF"]);
+/** Amount in the PSP's smallest unit (cents, or whole units for zero-decimal currencies). */
+export const toMinor = (amount: number, currency: string) =>
+  ZERO_DECIMAL.has(currency.toUpperCase()) ? Math.round(amount) : Math.round(amount * 100);
+export const fromMinor = (minor: number, currency: string) =>
+  ZERO_DECIMAL.has(String(currency).toUpperCase()) ? Number(minor) : Number(minor) / 100;
+
 const paddleBase = (psp: PspContext) =>
   psp.liveMode("paddle") ? "https://api.paddle.com" : "https://sandbox-api.paddle.com";
 
@@ -184,7 +192,7 @@ async function initStripe(psp: PspContext, ctx: InitCtx): Promise<InitResult> {
   params.set("mode", "payment");
   params.set("line_items[0][quantity]", "1");
   params.set("line_items[0][price_data][currency]", ctx.currency.toLowerCase());
-  params.set("line_items[0][price_data][unit_amount]", String(Math.round(ctx.amount * 100)));
+  params.set("line_items[0][price_data][unit_amount]", String(toMinor(ctx.amount, ctx.currency)));
   params.set("line_items[0][price_data][product_data][name]", "Nelvin Wallet Recharge");
   params.set("client_reference_id", ctx.reference);
   if (ctx.email) params.set("customer_email", ctx.email);
@@ -209,7 +217,7 @@ async function initPaystack(psp: PspContext, ctx: InitCtx): Promise<InitResult> 
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       email: ctx.email || "customer@nelvin.app",
-      amount: Math.round(ctx.amount * 100),
+      amount: toMinor(ctx.amount, ctx.currency),
       currency: ctx.currency.toUpperCase(),
       reference: ctx.reference,
       callback_url: appendQuery(ctx.callback_url, { psp: "paystack", ref: ctx.reference, status: "success" }),
@@ -251,7 +259,7 @@ async function initPaddle(psp: PspContext, ctx: InitCtx): Promise<InitResult> {
         quantity: 1,
         price: {
           description: "Nelvin Wallet Recharge",
-          unit_price: { amount: String(Math.round(ctx.amount * 100)), currency_code: ctx.currency.toUpperCase() },
+          unit_price: { amount: String(toMinor(ctx.amount, ctx.currency)), currency_code: ctx.currency.toUpperCase() },
           product: { name: "Nelvin Wallet Recharge", tax_category: "standard" },
         },
       }],
@@ -268,11 +276,14 @@ async function initPaddle(psp: PspContext, ctx: InitCtx): Promise<InitResult> {
 async function initPayunit(psp: PspContext, ctx: InitCtx): Promise<InitResult> {
   const [apiKey, username, password] = await psp.need("payunit", "PAYUNIT_API_KEY", "PAYUNIT_API_USERNAME", "PAYUNIT_API_PASSWORD");
   const basic = btoa(`${username}:${password}`);
+  if (ctx.currency.toUpperCase() !== "XAF") {
+    throw new Error(`Payunit only accepts XAF (FCFA CEMAC); ${ctx.currency.toUpperCase()} is not supported. Choose XAF or another payment method.`);
+  }
   const res = await fetch("https://gateway.payunit.net/api/gateway/initialize", {
     method: "POST",
     headers: { "x-api-key": apiKey, mode: psp.liveMode("payunit") ? "live" : "test", Authorization: `Basic ${basic}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      total_amount: ctx.amount,
+      total_amount: Math.round(ctx.amount),
       currency: ctx.currency.toUpperCase(),
       transaction_id: ctx.reference,
       return_url: appendQuery(ctx.callback_url, { psp: "payunit", ref: ctx.reference }),
@@ -344,7 +355,7 @@ async function verifyStripe(psp: PspContext, exp: Expected): Promise<VerifyResul
   });
   const d: Any = await res.json();
   const paid = d.payment_status === "paid";
-  const ok = paid && matches(exp, { reference: d.client_reference_id ?? "", amount: d.amount_total / 100, currency: d.currency });
+  const ok = paid && matches(exp, { reference: d.client_reference_id ?? "", amount: fromMinor(d.amount_total, d.currency), currency: d.currency });
   return { ok, status: paid && !ok ? "mismatch" : d.payment_status || "unknown" };
 }
 
@@ -355,7 +366,7 @@ async function verifyPaystack(psp: PspContext, exp: Expected): Promise<VerifyRes
   });
   const d: Any = (await res.json()).data || {};
   const paid = d.status === "success";
-  const ok = paid && matches(exp, { reference: d.reference, amount: d.amount / 100, currency: d.currency });
+  const ok = paid && matches(exp, { reference: d.reference, amount: fromMinor(d.amount, d.currency), currency: d.currency });
   return { ok, status: paid && !ok ? "mismatch" : d.status || "unknown" };
 }
 
@@ -382,7 +393,7 @@ async function verifyPaddle(psp: PspContext, exp: Expected): Promise<VerifyResul
   const total = d.details?.totals?.grand_total;
   const ok = paid && matches(exp, {
     reference: d.custom_data?.nelvin_reference ?? "",
-    amount: total != null ? Number(total) / 100 : null,
+    amount: total != null ? fromMinor(Number(total), d.currency_code) : null,
     currency: d.currency_code,
   });
   return { ok, status: paid && !ok ? "mismatch" : d.status || "unknown" };
@@ -399,7 +410,8 @@ async function verifyPayunit(psp: PspContext, exp: Expected): Promise<VerifyResu
   const status = d.data?.transaction_status || d.status || "unknown";
   const paid = status === "SUCCESS";
   const amount = d.data?.transaction_amount ?? d.data?.amount;
-  const ok = paid && matches(exp, { amount: amount != null ? Number(amount) : null });
+  const cur = d.data?.transaction_currency ?? d.data?.currency;
+  const ok = paid && matches(exp, { amount: amount != null ? Number(amount) : null, currency: cur ?? null });
   return { ok, status: paid && !ok ? "mismatch" : status };
 }
 

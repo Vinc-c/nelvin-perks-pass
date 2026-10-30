@@ -5,7 +5,7 @@
 //   GIFT           — a B2C membership bought for someone else (gift code issued once paid)
 // A PENDING transaction is recorded first; verify-payment completes it.
 import { adminClient, errorMessage, getCaller, json, readJson, serve } from "../_shared/http.ts";
-import { initPayment, PspContext, routePayment } from "../_shared/paymentRouter.ts";
+import { initPayment, PspContext, routePayment, ZERO_DECIMAL } from "../_shared/paymentRouter.ts";
 
 const VALID_METHODS = ["CARD", "MOBILE_MONEY", "BANK_TRANSFER", "APPLE_PAY", "GOOGLE_PAY"];
 const PURPOSES = ["RECHARGE", "SUBSCRIPTION", "COMPANY_TOPUP", "GIFT"];
@@ -98,6 +98,10 @@ serve(async (req) => {
     description = `Abonnement ${plan.name} (${cycle === "ANNUAL" ? "annuel" : "mensuel"})`;
   }
 
+  // Zero-decimal currencies (XAF, XOF…) are charged in whole units.
+  if (ZERO_DECIMAL.has(currency)) amount = Math.round(amount);
+  if (amount <= 0) return json({ error: "Montant invalide" }, 400);
+
   const psp = await PspContext.load(admin);
   let route: ReturnType<typeof routePayment>;
   try {
@@ -154,7 +158,7 @@ serve(async (req) => {
       email: user.email || "",
       reference,
       callback_url: callbackUrl,
-      metadata: { user_id: user.id, name: profile.full_name || "", purpose },
+      metadata: { user_id: user.id, name: profile.full_name || "", purpose, payment_country: ({ Cameroun: "CM", Gabon: "GA", Tchad: "TD", Congo: "CG", "République démocratique du Congo": "CD", "République centrafricaine": "CF", "Guinée équatoriale": "GQ" } as Record<string, string>)[country] || "CM" },
     });
     await admin.from("transactions").update({ provider_ref: session.provider_ref }).eq("id", tx.id);
     return json({
