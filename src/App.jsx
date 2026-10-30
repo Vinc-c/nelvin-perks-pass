@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { Toaster } from "@/components/ui/toaster"
+import ErrorBoundary from "@/components/ErrorBoundary"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
@@ -181,7 +182,9 @@ function App() {
           <Router>
             <ScrollToTop />
             <VpnBanner />
-            <AuthenticatedApp />
+            <ErrorBoundary>
+              <AuthenticatedApp />
+            </ErrorBoundary>
           </Router>
           <Toaster />
         </QueryClientProvider>

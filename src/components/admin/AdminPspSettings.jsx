@@ -109,9 +109,10 @@ function ProviderCard({ p, onChange }) {
     setTesting(true);
     try {
       const res = await invokeFunction("psp-test", { provider: p.id });
-      toast({ title: res.data.ok ? `${p.display_name} : connexion OK` : `${p.display_name} : échec`, description: res.data.message, variant: res.data.ok ? undefined : "destructive" });
+      const ok = !!res?.data?.ok;
+      toast({ title: ok ? `${p.display_name} : connexion OK` : `${p.display_name} : échec`, description: String(res?.data?.message ?? ""), variant: ok ? undefined : "destructive" });
     } catch (e) {
-      toast({ title: "Test impossible", description: e.message, variant: "destructive" });
+      toast({ title: "Test impossible", description: String(e?.message || e), variant: "destructive" });
     } finally {
       setTesting(false);
       onChange();
@@ -187,7 +188,8 @@ function ProviderCard({ p, onChange }) {
 
 /** Super admin: PSP credentials (Vault), activation, live mode, routing preview. */
 export default function AdminPspSettings() {
-  const { data: providers, loading, reload } = useAsync(() => entities.PspProvider.list("priority"), [], { initial: [] });
+  const { data, loading, reload } = useAsync(() => entities.PspProvider.list("priority"), [], { initial: [] });
+  const providers = Array.isArray(data) ? data : [];
   const [audience, setAudience] = useState("B2C");
   const [method, setMethod] = useState("MOBILE_MONEY");
   const [country, setCountry] = useState("Cameroun");

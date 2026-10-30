@@ -19,6 +19,7 @@ import AdminPlans from "@/components/admin/AdminPlans";
 import AdminPayments from "@/components/admin/AdminPayments";
 import AdminPlatformSettings from "@/components/admin/AdminPlatformSettings";
 import AdminAuditLog from "@/components/admin/AdminAuditLog";
+import AdminIndividuals from "@/components/admin/AdminIndividuals";
 
 const SECTIONS = {
   overview: AdminOverview,
@@ -27,6 +28,7 @@ const SECTIONS = {
   cms_copy: AdminCmsCopy,
   cms_categories: AdminCmsCategories,
   companies: AdminCompanyManagement,
+  individuals: AdminIndividuals,
   kyc: AdminMerchantVetting,
   offers: AdminOffers,
   sales: AdminSalesCodes,
