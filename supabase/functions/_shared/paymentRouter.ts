@@ -268,7 +268,7 @@ async function initPaddle(psp: PspContext, ctx: InitCtx): Promise<InitResult> {
 async function initPayunit(psp: PspContext, ctx: InitCtx): Promise<InitResult> {
   const [apiKey, username, password] = await psp.need("payunit", "PAYUNIT_API_KEY", "PAYUNIT_API_USERNAME", "PAYUNIT_API_PASSWORD");
   const basic = btoa(`${username}:${password}`);
-  const res = await fetch("https://api.payunit.net/api/gateway/initialize", {
+  const res = await fetch("https://gateway.payunit.net/api/gateway/initialize", {
     method: "POST",
     headers: { "x-api-key": apiKey, mode: psp.liveMode("payunit") ? "live" : "test", Authorization: `Basic ${basic}`, "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -280,7 +280,7 @@ async function initPayunit(psp: PspContext, ctx: InitCtx): Promise<InitResult> {
       payment_country: String(ctx.metadata?.payment_country || "CM"),
     }),
   });
-  const data: Any = await res.json();
+  const data: Any = await res.json().catch(() => ({}));
   if (!data.data?.transaction_url) throw new Error("Payunit: " + (data.message || res.status));
   return { authorization_url: data.data.transaction_url, reference: ctx.reference, provider_ref: ctx.reference };
 }
@@ -391,13 +391,12 @@ async function verifyPaddle(psp: PspContext, exp: Expected): Promise<VerifyResul
 async function verifyPayunit(psp: PspContext, exp: Expected): Promise<VerifyResult> {
   const [apiKey, username, password] = await psp.need("payunit", "PAYUNIT_API_KEY", "PAYUNIT_API_USERNAME", "PAYUNIT_API_PASSWORD");
   const basic = btoa(`${username}:${password}`);
-  const res = await fetch("https://api.payunit.net/api/gateway/checkstatus", {
-    method: "POST",
+  // GET /api/gateway/paymentstatus/{transaction_id} (developer.payunit.net/rest-api/get-payment-status)
+  const res = await fetch(`https://gateway.payunit.net/api/gateway/paymentstatus/${encodeURIComponent(exp.reference)}`, {
     headers: { "x-api-key": apiKey, mode: psp.liveMode("payunit") ? "live" : "test", Authorization: `Basic ${basic}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ transaction_id: exp.reference }),
   });
   const d: Any = await res.json().catch(() => ({}));
-  const status = d.data?.payment_status || d.status || "unknown";
+  const status = d.data?.transaction_status || d.status || "unknown";
   const paid = status === "SUCCESS";
   const amount = d.data?.transaction_amount ?? d.data?.amount;
   const ok = paid && matches(exp, { amount: amount != null ? Number(amount) : null });
