@@ -18,16 +18,16 @@ export const TIERS = [
 const WELLNESS = new Set(["WELLNESS_MENTAL", "FITNESS_SPORTS", "HEALTHCARE", "BEAUTY_CARE"]);
 
 export const BADGES = [
-  { id: "FIRST", name: "Premier pas", desc: "Utiliser une première offre", glyph: "SPARK", target: 1, metric: "redemptions" },
-  { id: "FOODIE", name: "Gourmet", desc: "5 offres restauration", glyph: "FOOD_DINING", target: 5, metric: "food" },
-  { id: "WELLNESS", name: "Bien-être", desc: "3 offres sport, santé ou beauté", glyph: "WELLNESS_MENTAL", target: 3, metric: "wellness" },
-  { id: "EXPLORER", name: "Explorateur", desc: "Utiliser des offres chez 5 partenaires", glyph: "CITY_PIN", target: 5, metric: "merchants" },
-  { id: "GLOBE", name: "Globe-trotter", desc: "Utiliser des offres dans 3 pays", glyph: "AFRICA", target: 3, metric: "countries" },
-  { id: "SAVER100", name: "Économe", desc: "100 $ économisés (remises + cashback)", glyph: "FINANCIAL_WELLNESS", target: 100, metric: "saved" },
-  { id: "SAVER500", name: "Top saver", desc: "500 $ économisés", glyph: "PASS_VIP", target: 500, metric: "saved" },
-  { id: "TEAM", name: "Esprit d'équipe", desc: "Reconnaître 5 collègues", glyph: "FAMILY_PARENTING", target: 5, metric: "sent", company: true },
-  { id: "STAR", name: "Collègue étoile", desc: "Être reconnu 5 fois", glyph: "STAR_MARK", target: 5, metric: "received", company: true },
-  { id: "AMBASSADOR", name: "Ambassadeur", desc: "3 filleuls inscrits", glyph: "WHATSAPP", target: 3, metric: "referrals" },
+  { id: "FIRST", name: "First step", desc: "Use your first offer", glyph: "SPARK", target: 1, metric: "redemptions" },
+  { id: "FOODIE", name: "Foodie", desc: "5 dining offers", glyph: "FOOD_DINING", target: 5, metric: "food" },
+  { id: "WELLNESS", name: "Wellness", desc: "3 sport, health or beauty offers", glyph: "WELLNESS_MENTAL", target: 3, metric: "wellness" },
+  { id: "EXPLORER", name: "Explorer", desc: "Use offers at 5 partners", glyph: "CITY_PIN", target: 5, metric: "merchants" },
+  { id: "GLOBE", name: "Globetrotter", desc: "Use offers in 3 countries", glyph: "AFRICA", target: 3, metric: "countries" },
+  { id: "SAVER100", name: "Saver", desc: "$100 saved (discounts + cashback)", glyph: "FINANCIAL_WELLNESS", target: 100, metric: "saved" },
+  { id: "SAVER500", name: "Top saver", desc: "$500 saved", glyph: "PASS_VIP", target: 500, metric: "saved" },
+  { id: "TEAM", name: "Team spirit", desc: "Recognize 5 colleagues", glyph: "FAMILY_PARENTING", target: 5, metric: "sent", company: true },
+  { id: "STAR", name: "Star colleague", desc: "Get recognized 5 times", glyph: "STAR_MARK", target: 5, metric: "received", company: true },
+  { id: "AMBASSADOR", name: "Ambassador", desc: "3 referrals signed up", glyph: "WHATSAPP", target: 3, metric: "referrals" },
 ];
 
 export function useRewards(user) {

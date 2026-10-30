@@ -106,35 +106,35 @@ const NAV = {
     ...SUPPORT,
   ],
   ADMIN: [
-    ...group("Pilotage", [
-      { to: "/admin", section: "overview", label: "Vue d'ensemble", icon: LayoutDashboard },
+    ...group("Overview", [
+      { to: "/admin", section: "overview", label: "Overview", icon: LayoutDashboard },
       { to: "/analytics", label: "Analytics", icon: BarChart3 },
     ]),
-    ...group("Contenu (CMS)", [
+    ...group("Content (CMS)", [
       { to: "/admin", section: "cms_logos", label: "CMS Logos", icon: Star },
       { to: "/admin", section: "cms_images", label: "CMS Images", icon: ImageIcon },
       { to: "/admin", section: "cms_copy", label: "CMS Marketing", icon: Type },
-      { to: "/admin", section: "cms_categories", label: "CMS Catégories", icon: Tag },
+      { to: "/admin", section: "cms_categories", label: "CMS Categories", icon: Tag },
     ]),
-    ...group("Clients & partenaires", [
-      { to: "/admin", section: "companies", label: "Entreprises", icon: Building2 },
-      { to: "/admin", section: "individuals", label: "Particuliers", icon: Users },
-      { to: "/admin", section: "kyc", label: "Validation marchands", icon: Shield },
-      { to: "/admin", section: "offers", label: "Offres & SEO", icon: Tag },
-      { to: "/admin", section: "sales", label: "Codes commerciaux", icon: Ticket },
-      { to: "/merchant-directory", label: "Annuaire marchands", icon: Store },
+    ...group("Clients & partners", [
+      { to: "/admin", section: "companies", label: "Companies", icon: Building2 },
+      { to: "/admin", section: "individuals", label: "Individuals", icon: Users },
+      { to: "/admin", section: "kyc", label: "Merchant vetting", icon: Shield },
+      { to: "/admin", section: "offers", label: "Offers & SEO", icon: Tag },
+      { to: "/admin", section: "sales", label: "Sales codes", icon: Ticket },
+      { to: "/merchant-directory", label: "Merchant directory", icon: Store },
     ]),
-    ...group("Paiements", [
-      { to: "/admin", section: "payments", label: "Paiements & retraits", icon: Banknote },
-      { to: "/admin", section: "psp", label: "Clés PSP & routage", icon: KeyRound },
-      { to: "/admin", section: "plans", label: "Plans & tarifs", icon: Gem },
-      { to: "/admin", section: "currency", label: "Devises", icon: Globe },
+    ...group("Payments", [
+      { to: "/admin", section: "payments", label: "Payments & withdrawals", icon: Banknote },
+      { to: "/admin", section: "psp", label: "PSP keys & routing", icon: KeyRound },
+      { to: "/admin", section: "plans", label: "Plans & pricing", icon: Gem },
+      { to: "/admin", section: "currency", label: "Currencies", icon: Globe },
     ]),
-    ...group("Plateforme", [
+    ...group("Platform", [
       { to: "/admin", section: "staff", label: "Super Admins", icon: Crown },
-      { to: "/admin", section: "settings", label: "Paramètres plateforme", icon: SlidersHorizontal },
-      { to: "/admin", section: "audit", label: "Journal d'audit", icon: ScrollText },
-      { to: "/pull-requests", label: "PR à reviewer", icon: GitPullRequest },
+      { to: "/admin", section: "settings", label: "Platform settings", icon: SlidersHorizontal },
+      { to: "/admin", section: "audit", label: "Audit log", icon: ScrollText },
+      { to: "/pull-requests", label: "PRs to review", icon: GitPullRequest },
     ]),
     ...group("Support", [
       { to: "/support-center", label: "Help Desk", icon: Headphones },

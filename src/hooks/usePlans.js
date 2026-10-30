@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { entities } from "@/api/entities";
 import { useI18n } from "@/i18n/I18nContext";
 
-// Pricing lives in the `plans` table (Admin → Plans & tarifs). These defaults
+// Pricing lives in the `plans` table (Admin → Plans & pricing). These defaults
 // mirror the seeded rows and only cover the first paint.
 export const DEFAULT_PLANS = [
   { code: "PASS_BASIC", audience: "B2C", name: "Pass Basic", tagline: "Commencez à économiser au quotidien", price_monthly: 9, price_annual: 90, features: ["Accès aux offres partenaires", "Cashback sur chaque échange", "Wallet multi-devises", "Support par email"], popular: false, sort_order: 1 },

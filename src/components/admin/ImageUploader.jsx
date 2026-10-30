@@ -15,7 +15,7 @@ export default function ImageUploader({ value, onChange, label = "Image" }) {
       const { file_url } = await uploadPublicFile(file, "cms");
       onChange(file_url);
     } catch (err) {
-      toast({ title: "Téléversement impossible", description: err.message, variant: "destructive" });
+      toast({ title: "Upload failed", description: err.message, variant: "destructive" });
     } finally {
       setBusy(false);
     }
@@ -26,7 +26,7 @@ export default function ImageUploader({ value, onChange, label = "Image" }) {
       <div className="mt-1.5 flex items-center gap-3">
         <label className="flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-          {value ? "Remplacer" : "Téléverser"}
+          {value ? "Replace" : "Upload"}
           <input type="file" accept="image/*" className="hidden" onChange={(e) => pick(e.target.files?.[0])} />
         </label>
         {value && (

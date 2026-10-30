@@ -141,9 +141,9 @@ export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
       setUploading(false);
 
       const extraText = extraOffers.length
-        ? "\n\nOffres supplémentaires :\n" +
+        ? "\n\nAdditional offers:\n" +
           extraOffers
-            .map((o, i) => `#${i + 2}: ${o.headline} | mode d'emploi : ${o.howToUse} | utilisation : ${o.redeemable} | conditions : ${o.terms} | expiration : ${o.expiry}`)
+            .map((o, i) => `#${i + 2}: ${o.headline} | how to use: ${o.howToUse} | redemption: ${o.redeemable} | terms: ${o.terms} | expiry: ${o.expiry}`)
             .join("\n")
         : "";
 

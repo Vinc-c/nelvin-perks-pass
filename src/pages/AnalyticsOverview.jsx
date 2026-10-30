@@ -16,7 +16,7 @@ import { useI18n } from "@/i18n/I18nContext";
 import { Users, TrendingUp, Store, Wallet, ScanLine, Tag, Crown, BarChart3, Building2 } from "lucide-react";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from "recharts";
 
-const monthLabel = (key, locale = "fr-FR") => {
+const monthLabel = (key, locale = "en-US") => {
   const [y, m] = key.split("-").map(Number);
   return new Date(y, m - 1, 1).toLocaleDateString(locale, { month: "short" });
 };
@@ -34,17 +34,17 @@ function AdminAnalytics({ money, currency }) {
   return (
     <>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard icon={Users} label="Utilisateurs" value={s.users_total} tone="blue" hint={`${s.users?.MEMBER || 0} membres · ${s.users?.EMPLOYEE || 0} salariés`} />
-        <StatCard icon={Building2} label="Entreprises" value={s.companies} tone="emerald" delay={0.05} hint={`${s.companies_active} actives · ${s.companies_trial} en essai`} />
-        <StatCard icon={Store} label="Partenaires vérifiés" value={s.merchants?.VERIFIED || 0} tone="amber" delay={0.1} hint={`${s.pending_merchants} en attente`} />
-        <StatCard icon={Crown} label="Revenus abonnements (30 j)" value={money.format(s.subscription_revenue_30d_usd, currency)} tone="rose" delay={0.15} hint={`${s.active_subscriptions} abonnements actifs`} />
-        <StatCard icon={ScanLine} label="Offres utilisées (30 j)" value={s.redemptions_30d} tone="emerald" />
-        <StatCard icon={TrendingUp} label="Volume d'affaires (30 j)" value={money.format(s.gmv_30d_usd, currency)} tone="blue" delay={0.05} />
-        <StatCard icon={Tag} label="Économies membres (30 j)" value={money.format(Number(s.savings_30d_usd) + Number(s.cashback_30d_usd), currency)} tone="amber" delay={0.1} />
-        <StatCard icon={Wallet} label="Encours wallets" value={money.format(s.wallet_float_usd, currency)} tone="rose" delay={0.15} hint={`Entreprises ${money.format(s.company_wallets_usd, currency)} · à reverser ${money.format(s.merchant_payables_usd, currency)}`} />
+        <StatCard icon={Users} label="Users" value={s.users_total} tone="blue" hint={`${s.users?.MEMBER || 0} members · ${s.users?.EMPLOYEE || 0} employees`} />
+        <StatCard icon={Building2} label="Companies" value={s.companies} tone="emerald" delay={0.05} hint={`${s.companies_active} active · ${s.companies_trial} on trial`} />
+        <StatCard icon={Store} label="Verified partners" value={s.merchants?.VERIFIED || 0} tone="amber" delay={0.1} hint={`${s.pending_merchants} pending`} />
+        <StatCard icon={Crown} label="Subscription revenue (30d)" value={money.format(s.subscription_revenue_30d_usd, currency)} tone="rose" delay={0.15} hint={`${s.active_subscriptions} active subscriptions`} />
+        <StatCard icon={ScanLine} label="Offers redeemed (30d)" value={s.redemptions_30d} tone="emerald" />
+        <StatCard icon={TrendingUp} label="Gross merchandise volume (30d)" value={money.format(s.gmv_30d_usd, currency)} tone="blue" delay={0.05} />
+        <StatCard icon={Tag} label="Member savings (30d)" value={money.format(Number(s.savings_30d_usd) + Number(s.cashback_30d_usd), currency)} tone="amber" delay={0.1} />
+        <StatCard icon={Wallet} label="Wallet float" value={money.format(s.wallet_float_usd, currency)} tone="rose" delay={0.15} hint={`Companies ${money.format(s.company_wallets_usd, currency)} · payable to merchants ${money.format(s.merchant_payables_usd, currency)}`} />
       </div>
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        <SectionCard title={`Revenus & économies (${currency})`}>
+        <SectionCard title={`Revenue & savings (${currency})`}>
           <div className="h-60">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={monthly}>
@@ -52,13 +52,13 @@ function AdminAnalytics({ money, currency }) {
                 <YAxis stroke="#94a3b8" fontSize={12} />
                 <Tooltip formatter={(v) => money.formatIn(v, currency)} contentStyle={{ borderRadius: 12 }} />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Area type="monotone" dataKey="revenue" name="Revenus" stroke="#8B5CF6" fill="#8B5CF622" strokeWidth={2} />
-                <Area type="monotone" dataKey="savings" name="Économies membres" stroke="#10B981" fill="#10B98122" strokeWidth={2} />
+                <Area type="monotone" dataKey="revenue" name="Revenue" stroke="#8B5CF6" fill="#8B5CF622" strokeWidth={2} />
+                <Area type="monotone" dataKey="savings" name="Member savings" stroke="#10B981" fill="#10B98122" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </SectionCard>
-        <SectionCard title="Inscriptions & utilisations">
+        <SectionCard title="Sign-ups & redemptions">
           <div className="h-60">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={monthly}>
@@ -66,8 +66,8 @@ function AdminAnalytics({ money, currency }) {
                 <YAxis stroke="#94a3b8" fontSize={12} allowDecimals={false} />
                 <Tooltip contentStyle={{ borderRadius: 12 }} />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Bar dataKey="signups" name="Inscriptions" fill="#3B82F6" radius={[6, 6, 0, 0]} />
-                <Bar dataKey="redemptions" name="Offres utilisées" fill="#F59E0B" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="signups" name="Sign-ups" fill="#3B82F6" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="redemptions" name="Offers redeemed" fill="#F59E0B" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -170,7 +170,7 @@ export default function AnalyticsOverview() {
   return (
     <PortalLayout title={t("mc.an.title")} theme="light">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold text-slate-900">{isAdmin(user) ? "Analytics plateforme" : t("mc.an.mine")}</h1>
+        <h1 className="text-xl font-bold text-slate-900">{isAdmin(user) ? "Platform analytics" : t("mc.an.mine")}</h1>
         <CurrencySelect value={currency} onChange={setCurrency} />
       </div>
       {isAdmin(user) ? (

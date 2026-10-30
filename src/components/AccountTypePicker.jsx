@@ -3,9 +3,9 @@ import { User as UserIcon, Store, Building2 } from "lucide-react";
 import { useI18n } from "@/i18n/I18nContext";
 
 export const ACCOUNT_TYPES = [
-  { v: "particulier", l: "Particulier", s: "Profiter des offres", lk: "reg.individual", sk: "reg.individualSub", icon: UserIcon },
-  { v: "marchand", l: "Marchand", s: "Publier vos offres", lk: "reg.merchant", sk: "reg.merchantSub", icon: Store },
-  { v: "entreprise", l: "Entreprise / RH", s: "Gérer vos employés", lk: "reg.company", sk: "reg.companySub", icon: Building2 },
+  { v: "particulier", l: "Individual", s: "Enjoy the offers", lk: "reg.individual", sk: "reg.individualSub", icon: UserIcon },
+  { v: "marchand", l: "Merchant", s: "Publish your offers", lk: "reg.merchant", sk: "reg.merchantSub", icon: Store },
+  { v: "entreprise", l: "Company / HR", s: "Manage your employees", lk: "reg.company", sk: "reg.companySub", icon: Building2 },
 ];
 
 export default function AccountTypePicker({ value, onChange }) {
