@@ -60,12 +60,12 @@ export default function Notifications() {
     : notifications.filter((n) => n.type === filter);
 
   const filters = [
-    { id: "all", label: "Toutes" },
-    { id: "unread", label: "Non lues" },
+    { id: "all", label: "All" },
+    { id: "unread", label: "Unread" },
     { id: "CASHBACK", label: "Cashback" },
-    { id: "RECHARGE", label: "Recharges" },
-    { id: "ANNOUNCEMENT", label: "Annonces" },
-    { id: "ALERT", label: "Alertes" },
+    { id: "RECHARGE", label: "Top-ups" },
+    { id: "ANNOUNCEMENT", label: "Announcements" },
+    { id: "ALERT", label: "Alerts" },
   ];
 
   return (
@@ -73,7 +73,7 @@ export default function Notifications() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl font-bold text-slate-900">Notifications</h1>
-          <p className="text-sm text-slate-500">{unreadCount} non lue{unreadCount > 1 ? "s" : ""} · cashback, recharges & annonces</p>
+          <p className="text-sm text-slate-500">{unreadCount} unread · cashback, top-ups & announcements</p>
         </div>
         <div className="flex gap-2">
           <button onClick={load} className="flex items-center gap-1.5 not-pill rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"><RefreshCw className="h-4 w-4" /></button>
@@ -91,7 +91,7 @@ export default function Notifications() {
         {loading ? (
           <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-slate-400" /></div>
         ) : filtered.length === 0 ? (
-          <EmptyState icon={Bell} title="Aucune notification" description="Vos cashbacks, recharges et annonces apparaîtront ici." />
+          <EmptyState icon={Bell} title="No notifications" description="Your cashback, top-ups and announcements will appear here." />
         ) : (
           filtered.map((n, i) => {
             const Icon = iconMap[n.type] || Bell;
@@ -116,9 +116,9 @@ export default function Notifications() {
                 </div>
                 <div className="flex flex-shrink-0 items-center gap-1">
                   {!n.read && (
-                    <button onClick={() => markRead(n.id)} title="Marquer comme lu" className="not-pill rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"><Check className="h-4 w-4" /></button>
+                    <button onClick={() => markRead(n.id)} title="Mark as read" className="not-pill rounded-lg p-1.5 text-slate-400 hover:bg-slate-100"><Check className="h-4 w-4" /></button>
                   )}
-                  <button onClick={() => remove(n.id)} title="Supprimer" className="not-pill rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-500"><Trash2 className="h-4 w-4" /></button>
+                  <button onClick={() => remove(n.id)} title="Delete" className="not-pill rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-500"><Trash2 className="h-4 w-4" /></button>
                 </div>
                 {!n.read && <span className="mt-1 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-emerald-500" />}
               </motion.div>

@@ -39,7 +39,7 @@ export function useCatalog() {
         return {
           ...o,
           merchant: m,
-          merchant_name: m?.name || "Partenaire",
+          merchant_name: m?.name || "Partner",
           city: m?.city || "",
           country: m?.country || "",
           category: o.category || m?.category || "",
@@ -56,7 +56,7 @@ export function offerBadge(offer, format, t) {
   const v = Number(offer.discount_value || 0);
   switch (offer.discount_type) {
     case "PERK":
-      return offer.perk_label || (t ? t("offer.perkDefault") : "Privilège offert");
+      return offer.perk_label || (t ? t("offer.perkDefault") : "Perk included");
     case "FIXED":
       return `-${format ? format(v) : `$${v}`}`;
     case "CASHBACK":

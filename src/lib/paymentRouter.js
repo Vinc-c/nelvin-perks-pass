@@ -3,12 +3,12 @@
 // Kept in sync with supabase/functions/_shared/paymentRouter.ts (server side).
 
 export const PSPS = [
-  { id: "paddle", name: "Paddle", region: "Global", useCase: "SaaS B2B Merchant of Record, facturation internationale, taxe auto", methods: ["CARD", "BANK_TRANSFER"] },
-  { id: "stripe", name: "Stripe", region: "International", useCase: "Cartes internationales, Apple Pay, Google Pay", methods: ["CARD", "APPLE_PAY", "GOOGLE_PAY"] },
-  { id: "paystack", name: "Paystack", region: "Afrique de l'Ouest", useCase: "Cartes & virement Nigeria, Ghana, CEDEAO", methods: ["CARD", "BANK_TRANSFER"] },
-  { id: "flutterwave", name: "Flutterwave", region: "Pan-Afrique", useCase: "MTN MoMo, Orange Money, M-Pesa, Wave, paiements locaux", methods: ["MOBILE_MONEY", "CARD"] },
-  { id: "payunit", name: "Payunit", region: "CEMAC", useCase: "Cameroun, Gabon, Tchad — agrégation Mobile Money & carte", methods: ["MOBILE_MONEY", "CARD"] },
-  { id: "korapay", name: "Korapay", region: "Afrique de l'Ouest", useCase: "Nigeria & Ghana — cartes & virement (secours)", methods: ["CARD", "BANK_TRANSFER"] },
+  { id: "paddle", name: "Paddle", region: "Global", useCase: "B2B SaaS Merchant of Record, international invoicing, automatic tax", methods: ["CARD", "BANK_TRANSFER"] },
+  { id: "stripe", name: "Stripe", region: "International", useCase: "International cards, Apple Pay, Google Pay", methods: ["CARD", "APPLE_PAY", "GOOGLE_PAY"] },
+  { id: "paystack", name: "Paystack", region: "West Africa", useCase: "Cards & bank transfer in Nigeria, Ghana, ECOWAS", methods: ["CARD", "BANK_TRANSFER"] },
+  { id: "flutterwave", name: "Flutterwave", region: "Pan-Afrique", useCase: "MTN MoMo, Orange Money, M-Pesa, Wave, local payments", methods: ["MOBILE_MONEY", "CARD"] },
+  { id: "payunit", name: "Payunit", region: "CEMAC", useCase: "Cameroon, Gabon, Chad — Mobile Money & card aggregation", methods: ["MOBILE_MONEY", "CARD"] },
+  { id: "korapay", name: "Korapay", region: "West Africa", useCase: "Nigeria & Ghana — cards & bank transfer (backup)", methods: ["CARD", "BANK_TRANSFER"] },
 ];
 
 // Country (French name, matching src/data/africanCountries.js) → preferred PSP.
@@ -45,7 +45,7 @@ function idealRoute({ audience, method, country }) {
     return {
       primary: find("paddle"),
       fallback: [find("stripe")],
-      reason: "Facturation B2B routée vers Paddle (Merchant of Record + facturation fiscale automatisée).",
+      reason: "B2B billing routed to Paddle (Merchant of Record + automated tax invoicing).",
     };
   }
 
@@ -54,7 +54,7 @@ function idealRoute({ audience, method, country }) {
     return {
       primary: find("stripe"),
       fallback: [],
-      reason: `${method} pris en charge exclusivement par Stripe (wallets cartes internationaux).`,
+      reason: `${method} is supported exclusively by Stripe (international card wallets).`,
     };
   }
 
@@ -67,7 +67,7 @@ function idealRoute({ audience, method, country }) {
     return {
       primary,
       fallback,
-      reason: `Mobile Money routé vers ${primary.name} pour ${country || "Pan-Afrique"}.`,
+      reason: `Mobile Money routed to ${primary.name} for ${country || "Pan-Africa"}.`,
     };
   }
 
@@ -77,7 +77,7 @@ function idealRoute({ audience, method, country }) {
     return {
       primary: psp,
       fallback: [find("stripe"), find("korapay")].filter((p) => p.id !== psp.id),
-      reason: `${method === "BANK_TRANSFER" ? "Virement" : "Paiement carte"} en ${country} routé vers ${psp.name}.`,
+      reason: `${method === "BANK_TRANSFER" ? "Bank transfer" : "Card payment"} in ${country} routed to ${psp.name}.`,
     };
   }
 
@@ -85,7 +85,7 @@ function idealRoute({ audience, method, country }) {
   return {
     primary: find("stripe"),
     fallback: [find("paddle"), find("korapay")],
-    reason: `Paiement international (${method || "carte"}) routé vers Stripe.`,
+    reason: `International payment (${method || "card"}) routed to Stripe.`,
   };
 }
 
@@ -108,7 +108,7 @@ export function routePayment(ctx, enabled) {
   const chain = [ideal.primary, ...ideal.fallback];
   const pick = chain.find(usable) ||
     PSPS.filter(usable).sort((a, b) => pool.findIndex((e) => e.id === a.id) - pool.findIndex((e) => e.id === b.id))[0];
-  if (!pick) throw new Error("Aucun moyen de paiement actif pour cette méthode.");
+  if (!pick) throw new Error("No active payment provider for this method.");
   if (pick.id === ideal.primary.id) return ideal;
-  return { primary: pick, fallback: chain.filter((p) => p.id !== pick.id && usable(p)), reason: `${ideal.primary.name} indisponible : paiement routé vers ${pick.name}.` };
+  return { primary: pick, fallback: chain.filter((p) => p.id !== pick.id && usable(p)), reason: `${ideal.primary.name} unavailable: payment routed to ${pick.name}.` };
 }

@@ -143,6 +143,11 @@ const AuthenticatedApp = () => {
           <Route path="/pull-requests" element={<PullRequests />} />
         </Route>
 
+        {/* Analytics: HR (company), merchants (sales); admins always pass. */}
+        <Route element={<RoleRoute allow={["HR_ADMIN", "MERCHANT"]} />}>
+          <Route path="/analytics" element={<AnalyticsOverview />} />
+        </Route>
+
         {/* Shared — any onboarded account. Billing, membership & account
             settings stay reachable even when access is denied, so the user
             can renew. Transactional pages are gated by an active subscription. */}
@@ -150,7 +155,6 @@ const AuthenticatedApp = () => {
           <Route path="/support-center" element={<SupportCenter />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/analytics" element={<AnalyticsOverview />} />
           <Route path="/notification-settings" element={<NotificationSettings />} />
           <Route path="/membership-plans" element={<MembershipTiers />} />
           <Route path="/referral-program" element={<ReferralProgram />} />

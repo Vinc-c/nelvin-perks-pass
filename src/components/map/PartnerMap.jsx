@@ -164,7 +164,7 @@ export default function PartnerMap({ merchants, selectedId, onSelect, me, fitKey
       <MapChrome />
       <Framing merchants={located} selected={selected} me={me} fitKey={fitKey} />
       <Clusters merchants={located} selectedId={selectedId} onSelect={onSelect} />
-      {me && <Marker position={me} icon={meIcon} title="Vous êtes ici" />}
+      {me && <Marker position={me} icon={meIcon} title="You are here" />}
     </MapContainer>
   );
 }

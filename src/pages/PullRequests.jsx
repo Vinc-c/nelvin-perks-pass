@@ -22,7 +22,7 @@ export default function PullRequests() {
       const res = await invokeFunction("list-pull-requests", repo ? { repo } : {});
       setData(res.data);
     } catch (e) {
-      setError(e.message || "Échec du chargement");
+      setError(e.message || "Failed to load");
     } finally {
       setLoading(false);
     }
@@ -39,10 +39,10 @@ export default function PullRequests() {
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-xl font-bold text-slate-900">
-            PR en attente {data?.login ? `• @${data.login}` : ""}
+            Pending PRs {data?.login ? `• @${data.login}` : ""}
           </h2>
           <p className="text-sm text-slate-500">
-            {loading ? "Chargement…" : `${totalOpen} pull request${totalOpen > 1 ? "s" : ""} ouverte${totalOpen > 1 ? "s" : ""}${repo ? ` sur ${repo}` : " sur vos dépôts"}`}
+            {loading ? "Loading…" : `${totalOpen} open pull request${totalOpen === 1 ? "" : "s"}${repo ? ` on ${repo}` : " across your repositories"}`}
           </p>
         </div>
         <button
@@ -51,7 +51,7 @@ export default function PullRequests() {
           className="not-pill flex items-center gap-2 rounded-xl bg-brand px-4 py-2 text-sm font-medium text-white transition hover:bg-brand active:scale-95 disabled:opacity-50"
         >
           <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-          Rafraîchir
+          Refresh
         </button>
       </div>
 
@@ -62,7 +62,7 @@ export default function PullRequests() {
             onClick={() => setRepo("")}
             className={`not-pill rounded-full px-3 py-1.5 text-xs font-medium transition ${!repo ? "bg-brand text-white" : "bg-white text-slate-600 border border-slate-200 hover:border-slate-300"}`}
           >
-            Tous les dépôts
+            All repositories
           </button>
           {(data.repos || []).map((r) => (
             <button
@@ -79,14 +79,14 @@ export default function PullRequests() {
       )}
 
       {loading ? (
-        <Spinner label="Chargement des pull requests…" />
+        <Spinner label="Loading pull requests…" />
       ) : error ? (
         <div className="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-sm text-rose-600">{error}</div>
       ) : !data || data.count === 0 ? (
         <EmptyState
           icon={GitPullRequest}
-          title="Aucune PR ouverte"
-          description={repo ? `Aucune pull request ouverte sur ${repo}.` : "Aucune pull request ouverte sur vos dépôts GitHub."}
+          title="No open PRs"
+          description={repo ? `No open pull requests on ${repo}.` : "No open pull requests across your GitHub repositories."}
         />
       ) : (
         <div className="space-y-3">
@@ -109,7 +109,7 @@ export default function PullRequests() {
                   )}
                 </div>
                 <p className="mt-0.5 text-sm text-slate-500">
-                  <span className="font-medium text-slate-700">{pr.repo}</span> #{pr.number} • par {pr.author} • mis à jour {timeAgo(pr.updated_at)}
+                  <span className="font-medium text-slate-700">{pr.repo}</span> #{pr.number} • by {pr.author} • updated {timeAgo(pr.updated_at)}
                 </p>
                 {pr.labels?.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1.5">
@@ -120,7 +120,7 @@ export default function PullRequests() {
                 )}
               </div>
               <div className="flex shrink-0 items-center gap-3 text-xs text-slate-400">
-                <span className="flex items-center gap-1" title="Commentaires">
+                <span className="flex items-center gap-1" title="Comments">
                   <MessageSquare className="h-4 w-4" /> {pr.comments}
                 </span>
                 <ExternalLink className="h-4 w-4 opacity-0 transition group-hover:opacity-100" />
@@ -132,7 +132,7 @@ export default function PullRequests() {
 
       <p className="mt-6 flex items-center gap-1.5 text-xs text-slate-400">
         <GitPullRequest className="h-3.5 w-3.5" />
-        Source : GitHub Search API • {repo ? `repo:${repo}` : `user:${data?.login || "you"}`} • is:pr is:open
+        Source: GitHub Search API • {repo ? `repo:${repo}` : `user:${data?.login || "you"}`} • is:pr is:open
       </p>
     </PortalLayout>
   );

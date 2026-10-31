@@ -70,8 +70,8 @@ export default function AdminSalesCodes() {
       {/* KPIs */}
       <div className="grid gap-4 sm:grid-cols-3">
         {[
-          { icon: Activity, label: "Codes actifs", value: codes.filter((c) => c.status === "ACTIVE").length, color: "blue" },
-          { icon: DollarSign, label: "Ventes tracées", value: `$${totalRevenue.toLocaleString()}`, color: "emerald" },
+          { icon: Activity, label: "Active codes", value: codes.filter((c) => c.status === "ACTIVE").length, color: "blue" },
+          { icon: DollarSign, label: "Tracked sales", value: `$${totalRevenue.toLocaleString()}`, color: "emerald" },
           { icon: TrendingUp, label: "Commissions", value: `$${totalCommission.toLocaleString()}`, color: "amber" },
         ].map((s) => {
           const Icon = s.icon;
@@ -89,10 +89,10 @@ export default function AdminSalesCodes() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative max-w-xs flex-1">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Rechercher un code ou commercial…" className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500" />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search for a code or sales agent…" className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500" />
         </div>
         <button onClick={() => setShowCreate(!showCreate)} className="flex items-center gap-2 rounded-full bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600">
-          {showCreate ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />} {showCreate ? "Annuler" : "Nouveau code commercial"}
+          {showCreate ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />} {showCreate ? "Cancel" : "New sales code"}
         </button>
       </div>
 
@@ -100,23 +100,23 @@ export default function AdminSalesCodes() {
       {showCreate && (
         <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            <label className="text-xs text-slate-500">Nom du commercial
-              <input value={draft.agent_name} onChange={(e) => setDraft({ ...draft, agent_name: e.target.value })} placeholder="Aïcha Diallo" className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
+            <label className="text-xs text-slate-500">Agent name
+              <input value={draft.agent_name} onChange={(e) => setDraft({ ...draft, agent_name: e.target.value })} placeholder="Aicha Diallo" className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
             </label>
             <label className="text-xs text-slate-500">Email
               <input value={draft.agent_email} onChange={(e) => setDraft({ ...draft, agent_email: e.target.value })} placeholder="aicha@nelvin.com" className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
             </label>
-            <label className="text-xs text-slate-500">Téléphone
+            <label className="text-xs text-slate-500">Phone
               <input value={draft.agent_phone} onChange={(e) => setDraft({ ...draft, agent_phone: e.target.value })} placeholder="+237…" className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
             </label>
-            <label className="text-xs text-slate-500">Région
+            <label className="text-xs text-slate-500">Region
               <input value={draft.region} onChange={(e) => setDraft({ ...draft, region: e.target.value })} placeholder="Afrique Centrale" className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
             </label>
             <label className="text-xs text-slate-500">Commission (%)
               <input type="number" min="0" max="50" value={draft.commission_rate} onChange={(e) => setDraft({ ...draft, commission_rate: e.target.value })} className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none" />
             </label>
           </div>
-          <button onClick={create} className="mt-4 rounded-full bg-emerald-600 px-5 py-2 text-sm font-medium text-white hover:bg-emerald-700">Générer le code</button>
+          <button onClick={create} className="mt-4 rounded-full bg-emerald-600 px-5 py-2 text-sm font-medium text-white hover:bg-emerald-700">Generate code</button>
         </motion.div>
       )}
 
@@ -127,19 +127,19 @@ export default function AdminSalesCodes() {
             <thead>
               <tr className="border-b border-slate-100 text-left text-slate-500">
                 <th className="p-4 font-medium">Code</th>
-                <th className="p-4 font-medium">Commercial</th>
+                <th className="p-4 font-medium">Sales agent</th>
                 <th className="p-4 font-medium">Commission</th>
-                <th className="p-4 font-medium">Ventes</th>
-                <th className="p-4 font-medium">Revenu</th>
-                <th className="p-4 font-medium">Com. gagnée</th>
+                <th className="p-4 font-medium">Sales</th>
+                <th className="p-4 font-medium">Revenue</th>
+                <th className="p-4 font-medium">Commission earned</th>
                 <th className="p-4"></th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={7} className="p-6 text-center text-slate-400">Chargement…</td></tr>
+                <tr><td colSpan={7} className="p-6 text-center text-slate-400">Loading…</td></tr>
               ) : filtered.length === 0 ? (
-                <tr><td colSpan={7} className="p-6 text-center text-slate-400">Aucun code commercial.</td></tr>
+                <tr><td colSpan={7} className="p-6 text-center text-slate-400">No sales codes.</td></tr>
               ) : filtered.map((c, i) => (
                 <motion.tr key={c.id} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }} className="border-b border-slate-50">
                   <td className="p-4">
@@ -157,8 +157,8 @@ export default function AdminSalesCodes() {
                   <td className="p-4 font-medium text-amber-600">${(c.total_commission || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
                   <td className="p-4">
                     <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => setLogFor(logFor === c.id ? null : c.id)} className="rounded-lg bg-emerald-100 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-200">+ Vente</button>
-                      <button onClick={() => toggle(c)} className="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-200">{c.status === "ACTIVE" ? "Pause" : "Activer"}</button>
+                      <button onClick={() => setLogFor(logFor === c.id ? null : c.id)} className="rounded-lg bg-emerald-100 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-200">+ Sale</button>
+                      <button onClick={() => toggle(c)} className="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-200">{c.status === "ACTIVE" ? "Pause" : "Activate"}</button>
                       <button onClick={() => remove(c)} className="rounded-lg bg-rose-100 p-1.5 text-rose-600 hover:bg-rose-200"><Trash2 className="h-3.5 w-3.5" /></button>
                     </div>
                   </td>
@@ -173,9 +173,9 @@ export default function AdminSalesCodes() {
       {logFor && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-2xl border border-emerald-200 bg-white p-4 shadow-2xl">
           <div className="flex items-center gap-3">
-            <span className="text-sm font-medium text-slate-700">Enregistrer une vente pour <span className="font-mono text-emerald-600">{codes.find((x) => x.id === logFor)?.code}</span></span>
-            <input type="number" value={logAmount} onChange={(e) => setLogAmount(e.target.value)} placeholder="Montant $" className="w-28 rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-emerald-500" />
-            <button onClick={logSale} className="rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">Valider</button>
+            <span className="text-sm font-medium text-slate-700">Log a sale for <span className="font-mono text-emerald-600">{codes.find((x) => x.id === logFor)?.code}</span></span>
+            <input type="number" value={logAmount} onChange={(e) => setLogAmount(e.target.value)} placeholder="Amount $" className="w-28 rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-emerald-500" />
+            <button onClick={logSale} className="rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">Confirm</button>
             <button onClick={() => setLogFor(null)} className="rounded-full p-2 text-slate-400 hover:bg-slate-100"><X className="h-4 w-4" /></button>
           </div>
         </motion.div>

@@ -31,16 +31,16 @@ export const categoryMeta = (value) =>
   OFFER_CATEGORIES.find((c) => c.value === value) || { value, label: value || translate("mc.cat.other"), emoji: "🏷️" };
 
 export const DISCOUNT_TYPES = [
-  { value: "PERCENTAGE", label: "Pourcentage (%)", suffix: "%" },
-  { value: "FIXED", label: "Montant fixe", suffix: "" },
+  { value: "PERCENTAGE", label: "Percentage (%)", suffix: "%" },
+  { value: "FIXED", label: "Fixed amount", suffix: "" },
   { value: "CASHBACK", label: "Cashback", suffix: "%" },
-  { value: "PERK", label: "Privilège premium (extra offert)", suffix: "" },
+  { value: "PERK", label: "Premium perk (free extra)", suffix: "" },
 ];
 
 export const AUDIENCES = [
-  { value: "ALL", label: "Tout le monde (B2B + B2C)" },
-  { value: "B2C", label: "Particuliers (B2C)" },
-  { value: "B2B_ONLY", label: "Employés (B2B)" },
+  { value: "ALL", label: "Everyone (B2B + B2C)" },
+  { value: "B2C", label: "Individuals (B2C)" },
+  { value: "B2B_ONLY", label: "Employees (B2B)" },
 ];
 /** Local illustration for a category (public/images/categories). */
 export const categoryImage = (value) =>

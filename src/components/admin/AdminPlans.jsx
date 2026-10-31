@@ -6,7 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Spinner } from "@/components/UiFeedback";
 import { Save, Crown } from "lucide-react";
 
-const AUDIENCE = { B2C: "Particuliers", B2B: "Entreprises", MERCHANT: "Partenaires" };
+const AUDIENCE = { B2C: "Individuals", B2B: "Companies", MERCHANT: "Partners" };
 
 function PlanRow({ plan, onSaved }) {
   const { toast } = useToast();
@@ -26,10 +26,10 @@ function PlanRow({ plan, onSaved }) {
         popular: !!p.popular, active: !!p.active,
       });
       await loadPlans(true);
-      toast({ title: `${p.name} mis à jour` });
+      toast({ title: `${p.name} updated` });
       onSaved();
     } catch (e) {
-      toast({ title: "Erreur", description: e.message, variant: "destructive" });
+      toast({ title: "Error", description: e.message, variant: "destructive" });
     } finally {
       setBusy(false);
     }
@@ -41,25 +41,25 @@ function PlanRow({ plan, onSaved }) {
       <div className="flex items-center justify-between gap-2">
         <span className="font-mono text-xs text-slate-400">{plan.code}</span>
         <div className="flex items-center gap-3 text-xs text-slate-600">
-          <label className="flex items-center gap-1"><input type="checkbox" checked={!!p.popular} onChange={(e) => setP({ ...p, popular: e.target.checked })} className="accent-amber-500" /> Mis en avant</label>
-          <label className="flex items-center gap-1"><input type="checkbox" checked={!!p.active} onChange={(e) => setP({ ...p, active: e.target.checked })} className="accent-emerald-500" /> Actif</label>
+          <label className="flex items-center gap-1"><input type="checkbox" checked={!!p.popular} onChange={(e) => setP({ ...p, popular: e.target.checked })} className="accent-amber-500" /> Featured</label>
+          <label className="flex items-center gap-1"><input type="checkbox" checked={!!p.active} onChange={(e) => setP({ ...p, active: e.target.checked })} className="accent-emerald-500" /> Active</label>
         </div>
       </div>
       <div className="mt-2 grid gap-2 sm:grid-cols-2">
-        <input value={p.name} onChange={(e) => setP({ ...p, name: e.target.value })} aria-label="Nom" className={input} />
-        <input value={p.tagline || ""} onChange={(e) => setP({ ...p, tagline: e.target.value })} placeholder="Accroche" aria-label="Accroche" className={input} />
-        <label className="text-xs text-slate-500">USD / mois<input type="number" min="0" step="0.01" value={p.price_monthly} onChange={(e) => setP({ ...p, price_monthly: e.target.value })} className={input} /></label>
-        <label className="text-xs text-slate-500">USD / an<input type="number" min="0" step="0.01" value={p.price_annual} onChange={(e) => setP({ ...p, price_annual: e.target.value })} className={input} /></label>
+        <input value={p.name} onChange={(e) => setP({ ...p, name: e.target.value })} aria-label="Name" className={input} />
+        <input value={p.tagline || ""} onChange={(e) => setP({ ...p, tagline: e.target.value })} placeholder="Tagline" aria-label="Tagline" className={input} />
+        <label className="text-xs text-slate-500">USD / month<input type="number" min="0" step="0.01" value={p.price_monthly} onChange={(e) => setP({ ...p, price_monthly: e.target.value })} className={input} /></label>
+        <label className="text-xs text-slate-500">USD / year<input type="number" min="0" step="0.01" value={p.price_annual} onChange={(e) => setP({ ...p, price_annual: e.target.value })} className={input} /></label>
         {p.audience === "B2C" && (
-          <label className="text-xs text-slate-500">Proches inclus (abonnement famille, 0–10)<input type="number" min="0" max="10" value={p.family_seats ?? 0} onChange={(e) => setP({ ...p, family_seats: e.target.value })} className={input} /></label>
+          <label className="text-xs text-slate-500">Family members included (family plan, 0–10)<input type="number" min="0" max="10" value={p.family_seats ?? 0} onChange={(e) => setP({ ...p, family_seats: e.target.value })} className={input} /></label>
         )}
         {p.audience === "B2B" && (
-          <label className="text-xs text-slate-500">Sièges max (vide = illimité)<input type="number" min="1" value={p.max_employees ?? ""} onChange={(e) => setP({ ...p, max_employees: e.target.value })} className={input} /></label>
+          <label className="text-xs text-slate-500">Max seats (empty = unlimited)<input type="number" min="1" value={p.max_employees ?? ""} onChange={(e) => setP({ ...p, max_employees: e.target.value })} className={input} /></label>
         )}
       </div>
-      <textarea value={p.featuresText} onChange={(e) => setP({ ...p, featuresText: e.target.value })} rows={4} aria-label="Avantages (un par ligne)" className="mt-2 w-full rounded-md border border-slate-200 px-2 py-1.5 text-sm" />
+      <textarea value={p.featuresText} onChange={(e) => setP({ ...p, featuresText: e.target.value })} rows={4} aria-label="Features (one per line)" className="mt-2 w-full rounded-md border border-slate-200 px-2 py-1.5 text-sm" />
       <div className="mt-2 flex justify-end">
-        <button onClick={save} disabled={busy || !dirty} className="flex items-center gap-1 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-30"><Save className="h-3.5 w-3.5" /> Enregistrer</button>
+        <button onClick={save} disabled={busy || !dirty} className="flex items-center gap-1 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-30"><Save className="h-3.5 w-3.5" /> Save</button>
       </div>
     </div>
   );
@@ -71,7 +71,7 @@ export default function AdminPlans() {
   if (loading && !plans.length) return <Spinner />;
   return (
     <div className="mt-6 space-y-6">
-      <p className="flex items-center gap-2 text-sm text-slate-500"><Crown className="h-4 w-4" /> Ces prix alimentent la page Tarifs, les abonnements et les paiements. Un changement s'applique aux prochains paiements.</p>
+      <p className="flex items-center gap-2 text-sm text-slate-500"><Crown className="h-4 w-4" /> These prices feed the Pricing page, subscriptions and payments. A change applies to upcoming payments.</p>
       {Object.entries(AUDIENCE).map(([aud, label]) => (
         <div key={aud}>
           <h3 className="mb-3 font-semibold text-slate-900">{label}</h3>

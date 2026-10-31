@@ -133,6 +133,12 @@ export default function HRPortal() {
       <AccessGate>
       {a.loading && !a.ready ? (
         <div className="flex justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-slate-400" /></div>
+      ) : !a.ready ? (
+        <div className="mx-auto my-16 max-w-md rounded-2xl border border-slate-200 bg-white p-6 text-center">
+          <p className="font-semibold text-slate-900">{user?.company_id ? "We couldn't load your company data" : "No company is linked to this account yet"}</p>
+          <p className="mt-1 text-sm text-slate-500">{user?.company_id ? "Check your connection and try again." : "Ask your administrator for an invitation."}</p>
+          {user?.company_id && <button type="button" onClick={a.reload} className="mt-4 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">Retry</button>}
+        </div>
       ) : (
       <>
       <RoleWelcomeHeader />

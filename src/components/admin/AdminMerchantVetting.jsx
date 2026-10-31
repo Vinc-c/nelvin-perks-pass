@@ -6,10 +6,10 @@ import { Loader2, Store } from "lucide-react";
 import AdminMerchantRow from "./AdminMerchantRow";
 
 const FILTERS = [
-  { k: "PENDING", l: "En attente" },
-  { k: "VERIFIED", l: "Validés" },
-  { k: "REJECTED", l: "Rejetés" },
-  { k: "ALL", l: "Tous" },
+  { k: "PENDING", l: "Pending" },
+  { k: "VERIFIED", l: "Approved" },
+  { k: "REJECTED", l: "Rejected" },
+  { k: "ALL", l: "All" },
 ];
 
 export default function AdminMerchantVetting() {
@@ -26,9 +26,9 @@ export default function AdminMerchantVetting() {
     try {
       await entities.Merchant.update(m.id, { verified_status: status });
       setMerchants((list) => list.map((x) => (x.id === m.id ? { ...x, verified_status: status } : x)));
-      toast({ title: status === "VERIFIED" ? "Partenaire validé" : "Partenaire refusé", description: m.name });
+      toast({ title: status === "VERIFIED" ? "Partner approved" : "Partner rejected", description: m.name });
     } catch (e) {
-      toast({ title: "Erreur", description: e.message, variant: "destructive" });
+      toast({ title: "Error", description: e.message, variant: "destructive" });
     }
   };
   const replace = (u) => setMerchants((list) => list.map((x) => (x.id === u.id ? { ...x, ...u } : x)));
@@ -50,7 +50,7 @@ export default function AdminMerchantVetting() {
         <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-slate-400" /></div>
       ) : shown.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-200 bg-white py-16 text-center text-sm text-slate-500">
-          <Store className="mx-auto mb-2 h-8 w-8 text-slate-300" /> Aucun partenaire dans cette catégorie.
+          <Store className="mx-auto mb-2 h-8 w-8 text-slate-300" /> No partners in this category.
         </div>
       ) : (
         shown.map((m) => <AdminMerchantRow key={m.id} merchant={m} onStatus={setStatus} onChange={replace} />)

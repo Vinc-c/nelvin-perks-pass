@@ -7,7 +7,7 @@ import { Image } from "@/components/ui/image";
 // NELVIN_ICON — gold icon mark only. Use on dark surfaces where the navy
 //               wordmark wouldn't be legible.
 export const NELVIN_LOGO =
-  "/images/nelvin-logo.svg";
+  "/images/nelvin-logo.png";
 export const NELVIN_ICON =
   "/images/nelvin-icon-512.png";
 

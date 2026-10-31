@@ -28,7 +28,7 @@ export default function AdminCmsLogos() {
     if (!draft.name.trim()) return;
     await entities.PartnerLogo.create({ ...draft, name: draft.name.trim(), active: true });
     setDraft({ name: "", category: "", domain: "", logo_url: "", sort_order: logos.length });
-    toast({ title: "Logo ajouté" });
+    toast({ title: "Logo added" });
     load();
   };
 
@@ -40,7 +40,7 @@ export default function AdminCmsLogos() {
   const remove = async (logo) => {
     await entities.PartnerLogo.delete(logo.id);
     setLogos((l) => l.filter((x) => x.id !== logo.id));
-    toast({ title: "Logo supprimé" });
+    toast({ title: "Logo deleted" });
   };
 
   const bulkUpload = async (files) => {
@@ -60,7 +60,7 @@ export default function AdminCmsLogos() {
         });
         setBulkDone(i + 1);
       }
-      toast({ title: `${files.length} logos ajoutés` });
+      toast({ title: `${files.length} logos added` });
       load();
     } finally {
       setBulkBusy(false);
@@ -71,27 +71,27 @@ export default function AdminCmsLogos() {
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mt-6 space-y-6">
       <div>
-        <h2 className="flex items-center gap-2 text-xl font-bold text-slate-900"><Star className="h-5 w-5 text-amber-500" /> Logos partenaires</h2>
-        <p className="text-sm text-slate-500">Ces logos défilent sous le hero de la page d'accueil. Ajoutez, réordonnez, activez.</p>
+        <h2 className="flex items-center gap-2 text-xl font-bold text-slate-900"><Star className="h-5 w-5 text-amber-500" /> Partner logos</h2>
+        <p className="text-sm text-slate-500">These logos scroll beneath the hero on the home page. Add, reorder, activate.</p>
       </div>
 
       <form onSubmit={add} className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:grid-cols-2 lg:grid-cols-5">
-        <input className={inputCls} placeholder="Nom *" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} required />
-        <input className={inputCls} placeholder="Catégorie" value={draft.category} onChange={(e) => setDraft({ ...draft, category: e.target.value })} />
-        <input className={inputCls} placeholder="Domaine (ex. emirates.com)" value={draft.domain} onChange={(e) => setDraft({ ...draft, domain: e.target.value })} />
-        <input type="number" className={inputCls} placeholder="Ordre" value={draft.sort_order} onChange={(e) => setDraft({ ...draft, sort_order: Number(e.target.value) })} />
-        <button type="submit" className="flex items-center justify-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600"><Plus className="h-4 w-4" /> Ajouter</button>
+        <input className={inputCls} placeholder="Name *" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} required />
+        <input className={inputCls} placeholder="Category" value={draft.category} onChange={(e) => setDraft({ ...draft, category: e.target.value })} />
+        <input className={inputCls} placeholder="Domain (e.g. emirates.com)" value={draft.domain} onChange={(e) => setDraft({ ...draft, domain: e.target.value })} />
+        <input type="number" className={inputCls} placeholder="Order" value={draft.sort_order} onChange={(e) => setDraft({ ...draft, sort_order: Number(e.target.value) })} />
+        <button type="submit" className="flex items-center justify-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600"><Plus className="h-4 w-4" /> Add</button>
         <div className="sm:col-span-2 lg:col-span-5">
-          <ImageUploader label="Logo (optionnel — sinon Clearbit par domaine)" value={draft.logo_url} onChange={(v) => setDraft({ ...draft, logo_url: v })} />
+          <ImageUploader label="Logo (optional — otherwise Clearbit by domain)" value={draft.logo_url} onChange={(v) => setDraft({ ...draft, logo_url: v })} />
         </div>
       </form>
 
       <div className="rounded-2xl border border-dashed border-amber-300 bg-amber-50/60 p-5">
-        <p className="text-sm font-semibold text-slate-800">Téléverser plusieurs logos en une fois</p>
-        <p className="mt-1 text-xs text-slate-500">Sélectionnez plusieurs images — chaque fichier devient un partenaire (le nom vient du nom du fichier).</p>
+        <p className="text-sm font-semibold text-slate-800">Upload several logos at once</p>
+        <p className="mt-1 text-xs text-slate-500">Select several images — each file becomes a partner (the name comes from the file name).</p>
         <label className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600">
           {bulkBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-          {bulkBusy ? `Upload ${bulkDone}…` : "Choisir des images"}
+          {bulkBusy ? `Uploading ${bulkDone}…` : "Choose images"}
           <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => bulkUpload(Array.from(e.target.files || []))} disabled={bulkBusy} />
         </label>
       </div>
@@ -99,7 +99,7 @@ export default function AdminCmsLogos() {
       {loading ? (
         <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-slate-400" /></div>
       ) : logos.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-slate-200 bg-white py-12 text-center text-sm text-slate-500">Aucun logo. Ajoutez-en ci-dessus.</p>
+        <p className="rounded-2xl border border-dashed border-slate-200 bg-white py-12 text-center text-sm text-slate-500">No logos. Add some above.</p>
       ) : (
         <div className="space-y-2">
           {logos.map((l) => (
@@ -107,11 +107,11 @@ export default function AdminCmsLogos() {
               <GripVertical className="h-4 w-4 text-slate-300" />
               <img src={l.logo_url || domainLogo(l.domain)} onError={(e) => { e.currentTarget.style.display = "none"; }} className="h-10 w-10 rounded-lg bg-slate-100 object-contain" alt="" />
               <input className={`${inputCls} max-w-[160px]`} value={l.name} onChange={(e) => save(l, { name: e.target.value })} />
-              <input className={`${inputCls} max-w-[140px]`} placeholder="Catégorie" value={l.category || ""} onChange={(e) => save(l, { category: e.target.value })} />
-              <input className={`${inputCls} max-w-[160px]`} placeholder="Domaine" value={l.domain || ""} onChange={(e) => save(l, { domain: e.target.value })} />
+              <input className={`${inputCls} max-w-[140px]`} placeholder="Category" value={l.category || ""} onChange={(e) => save(l, { category: e.target.value })} />
+              <input className={`${inputCls} max-w-[160px]`} placeholder="Domain" value={l.domain || ""} onChange={(e) => save(l, { domain: e.target.value })} />
               <input type="number" className={`${inputCls} w-20`} value={l.sort_order || 0} onChange={(e) => save(l, { sort_order: Number(e.target.value) })} />
               <label className="flex items-center gap-1.5 text-xs text-slate-500">
-                <input type="checkbox" checked={l.active !== false} onChange={(e) => save(l, { active: e.target.checked })} className="h-4 w-4 rounded border-slate-300 text-amber-600" /> Actif
+                <input type="checkbox" checked={l.active !== false} onChange={(e) => save(l, { active: e.target.checked })} className="h-4 w-4 rounded border-slate-300 text-amber-600" /> Active
               </label>
               <button onClick={() => remove(l)} className="ml-auto rounded-full p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-500"><Trash2 className="h-4 w-4" /></button>
             </div>

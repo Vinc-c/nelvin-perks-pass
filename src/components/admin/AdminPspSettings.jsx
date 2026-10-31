@@ -14,24 +14,24 @@ import { KeyRound, Eye, EyeOff, Save, Trash2, PlugZap, CheckCircle2, XCircle, Lo
 // Secret fields accepted per PSP (mirrors public.psp_secret_fields()).
 export const PSP_FIELDS = {
   stripe: [
-    { key: "STRIPE_SECRET_KEY", label: "Clé secrète", placeholder: "sk_live_… ou sk_test_…" },
-    { key: "STRIPE_WEBHOOK_SECRET", label: "Secret webhook (optionnel)", placeholder: "whsec_…" },
+    { key: "STRIPE_SECRET_KEY", label: "Secret key", placeholder: "sk_live_… or sk_test_…" },
+    { key: "STRIPE_WEBHOOK_SECRET", label: "Webhook secret (optional)", placeholder: "whsec_…" },
   ],
-  paystack: [{ key: "PAYSTACK_SECRET_KEY", label: "Clé secrète", placeholder: "sk_live_…" }],
+  paystack: [{ key: "PAYSTACK_SECRET_KEY", label: "Secret key", placeholder: "sk_live_…" }],
   flutterwave: [
-    { key: "FLUTTERWAVE_SECRET_KEY", label: "Clé secrète", placeholder: "FLWSECK-…" },
-    { key: "FLUTTERWAVE_WEBHOOK_HASH", label: "Hash webhook (optionnel)", placeholder: "" },
+    { key: "FLUTTERWAVE_SECRET_KEY", label: "Secret key", placeholder: "FLWSECK-…" },
+    { key: "FLUTTERWAVE_WEBHOOK_HASH", label: "Webhook hash (optional)", placeholder: "" },
   ],
   paddle: [
-    { key: "PADDLE_API_KEY", label: "Clé API", placeholder: "pdl_live_apikey_…" },
-    { key: "PADDLE_WEBHOOK_SECRET", label: "Secret webhook (optionnel)", placeholder: "pdl_ntfset_…" },
+    { key: "PADDLE_API_KEY", label: "API key", placeholder: "pdl_live_apikey_…" },
+    { key: "PADDLE_WEBHOOK_SECRET", label: "Webhook secret (optional)", placeholder: "pdl_ntfset_…" },
   ],
   payunit: [
-    { key: "PAYUNIT_API_KEY", label: "Clé API", placeholder: "" },
-    { key: "PAYUNIT_API_USERNAME", label: "Utilisateur API", placeholder: "" },
-    { key: "PAYUNIT_API_PASSWORD", label: "Mot de passe API", placeholder: "" },
+    { key: "PAYUNIT_API_KEY", label: "API key", placeholder: "" },
+    { key: "PAYUNIT_API_USERNAME", label: "API user", placeholder: "" },
+    { key: "PAYUNIT_API_PASSWORD", label: "API password", placeholder: "" },
   ],
-  korapay: [{ key: "KORAPAY_SECRET_KEY", label: "Clé secrète", placeholder: "sk_live_…" }],
+  korapay: [{ key: "KORAPAY_SECRET_KEY", label: "Secret key", placeholder: "sk_live_…" }],
 };
 
 const PUBLIC_KEY_HINT = {
@@ -46,15 +46,15 @@ function SecretField({ provider, field, hint, onSaved }) {
 
   const save = async (clear = false) => {
     if (!clear && !value.trim()) return;
-    if (clear && !window.confirm(`Supprimer ${field.label} de ${provider} ?`)) return;
+    if (clear && !window.confirm(`Delete ${field.label} for ${provider}?`)) return;
     setBusy(true);
     try {
       await callRpc("admin_set_psp_secret", { p_provider: provider, p_field: field.key, p_value: clear ? "" : value.trim() });
       setValue("");
-      toast({ title: clear ? "Clé supprimée" : "Clé enregistrée", description: "Stockée chiffrée dans le coffre (Vault)." });
+      toast({ title: clear ? "Key deleted" : "Key saved", description: "Stored encrypted in the Vault." });
       onSaved();
     } catch (e) {
-      toast({ title: "Erreur", description: e.message, variant: "destructive" });
+      toast({ title: "Error", description: e.message, variant: "destructive" });
     } finally {
       setBusy(false);
     }
@@ -64,22 +64,22 @@ function SecretField({ provider, field, hint, onSaved }) {
     <div>
       <div className="flex items-center justify-between text-xs">
         <span className="font-medium text-slate-600">{field.label}</span>
-        {hint ? <span className="flex items-center gap-1 font-mono text-emerald-700"><Lock className="h-3 w-3" /> {hint}</span> : <span className="text-slate-400">non renseignée</span>}
+        {hint ? <span className="flex items-center gap-1 font-mono text-emerald-700"><Lock className="h-3 w-3" /> {hint}</span> : <span className="text-slate-400">not set</span>}
       </div>
       <div className="mt-1 flex gap-1.5">
         <div className="relative flex-1">
           <input type={show ? "text" : "password"} value={value} onChange={(e) => setValue(e.target.value)} autoComplete="off" spellCheck={false}
-            placeholder={hint ? "Remplacer la clé…" : field.placeholder || "Coller la clé"} aria-label={`${provider} ${field.label}`}
+            placeholder={hint ? "Replace key…" : field.placeholder || "Paste the key"} aria-label={`${provider} ${field.label}`}
             className="w-full rounded-lg border border-slate-200 bg-white py-1.5 pl-2.5 pr-8 font-mono text-xs text-slate-900 outline-none focus:border-emerald-500" />
-          <button type="button" onClick={() => setShow((s) => !s)} className="absolute right-2 top-1.5 text-slate-400" aria-label={show ? "Masquer" : "Afficher"}>
+          <button type="button" onClick={() => setShow((s) => !s)} className="absolute right-2 top-1.5 text-slate-400" aria-label={show ? "Hide" : "Show"}>
             {show ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
           </button>
         </div>
-        <button type="button" onClick={() => save(false)} disabled={busy || !value.trim()} className="rounded-lg bg-slate-900 px-2.5 text-white hover:bg-slate-800 disabled:opacity-40" aria-label="Enregistrer">
+        <button type="button" onClick={() => save(false)} disabled={busy || !value.trim()} className="rounded-lg bg-slate-900 px-2.5 text-white hover:bg-slate-800 disabled:opacity-40" aria-label="Save">
           {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
         </button>
         {hint && (
-          <button type="button" onClick={() => save(true)} disabled={busy} className="rounded-lg border border-rose-200 px-2 text-rose-500 hover:bg-rose-50" aria-label="Supprimer la clé">
+          <button type="button" onClick={() => save(true)} disabled={busy} className="rounded-lg border border-rose-200 px-2 text-rose-500 hover:bg-rose-50" aria-label="Delete key">
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         )}
@@ -98,10 +98,10 @@ function ProviderCard({ p, onChange }) {
   const patch = async (values) => {
     try {
       const row = await entities.PspProvider.update(p.id, values);
-      if (!row) throw new Error("Modification refusée : reconnectez-vous (validation 2FA requise) puis réessayez.");
+      if (!row) throw new Error("Change refused: sign in again (2FA verification required) and retry.");
       onChange();
     } catch (e) {
-      toast({ title: "Erreur", description: e.message, variant: "destructive" });
+      toast({ title: "Error", description: e.message, variant: "destructive" });
     }
   };
 
@@ -110,9 +110,9 @@ function ProviderCard({ p, onChange }) {
     try {
       const res = await invokeFunction("psp-test", { provider: p.id });
       const ok = !!res?.data?.ok;
-      toast({ title: ok ? `${p.display_name} : connexion OK` : `${p.display_name} : échec`, description: String(res?.data?.message ?? ""), variant: ok ? undefined : "destructive" });
+      toast({ title: ok ? `${p.display_name}: connection OK` : `${p.display_name}: failed`, description: String(res?.data?.message ?? ""), variant: ok ? undefined : "destructive" });
     } catch (e) {
-      toast({ title: "Test impossible", description: String(e?.message || e), variant: "destructive" });
+      toast({ title: "Test failed", description: String(e?.message || e), variant: "destructive" });
     } finally {
       setTesting(false);
       onChange();
@@ -130,9 +130,9 @@ function ProviderCard({ p, onChange }) {
           </div>
         </div>
         <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-slate-600">
-          <span>{p.enabled ? "Actif" : "Inactif"}</span>
+          <span>{p.enabled ? "Active" : "Inactive"}</span>
           <button type="button" role="switch" aria-checked={p.enabled} onClick={() => patch({ enabled: !p.enabled })}
-            className={`relative h-6 w-11 rounded-full transition ${p.enabled ? "bg-emerald-500" : "bg-slate-300"}`} title={!hasSecret ? "Aucune clé dans le coffre : les secrets d'environnement du serveur seront utilisés" : ""}>
+            className={`relative h-6 w-11 rounded-full transition ${p.enabled ? "bg-emerald-500" : "bg-slate-300"}`} title={!hasSecret ? "No key in the Vault: the server's environment secrets will be used" : ""}>
             <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition ${p.enabled ? "left-5" : "left-0.5"}`} />
           </button>
         </label>
@@ -141,31 +141,31 @@ function ProviderCard({ p, onChange }) {
       <div className="mt-4 flex flex-wrap items-center gap-3 text-xs">
         <label className="flex items-center gap-1.5 text-slate-600">
           <input type="checkbox" checked={p.live_mode} onChange={(e) => patch({ live_mode: e.target.checked })} className="accent-rose-500" />
-          Mode production (live)
+          Production mode (live)
         </label>
         <label className="flex items-center gap-1.5 text-slate-600">
-          Priorité
-          <input type="number" min={1} max={999} defaultValue={p.priority} onBlur={(e) => Number(e.target.value) !== p.priority && patch({ priority: Number(e.target.value) || 100 })} className="w-16 rounded-md border border-slate-200 px-2 py-1" aria-label="Priorité" />
+          Priority
+          <input type="number" min={1} max={999} defaultValue={p.priority} onBlur={(e) => Number(e.target.value) !== p.priority && patch({ priority: Number(e.target.value) || 100 })} className="w-16 rounded-md border border-slate-200 px-2 py-1" aria-label="Priority" />
         </label>
         {!p.live_mode && <span className="rounded-full bg-amber-100 px-2 py-0.5 font-medium text-amber-700">Test / sandbox</span>}
       </div>
 
       {!hasSecret && (
-        <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">Aucune clé dans le coffre : le serveur utilisera les secrets d'environnement (ex. {(PSP_FIELDS[p.id] || [])[0]?.key}) s'ils existent. Utilisez « Tester » pour vérifier.</p>
+        <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">No key in the Vault: the server will use environment secrets (e.g. {(PSP_FIELDS[p.id] || [])[0]?.key}) if they exist. Use “Test” to check.</p>
       )}
       <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
         {(PSP_FIELDS[p.id] || []).map((f) => <SecretField key={f.key} provider={p.id} field={f} hint={p.secret_hints?.[f.key]} onSaved={onChange} />)}
         <div>
-          <span className="text-xs font-medium text-slate-600">URL webhook {p.id === "payunit" || p.id === "korapay" ? "(envoyée automatiquement)" : "(à coller dans le tableau de bord du PSP)"}</span>
+          <span className="text-xs font-medium text-slate-600">Webhook URL {p.id === "payunit" || p.id === "korapay" ? "(sent automatically)" : "(paste into the PSP dashboard)"}</span>
           <div className="mt-1 flex gap-1">
-            <input readOnly value={webhook} onFocus={(e) => e.target.select()} aria-label={`${p.display_name} URL webhook`} className="w-full rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 font-mono text-[11px] text-slate-600" />
-            <button type="button" onClick={() => navigator.clipboard?.writeText(webhook).then(() => toast({ title: "URL copiée" }), () => {})} className="rounded-lg border border-slate-200 px-2 text-slate-500 hover:bg-slate-50" aria-label="Copier l'URL webhook"><Copy className="h-3.5 w-3.5" /></button>
+            <input readOnly value={webhook} onFocus={(e) => e.target.select()} aria-label={`${p.display_name} webhook URL`} className="w-full rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 font-mono text-[11px] text-slate-600" />
+            <button type="button" onClick={() => navigator.clipboard?.writeText(webhook).then(() => toast({ title: "URL copied" }), () => {})} className="rounded-lg border border-slate-200 px-2 text-slate-500 hover:bg-slate-50" aria-label="Copy webhook URL"><Copy className="h-3.5 w-3.5" /></button>
           </div>
         </div>
         {PUBLIC_KEY_HINT[p.id] !== "" && (
           <div>
-            <span className="text-xs font-medium text-slate-600">Clé publique (non secrète)</span>
-            <input value={publicKey} onChange={(e) => setPublicKey(e.target.value)} onBlur={() => publicKey !== (p.public_key || "") && patch({ public_key: publicKey.trim() || null })} placeholder={PUBLIC_KEY_HINT[p.id]} aria-label={`${p.display_name} clé publique`} className="mt-1 w-full rounded-lg border border-slate-200 px-2.5 py-1.5 font-mono text-xs outline-none focus:border-emerald-500" />
+            <span className="text-xs font-medium text-slate-600">Public key (not secret)</span>
+            <input value={publicKey} onChange={(e) => setPublicKey(e.target.value)} onBlur={() => publicKey !== (p.public_key || "") && patch({ public_key: publicKey.trim() || null })} placeholder={PUBLIC_KEY_HINT[p.id]} aria-label={`${p.display_name} public key`} className="mt-1 w-full rounded-lg border border-slate-200 px-2.5 py-1.5 font-mono text-xs outline-none focus:border-emerald-500" />
           </div>
         )}
       </div>
@@ -176,10 +176,10 @@ function ProviderCard({ p, onChange }) {
             p.last_test_ok
               ? <><CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" /><span className="truncate text-emerald-700">{p.last_test_message}</span></>
               : <><XCircle className="h-4 w-4 shrink-0 text-rose-500" /><span className="truncate text-rose-600">{p.last_test_message}</span></>
-          ) : <span className="text-slate-400">Jamais testé</span>}
+          ) : <span className="text-slate-400">Never tested</span>}
         </span>
         <button onClick={test} disabled={testing} className="flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40">
-          {testing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <PlugZap className="h-3.5 w-3.5" />} Tester
+          {testing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <PlugZap className="h-3.5 w-3.5" />} Test
         </button>
       </div>
     </motion.div>
@@ -209,7 +209,7 @@ export default function AdminPspSettings() {
     <div className="mt-6 space-y-6">
       <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
         <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0" />
-        <p>Les clés secrètes sont chiffrées dans le coffre Supabase Vault et ne sont jamais renvoyées au navigateur : seules les 4 dernières lettres sont affichées. Seules les Edge Functions de paiement peuvent les lire. Chaque modification est tracée dans le journal d'audit.</p>
+        <p>Secret keys are encrypted in Supabase Vault and are never sent back to the browser: only the last 4 characters are shown. Only the payment Edge Functions can read them. Every change is recorded in the audit log.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -217,16 +217,16 @@ export default function AdminPspSettings() {
       </div>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h3 className="flex items-center gap-2 font-semibold text-slate-900"><Route className="h-5 w-5 text-emerald-600" /> Simulateur de routage</h3>
+        <h3 className="flex items-center gap-2 font-semibold text-slate-900"><Route className="h-5 w-5 text-emerald-600" /> Routing simulator</h3>
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
           <select value={audience} onChange={(e) => setAudience(e.target.value)} aria-label="Audience" className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
-            <option value="B2C">B2C (particulier, salarié)</option>
-            <option value="B2B">B2B (entreprise, marchand)</option>
+            <option value="B2C">B2C (individual, employee)</option>
+            <option value="B2B">B2B (company, merchant)</option>
           </select>
-          <select value={method} onChange={(e) => setMethod(e.target.value)} aria-label="Méthode" className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
+          <select value={method} onChange={(e) => setMethod(e.target.value)} aria-label="Method" className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
             {["CARD", "MOBILE_MONEY", "BANK_TRANSFER", "APPLE_PAY", "GOOGLE_PAY"].map((m) => <option key={m} value={m}>{m}</option>)}
           </select>
-          <select value={country} onChange={(e) => setCountry(e.target.value)} aria-label="Pays" className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
+          <select value={country} onChange={(e) => setCountry(e.target.value)} aria-label="Country" className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
             {AFRICAN_COUNTRIES.map((c) => <option key={c.iso} value={c.name}>{c.flag} {c.name}</option>)}
           </select>
         </div>
@@ -236,13 +236,13 @@ export default function AdminPspSettings() {
             <div>
               <p className="text-lg font-bold text-emerald-600">{route.primary.name}</p>
               <p className="text-xs text-slate-500">{route.reason}</p>
-              {enabled.length === 0 && <p className="mt-1 text-xs text-amber-600">Aucun PSP activé : le routage théorique est affiché (clés lues dans les secrets serveur).</p>}
+              {enabled.length === 0 && <p className="mt-1 text-xs text-amber-600">No PSP enabled: the theoretical routing is shown (keys read from server secrets).</p>}
             </div>
           ) : (
             <p className="text-sm text-rose-600">{routeError}</p>
           )}
         </div>
-        <p className="mt-3 flex items-center gap-1.5 text-xs text-slate-400"><KeyRound className="h-3.5 w-3.5" /> Les clés viennent du coffre Vault, ou à défaut des secrets d'environnement des Edge Functions.</p>
+        <p className="mt-3 flex items-center gap-1.5 text-xs text-slate-400"><KeyRound className="h-3.5 w-3.5" /> Keys come from the Vault, or otherwise from the Edge Functions' environment secrets.</p>
       </div>
     </div>
   );

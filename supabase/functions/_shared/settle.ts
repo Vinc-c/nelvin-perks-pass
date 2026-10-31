@@ -8,7 +8,10 @@ import { PspContext, verifyPayment } from "./paymentRouter.ts";
 type Tx = Record<string, any>;
 export type SettleResult = { ok: boolean; status: string; error?: string; [key: string]: unknown };
 
-const TERMINAL = ["failed", "cancelled", "abandoned", "expired", "mismatch", "unpaid", "FAILED", "canceled"];
+// Only definitive outcomes close a transaction. "failed"/"abandoned"/"unpaid"/"cancelled" are
+// NOT terminal: PSPs let the customer retry on the same reference, and a later successful
+// payment must still be credited. Stale PENDING rows are expired by a scheduled job instead.
+const TERMINAL = ["expired", "mismatch"];
 
 export async function settleTransaction(
   admin: SupabaseClient,
@@ -34,7 +37,7 @@ export async function settleTransaction(
   });
 
   if (!result.ok) {
-    if (TERMINAL.includes(result.status)) {
+    if (TERMINAL.includes(String(result.status).toLowerCase())) {
       await admin.from("transactions").update({ status: "FAILED", admin_note: `PSP: ${result.status}` })
         .eq("id", tx.id).eq("status", "PENDING");
     }

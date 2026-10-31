@@ -5,7 +5,7 @@
 // from a stale cache, and a failure there must surface to the app as a normal
 // fetch error rather than a broken service-worker response.
 
-const CACHE_VERSION = "nelvin-v4";
+const CACHE_VERSION = "nelvin-v5";
 const APP_SHELL = ["/", "/index.html", "/manifest.json"];
 
 self.addEventListener("install", (event) => {

@@ -2,17 +2,17 @@ import { useEffect, useState } from "react";
 import { entities } from "@/api/entities";
 
 // Every balance in the platform is stored in USD. Rates (units per USD) are
-// managed by super admins in Admin → Devises; these defaults only cover the
+// managed by super admins in Admin → Currencies; these defaults only cover the
 // first paint or an offline load.
 export const DEFAULT_CURRENCIES = [
   { code: "USD", name: "US Dollar", symbol: "$", rate_per_usd: 1 },
   { code: "EUR", name: "Euro", symbol: "€", rate_per_usd: 0.92 },
-  { code: "XOF", name: "Franc CFA (BCEAO)", symbol: "CFA", rate_per_usd: 605 },
-  { code: "XAF", name: "Franc CFA (BEAC)", symbol: "FCFA", rate_per_usd: 605 },
-  { code: "NGN", name: "Naira nigérian", symbol: "₦", rate_per_usd: 1580 },
-  { code: "KES", name: "Shilling kényan", symbol: "KSh", rate_per_usd: 128 },
-  { code: "EGP", name: "Livre égyptienne", symbol: "E£", rate_per_usd: 48 },
-  { code: "AED", name: "Dirham des EAU", symbol: "AED", rate_per_usd: 3.67 },
+  { code: "XOF", name: "CFA Franc (BCEAO)", symbol: "CFA", rate_per_usd: 605 },
+  { code: "XAF", name: "CFA Franc (BEAC)", symbol: "FCFA", rate_per_usd: 605 },
+  { code: "NGN", name: "Nigerian Naira", symbol: "₦", rate_per_usd: 1580 },
+  { code: "KES", name: "Kenyan Shilling", symbol: "KSh", rate_per_usd: 128 },
+  { code: "EGP", name: "Egyptian Pound", symbol: "E£", rate_per_usd: 48 },
+  { code: "AED", name: "UAE Dirham", symbol: "AED", rate_per_usd: 3.67 },
 ];
 
 let cache = null;
@@ -47,14 +47,14 @@ export function makeMoney(list) {
     const c = get(code);
     const v = fromUsd(usd, c.code);
     const digits = NO_DECIMALS.has(c.code) ? 0 : 2;
-    const n = v.toLocaleString("fr-FR", { minimumFractionDigits: digits, maximumFractionDigits: digits });
+    const n = v.toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits });
     return c.symbol.length > 1 ? `${n} ${c.symbol}` : `${c.symbol}${n}`;
   };
   /** Formats an amount already expressed in `code` (no conversion). */
   const formatIn = (amount, code = "USD") => {
     const c = get(code);
     const digits = NO_DECIMALS.has(c.code) ? 0 : 2;
-    const n = Number(amount || 0).toLocaleString("fr-FR", { minimumFractionDigits: digits, maximumFractionDigits: digits });
+    const n = Number(amount || 0).toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits });
     return c.symbol.length > 1 ? `${n} ${c.symbol}` : `${c.symbol}${n}`;
   };
   return { currencies: list, get, fromUsd, toUsd, format, formatIn };

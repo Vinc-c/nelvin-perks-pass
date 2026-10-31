@@ -46,9 +46,9 @@ export default function AdminCompanyManagement() {
       {/* Premium KPIs */}
       <div className="grid gap-4 sm:grid-cols-3">
         {[
-          { icon: Building2, label: "Entreprises", value: companies.length, color: "blue" },
-          { icon: Crown, label: "Comptes Enterprise", value: companies.filter((c) => c.plan_tier === "ENTERPRISE").length, color: "amber" },
-          { icon: TrendingUp, label: "MRR estimé", value: `$${totalMRR.toLocaleString()}`, color: "emerald" },
+          { icon: Building2, label: "Companies", value: companies.length, color: "blue" },
+          { icon: Crown, label: "Enterprise accounts", value: companies.filter((c) => c.plan_tier === "ENTERPRISE").length, color: "amber" },
+          { icon: TrendingUp, label: "Estimated MRR", value: `$${totalMRR.toLocaleString()}`, color: "emerald" },
         ].map((s) => {
           const Icon = s.icon;
           return (
@@ -65,10 +65,10 @@ export default function AdminCompanyManagement() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative max-w-xs flex-1">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Rechercher une entreprise…" className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500" />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search companies…" className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500" />
         </div>
         <button onClick={() => setShowAdd(!showAdd)} className="flex items-center gap-2 rounded-full bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600">
-          {showAdd ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />} {showAdd ? "Annuler" : "Nouvelle entreprise"}
+          {showAdd ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />} {showAdd ? "Cancel" : "New company"}
         </button>
       </div>
 
@@ -77,10 +77,10 @@ export default function AdminCompanyManagement() {
         <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[
-              { k: "name", l: "Nom", ph: "Acme Corp" },
-              { k: "industry", l: "Secteur", ph: "Fintech" },
-              { k: "country", l: "Pays", ph: "Cameroun" },
-              { k: "contact_email", l: "Email contact", ph: "hr@acme.com" },
+              { k: "name", l: "Name", ph: "Acme Corp" },
+              { k: "industry", l: "Industry", ph: "Fintech" },
+              { k: "country", l: "Country", ph: "Cameroon" },
+              { k: "contact_email", l: "Contact email", ph: "hr@acme.com" },
             ].map((f) => (
               <label key={f.k} className="text-xs text-slate-500">{f.l}
                 <input value={draft[f.k]} onChange={(e) => setDraft({ ...draft, [f.k]: e.target.value })} placeholder={f.ph} className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
@@ -91,16 +91,16 @@ export default function AdminCompanyManagement() {
                 <option value="STARTER">Starter</option><option value="GROWTH">Growth</option><option value="ENTERPRISE">Enterprise</option>
               </select>
             </label>
-            <label className="text-xs text-slate-500">Facturation
+            <label className="text-xs text-slate-500">Billing
               <select value={draft.billing_cycle} onChange={(e) => setDraft({ ...draft, billing_cycle: e.target.value })} className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none">
-                <option value="MONTHLY">Mensuelle</option><option value="ANNUAL">Annuelle</option>
+                <option value="MONTHLY">Monthly</option><option value="ANNUAL">Annual</option>
               </select>
             </label>
-            <label className="text-xs text-slate-500">Sièges max
+            <label className="text-xs text-slate-500">Max seats
               <input type="number" value={draft.max_employees} onChange={(e) => setDraft({ ...draft, max_employees: Number(e.target.value) })} className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none" />
             </label>
           </div>
-          <button onClick={create} className="mt-4 flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-2 text-sm font-medium text-white hover:bg-emerald-700"><Save className="h-4 w-4" /> Créer l'entreprise</button>
+          <button onClick={create} className="mt-4 flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-2 text-sm font-medium text-white hover:bg-emerald-700"><Save className="h-4 w-4" /> Create company</button>
         </motion.div>
       )}
 
@@ -110,19 +110,19 @@ export default function AdminCompanyManagement() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 text-left text-slate-500">
-                <th className="p-4 font-medium">Entreprise</th>
+                <th className="p-4 font-medium">Company</th>
                 <th className="p-4 font-medium">Plan</th>
-                <th className="p-4 font-medium">Sièges</th>
-                <th className="p-4 font-medium">Statut</th>
+                <th className="p-4 font-medium">Seats</th>
+                <th className="p-4 font-medium">Status</th>
                 <th className="p-4 font-medium">MRR</th>
-                <th className="p-4 font-medium">Économies</th>
+                <th className="p-4 font-medium">Savings</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={6} className="p-6 text-center text-slate-400">Chargement…</td></tr>
+                <tr><td colSpan={6} className="p-6 text-center text-slate-400">Loading…</td></tr>
               ) : filtered.length === 0 ? (
-                <tr><td colSpan={6} className="p-6 text-center text-slate-400">Aucune entreprise.</td></tr>
+                <tr><td colSpan={6} className="p-6 text-center text-slate-400">No companies found.</td></tr>
               ) : filtered.map((c, i) => (
                 <motion.tr key={c.id} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }} className="border-b border-slate-50">
                   <td className="p-4">
