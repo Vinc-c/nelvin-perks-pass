@@ -48,8 +48,8 @@ function PlanRow({ plan, onSaved }) {
       <div className="mt-2 grid gap-2 sm:grid-cols-2">
         <input value={p.name} onChange={(e) => setP({ ...p, name: e.target.value })} aria-label="Name" className={input} />
         <input value={p.tagline || ""} onChange={(e) => setP({ ...p, tagline: e.target.value })} placeholder="Tagline" aria-label="Tagline" className={input} />
-        <label className="text-xs text-slate-500">USD / month<input type="number" min="0" step="0.01" value={p.price_monthly} onChange={(e) => setP({ ...p, price_monthly: e.target.value })} className={input} /></label>
-        <label className="text-xs text-slate-500">USD / year<input type="number" min="0" step="0.01" value={p.price_annual} onChange={(e) => setP({ ...p, price_annual: e.target.value })} className={input} /></label>
+        <label className="text-xs text-slate-500">USD / month<input type="number" min="0" step="0.01" value={p.price_monthly} onChange={(e) => setP({ ...p, price_monthly: e.target.value, price_annual: Math.round(Number(e.target.value) * 12 * 0.85) })} className={input} /></label>
+        <label className="text-xs text-slate-500">USD / year (default: monthly × 12 − 15%{Number(p.price_monthly) > 0 ? `, current −${Math.round((1 - Number(p.price_annual) / (Number(p.price_monthly) * 12)) * 100)}%` : ""})<input type="number" min="0" step="0.01" value={p.price_annual} onChange={(e) => setP({ ...p, price_annual: e.target.value })} className={input} /></label>
         {p.audience === "B2C" && (
           <label className="text-xs text-slate-500">Family members included (family plan, 0–10)<input type="number" min="0" max="10" value={p.family_seats ?? 0} onChange={(e) => setP({ ...p, family_seats: e.target.value })} className={input} /></label>
         )}

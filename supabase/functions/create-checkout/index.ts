@@ -110,8 +110,8 @@ serve(async (req) => {
     // No enabled provider supports this method: a business answer, not a crash.
     return json({ error: errorMessage(e) }, 503);
   }
-  const provider = route.primary;
-  const reference = genRef(provider.id);
+  const chain = [route.primary, ...route.fallback];
+  let reference = genRef(route.primary.id);
 
   const { data: tx, error } = await admin
     .from("transactions")
@@ -151,29 +151,45 @@ serve(async (req) => {
     }
   }
 
-  try {
-    const session = await initPayment(psp, provider.id, {
-      amount,
-      currency,
-      email: user.email || "",
-      reference,
-      callback_url: callbackUrl,
-      metadata: { user_id: user.id, name: profile.full_name || "", purpose, payment_country: ({ Cameroun: "CM", Gabon: "GA", Tchad: "TD", Congo: "CG", "République démocratique du Congo": "CD", "République centrafricaine": "CF", "Guinée équatoriale": "GQ" } as Record<string, string>)[country] || "CM" },
-    });
-    await admin.from("transactions").update({ provider_ref: session.provider_ref }).eq("id", tx.id);
-    return json({
-      ok: true,
-      psp: provider.name,
-      pspId: provider.id,
-      reason: route.reason,
-      reference,
-      amount,
-      currency,
-      transactionId: tx.id,
-      authorization_url: session.authorization_url,
-    });
-  } catch (e) {
-    await admin.from("transactions").update({ status: "FAILED", admin_note: errorMessage(e).slice(0, 300) }).eq("id", tx.id);
-    return json({ error: errorMessage(e), psp: provider.name }, 502);
+  const payment_country = ({ Cameroun: "CM", Gabon: "GA", Tchad: "TD", Congo: "CG", "République démocratique du Congo": "CD", "République centrafricaine": "CF", "Guinée équatoriale": "GQ" } as Record<string, string>)[country] || "CM";
+  const failures: string[] = [];
+  // Try the routed provider first, then each fallback: a provider outage must not block the payment.
+  for (let i = 0; i < chain.length; i++) {
+    const provider = chain[i];
+    if (i > 0) {
+      // The PSP is encoded in our reference (settle reads it back), so each attempt gets its own.
+      reference = genRef(provider.id);
+      await admin.from("transactions").update({ psp_reference: reference, provider_ref: null }).eq("id", tx.id);
+    }
+    try {
+      const session = await initPayment(psp, provider.id, {
+        amount,
+        currency,
+        email: user.email || "",
+        reference,
+        callback_url: callbackUrl,
+        metadata: { user_id: user.id, name: profile.full_name || "", purpose, payment_country },
+      });
+      await admin.from("transactions").update({
+        provider_ref: session.provider_ref,
+        admin_note: failures.length ? `Fallback: ${failures.join(" | ")}`.slice(0, 300) : null,
+      }).eq("id", tx.id);
+      return json({
+        ok: true,
+        psp: provider.name,
+        pspId: provider.id,
+        reason: i === 0 ? route.reason : `${chain[0].name} indisponible : paiement routé vers ${provider.name}.`,
+        reference,
+        amount,
+        currency,
+        transactionId: tx.id,
+        authorization_url: session.authorization_url,
+      });
+    } catch (e) {
+      console.error("create-checkout init failed", provider.id, errorMessage(e));
+      failures.push(`${provider.name}: ${errorMessage(e)}`);
+    }
   }
+  await admin.from("transactions").update({ status: "FAILED", admin_note: failures.join(" | ").slice(0, 300) }).eq("id", tx.id);
+  return json({ error: failures[failures.length - 1] || "Paiement indisponible", psp: chain[0].name, attempts: failures }, 502);
 });
