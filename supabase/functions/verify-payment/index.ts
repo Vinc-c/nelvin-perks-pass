@@ -26,5 +26,7 @@ serve(async (req) => {
   const { data: tx } = await query.maybeSingle();
   if (!tx) return json({ ok: false, error: "Transaction introuvable" }, 404);
   const result = await settleTransaction(admin, tx, body.provider_ref ? String(body.provider_ref) : null);
+  // Without a signed-in caller (return page reached by reference only) expose the outcome, never balances.
+  if (!txId) return json({ ok: result.ok, status: result.status, type: result.type ?? tx.type, error: result.error });
   return json(result);
 });

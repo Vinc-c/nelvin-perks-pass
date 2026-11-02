@@ -30,18 +30,32 @@ function applyFilters(query, filters = {}) {
 }
 
 function createEntity(table, { pk = "id" } = {}) {
-  const filter = async (filters = {}, sort, limit) => {
+  const filter = async (filters = {}, sort, limit, offset = 0) => {
     let q = applyFilters(supabase.from(table).select("*"), filters);
     q = applySort(q, sort);
-    if (limit) q = q.limit(limit);
+    if (offset > 0 && limit) q = q.range(offset, offset + limit - 1);
+    else if (limit) q = q.limit(limit);
     const { data, error } = await q;
     if (error) fail(error);
     return data || [];
   };
 
+  /** Every matching row, fetched in pages (the API caps one response at ~1000 rows). */
+  const filterAll = async (filters = {}, sort, max = 5000) => {
+    const page = 1000;
+    const out = [];
+    for (let offset = 0; offset < max; offset += page) {
+      const rows = await filter(filters, sort, page, offset);
+      out.push(...rows);
+      if (rows.length < page) break;
+    }
+    return out;
+  };
+
   return {
     table,
     filter,
+    filterAll,
     list: (sort, limit) => filter({}, sort, limit),
 
     async get(id) {

@@ -60,6 +60,10 @@ serve(async (req) => {
   if (purpose === "RECHARGE") {
     amount = Math.round(Number(body.amount) * 100) / 100;
     if (!Number.isFinite(amount) || amount <= 0 || amount / rate > 100000) return json({ error: "Montant invalide" }, 400);
+    // Minimum top-up (platform setting min_recharge_usd, default 1 USD): tiny payments cost more in PSP fees than they bring.
+    const { data: minRow } = await admin.from("platform_settings").select("value").eq("key", "min_recharge_usd").maybeSingle();
+    const minUsd = Number(minRow?.value) > 0 ? Number(minRow?.value) : 1;
+    if (amount / rate < minUsd) return json({ error: `Montant minimum de recharge : ${minUsd} USD` }, 400);
     description = "Recharge wallet";
   } else if (purpose === "COMPANY_TOPUP") {
     if (profile.role !== "HR_ADMIN" || !profile.company_id) return json({ error: "Réservé aux administrateurs RH" }, 403);

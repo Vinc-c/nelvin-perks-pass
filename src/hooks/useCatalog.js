@@ -13,8 +13,8 @@ export function useCatalog() {
   const { data, loading, error, reload } = useAsync(async () => {
     try {
       const [merchants, offers] = await Promise.all([
-        entities.Merchant.filter({ verified_status: "VERIFIED" }, "name", 500),
-        entities.Offer.list("-created_date", 500),
+        entities.Merchant.filterAll({ verified_status: "VERIFIED" }, "name"),
+        entities.Offer.filterAll({}, "-created_date"),
       ]);
       try { localStorage.setItem(CACHE_KEY, JSON.stringify({ merchants, offers, at: Date.now() })); } catch { /* storage full or blocked */ }
       return { merchants, offers };
