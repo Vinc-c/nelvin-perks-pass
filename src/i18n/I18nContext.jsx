@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { translations, LANGUAGES } from "./translations";
+import { translations, LANGUAGES, loadLanguage } from "./translations";
 import { supabase } from "@/api/supabaseClient";
 
 const I18nContext = createContext(null);
@@ -23,26 +23,37 @@ const hasChoice = () => {
 
 export function I18nProvider({ children }) {
   const [lang, setLangState] = useState(detectLang);
+  // Non-English dictionaries are fetched on demand. A saved non-English choice is loaded before
+  // first render (brief blank instead of a flash of English).
+  const [, bump] = useState(0);
+  useEffect(() => {
+    if (!translations[lang]) loadLanguage(lang).then(() => bump((n) => n + 1));
+  }, [lang]);
+
+  // Switch only once the new dictionary is in memory, so the screen never shows keys or a half-translated page.
+  const changeTo = useCallback((code) => {
+    loadLanguage(code).then(() => setLangState(code));
+  }, []);
 
   // Explicit choice: remember it and mirror it on the signed-in profile.
   const setLang = useCallback((code) => {
     if (!LANGUAGES.some((l) => l.code === code)) return;
-    setLangState(code);
+    changeTo(code);
     try { localStorage.setItem("nelvin_lang_choice", code); } catch { /* storage unavailable */ }
     supabase.auth.getSession().then(({ data }) => {
       if (data?.session) supabase.rpc("set_my_language", { p_lang: code }).then(() => {}, () => {});
     }).catch(() => {});
-  }, []);
+  }, [changeTo]);
 
   // On sign-in, adopt the language saved on the profile when this device has no explicit choice yet.
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event !== "SIGNED_IN" || !session?.user || hasChoice()) return;
       supabase.from("profiles").select("language").eq("id", session.user.id).maybeSingle()
-        .then(({ data }) => { if (data?.language && LANGUAGES.some((l) => l.code === data.language)) setLangState(data.language); }, () => {});
+        .then(({ data }) => { if (data?.language && LANGUAGES.some((l) => l.code === data.language)) changeTo(data.language); }, () => {});
     });
     return () => sub?.subscription?.unsubscribe();
-  }, []);
+  }, [changeTo]);
 
   const currentLang = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
 
@@ -59,6 +70,8 @@ export function I18nProvider({ children }) {
     [lang]
   );
 
+  // Until the chosen language is loaded, keys fall back to English (never blank text).
+  if (!translations[lang]) return null;
   const value = { lang, setLang, t, dir: currentLang.dir, locale: LOCALES[lang] || "en-GB", languages: LANGUAGES };
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
