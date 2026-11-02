@@ -1,9 +1,10 @@
 import { lazy, Suspense } from 'react';
 import { Toaster } from "@/components/ui/toaster"
 import ErrorBoundary from "@/components/ErrorBoundary"
+import useModalEscape from "@/hooks/useModalEscape"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import ScrollToTop from './components/ScrollToTop';
@@ -63,6 +64,13 @@ const PageFallback = () => (
     <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
   </div>
 );
+
+// Resets the error screen when the user navigates elsewhere.
+const RoutedBoundary = ({ children }) => {
+  const location = useLocation();
+  useModalEscape();
+  return <ErrorBoundary resetKey={location.pathname}>{children}</ErrorBoundary>;
+};
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, authChecked } = useAuth();
@@ -186,9 +194,9 @@ function App() {
           <Router>
             <ScrollToTop />
             <VpnBanner />
-            <ErrorBoundary>
+            <RoutedBoundary>
               <AuthenticatedApp />
-            </ErrorBoundary>
+            </RoutedBoundary>
           </Router>
           <Toaster />
         </QueryClientProvider>

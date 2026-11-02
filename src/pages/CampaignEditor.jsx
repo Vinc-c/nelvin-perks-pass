@@ -229,7 +229,7 @@ export default function CampaignEditor() {
 
       <AnimatePresence>
         {editing && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 p-0 sm:items-center sm:p-4" onClick={() => setEditing(null)}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} role="dialog" aria-modal="true" data-modal-overlay className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 p-0 sm:items-center sm:p-4" onClick={() => setEditing(null)}>
             <motion.div
               initial={{ y: 40, scale: 0.98 }}
               animate={{ y: 0, scale: 1 }}

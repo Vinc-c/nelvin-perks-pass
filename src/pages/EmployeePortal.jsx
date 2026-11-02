@@ -21,7 +21,7 @@ import { Wallet, Gift, QrCode, TrendingUp, Loader2, Award, ArrowUpRight } from "
 import RoleWelcomeHeader from "@/components/RoleWelcomeHeader";
 import StatCard from "@/components/dashboard/StatCard";
 import SectionCard from "@/components/dashboard/SectionCard";
-import { EmptyState } from "@/components/UiFeedback";
+import { EmptyState, ErrorState } from "@/components/UiFeedback";
 import AccessGate from "@/components/AccessGate";
 
 const STATUS = { REDEEMED: "bg-emerald-100 text-emerald-700", EXPIRED: "bg-rose-100 text-rose-700", GENERATED: "bg-amber-100 text-amber-700", INVALID: "bg-slate-100 text-slate-600" };
@@ -41,7 +41,7 @@ export default function EmployeePortal() {
   const show = (s) => section === "overview" || section === s;
   const fmt = (usd) => money.format(usd, currency);
 
-  const { data, loading, reload } = useAsync(async () => {
+  const { data, loading, error: loadError, reload } = useAsync(async () => {
     if (!user?.company_id) return { policies: [], txs: [], redemptions: [] };
     const [policies, txs, redemptions] = await Promise.all([
       entities.BenefitPolicy.filter({ company_id: user.company_id, active: true }, "label"),
@@ -90,6 +90,8 @@ export default function EmployeePortal() {
       <SectionCard title={t("hr.e.allowTitle")} className="mt-4" icon={Gift}>
         {loading ? (
           <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+        ) : loadError ? (
+          <ErrorState onRetry={reload} />
         ) : allowances.length === 0 ? (
           <EmptyState icon={Gift} title={t("hr.e.noAllow")} description={t("hr.e.noAllowDesc")} />
         ) : (

@@ -1,6 +1,11 @@
 // [key, en, fr, sw, ar, yo]  (account, security, onboarding, KYC, referral)
 export default [
   // ---- common ----
+  ["ac.err.title", "Something went wrong", "Une erreur est survenue", "Kuna tatizo limetokea", "حدث خطأ ما", "Nǹkan kan ṣẹlẹ̀"],
+  ["ac.err.body", "This page hit an unexpected error. Your data is safe.", "Cette page a rencontré une erreur inattendue. Vos données sont en sécurité.", "Ukurasa huu umekumbwa na hitilafu isiyotarajiwa. Data yako ni salama.", "واجهت هذه الصفحة خطأً غير متوقع. بياناتك بأمان.", "Ojú-ìwé yìí ní àṣìṣe àìròtẹ́lẹ̀. Dátà rẹ wà ní ààbò."],
+  ["ac.err.retry", "Try again", "Réessayer", "Jaribu tena", "حاول مرة أخرى", "Gbìyànjú lẹ́ẹ̀kan sí i"],
+  ["ac.err.reload", "Reload", "Recharger", "Pakia upya", "إعادة التحميل", "Tún gbé e"],
+  ["ac.err.load", "Couldn't load this data.", "Impossible de charger ces données.", "Imeshindwa kupakia data hii.", "تعذّر تحميل هذه البيانات.", "Kò lè gbé dátà yìí jáde."],
   ["ac.common.error", "Error", "Erreur", "Hitilafu", "خطأ", "Àṣìṣe"],
   ["ac.common.save", "Save", "Enregistrer", "Hifadhi", "حفظ", "Fipamọ́"],
   ["ac.common.cancel", "Cancel", "Annuler", "Ghairi", "إلغاء", "Fagilé"],

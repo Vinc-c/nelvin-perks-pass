@@ -1,3 +1,4 @@
+import { useI18n } from "@/i18n/I18nContext";
 import React from "react";
 import { Loader2 } from "lucide-react";
 import NvIcon, { glyphFor } from "@/components/brand/NvIcon";
@@ -42,6 +43,18 @@ export function ListSkeleton({ rows = 4 }) {
           <div className="h-3 w-10 animate-pulse rounded bg-slate-200" />
         </div>
       ))}
+    </div>
+  );
+}
+/** Shown when a data load failed, instead of a misleading empty list. */
+export function ErrorState({ onRetry, message }) {
+  const { t } = useI18n();
+  return (
+    <div role="alert" className="rounded-xl border border-rose-100 bg-rose-50/60 px-4 py-6 text-center">
+      <p className="text-sm font-medium text-rose-700">{message || t("ac.err.load")}</p>
+      {onRetry && (
+        <button type="button" onClick={onRetry} className="mt-3 rounded-lg border border-rose-200 bg-white px-3 py-1.5 text-xs font-medium text-rose-700 hover:bg-rose-50">{t("ac.err.retry")}</button>
+      )}
     </div>
   );
 }

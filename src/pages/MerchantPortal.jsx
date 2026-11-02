@@ -329,7 +329,7 @@ export default function MerchantPortal() {
         </div>
 
         {payoutOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setPayoutOpen(false)}>
+          <div role="dialog" aria-modal="true" data-modal-overlay className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setPayoutOpen(false)}>
             <motion.form initial={{ scale: 0.95 }} animate={{ scale: 1 }} onSubmit={requestPayout} onClick={(e) => e.stopPropagation()} className="w-full max-w-md space-y-3 rounded-2xl bg-white p-6 shadow-2xl">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold text-slate-900">{t("mc.payouts.request")}</h3>

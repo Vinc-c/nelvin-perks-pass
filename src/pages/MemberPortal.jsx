@@ -22,7 +22,7 @@ import { ArrowDownLeft, ArrowUpRight, Crown, Loader2, Search, Star, TrendingUp, 
 import RoleWelcomeHeader from "@/components/RoleWelcomeHeader";
 import StatCard from "@/components/dashboard/StatCard";
 import SectionCard from "@/components/dashboard/SectionCard";
-import { EmptyState } from "@/components/UiFeedback";
+import { EmptyState, ErrorState } from "@/components/UiFeedback";
 import AccessGate from "@/components/AccessGate";
 import NvIcon, { CategoryIcon } from "@/components/brand/NvIcon";
 import NelvinPassCard from "@/components/brand/NelvinPassCard";
@@ -46,7 +46,7 @@ export default function MemberPortal() {
   const section = params.get("section") || "overview";
   const show = (s) => section === "overview" || section === s;
 
-  const { data: activity, loading, reload } = useAsync(async () => {
+  const { data: activity, loading, error: loadError, reload } = useAsync(async () => {
     if (!user) return { txs: [], subs: [], redeemed: 0 };
     const [txs, subs, redeemed] = await Promise.all([
       entities.Transaction.filter({ user_id: user.id }, "-created_date", 50),
@@ -165,6 +165,8 @@ export default function MemberPortal() {
       <SectionCard title={t("mb.portal.recentTx")} className="mt-6" action={<Link to="/wallet-activity" className="text-sm font-medium text-emerald-600 hover:underline">{t("mb.portal.seeAll")}</Link>}>
         {loading ? (
           <div className="flex justify-center py-6"><Loader2 className="h-5 w-5 animate-spin text-slate-400" /></div>
+        ) : loadError ? (
+          <ErrorState onRetry={reload} />
         ) : activity.txs.length === 0 ? (
           <EmptyState icon={Wallet} title={t("mb.portal.noTx")} description={t("mb.portal.noTxDesc")} />
         ) : (
