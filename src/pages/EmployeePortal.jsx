@@ -6,6 +6,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import PortalLayout from "@/components/PortalLayout";
 import QrRedemption from "@/components/QrRedemption";
 import OfferCard from "@/components/OfferCard";
+import OfferShelves from "@/components/OfferShelves";
 import CurrencySelect from "@/components/CurrencySelect";
 import WithdrawWalletModal from "@/components/WithdrawWalletModal";
 import { useI18n } from "@/i18n/I18nContext";
@@ -131,7 +132,8 @@ export default function EmployeePortal() {
 
       {show("offers") && (
       <div className="mt-6">
-        <h2 className="mb-4 flex items-center gap-2 font-semibold text-slate-900"><QrCode className="h-5 w-5 text-emerald-600" /> {t("offers.title")}</h2>
+        {!catalog.loading && <OfferShelves offers={offers} meta={meta} format={fmt} onRedeem={setSelectedOffer} ctaLabel={t("cta.redeem")} />}
+        <h2 className="mb-4 mt-6 flex items-center gap-2 font-semibold text-slate-900"><QrCode className="h-5 w-5 text-emerald-600" /> {t("offers.title")}</h2>
         {catalog.loading ? (
           <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-slate-400" /></div>
         ) : offers.length === 0 ? (
