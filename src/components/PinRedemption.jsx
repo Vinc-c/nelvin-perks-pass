@@ -8,6 +8,8 @@ import { useAuth } from "@/lib/AuthContext";
 import { useCurrencies } from "@/hooks/useCurrencies";
 import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
 import { useI18n } from "@/i18n/I18nContext";
+import { entities } from "@/api/entities";
+import { Stars } from "@/components/OfferReviews";
 
 const REASON_KEYS = {
   BAD_PIN: "mb.pin.reason.BAD_PIN",
@@ -42,6 +44,13 @@ export default function PinRedemption({ offer, merchantName, onClose, onDone }) 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState(null);
+  const [rated, setRated] = useState(0);
+
+  // One tap right after use: stored as the member's verified review (they can add a comment later on the offer page).
+  const rate = async (n) => {
+    setRated(n);
+    try { await entities.OfferReview.create({ offer_id: offer.id, rating: n }); } catch { /* already reviewed or not allowed: the offer page handles edits */ }
+  };
 
   const submit = async (value = pin) => {
     setBusy(true);
@@ -70,7 +79,7 @@ export default function PinRedemption({ offer, merchantName, onClose, onDone }) 
   const fmt = (usd) => money.format(usd, currency);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/60 p-4 sm:items-center" onClick={onClose}>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} role="dialog" aria-modal="true" data-modal-overlay className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/60 p-4 sm:items-center" onClick={onClose}>
       <motion.div initial={{ y: 40 }} animate={{ y: 0 }} exit={{ y: 40 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl" role="dialog" aria-modal="true" aria-label={t("mb.pin.dialog")}>
         <div className="flex items-start justify-between gap-2">
           <div>
@@ -129,6 +138,11 @@ export default function PinRedemption({ offer, merchantName, onClose, onDone }) 
               <div className="flex justify-between font-semibold text-slate-900"><dt>{t("mb.pin.toPay")}</dt><dd>{fmt(result.net_usd)}{result.paid_with_wallet ? ` (${t("mb.pin.walletTag")})` : ""}</dd></div>
               {Number(result.cashback_credited) > 0 && <div className="flex justify-between text-amber-700"><dt>{t("mb.pin.cashbackCredited")}</dt><dd>+{fmt(result.cashback_credited)}</dd></div>}
             </dl>
+            <div className="rounded-xl border border-amber-100 bg-amber-50/60 p-3">
+              <p className="text-sm font-medium text-slate-800">{t("pin.rate.title")}</p>
+              <div className="mt-1 flex justify-center"><Stars value={rated} size="h-7 w-7" onChange={rate} /></div>
+              {rated > 0 && <p className="mt-1 text-xs text-emerald-700">{t("mb.reviews.thanks")}</p>}
+            </div>
             <p className="text-xs text-slate-400">{t("mb.pin.ref", { code: result.code })}</p>
             <button onClick={onClose} className="w-full rounded-xl bg-slate-900 py-3 font-medium text-white">{t("mb.pin.finish")}</button>
           </div>

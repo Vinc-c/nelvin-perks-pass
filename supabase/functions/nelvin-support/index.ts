@@ -26,6 +26,14 @@ serve(async (req) => {
   const message = String(body.message || "").trim().slice(0, 1200);
   if (!message) return json({ error: "Message vide" }, 400);
 
+  // Cost guard: daily message quota per user (platform setting support_chat_daily_limit, default 30).
+  const { data: limitRow } = await admin.from("platform_settings").select("value").eq("key", "support_chat_daily_limit").maybeSingle();
+  const dailyLimit = Math.max(1, Number(limitRow?.value) || 30);
+  const { data: withinQuota } = await admin.rpc("chat_quota_take", { p_user: caller.user.id, p_limit: dailyLimit });
+  if (withinQuota === false) {
+    return json({ reply: "Vous avez atteint la limite quotidienne de messages avec l'assistant. Revenez demain ou consultez le Centre d'aide." });
+  }
+
   const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
   if (!apiKey) {
     return json({ reply: "L'assistant n'est pas encore configuré. Consultez le Centre d'aide ou contactez le support depuis votre tableau de bord." });

@@ -12,18 +12,29 @@ const TIERS = {
   PASS_VIP: { label: "VIP Gold", glyph: "PASS_VIP", bg: "from-[#0B1612] via-[#14201B] to-nv-deep", ring: "ring-nv-gold" },
 };
 
+/** Member-selectable card colours (the tier's own look is the default). */
+export const CARD_COLORS = {
+  emerald: { bg: "from-nv-emerald via-nv-emerald to-nv-deep", swatch: "#1F6B50" },
+  midnight: { bg: "from-[#0B1B3A] via-[#12285A] to-[#0A1530]", swatch: "#12285A" },
+  gold: { bg: "from-[#B8893A] via-[#9A6F25] to-[#6E4D14]", swatch: "#B8893A" },
+  royal: { bg: "from-[#4B2A8A] via-[#38207A] to-[#241450]", swatch: "#4B2A8A" },
+  burgundy: { bg: "from-[#8A1F3A] via-[#6E1830] to-[#47101F]", swatch: "#8A1F3A" },
+  graphite: { bg: "from-[#2B2F36] via-[#1B1E24] to-[#0E1013]", swatch: "#2B2F36" },
+};
+
 /**
  * Digital membership card. `illustration` shows a placeholder holder so the
  * marketing version never looks like a real person's card.
  */
-export default function NelvinPassCard({ tier = "PASS_PREMIUM", name, code, qrValue, showQr = true, illustration = false, className = "" }) {
+export default function NelvinPassCard({ tier = "PASS_PREMIUM", name, code, qrValue, showQr = true, illustration = false, color = null, className = "" }) {
   const { t: tr } = useI18n();
   const t = TIERS[tier] || TIERS.PASS_FREE;
+  const bg = (color && CARD_COLORS[color]?.bg) || t.bg;
   const holder = name || tr(illustration ? "pass.yourName" : "pass.member");
   const shown = code || (illustration ? "NLV · 0000 0000" : "");
   return (
     <div
-      className={`relative aspect-[1.586/1] w-full overflow-hidden rounded-[1.6rem] bg-gradient-to-br ${t.bg} p-5 text-white shadow-2xl shadow-nv-deep/40 ring-1 ${t.ring} ${className}`}
+      className={`relative aspect-[1.586/1] w-full overflow-hidden rounded-[1.6rem] bg-gradient-to-br ${bg} p-5 text-white shadow-2xl shadow-nv-deep/40 ring-1 ${t.ring} ${className}`}
       role="img"
       aria-label={tr("pass.aria", { tier: `${t.label}${illustration ? ` (${tr("pass.illustration")})` : ""}` })}
     >

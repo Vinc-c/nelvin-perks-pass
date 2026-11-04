@@ -1,6 +1,7 @@
 import { offerPath } from "@/lib/seo";
 import React from "react";
 import { motion } from "framer-motion";
+import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Image } from "@/components/ui/image";
 import { offerBadge } from "@/hooks/useCatalog";
@@ -10,7 +11,7 @@ import NvIcon, { CategoryIcon } from "@/components/brand/NvIcon";
 import { useI18n } from "@/i18n/I18nContext";
 
 /** Offer tile used by the member and employee dashboards. */
-export default function OfferCard({ offer, meta, format, onRedeem, index = 0, ctaLabel = "Utiliser" }) {
+export default function OfferCard({ offer, meta, format, onRedeem, index = 0, ctaLabel = "Utiliser", badge = null }) {
   const { t } = useI18n();
   const cat = meta(offer.category);
   const isPerk = offer.discount_type === "PERK";
@@ -25,10 +26,13 @@ export default function OfferCard({ offer, meta, format, onRedeem, index = 0, ct
             {offer.required_plan === "PASS_VIP" ? "VIP Gold" : "Premium"}
           </span>
         )}
-        {offer.is_featured && (
+        {offer.is_featured && !badge && (
           <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-nv-gold px-2.5 py-1 text-xs font-bold text-nv-deep shadow">
             <NvIcon name="STAR_MARK" className="h-3.5 w-3.5" /> {t("offer.featured")}
           </span>
+        )}
+        {badge && (
+          <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-xs font-semibold text-nv-deep shadow">{badge}</span>
         )}
         <span className="absolute bottom-3 right-3 inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-nv-ink backdrop-blur-sm">
           <CategoryIcon category={offer.category} className="h-3.5 w-3.5 text-nv-emerald" /> {cat.label}
@@ -38,6 +42,11 @@ export default function OfferCard({ offer, meta, format, onRedeem, index = 0, ct
       <div className="flex flex-1 flex-col p-4">
         <Link to={offerPath(offer)} className="font-semibold text-nv-ink hover:underline">{offer.title}</Link>
         <p className="mt-0.5 flex items-center gap-1 text-sm text-nv-muted"><NvIcon name="CITY_PIN" className="h-4 w-4 shrink-0" /> <span className="truncate">{offer.merchant_name}{offer.city ? ` · ${offer.city}` : ""}</span></p>
+        {offer.rating_count > 0 && (
+          <p className="mt-1 flex items-center gap-1 text-xs text-nv-muted" aria-label={t("mb.reviews.outOf5", { value: offer.rating_avg })}>
+            <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" /> <span className="font-semibold text-nv-ink">{Number(offer.rating_avg).toFixed(1)}</span> ({offer.rating_count})
+          </p>
+        )}
         <div className="mt-2 flex items-center justify-between gap-2">
           <span className="flex items-center gap-1.5 text-base font-bold text-nv-emerald">
             <NvIcon name={isPerk ? "PERK_GIFT" : "PERCENT"} className="h-5 w-5" /> {offerBadge(offer, format, t)}

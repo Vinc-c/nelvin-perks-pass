@@ -11,7 +11,7 @@ import CurrencySelect from "@/components/CurrencySelect";
 import StatCard from "@/components/dashboard/StatCard";
 import RechargeWalletModal from "@/components/RechargeWalletModal";
 import WithdrawWalletModal from "@/components/WithdrawWalletModal";
-import { EmptyState, ListSkeleton } from "@/components/UiFeedback";
+import { EmptyState, ErrorState, ListSkeleton } from "@/components/UiFeedback";
 import { useToast } from "@/components/ui/use-toast";
 import { useI18n } from "@/i18n/I18nContext";
 import { translate } from "@/i18n/translate";
@@ -93,7 +93,7 @@ export default function WalletActivity() {
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [checking, setChecking] = useState(null);
 
-  const { data: txs, loading, reload } = useAsync(async () => {
+  const { data: txs, loading, error: loadError, reload } = useAsync(async () => {
     if (!user) return [];
     const [list, merchants] = await Promise.all([
       entities.Transaction.filter({ user_id: user.id }, "-created_date", 300),
@@ -192,6 +192,8 @@ export default function WalletActivity() {
       <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         {loading ? (
           <div className="p-4"><ListSkeleton rows={5} /></div>
+        ) : loadError ? (
+          <div className="p-4"><ErrorState onRetry={reload} /></div>
         ) : rows.length === 0 ? (
           <div className="p-4"><EmptyState icon={Wallet} title={tr("mb.portal.noTx")} description={tr("mb.wallet.emptyDesc")} /></div>
         ) : (

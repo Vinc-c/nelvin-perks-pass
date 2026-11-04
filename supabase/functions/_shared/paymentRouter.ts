@@ -102,6 +102,15 @@ function idealRoute({ audience, method, country }: { audience: string; method: s
   return { primary: find("stripe"), fallback: [find("paddle"), find("korapay")], reason: `Paiement international (${method || "carte"}) routé vers Stripe.` };
 }
 
+/** Currencies each provider can charge. Providers not listed accept any currency. */
+export const PSP_CURRENCIES: Record<string, string[]> = {
+  payunit: ["XAF"],
+  paystack: ["NGN", "GHS", "ZAR", "KES", "USD", "XOF"],
+  paddle: ["USD", "EUR", "GBP", "CAD", "AUD", "JPY", "CHF", "SEK", "NOK", "DKK", "PLN", "CZK", "HUF", "TRY", "ZAR", "KRW", "HKD", "SGD", "TWD", "CNY", "BRL", "MXN", "INR", "ILS", "NZD", "THB", "UAH", "ARS", "COP"],
+};
+export const pspSupportsCurrency = (id: string, currency?: string) =>
+  !currency || !PSP_CURRENCIES[id] || PSP_CURRENCIES[id].includes(currency.toUpperCase());
+
 /**
  * Picks the PSP for a payment. The ideal route is followed when its provider
  * is enabled (Admin → PSP); otherwise the first enabled fallback, then any
@@ -119,12 +128,13 @@ export function routePayment(
   if (!enabled || enabled.length === 0) return ideal;
   const keyed = enabled.filter((e) => e.has_secret);
   const pool = keyed.length > 0 ? keyed : enabled;
-  const usable = (p: Psp) => pool.some((e) => e.id === p.id && (e.methods.length === 0 || e.methods.includes(ctx.method)));
+  const usable = (p: Psp) => pool.some((e) => e.id === p.id && (e.methods.length === 0 || e.methods.includes(ctx.method)))
+    && pspSupportsCurrency(p.id, ctx.currency);
   const chain = [ideal.primary, ...ideal.fallback];
   const pick = chain.find(usable) ||
     PSPS.filter(usable).sort((a, b) => pool.findIndex((e) => e.id === a.id) - pool.findIndex((e) => e.id === b.id))[0];
-  if (!pick) throw new Error("Aucun moyen de paiement actif pour cette méthode. Contactez le support.");
-  if (pick.id === ideal.primary.id) return ideal;
+  if (!pick) throw new Error("Aucun moyen de paiement actif pour cette méthode ou cette devise. Contactez le support.");
+  if (pick.id === ideal.primary.id) return { ...ideal, fallback: ideal.fallback.filter(usable) };
   return {
     primary: pick,
     fallback: chain.filter((p) => p.id !== pick.id && usable(p)),

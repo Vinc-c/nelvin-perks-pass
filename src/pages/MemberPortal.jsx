@@ -7,6 +7,7 @@ import RechargeWalletModal from "@/components/RechargeWalletModal";
 import WithdrawWalletModal from "@/components/WithdrawWalletModal";
 import PartnerMap from "@/components/map/PartnerMap";
 import OfferCard from "@/components/OfferCard";
+import OfferShelves from "@/components/OfferShelves";
 import CurrencySelect from "@/components/CurrencySelect";
 import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/lib/AuthContext";
@@ -22,10 +23,10 @@ import { ArrowDownLeft, ArrowUpRight, Crown, Loader2, Search, Star, TrendingUp, 
 import RoleWelcomeHeader from "@/components/RoleWelcomeHeader";
 import StatCard from "@/components/dashboard/StatCard";
 import SectionCard from "@/components/dashboard/SectionCard";
-import { EmptyState } from "@/components/UiFeedback";
+import { EmptyState, ErrorState } from "@/components/UiFeedback";
 import AccessGate from "@/components/AccessGate";
 import NvIcon, { CategoryIcon } from "@/components/brand/NvIcon";
-import NelvinPassCard from "@/components/brand/NelvinPassCard";
+import NelvinPassCard, { CARD_COLORS } from "@/components/brand/NelvinPassCard";
 import SavingsPanel from "@/components/dashboard/SavingsPanel";
 
 export default function MemberPortal() {
@@ -46,7 +47,7 @@ export default function MemberPortal() {
   const section = params.get("section") || "overview";
   const show = (s) => section === "overview" || section === s;
 
-  const { data: activity, loading, reload } = useAsync(async () => {
+  const { data: activity, loading, error: loadError, reload } = useAsync(async () => {
     if (!user) return { txs: [], subs: [], redeemed: 0 };
     const [txs, subs, redeemed] = await Promise.all([
       entities.Transaction.filter({ user_id: user.id }, "-created_date", 50),
@@ -57,6 +58,14 @@ export default function MemberPortal() {
   }, [user?.id], { initial: { txs: [], subs: [], redeemed: 0 } });
 
   const activeSub = (activity?.subs || []).find((s) => s.status === "ACTIVE" && (!s.expires_at || new Date(s.expires_at) > new Date()));
+  // Cardholder: full name, else the part of the email before @ (same as the welcome banner).
+  const holderName = (user?.full_name || (user?.email ? user.email.split("@")[0] : "") || "").toUpperCase();
+  const colorKey = `nelvin_card_color_${user?.id || ""}`;
+  const [cardColor, setCardColor] = useState(() => { try { const v = localStorage.getItem(colorKey); return CARD_COLORS[v] ? v : null; } catch { return null; } });
+  const pickCardColor = (key) => {
+    setCardColor(key);
+    try { key ? localStorage.setItem(colorKey, key) : localStorage.removeItem(colorKey); } catch { /* storage unavailable */ }
+  };
   const planName = activeSub ? byCode(activeSub.plan_type)?.name || activeSub.plan_type : t("mb.portal.freeAccess");
   const memberCode = user?.id ? `NLV · ${String(user.id).replace(/-/g, "").slice(0, 4).toUpperCase()} ${String(user.id).replace(/-/g, "").slice(4, 8).toUpperCase()}` : "";
   const cashback = (activity?.txs || []).filter((x) => x.status === "COMPLETED").reduce((s, x) => s + Number(x.cashback_amount || 0), 0);
@@ -90,7 +99,15 @@ export default function MemberPortal() {
       {show("wallet") && (<>
       <div className="grid gap-4 lg:grid-cols-2">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-          <NelvinPassCard tier={activeSub?.plan_type || "PASS_FREE"} name={(user?.full_name || "").toUpperCase()} code={memberCode} showQr={false} />
+          <NelvinPassCard tier={activeSub?.plan_type || "PASS_FREE"} name={holderName} code={memberCode} showQr={false} color={cardColor} />
+          <div className="mt-3 flex items-center gap-2" role="radiogroup" aria-label={t("pass.color.label")}>
+            <span className="text-xs text-slate-500">{t("pass.color.label")}</span>
+            {Object.entries(CARD_COLORS).map(([key, c]) => (
+              <button key={key} type="button" role="radio" aria-checked={cardColor === key} aria-label={t(`pass.color.${key}`)} title={t(`pass.color.${key}`)}
+                onClick={() => pickCardColor(cardColor === key ? null : key)}
+                className={`h-6 w-6 rounded-full border-2 transition ${cardColor === key ? "scale-110 border-nv-gold" : "border-white shadow ring-1 ring-slate-200"}`} style={{ background: c.swatch }} />
+            ))}
+          </div>
         </motion.div>
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="relative flex flex-col justify-between overflow-hidden rounded-[1.6rem] bg-gradient-to-br from-emerald-500 to-emerald-700 p-6 shadow-lg">
           <NvIcon name="AFRICA" tone="dark" strokeWidth={0.5} className="pointer-events-none absolute -right-8 -top-8 h-44 w-44 text-nv-gold" faint={0.15} />
@@ -138,6 +155,10 @@ export default function MemberPortal() {
         </div>
       </div>
 
+      {!catalog.loading && category === "ALL" && !query.trim() && (
+        <OfferShelves offers={catalog.offers.filter((o) => o.target_audience !== "B2B_ONLY" || user?.company_id)} meta={meta} format={fmt} onRedeem={setSelectedOffer} ctaLabel={t("cta.redeem")} />
+      )}
+
       {catalog.loading ? (
         <div className="mt-10 flex justify-center"><Loader2 className="h-6 w-6 animate-spin text-slate-400" /></div>
       ) : offers.length === 0 ? (
@@ -165,6 +186,8 @@ export default function MemberPortal() {
       <SectionCard title={t("mb.portal.recentTx")} className="mt-6" action={<Link to="/wallet-activity" className="text-sm font-medium text-emerald-600 hover:underline">{t("mb.portal.seeAll")}</Link>}>
         {loading ? (
           <div className="flex justify-center py-6"><Loader2 className="h-5 w-5 animate-spin text-slate-400" /></div>
+        ) : loadError ? (
+          <ErrorState onRetry={reload} />
         ) : activity.txs.length === 0 ? (
           <EmptyState icon={Wallet} title={t("mb.portal.noTx")} description={t("mb.portal.noTxDesc")} />
         ) : (

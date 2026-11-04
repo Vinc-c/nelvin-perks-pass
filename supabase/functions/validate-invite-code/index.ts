@@ -9,6 +9,11 @@ serve(async (req) => {
   if (!code) return json({ valid: false, error: "Invite code is required" });
 
   const admin = adminClient();
+  // Brute-force guard: 10 lookups per 15 minutes per client IP.
+  const ip = (req.headers.get("x-forwarded-for") || req.headers.get("cf-connecting-ip") || "unknown").split(",")[0].trim();
+  const { data: allowed } = await admin.rpc("invite_attempt_allowed", { p_ip: ip, p_limit: 10, p_window_minutes: 15 });
+  if (allowed === false) return json({ valid: false, error: "Too many attempts. Please try again in a few minutes." }, 429);
+
   const { data: invite } = await admin.from("invite_codes").select("*").eq("code", code).maybeSingle();
   if (!invite) return json({ valid: false, error: "Invalid invite code" });
   if (invite.status !== "PENDING") return json({ valid: false, error: "This code has already been used or revoked" });

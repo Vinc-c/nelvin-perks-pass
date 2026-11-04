@@ -9,7 +9,7 @@ for (const f of walk("src/i18n/messages")) {
     defined.set(m[1], n);
   }
 }
-const base = readFileSync("src/i18n/translations.js", "utf8");
+const base = readFileSync("src/i18n/source.js", "utf8");
 for (const m of base.matchAll(/"([a-zA-Z0-9_.]+)":\s*"/g)) if (!defined.has(m[1])) defined.set(m[1], 5);
 const used = new Map();
 const PREFIX = /["'`]((?:mb|ac|bl|mc|hr|lg|dash|nav|role|ui|auth|land|cat|pass|cta|wallet|welcome|portal)\.[A-Za-z0-9_.]+)["'`]/g;
@@ -21,3 +21,8 @@ console.log(`keys defined: ${defined.size}, used: ${used.size}, missing: ${missi
 for (const [k, f] of missing.slice(0, 400)) console.log(" MISSING", k, "<-", f);
 const short = [...defined].filter(([, n]) => n < 5 && n > 0).length;
 if (short) console.log(`rows with fewer than 5 languages: ${short}`);
+
+// The committed per-language JSON must match the sources (run `node scripts/build-locales.mjs`).
+const { buildLocales } = await import("./build-locales.mjs");
+const stale = await buildLocales({ check: true });
+if (stale.length) { console.log(`STALE locale files (run node scripts/build-locales.mjs): ${stale.join(", ")}`); process.exitCode = 1; }

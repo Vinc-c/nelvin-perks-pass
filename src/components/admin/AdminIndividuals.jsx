@@ -31,7 +31,7 @@ function Detail({ id, onClose }) {
     .reduce((s, r) => s + Number(r.discount_applied || 0) + Number(r.cashback_credited || 0), 0);
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/40" onClick={onClose}>
+    <div role="dialog" aria-modal="true" data-modal-overlay className="fixed inset-0 z-50 flex justify-end bg-slate-900/40" onClick={onClose}>
       <aside className="h-full w-full max-w-xl overflow-y-auto bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-start justify-between gap-3">
           <div>

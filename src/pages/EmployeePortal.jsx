@@ -6,6 +6,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import PortalLayout from "@/components/PortalLayout";
 import QrRedemption from "@/components/QrRedemption";
 import OfferCard from "@/components/OfferCard";
+import OfferShelves from "@/components/OfferShelves";
 import CurrencySelect from "@/components/CurrencySelect";
 import WithdrawWalletModal from "@/components/WithdrawWalletModal";
 import { useI18n } from "@/i18n/I18nContext";
@@ -21,7 +22,7 @@ import { Wallet, Gift, QrCode, TrendingUp, Loader2, Award, ArrowUpRight } from "
 import RoleWelcomeHeader from "@/components/RoleWelcomeHeader";
 import StatCard from "@/components/dashboard/StatCard";
 import SectionCard from "@/components/dashboard/SectionCard";
-import { EmptyState } from "@/components/UiFeedback";
+import { EmptyState, ErrorState } from "@/components/UiFeedback";
 import AccessGate from "@/components/AccessGate";
 
 const STATUS = { REDEEMED: "bg-emerald-100 text-emerald-700", EXPIRED: "bg-rose-100 text-rose-700", GENERATED: "bg-amber-100 text-amber-700", INVALID: "bg-slate-100 text-slate-600" };
@@ -41,7 +42,7 @@ export default function EmployeePortal() {
   const show = (s) => section === "overview" || section === s;
   const fmt = (usd) => money.format(usd, currency);
 
-  const { data, loading, reload } = useAsync(async () => {
+  const { data, loading, error: loadError, reload } = useAsync(async () => {
     if (!user?.company_id) return { policies: [], txs: [], redemptions: [] };
     const [policies, txs, redemptions] = await Promise.all([
       entities.BenefitPolicy.filter({ company_id: user.company_id, active: true }, "label"),
@@ -90,6 +91,8 @@ export default function EmployeePortal() {
       <SectionCard title={t("hr.e.allowTitle")} className="mt-4" icon={Gift}>
         {loading ? (
           <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+        ) : loadError ? (
+          <ErrorState onRetry={reload} />
         ) : allowances.length === 0 ? (
           <EmptyState icon={Gift} title={t("hr.e.noAllow")} description={t("hr.e.noAllowDesc")} />
         ) : (
@@ -129,7 +132,8 @@ export default function EmployeePortal() {
 
       {show("offers") && (
       <div className="mt-6">
-        <h2 className="mb-4 flex items-center gap-2 font-semibold text-slate-900"><QrCode className="h-5 w-5 text-emerald-600" /> {t("offers.title")}</h2>
+        {!catalog.loading && <OfferShelves offers={offers} meta={meta} format={fmt} onRedeem={setSelectedOffer} ctaLabel={t("cta.redeem")} />}
+        <h2 className="mb-4 mt-6 flex items-center gap-2 font-semibold text-slate-900"><QrCode className="h-5 w-5 text-emerald-600" /> {t("offers.title")}</h2>
         {catalog.loading ? (
           <div className="flex justify-center py-10"><Loader2 className="h-6 w-6 animate-spin text-slate-400" /></div>
         ) : offers.length === 0 ? (

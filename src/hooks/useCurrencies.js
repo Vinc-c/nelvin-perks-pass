@@ -1,3 +1,4 @@
+import { currentLocale } from "@/i18n/translate";
 import { useEffect, useState } from "react";
 import { entities } from "@/api/entities";
 
@@ -47,14 +48,14 @@ export function makeMoney(list) {
     const c = get(code);
     const v = fromUsd(usd, c.code);
     const digits = NO_DECIMALS.has(c.code) ? 0 : 2;
-    const n = v.toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits });
+    const n = v.toLocaleString(currentLocale(), { minimumFractionDigits: digits, maximumFractionDigits: digits });
     return c.symbol.length > 1 ? `${n} ${c.symbol}` : `${c.symbol}${n}`;
   };
   /** Formats an amount already expressed in `code` (no conversion). */
   const formatIn = (amount, code = "USD") => {
     const c = get(code);
     const digits = NO_DECIMALS.has(c.code) ? 0 : 2;
-    const n = Number(amount || 0).toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits });
+    const n = Number(amount || 0).toLocaleString(currentLocale(), { minimumFractionDigits: digits, maximumFractionDigits: digits });
     return c.symbol.length > 1 ? `${n} ${c.symbol}` : `${c.symbol}${n}`;
   };
   return { currencies: list, get, fromUsd, toUsd, format, formatIn };

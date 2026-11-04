@@ -148,7 +148,7 @@ export default function BenefitsBuilder() {
           <div className="mt-4 space-y-2">
             {rows.map((r, i) => (
               <div key={r.id || r.category} className="flex flex-wrap items-center gap-3 rounded-xl bg-slate-50 px-3 py-2">
-                <select value={r.category} onChange={(e) => setRows((list) => list.map((x, j) => (j === i ? { ...x, category: e.target.value, label: categoryMeta(e.target.value).label } : x)))} className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm" aria-label="Catégorie">
+                <select value={r.category} onChange={(e) => setRows((list) => list.map((x, j) => (j === i ? { ...x, category: e.target.value, label: categoryMeta(e.target.value).label } : x)))} className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm" aria-label={t("hr.b.category")}>
                   {[categoryMeta(r.category), ...unused].filter((c, k, arr) => arr.findIndex((y) => y.value === c.value) === k).map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
                 </select>
                 <input value={r.label} onChange={(e) => setRows((list) => list.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))} className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm" aria-label={t("hr.b.labelAria")} />
