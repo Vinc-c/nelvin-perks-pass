@@ -1,5 +1,6 @@
 import { offerPath } from "@/lib/seo";
 import React from "react";
+import { offerTitle } from "@/lib/offerTitle";
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -18,7 +19,7 @@ export default function OfferCard({ offer, meta, format, onRedeem, index = 0, ct
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: Math.min(index, 9) * 0.04 }} className="group relative flex flex-col overflow-hidden rounded-2xl border border-nv-line bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
       <Link to={offerPath(offer)} className="relative block h-32 overflow-hidden">
-        <Image src={offer.image_url || offer.merchant?.cover_image_url || cat.image_url || categoryImage(offer.category)} alt={offer.title} className="h-full w-full transition duration-500 group-hover:scale-105" />
+        <Image src={offer.image_url || offer.merchant?.cover_image_url || cat.image_url || categoryImage(offer.category)} alt={offerTitle(offer)} className="h-full w-full transition duration-500 group-hover:scale-105" />
         <div className="absolute inset-0 bg-gradient-to-t from-nv-deep/60 via-transparent to-transparent" />
         {offer.required_plan && (
           <span className="absolute bottom-3 left-3 inline-flex items-center gap-1 rounded-full bg-nv-deep px-2.5 py-1 text-xs font-bold text-nv-gold-light shadow">
@@ -40,7 +41,7 @@ export default function OfferCard({ offer, meta, format, onRedeem, index = 0, ct
       </Link>
       <FavoriteButton offerId={offer.id} className="absolute right-3 top-3" />
       <div className="flex flex-1 flex-col p-4">
-        <Link to={offerPath(offer)} className="font-semibold text-nv-ink hover:underline">{offer.title}</Link>
+        <Link to={offerPath(offer)} className="font-semibold text-nv-ink hover:underline">{offerTitle(offer)}</Link>
         <p className="mt-0.5 flex items-center gap-1 text-sm text-nv-muted"><NvIcon name="CITY_PIN" className="h-4 w-4 shrink-0" /> <span className="truncate">{offer.merchant_name}{offer.city ? ` · ${offer.city}` : ""}</span></p>
         {offer.rating_count > 0 && (
           <p className="mt-1 flex items-center gap-1 text-xs text-nv-muted" aria-label={t("mb.reviews.outOf5", { value: offer.rating_avg })}>

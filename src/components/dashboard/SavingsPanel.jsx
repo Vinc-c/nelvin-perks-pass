@@ -3,12 +3,27 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useI18n } from "@/i18n/I18nContext";
 import NvIcon from "@/components/brand/NvIcon";
+import { PiggyBank } from "lucide-react";
 
 /** Member ROI card: what the Pass saved vs what it costs, plus the next-tier nudge. */
 export default function SavingsPanel({ total, month, passCost, next, fmt }) {
   const { t } = useI18n();
   const ratio = passCost > 0 ? month / passCost : 0;
   const pct = Math.min(100, Math.round(ratio * 100));
+  if (!(total > 0) && !(month > 0) && !(passCost > 0)) {
+    return (
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mt-3 rounded-[20px] border border-slate-200 bg-white p-5">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-nv-gold/15 text-nv-bronze"><PiggyBank className="h-6 w-6" strokeWidth={1.5} /></div>
+        <h2 className="mt-3 text-base font-medium text-slate-900">{t("rd.savings.title")}</h2>
+        <p className="mt-1 text-sm text-slate-500">{t("rd.savings.desc")}</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600">{t("rd.totalSaved")} {fmt(total)}</span>
+          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600">{t("rd.thisMonth")} {fmt(month)}</span>
+        </div>
+        <Link to="/membership-plans" className="mt-4 flex h-11 w-full items-center justify-center rounded-xl border border-slate-300 text-sm font-medium text-slate-800 transition hover:bg-slate-50">{t("rd.explorePasses")} →</Link>
+      </motion.div>
+    );
+  }
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mt-4 rounded-2xl border border-nv-line bg-white p-5 shadow-sm">
       <div className="flex items-center gap-2 text-sm font-semibold text-nv-deep">

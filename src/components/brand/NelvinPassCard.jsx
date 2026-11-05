@@ -26,9 +26,31 @@ export const CARD_COLORS = {
  * Digital membership card. `illustration` shows a placeholder holder so the
  * marketing version never looks like a real person's card.
  */
-export default function NelvinPassCard({ tier = "PASS_PREMIUM", name, code, qrValue, showQr = true, illustration = false, color = null, className = "" }) {
+export default function NelvinPassCard({ tier = "PASS_PREMIUM", name, code, qrValue, showQr = true, illustration = false, color = null, variant = "default", className = "" }) {
   const { t: tr } = useI18n();
   const t = TIERS[tier] || TIERS.PASS_FREE;
+  if (variant === "member") {
+    const mbg = CARD_COLORS[color || "burgundy"]?.bg || CARD_COLORS.burgundy.bg;
+    return (
+      <div className={`relative aspect-[1.586/1] w-full overflow-hidden rounded-[20px] bg-gradient-to-br ${mbg} p-5 text-white ${className}`} role="img" aria-label={tr("pass.aria", { tier: t.label })}>
+        <span className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/[0.06]" />
+        <span className="pointer-events-none absolute -right-2 top-6 h-24 w-24 rounded-full bg-white/[0.06]" />
+        <div className="relative flex items-start justify-between">
+          <div className="flex items-center gap-2"><NelvinMark className="h-8 w-8" /><span className="text-sm font-medium">Nelvin</span></div>
+          <span className="rounded-full border border-nv-gold px-2.5 py-0.5 text-[11px] text-nv-gold-light">{t.label}</span>
+        </div>
+        {code && <p className="relative mt-6 font-mono text-base tracking-[0.25em] text-white/90">{code}</p>}
+        <div className="absolute inset-x-5 bottom-5 flex items-end justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[10px] uppercase tracking-wider text-white/60">{tr("rd.cardholder")}</p>
+            <p className="truncate text-lg font-medium">{name || tr("pass.member")}</p>
+          </div>
+          <span className="shrink-0 rounded-full border border-nv-gold/60 px-2 py-0.5 text-[10px] text-nv-gold-light">{tr("rd.verified")}</span>
+        </div>
+        <div className="absolute inset-x-0 bottom-0 h-[2px] bg-nv-gold" />
+      </div>
+    );
+  }
   const bg = (color && CARD_COLORS[color]?.bg) || t.bg;
   const holder = name || tr(illustration ? "pass.yourName" : "pass.member");
   const shown = code || (illustration ? "NLV · 0000 0000" : "");

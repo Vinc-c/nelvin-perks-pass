@@ -49,7 +49,7 @@ export default function NelvinSupportWidget() {
       <button
         onClick={() => setOpen((o) => !o)}
         aria-label="Nelvin AI Assistant"
-        className="fixed bottom-6 right-6 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 text-white shadow-2xl shadow-amber-600/40 ring-2 ring-amber-300/50 transition hover:scale-105 active:scale-95"
+        className="fixed bottom-24 right-4 z-50 flex h-12 w-12 md:bottom-6 md:right-6 md:h-16 md:w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 text-white shadow-2xl shadow-amber-600/40 ring-2 ring-amber-300/50 transition hover:scale-105 active:scale-95"
       >
         {open ? (
           <X className="h-6 w-6" />
@@ -67,7 +67,7 @@ export default function NelvinSupportWidget() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 right-6 z-50 flex h-[520px] max-h-[80vh] w-[calc(100vw-3rem)] max-w-sm flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
+            className="fixed bottom-40 right-4 md:bottom-24 md:right-6 z-50 flex h-[520px] max-h-[80vh] w-[calc(100vw-3rem)] max-w-sm flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
           >
             <div className="flex items-center gap-3 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-4 py-3.5 text-white">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-amber-600 ring-2 ring-amber-300/40">
