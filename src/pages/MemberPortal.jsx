@@ -117,7 +117,7 @@ export default function MemberPortal() {
   return (
     <PortalLayout title={t("portal.member.title")} theme="light">
       <AccessGate>
-      <MemberWelcomeBanner shortCode={shortCode} />
+      {(section === "overview" || section === "wallet") && <MemberWelcomeBanner shortCode={shortCode} />}
       <div className="[&>*:first-child]:mt-0">
       {show("wallet") && (<>
       <div className="grid gap-4 lg:grid-cols-2">
@@ -220,7 +220,7 @@ export default function MemberPortal() {
       )}
 
       {show("activity") && (
-      <SectionCard title={t("mb.portal.recentTx")} className="mt-6" action={<Link to="/wallet-activity" className="text-sm font-medium text-emerald-600 hover:underline">{t("mb.portal.seeAll")}</Link>}>
+      <SectionCard title={t("mb.portal.recentTx")} className="mt-6" action={<Link to="/wallet-activity?view=tx" className="text-sm font-medium text-emerald-600 hover:underline">{t("mb.portal.seeAll")}</Link>}>
         {loading ? (
           <div className="flex justify-center py-6"><Loader2 className="h-5 w-5 animate-spin text-slate-400" /></div>
         ) : loadError ? (
