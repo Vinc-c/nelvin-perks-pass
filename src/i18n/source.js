@@ -13,6 +13,7 @@ import billing from "./messages/billing";
 import merchant from "./messages/merchant";
 import hr from "./messages/hr";
 import legal from "./messages/legal";
+import redesign from "./messages/redesign";
 
 export const LANGUAGES = [
   { code: "en", label: "English", flag: "🇬🇧", dir: "ltr" },
@@ -341,7 +342,7 @@ export const translations = {
 // Longer screen-by-screen copy lives in ./messages as [key, en, fr, sw, ar, yo]
 // rows (easier to review a translation side by side than per-language blocks).
 const ORDER = ["en", "fr", "sw", "ar", "yo"];
-for (const rows of [categories, landing, auth, catalog, nav, dashboard, member, account, billing, merchant, hr, legal]) {
+for (const rows of [categories, landing, auth, catalog, nav, dashboard, member, account, billing, merchant, hr, legal, redesign]) {
   for (const [key, ...texts] of rows) {
     ORDER.forEach((code, i) => { if (texts[i]) translations[code][key] = texts[i]; });
   }

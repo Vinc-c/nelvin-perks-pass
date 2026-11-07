@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/AuthContext";
-import { navFor, navHref, isNavActive } from "@/lib/portalNav";
+import { navFor, navHref, isNavActive, currentPortal } from "@/lib/portalNav";
+import MemberDrawer from "@/components/member/MemberDrawer";
+import { Home, Wallet, Tag, Activity, Store } from "lucide-react";
 import LanguageSwitcher from "./LanguageSwitcher";
 import InstallAppButton from "./InstallAppButton";
 import PortalNavLinks from "./PortalNavLinks";
@@ -25,6 +27,14 @@ export default function PortalLayout({ children, title }) {
   const location = useLocation();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const items = navFor(user, location.pathname, location.search);
+  const isMember = !!user && currentPortal(user, location.pathname, location.search) === "MEMBER";
+  const memberTabs = [
+    { to: "/member", section: "overview", label: "rd.tab.home", icon: Home },
+    { to: "/member", section: "wallet", label: "rd.tab.wallet", icon: Wallet },
+    { to: "/member", section: "offers", label: "rd.tab.offers", icon: Tag },
+    { to: "/member", section: "activity", label: "rd.tab.activity", icon: Activity },
+    { to: "/merchant-directory", label: "rd.tab.partners", icon: Store },
+  ];
 
   // Public visitors (browsing the merchant directory / map from the landing
   // page) get a lightweight header instead of the authenticated portal chrome.
@@ -73,7 +83,7 @@ export default function PortalLayout({ children, title }) {
         <div className="flex items-center gap-2">
           <InstallAppButton compact />
           <LanguageSwitcher compact variant="light" />
-          <button onClick={() => setMobileNavOpen(!mobileNavOpen)} className="rounded-full p-2 hover:bg-slate-100">
+          <button onClick={() => setMobileNavOpen(!mobileNavOpen)} aria-label={t(mobileNavOpen ? "rd.closeMenu" : "rd.openMenu")} className="rounded-full p-2 hover:bg-slate-100">
             {mobileNavOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
@@ -91,9 +101,11 @@ export default function PortalLayout({ children, title }) {
               transition={{ type: "spring", damping: 25, stiffness: 250 }}
               className="absolute inset-y-0 start-0 flex w-72 flex-col bg-white p-4"
             >
+              {isMember ? <MemberDrawer onNavigate={() => setMobileNavOpen(false)} /> : (<>
               <div className="mb-4 px-2"><Logo to={items[0].to} /></div>
               <nav className="flex-1 space-y-1 overflow-y-auto"><PortalNavLinks items={items} onNavigate={() => setMobileNavOpen(false)} /></nav>
               <PortalUserCard />
+              </>)}
             </motion.div>
           </motion.div>
         )}
@@ -112,18 +124,25 @@ export default function PortalLayout({ children, title }) {
       </div>
 
       {/* Mobile bottom nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-30 grid border-t border-slate-200 bg-white px-1 py-2 md:hidden" style={{ gridTemplateColumns: `repeat(${Math.min(items.length, 5) || 1}, minmax(0, 1fr))` }}>
-        {items.slice(0, 5).map((item, i) => {
-          const Icon = item.icon;
-          const active = isNavActive(item, location.pathname, location.search);
-          return (
-            <Link key={`${item.to}-${item.section || ""}-${i}`} to={navHref(item)} className={`flex min-w-0 flex-col items-center gap-1 rounded-full px-1 py-1.5 text-xs ${active ? "text-amber-700" : "text-slate-500"}`}>
-              <Icon className="h-5 w-5" />
-              <span className="max-w-full truncate">{(() => { const k = navKey(item.label); const v = t(k); return v === k ? item.label : v; })()}</span>
-            </Link>
-          );
-        })}
-      </nav>
+      {(() => {
+        const tabs = isMember ? memberTabs : items.slice(0, 5);
+        const label = (item) => { if (isMember) return t(item.label); const k = navKey(item.label); const v = t(k); return v === k ? item.label : v; };
+        return (
+          <nav className="fixed bottom-0 left-0 right-0 z-30 grid border-t border-slate-200 bg-white px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden" style={{ gridTemplateColumns: `repeat(${Math.min(tabs.length, 5) || 1}, minmax(0, 1fr))` }}>
+            {tabs.map((item, i) => {
+              const Icon = item.icon;
+              const active = isNavActive(item, location.pathname, location.search);
+              return (
+                <Link key={`${item.to}-${item.section || ""}-${i}`} to={navHref(item)} aria-current={active ? "page" : undefined} className={`relative flex min-w-0 flex-col items-center gap-1 px-0.5 pb-1 pt-2.5 text-[11px] ${active ? "font-medium text-nv-emerald" : "text-slate-500"}`}>
+                  {active && <span className="absolute left-1/2 top-0 h-[3px] w-8 -translate-x-1/2 rounded-b-full bg-nv-gold" />}
+                  <Icon className="h-5 w-5" strokeWidth={1.5} />
+                  <span className="max-w-full whitespace-nowrap">{label(item)}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        );
+      })()}
 
       <NelvinSupportWidget />
     </div>

@@ -82,6 +82,7 @@ function iconFor(tx) {
 }
 
 export default function WalletActivity() {
+  const txOnly = new URLSearchParams(window.location.search).get("view") === "tx";
   const { t: tr, locale } = useI18n();
   const { user, refreshUser } = useAuth();
   const { toast } = useToast();
@@ -152,7 +153,8 @@ export default function WalletActivity() {
   };
 
   return (
-    <PortalLayout title={tr("mb.wallet.title")} theme="light">
+    <PortalLayout title={txOnly ? tr("nav.l.transactions") : tr("mb.wallet.title")} theme="light">
+      {!txOnly && (<>
       <div className="flex flex-col gap-4 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 p-6 text-white shadow-lg sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="flex items-center gap-2 text-sm text-emerald-50"><Wallet className="h-4 w-4" /> {tr("mb.wallet.available")}</p>
@@ -171,6 +173,8 @@ export default function WalletActivity() {
         <StatCard icon={Gift} label={tr("mb.wallet.savings")} value={money.format(totals.savings, currency)} tone="amber" delay={0.05} />
         <StatCard icon={ArrowDownLeft} label={tr("mb.wallet.credits")} value={money.format(totals.credited, currency)} tone="blue" delay={0.1} hint={tr("mb.wallet.creditsHint")} />
       </div>
+
+      </>)}
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-2">

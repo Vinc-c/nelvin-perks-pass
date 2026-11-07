@@ -15,7 +15,7 @@ export default function QrRedemption({ offer, onClose }) {
   const { user } = useAuth();
   const money = useCurrencies();
   const [started, setStarted] = useState(false);
-  const [allowWallet, setAllowWallet] = useState(false);
+  const allowWallet = false; // wallet payment option removed from the redemption screen
   const [online, setOnline] = useState(navigator.onLine);
   const [code, setCode] = useState("");
   const [redemptionId, setRedemptionId] = useState(null);
@@ -129,13 +129,6 @@ export default function QrRedemption({ offer, onClose }) {
         {!started ? (
           <div className="space-y-4">
             <p className="text-sm text-slate-600">{t("mb.qr.intro")}</p>
-            <label className="flex items-start gap-3 rounded-xl border border-slate-200 p-3 text-sm">
-              <input type="checkbox" checked={allowWallet} onChange={(e) => setAllowWallet(e.target.checked)} className="mt-1 h-4 w-4 accent-emerald-500" />
-              <span>
-                <span className="font-medium text-slate-900">{t("mb.qr.payWallet")}</span>
-                <span className="block text-xs text-slate-500">{t("mb.qr.payWalletDesc", { balance: money.format(user?.wallet_balance, user?.wallet_currency || "USD") })}</span>
-              </span>
-            </label>
             <button onClick={start} className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white hover:bg-emerald-600">{t("mb.qr.generate")}</button>
           </div>
         ) : (<>

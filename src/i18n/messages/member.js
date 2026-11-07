@@ -105,7 +105,7 @@ export default [
   ["mb.tx.type.REFERRAL_BONUS", "Referral bonus", "Bonus parrainage", "Bonasi ya mapendekezo", "مكافأة الإحالة", "Ẹ̀bùn ìtọ́kasí"],
   ["mb.tx.type.REFUND", "Refund", "Remboursement", "Marejesho", "استرداد", "Ìsanpadà"],
   ["mb.tx.type.GIFT", "Gifted subscription", "Abonnement offert", "Usajili wa zawadi", "اشتراك مُهدى", "Ìforúkọsílẹ̀ ẹ̀bùn"],
-  ["mb.tx.status.PENDING", "pending", "en attente", "inasubiri", "قيد الانتظار", "ń dúró"],
+  ["mb.tx.status.PENDING", "Pending", "en attente", "inasubiri", "قيد الانتظار", "ń dúró"],
   ["mb.tx.status.COMPLETED", "Completed", "Effectué", "Imekamilika", "مكتملة", "Ti parí"],
   ["mb.tx.status.FAILED", "Failed", "Échoué", "Imeshindwa", "فشلت", "Ó kùnà"],
   ["mb.tx.status.REFUNDED", "Refunded", "Remboursé", "Imerejeshwa", "مستردّة", "A ti san padà"],
