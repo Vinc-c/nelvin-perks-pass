@@ -21,6 +21,8 @@ import { usePlans } from "@/hooks/usePlans";
 import { walletEffect } from "@/pages/WalletActivity";
 import { txTitle, txChip } from "@/lib/txDisplay";
 import { ChevronRight, Crown, Plus, ArrowUpRight, Loader2, Search, Star, TrendingUp, Wallet } from "lucide-react";
+import MemberStories from "@/components/member/MemberStories";
+import MemberPromo from "@/components/member/MemberPromo";
 import MemberWelcomeBanner, { displayName } from "@/components/member/MemberWelcomeBanner";
 import SectionCard from "@/components/dashboard/SectionCard";
 import { EmptyState, ErrorState } from "@/components/UiFeedback";
@@ -45,7 +47,7 @@ export default function MemberPortal() {
   const [query, setQuery] = useState("");
   const [params] = useSearchParams();
   const section = params.get("section") || "overview";
-  const show = (s) => section === "overview" || section === s;
+  const homeOffers = useMemo(() => catalog.offers.filter((o) => o.target_audience !== "B2B_ONLY" || user?.company_id), [catalog.offers, user?.company_id]);
 
   const { data: activity, loading, error: loadError, reload } = useAsync(async () => {
     if (!user) return { txs: [], subs: [], redeemed: 0 };
@@ -69,7 +71,6 @@ export default function MemberPortal() {
   const planName = activeSub ? byCode(activeSub.plan_type)?.name || activeSub.plan_type : t("mb.portal.freeAccess");
   const idHex = String(user?.id || "").replace(/-/g, "").toUpperCase();
   const memberCode = idHex ? `NLV ${idHex.slice(0, 4)} ${idHex.slice(4, 8)}` : "";
-  const shortCode = idHex ? `NLV ${idHex.slice(4, 8)}` : "";
   const cashback = (activity?.txs || []).filter((x) => x.status === "COMPLETED").reduce((s, x) => s + Number(x.cashback_amount || 0), 0);
 
   const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
@@ -117,9 +118,10 @@ export default function MemberPortal() {
   return (
     <PortalLayout title={t("portal.member.title")} theme="light">
       <AccessGate>
-      {(section === "overview" || section === "wallet") && <MemberWelcomeBanner shortCode={shortCode} />}
+      {section === "overview" && <MemberWelcomeBanner />}
+      {section === "overview" && !catalog.loading && <MemberStories offers={homeOffers} meta={meta} onOpen={setSelectedOffer} />}
       <div className="[&>*:first-child]:mt-0">
-      {show("wallet") && (<>
+      {section === "wallet" && (<>
       <div className="grid gap-4 lg:grid-cols-2">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
           <NelvinPassCard tier={activeSub?.plan_type || "PASS_FREE"} name={holderName} code={memberCode} showQr={false} color={cardColor} variant="member" />
@@ -176,7 +178,10 @@ export default function MemberPortal() {
       </div>
       </>)}
 
-      {show("offers") && (<>
+      {section === "overview" && !catalog.loading && <OfferShelves offers={homeOffers} meta={meta} format={fmt} onRedeem={setSelectedOffer} ctaLabel={t("cta.redeem")} />}
+      {section === "overview" && <MemberPromo />}
+
+      {section === "offers" && (<>
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-2">
           {usedCategories.map((c) => (
@@ -219,7 +224,7 @@ export default function MemberPortal() {
         </div>
       )}
 
-      {show("activity") && (
+      {section === "activity" && (
       <SectionCard title={t("mb.portal.recentTx")} className="mt-6" action={<Link to="/wallet-activity?view=tx" className="text-sm font-medium text-emerald-600 hover:underline">{t("mb.portal.seeAll")}</Link>}>
         {loading ? (
           <div className="flex justify-center py-6"><Loader2 className="h-5 w-5 animate-spin text-slate-400" /></div>

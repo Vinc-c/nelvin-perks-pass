@@ -49,4 +49,9 @@ export default [
   ["rd.openMenu", "Open menu", "Ouvrir le menu"],
   ["rd.closeMenu", "Close menu", "Fermer le menu"],
   ["rd.menu", "Menu", "Menu"],
+  ["rd.promo.eyebrow", "Members only", "Réservé aux membres"],
+  ["rd.promo.title", "Unlock more savings with a Pass", "Économisez plus avec un Pass"],
+  ["rd.promo.desc", "Every partner offer, cashback on each purchase and a wallet built for Africa.", "Toutes les offres partenaires, du cashback à chaque achat et un wallet pensé pour l'Afrique."],
+  ["rd.walletAria", "Wallet balance: {amount}", "Solde du wallet : {amount}"],
+  ["rd.lang", "Language", "Langue"],
 ];

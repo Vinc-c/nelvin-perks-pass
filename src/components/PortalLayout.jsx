@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/AuthContext";
@@ -10,7 +10,8 @@ import InstallAppButton from "./InstallAppButton";
 import PortalNavLinks from "./PortalNavLinks";
 import PortalUserCard from "./PortalUserCard";
 import NelvinSupportWidget from "@/components/NelvinSupportWidget";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Wallet as WalletIcon } from "lucide-react";
+import { useCurrencies } from "@/hooks/useCurrencies";
 import { useI18n } from "@/i18n/I18nContext";
 import { navKey } from "@/lib/portalNav";
 import NelvinLogo from "@/components/NelvinLogo";
@@ -26,6 +27,16 @@ export default function PortalLayout({ children, title }) {
   const { t, dir } = useI18n();
   const location = useLocation();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const money = useCurrencies();
+  useEffect(() => { setMobileNavOpen(false); }, [location.pathname, location.search]);
+  useEffect(() => {
+    if (!mobileNavOpen) return undefined;
+    const onKey = (e) => { if (e.key === "Escape") setMobileNavOpen(false); };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+  }, [mobileNavOpen]);
   const items = navFor(user, location.pathname, location.search);
   const isMember = !!user && currentPortal(user, location.pathname, location.search) === "MEMBER";
   const memberTabs = [
@@ -35,6 +46,14 @@ export default function PortalLayout({ children, title }) {
     { to: "/member", section: "activity", label: "rd.tab.activity", icon: Activity },
     { to: "/merchant-directory", label: "rd.tab.partners", icon: Store },
   ];
+
+  // Wallet shortcut: only for signed-in members.
+  const WalletChip = () => (
+    <Link to="/member?section=wallet" aria-label={t("rd.walletAria", { amount: money.format(user?.wallet_balance || 0, user?.wallet_currency || "USD") })} className="flex h-10 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50">
+      <WalletIcon className="h-4 w-4 text-nv-emerald" strokeWidth={1.5} aria-hidden="true" />
+      <span className="hidden min-[390px]:inline">{money.format(user?.wallet_balance || 0, user?.wallet_currency || "USD")}</span>
+    </Link>
+  );
 
   // Public visitors (browsing the merchant directory / map from the landing
   // page) get a lightweight header instead of the authenticated portal chrome.
@@ -81,9 +100,10 @@ export default function PortalLayout({ children, title }) {
       <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 md:hidden">
         <Logo to={items[0].to} />
         <div className="flex items-center gap-2">
-          <InstallAppButton compact />
+          <div className="hidden min-[430px]:block"><InstallAppButton compact /></div>
           <LanguageSwitcher compact variant="light" />
-          <button onClick={() => setMobileNavOpen(!mobileNavOpen)} aria-label={t(mobileNavOpen ? "rd.closeMenu" : "rd.openMenu")} className="rounded-full p-2 hover:bg-slate-100">
+          {isMember && <WalletChip />}
+          <button type="button" onClick={() => setMobileNavOpen(!mobileNavOpen)} aria-expanded={mobileNavOpen} aria-label={t(mobileNavOpen ? "rd.closeMenu" : "rd.openMenu")} className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-slate-100">
             {mobileNavOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
@@ -117,6 +137,7 @@ export default function PortalLayout({ children, title }) {
           <h1 className="text-xl font-bold text-slate-900">{title}</h1>
           <div className="flex items-center gap-2">
             <InstallAppButton />
+            {isMember && <WalletChip />}
             <LanguageSwitcher variant="light" />
           </div>
         </div>
@@ -128,7 +149,7 @@ export default function PortalLayout({ children, title }) {
         const tabs = isMember ? memberTabs : items.slice(0, 5);
         const label = (item) => { if (isMember) return t(item.label); const k = navKey(item.label); const v = t(k); return v === k ? item.label : v; };
         return (
-          <nav className="fixed bottom-0 left-0 right-0 z-30 grid border-t border-slate-200 bg-white px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden" style={{ gridTemplateColumns: `repeat(${Math.min(tabs.length, 5) || 1}, minmax(0, 1fr))` }}>
+          <nav className="fixed bottom-0 left-0 right-0 z-30 grid border-t border-slate-200 bg-white/90 px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-lg md:hidden" style={{ gridTemplateColumns: `repeat(${Math.min(tabs.length, 5) || 1}, minmax(0, 1fr))` }}>
             {tabs.map((item, i) => {
               const Icon = item.icon;
               const active = isNavActive(item, location.pathname, location.search);
