@@ -112,14 +112,14 @@ export default function PortalLayout({ children, title }) {
       {/* Mobile nav drawer */}
       <AnimatePresence>
         {mobileNavOpen && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-40 md:hidden">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[60] md:hidden">
             <div className="absolute inset-0 bg-slate-900/30" onClick={() => setMobileNavOpen(false)} />
             <motion.div
               initial={{ x: dir === "rtl" ? "100%" : "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: dir === "rtl" ? "100%" : "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 250 }}
-              className="absolute inset-y-0 start-0 flex w-72 flex-col bg-white p-4"
+              className="absolute inset-y-0 start-0 flex w-72 max-w-[85vw] flex-col bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
             >
               {isMember ? <MemberDrawer onNavigate={() => setMobileNavOpen(false)} /> : (<>
               <div className="mb-4 px-2"><Logo to={items[0].to} /></div>
