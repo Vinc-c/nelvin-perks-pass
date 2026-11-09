@@ -4,7 +4,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import PartnerMap, { distanceKm } from "@/components/map/PartnerMap";
 import Motif from "@/components/brand/Motif";
 import KenteBand from "@/components/brand/KenteBand";
-import NelvinLogo from "@/components/NelvinLogo";
+import SiteHeader from "@/components/landing/SiteHeader";
 import FavoriteButton from "@/components/FavoriteButton";
 import { useCatalog, offerBadge } from "@/hooks/useCatalog";
 import { useCategories } from "@/hooks/useCategories";
@@ -100,13 +100,7 @@ export default function MerchantMap() {
 
   return (
     <div className="nv-body flex h-[100dvh] flex-col bg-white text-[#08261D]">
-      <header className="z-[500] flex h-16 shrink-0 items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 sm:px-6">
-        <Link to="/" className="nv-focus shrink-0 rounded"><NelvinLogo className="h-9" /></Link>
-        <div className="flex items-center gap-2 text-sm font-semibold">
-          <Link to="/merchant-directory" className="nv-focus hidden rounded-full px-4 py-2 hover:bg-[#F2EBDA] sm:inline-flex">{t("mc.map.all")}</Link>
-          <Link to={user ? "/app" : "/register"} className="nv-focus rounded-full bg-[#08261D] px-4 py-2 text-white hover:bg-[#0F4A38]">{user ? t("mc.map.mine") : t("mc.map.create")}</Link>
-        </div>
-      </header>
+      <SiteHeader />
       <KenteBand height={8} />
 
       <div className="flex min-h-0 flex-1 flex-col-reverse lg:flex-row">

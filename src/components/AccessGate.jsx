@@ -1,3 +1,4 @@
+import TopBar from "@/components/TopBar";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { invokeFunction } from "@/api/functions";
@@ -44,7 +45,9 @@ export default function AccessGate({ children }) {
   const desc = isHr ? t("access.desc.hr") : isEmployee ? t("access.desc.employee") : t("access.desc.member");
 
   return (
-    <div className="mx-auto max-w-md py-10">
+    <>
+    <TopBar />
+    <div className="mx-auto max-w-md px-4 py-10">
       <div className="flex flex-col items-center rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-rose-50">
           <Lock className="h-7 w-7 text-rose-500" />
@@ -68,5 +71,6 @@ export default function AccessGate({ children }) {
         </div>
       </div>
     </div>
+    </>
   );
 }

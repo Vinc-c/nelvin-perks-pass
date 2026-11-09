@@ -147,6 +147,7 @@ const NAV = {
 // Section items open a dashboard module. When a super admin previews another
 // portal, shared pages carry `?portal=` so the sidebar stays on that portal.
 export function navHref(item) {
+  if (item.section === "overview") return item.to;
   if (item.section) return `${item.to}?section=${item.section}`;
   if (item.portal) return `${item.to}?portal=${item.portal}`;
   return item.to;

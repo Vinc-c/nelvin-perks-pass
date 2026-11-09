@@ -1,3 +1,4 @@
+import TopBar from "@/components/TopBar";
 import React from "react";
 import { ShieldAlert } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
@@ -9,7 +10,8 @@ export default function DeviceLimitGate() {
   const { t } = useI18n();
   const { deviceBlock, recheckDevice, logout } = useAuth();
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
+    <div className="min-h-screen bg-slate-50"><TopBar />
+    <div className="flex items-center justify-center p-4 pt-10">
       <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl ring-1 ring-slate-200">
         <div className="flex items-center gap-3">
           <span className="flex h-11 w-11 items-center justify-center rounded-full bg-amber-100 text-amber-600"><ShieldAlert className="h-6 w-6" /></span>
@@ -22,6 +24,7 @@ export default function DeviceLimitGate() {
           <button onClick={() => logout()} className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50">{t("dev.signOut")}</button>
         </div>
       </div>
+    </div>
     </div>
   );
 }
