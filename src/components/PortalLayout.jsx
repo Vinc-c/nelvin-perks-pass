@@ -48,7 +48,8 @@ export default function PortalLayout({ children, title }) {
   ];
 
   // Wallet shortcut: only for signed-in members.
-  const WalletChip = () => (
+  const onHome = isMember && location.pathname === "/member" && !new URLSearchParams(location.search).get("section");
+  const WalletChip = () => onHome ? null : (
     <Link to="/member?section=wallet" aria-label={t("rd.walletAria", { amount: money.format(user?.wallet_balance || 0, user?.wallet_currency || "USD") })} className="flex h-10 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50">
       <WalletIcon className="h-4 w-4 text-nv-emerald" strokeWidth={1.5} aria-hidden="true" />
       <span className="hidden min-[390px]:inline">{money.format(user?.wallet_balance || 0, user?.wallet_currency || "USD")}</span>

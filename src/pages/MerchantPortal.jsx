@@ -1,4 +1,6 @@
 import NvIcon from "@/components/brand/NvIcon";
+import { useAsync } from "@/hooks/useAsync";
+import RateMember from "@/components/merchant/RateMember";
 import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useSearchParams } from "react-router-dom";
@@ -80,6 +82,7 @@ export default function MerchantPortal() {
     return () => { alive = false; unsub(); };
   }, [merchantId]);
 
+  const { data: myReviews, reload: reloadReviews } = useAsync(() => (merchantId ? entities.MemberReview.filter({ merchant_id: merchantId }, "-created_date", 200) : Promise.resolve([])), [merchantId], { initial: [] });
   const redeemed = useMemo(() => redemptions.filter((r) => r.status === "REDEEMED"), [redemptions]);
   const todayStr = new Date().toDateString();
   const todays = redeemed.filter((r) => new Date(r.redeemed_at).toDateString() === todayStr);
@@ -239,10 +242,11 @@ export default function MerchantPortal() {
             ) : (
               <div className="space-y-2">
                 {redeemed.slice(0, 12).map((s) => (
-                  <div key={s.id} className="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3">
-                    <div>
+                  <div key={s.id} className="flex items-start justify-between gap-3 rounded-lg bg-slate-50 px-4 py-3">
+                    <div className="min-w-0 flex-1">
                       <p className="font-mono text-sm font-medium text-slate-900">{s.code_used}</p>
                       <p className="text-xs text-slate-500">{new Date(s.redeemed_at).toLocaleString(locale, { dateStyle: "short", timeStyle: "short" })}{s.paid_with_wallet ? ` · ${t("mc.red.wallet")}` : ""}</p>
+                      <RateMember redemption={s} merchantId={merchantId} review={myReviews.find((x) => x.redemption_id === s.id)} onSaved={reloadReviews} />
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-semibold text-slate-900">{money.format(s.net_amount_usd ?? s.bill_amount_usd, currency)}</p>

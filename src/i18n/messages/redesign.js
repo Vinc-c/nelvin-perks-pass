@@ -54,4 +54,13 @@ export default [
   ["rd.promo.desc", "Every partner offer, cashback on each purchase and a wallet built for Africa.", "Toutes les offres partenaires, du cashback à chaque achat et un wallet pensé pour l'Afrique."],
   ["rd.walletAria", "Wallet balance: {amount}", "Solde du wallet : {amount}"],
   ["rd.lang", "Language", "Langue"],
+  ["rv.pending", "Awaiting approval", "En attente de validation"],
+  ["rv.rejected", "Not published", "Non publié"],
+  ["rv.approved", "Approved", "Approuvé"],
+  ["rv.submitted", "Thanks! Your review will appear once approved.", "Merci ! Votre avis apparaîtra après validation."],
+  ["rv.rated", "Customer rated", "Client noté"],
+  ["rv.rateCustomer", "Rate this customer", "Noter ce client"],
+  ["rv.customerPlaceholder", "How was this customer? (optional)", "Comment s'est passé ce client ? (facultatif)"],
+  ["rv.cancel", "Cancel", "Annuler"],
+  ["rv.privateNote", "Private: only the Nelvin team sees this rating, after review.", "Privé : seule l'équipe Nelvin voit cette note, après vérification."],
 ];

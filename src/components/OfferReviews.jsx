@@ -31,7 +31,7 @@ export default function OfferReviews({ offerId, canReview }) {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [busy, setBusy] = useState(false);
-  const visible = reviews.filter((r) => !r.hidden);
+  const visible = reviews.filter((r) => !r.hidden && r.status === "APPROVED");
   const avg = visible.length ? visible.reduce((s, r) => s + r.rating, 0) / visible.length : 0;
 
   const submit = async (e) => {
@@ -41,7 +41,7 @@ export default function OfferReviews({ offerId, canReview }) {
     try {
       if (mine) await entities.OfferReview.update(mine.id, { rating, comment: comment.trim() || null });
       else await entities.OfferReview.create({ offer_id: offerId, rating, comment: comment.trim() || null });
-      toast({ title: t("mb.reviews.thanks") });
+      toast({ title: t("rv.submitted") });
       setRating(0);
       setComment("");
       reload();
@@ -87,7 +87,7 @@ export default function OfferReviews({ offerId, canReview }) {
           {reviews.map((r) => (
             <li key={r.id} className={`border-b border-slate-100 pb-3 last:border-0 ${r.hidden ? "opacity-50" : ""}`}>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-sm font-medium text-slate-900">{r.author_name || t("mb.reviews.member")} <span className="ml-1 text-xs font-normal text-emerald-600">{t("mb.reviews.verified")}</span></span>
+                <span className="text-sm font-medium text-slate-900">{r.author_name || t("mb.reviews.member")} <span className="ml-1 text-xs font-normal text-emerald-600">{t("mb.reviews.verified")}</span>{r.status === "PENDING" && <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-700">{t("rv.pending")}</span>}{r.status === "REJECTED" && <span className="ml-2 rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-medium text-rose-700">{t("rv.rejected")}</span>}</span>
                 <Stars value={r.rating} size="h-3.5 w-3.5" />
               </div>
               {r.comment && <p className="mt-1 text-sm text-slate-600">{r.comment}</p>}
