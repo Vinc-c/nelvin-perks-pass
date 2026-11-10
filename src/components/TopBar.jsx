@@ -10,7 +10,7 @@ export default function TopBar() {
   const { isAuthenticated } = useAuth();
   const { t } = useI18n();
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white/90 px-4 backdrop-blur-lg sm:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 sm:px-6">
       <Link to="/" className="flex items-center"><NelvinLogo className="h-8" /></Link>
       <div className="flex items-center gap-2">
         <LanguageSwitcher compact variant="light" />

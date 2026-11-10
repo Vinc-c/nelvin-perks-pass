@@ -59,8 +59,8 @@ export default function PortalLayout({ children, title }) {
   // page) get a lightweight header instead of the authenticated portal chrome.
   if (!user) {
     return (
-      <div className="min-h-screen bg-slate-50 text-slate-900">
-        <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/80 backdrop-blur-lg">
+      <div className="min-h-screen bg-white text-slate-900 md:bg-slate-50">
+        <header className="sticky top-0 z-30 border-b border-slate-200 bg-white">
           <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
             <Logo to="/" />
             <div className="flex items-center gap-2">
@@ -86,7 +86,7 @@ export default function PortalLayout({ children, title }) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className="min-h-screen bg-white text-slate-900 md:bg-slate-50">
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 start-0 z-30 hidden w-64 flex-col border-e border-slate-200 bg-white md:flex">
         <div className="flex h-16 items-center px-6"><Logo to={items[0].to} /></div>
@@ -149,7 +149,7 @@ export default function PortalLayout({ children, title }) {
         const tabs = isMember ? memberTabs : items.slice(0, 5);
         const label = (item) => { if (isMember) return t(item.label); const k = navKey(item.label); const v = t(k); return v === k ? item.label : v; };
         return (
-          <nav className="fixed bottom-0 left-0 right-0 z-30 grid border-t border-slate-200 bg-white/90 px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-lg md:hidden" style={{ gridTemplateColumns: `repeat(${Math.min(tabs.length, 5) || 1}, minmax(0, 1fr))` }}>
+          <nav className="fixed bottom-0 left-0 right-0 z-30 grid border-t border-slate-200 bg-white px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden" style={{ gridTemplateColumns: `repeat(${Math.min(tabs.length, 5) || 1}, minmax(0, 1fr))` }}>
             {tabs.map((item, i) => {
               const Icon = item.icon;
               const active = isNavActive(item, location.pathname, location.search);

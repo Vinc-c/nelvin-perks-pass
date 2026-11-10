@@ -18,7 +18,7 @@ export default function SiteHeader() {
   ];
 
   return (
-    <header className="sticky top-0 z-[600] border-b border-white/10 bg-[#08261D]/95 text-white backdrop-blur">
+    <header className="sticky top-0 z-[600] border-b border-white/10 bg-[#08261D] text-white">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link to="/" className="nv-focus flex items-center rounded bg-white px-2 py-1"><NelvinLogo className="h-8" /></Link>
         <nav className="hidden items-center gap-1 text-sm font-medium lg:flex" aria-label="Navigation principale">

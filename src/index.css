@@ -182,3 +182,8 @@ button:not(.not-pill) {
   body { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); padding-bottom: env(safe-area-inset-bottom); }
 }
 html.is-native body { padding-top: env(safe-area-inset-top); padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); padding-bottom: env(safe-area-inset-bottom); }
+
+/* Mobile: solid white app background (no cream tint, no translucent bars). */
+@media (max-width: 767px) {
+  html:not(.dark) body { background-color: #fff; }
+}
