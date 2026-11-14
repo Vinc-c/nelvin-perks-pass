@@ -187,3 +187,9 @@ html.is-native body { padding-top: env(safe-area-inset-top); padding-left: env(s
 @media (max-width: 767px) {
   html:not(.dark) body { background-color: #fff; }
 }
+@media (max-width: 767px) {
+  .bg-nv-ivory { background-color: #fff; }
+}
+@media (max-width: 767px) {
+  .nv-body.bg-slate-50, .min-h-screen.bg-slate-50 { background-color: #fff; }
+}
