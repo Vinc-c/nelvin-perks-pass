@@ -65,4 +65,5 @@ export default [
   ["rv.privateNote", "Private: only the Nelvin team sees this rating, after review.", "Privé : seule l'équipe Nelvin voit cette note, après vérification."],
   ["rd.wallet.recent", "Recent activity", "Activité récente"],
   ["rd.tab.wallet.aria", "Wallet", "Wallet"],
+  ["nav.demo", "Live demo", "Démo"],
 ];

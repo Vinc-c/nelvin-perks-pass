@@ -18,6 +18,7 @@ const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
 const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
 import Landing from '@/pages/Landing';
 const Pricing = lazy(() => import('@/pages/Pricing'));
+const Demo = lazy(() => import('@/pages/Demo'));
 const EmployeePortal = lazy(() => import('@/pages/EmployeePortal'));
 const MemberPortal = lazy(() => import('@/pages/MemberPortal'));
 const HRPortal = lazy(() => import('@/pages/HRPortal'));
@@ -96,6 +97,7 @@ const AuthenticatedApp = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/pricing" element={<Pricing />} />
+      <Route path="/demo" element={<Demo />} />
       <Route path="/merchant" element={<BecomePartner />} />
       <Route path="/merchant-directory" element={<MerchantDirectory />} />
       <Route path="/merchant-map" element={<MerchantMap />} />
