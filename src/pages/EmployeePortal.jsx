@@ -18,6 +18,7 @@ import { useCurrencies } from "@/hooks/useCurrencies";
 import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
 import { useRewards } from "@/hooks/useRewards";
 import { Gift, QrCode, Loader2, Award } from "lucide-react";
+import CompanyBanner from "@/components/company/CompanyBanner";
 import MemberWelcomeBanner from "@/components/member/MemberWelcomeBanner";
 import MemberStories from "@/components/member/MemberStories";
 import WalletHero from "@/components/wallet/WalletHero";
@@ -75,6 +76,7 @@ export default function EmployeePortal() {
     <PortalLayout title={t("portal.employee.title")} theme="light">
       <AccessGate>
       {section === "overview" && <MemberWelcomeBanner />}
+      {section === "overview" && <CompanyBanner />}
       {section === "overview" && !catalog.loading && <MemberStories offers={offers} meta={meta} onOpen={setSelectedOffer} />}
       <div className="[&>*:first-child]:mt-0">
       {section === "wallet" && (<>

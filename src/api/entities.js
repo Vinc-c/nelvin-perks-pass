@@ -115,6 +115,7 @@ export const entities = {
   GiftCard: createEntity("gift_cards"),
   OfferReview: createEntity("offer_reviews"),
   MemberReview: createEntity("member_reviews"),
+  CompanyBranding: createEntity("company_branding"),
   Currency: createEntity("currencies", { pk: "code" }),
   MerchantDocument: createEntity("merchant_documents"),
   PayoutRequest: createEntity("payout_requests"),

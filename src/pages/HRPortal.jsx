@@ -1,3 +1,4 @@
+import CompanyBrandingPanel from "@/components/company/CompanyBrandingPanel";
 import React, { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import PortalLayout from "@/components/PortalLayout";
@@ -188,6 +189,8 @@ export default function HRPortal() {
       </>)}
 
       {show("benefits") && <div className="mt-6"><BenefitsBuilder /></div>}
+
+      {section === "branding" && <div className="mt-6"><CompanyBrandingPanel /></div>}
 
       {show("invitations") && <div className="mt-6"><InviteEmployees /></div>}
 

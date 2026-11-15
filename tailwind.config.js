@@ -52,8 +52,8 @@ module.exports = {
   				foreground: 'hsl(var(--accent-foreground))'
   			},
   			'nv-deep': '#08261D',
-  			'nv-emerald': '#0F4A38',
-  			'nv-gold': '#C8A24A',
+  			'nv-emerald': 'rgb(var(--nv-emerald, 15 74 56) / <alpha-value>)',
+  			'nv-gold': 'rgb(var(--nv-gold, 200 162 74) / <alpha-value>)',
   			'nv-gold-light': '#E6CF8B',
   			'nv-bronze': '#84631A',
   			'nv-terracotta': '#A8472A',

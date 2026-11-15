@@ -15,10 +15,11 @@ import { useCurrencies } from "@/hooks/useCurrencies";
 import { useI18n } from "@/i18n/I18nContext";
 import { navKey } from "@/lib/portalNav";
 import NelvinLogo from "@/components/NelvinLogo";
+import { useBranding, hexToTriplet } from "@/hooks/useBranding";
 
-const Logo = ({ to }) => (
+const Logo = ({ to, brandLogo }) => (
   <Link to={to} className="flex items-center gap-2">
-    <NelvinLogo className="h-8" />
+    {brandLogo ? <img src={brandLogo} alt="" className="h-8 max-w-[140px] object-contain" /> : <NelvinLogo className="h-8" />}
   </Link>
 );
 
@@ -28,6 +29,8 @@ export default function PortalLayout({ children, title }) {
   const location = useLocation();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const money = useCurrencies();
+  const { live: brand } = useBranding();
+  const brandStyle = brand ? { ...(hexToTriplet(brand.primary_color) && { "--nv-emerald": hexToTriplet(brand.primary_color) }), ...(hexToTriplet(brand.accent_color) && { "--nv-gold": hexToTriplet(brand.accent_color) }) } : undefined;
   useEffect(() => { setMobileNavOpen(false); }, [location.pathname, location.search]);
   useEffect(() => {
     if (!mobileNavOpen) return undefined;
@@ -89,10 +92,10 @@ export default function PortalLayout({ children, title }) {
   }
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 md:bg-slate-50">
+    <div className="min-h-screen bg-white text-slate-900 md:bg-slate-50" style={brandStyle}>
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 start-0 z-30 hidden w-64 flex-col border-e border-slate-200 bg-white md:flex">
-        <div className="flex h-16 items-center px-6"><Logo to={items[0].to} /></div>
+        <div className="flex h-16 items-center px-6"><Logo to={items[0].to} brandLogo={brand?.logo_url} /></div>
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
           <PortalNavLinks items={items} />
         </nav>
@@ -101,7 +104,7 @@ export default function PortalLayout({ children, title }) {
 
       {/* Mobile top bar */}
       <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 md:hidden">
-        <Logo to={items[0].to} />
+        <Logo to={items[0].to} brandLogo={brand?.logo_url} />
         <div className="flex items-center gap-2">
           <div className="hidden min-[430px]:block"><InstallAppButton compact /></div>
           <LanguageSwitcher compact variant="light" />
@@ -125,7 +128,7 @@ export default function PortalLayout({ children, title }) {
               className="absolute inset-y-0 start-0 flex w-72 max-w-[85vw] flex-col bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
             >
               {isMember ? <MemberDrawer onNavigate={() => setMobileNavOpen(false)} /> : (<>
-              <div className="mb-4 px-2"><Logo to={items[0].to} /></div>
+              <div className="mb-4 px-2"><Logo to={items[0].to} brandLogo={brand?.logo_url} /></div>
               <nav className="flex-1 space-y-1 overflow-y-auto"><PortalNavLinks items={items} onNavigate={() => setMobileNavOpen(false)} /></nav>
               <PortalUserCard />
               </>)}

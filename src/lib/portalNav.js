@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Star, Image as ImageIcon, Type, Crown, Building2, Ticket,
   Activity, Globe, Bell, Lock, LifeBuoy, MessageSquare, History, ArrowLeftRight,
   Users, UserPlus, SlidersHorizontal, ScanLine, Tag, Banknote, QrCode, Share2,
-  Gem, Headphones, PiggyBank, TrendingUp, GitPullRequest, KeyRound, ScrollText,
+  Gem, Headphones, PiggyBank, TrendingUp, GitPullRequest, KeyRound, ScrollText, Palette,
 } from "lucide-react";
 import { isAdmin } from "@/lib/roles";
 
@@ -75,6 +75,7 @@ const NAV = {
       { to: "/hr", section: "analytics", label: "Adoption & économies", icon: TrendingUp },
       { to: "/hr", section: "benefits", label: "Avantages flexibles", icon: SlidersHorizontal },
       { to: "/hr", section: "invitations", label: "Invitations", icon: UserPlus },
+      { to: "/hr", section: "branding", label: "Personnalisation", icon: Palette },
       { to: "/hr", section: "employees", label: "Employés", icon: Users },
     ]),
     ...group("Rapports", [
@@ -122,6 +123,7 @@ const NAV = {
       { to: "/admin", section: "kyc", label: "Merchant vetting", icon: Shield },
       { to: "/admin", section: "offers", label: "Offers & SEO", icon: Tag },
       { to: "/admin", section: "reviews", label: "Reviews", icon: Star },
+      { to: "/admin", section: "branding", label: "Company branding", icon: Palette },
       { to: "/admin", section: "sales", label: "Sales codes", icon: Ticket },
       { to: "/merchant-directory", label: "Merchant directory", icon: Store },
     ]),
