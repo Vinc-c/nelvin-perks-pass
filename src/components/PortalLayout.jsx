@@ -38,19 +38,21 @@ export default function PortalLayout({ children, title }) {
     return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
   }, [mobileNavOpen]);
   const items = navFor(user, location.pathname, location.search);
-  const isMember = !!user && currentPortal(user, location.pathname, location.search) === "MEMBER";
+  const portalKind = user ? currentPortal(user, location.pathname, location.search) : null;
+  const isMember = portalKind === "MEMBER" || portalKind === "EMPLOYEE";
+  const base = portalKind === "EMPLOYEE" ? "/employee" : "/member";
   const memberTabs = [
-    { to: "/member", section: "overview", label: "rd.tab.home", icon: Home },
-    { to: "/member", section: "wallet", label: "rd.tab.wallet", icon: Wallet },
-    { to: "/member", section: "offers", label: "rd.tab.offers", icon: Tag },
-    { to: "/member", section: "activity", label: "rd.tab.activity", icon: Activity },
+    { to: base, section: "overview", label: "rd.tab.home", icon: Home },
+    { to: base, section: "wallet", label: "rd.tab.wallet", icon: Wallet },
+    { to: base, section: "offers", label: "rd.tab.offers", icon: Tag },
+    { to: base, section: portalKind === "EMPLOYEE" ? "history" : "activity", label: "rd.tab.activity", icon: Activity },
     { to: "/merchant-directory", label: "rd.tab.partners", icon: Store },
   ];
 
   // Wallet shortcut: only for signed-in members.
-  const onHome = isMember && location.pathname === "/member" && !new URLSearchParams(location.search).get("section");
+  const onHome = isMember && location.pathname === base && !new URLSearchParams(location.search).get("section");
   const WalletChip = () => onHome ? null : (
-    <Link to="/member?section=wallet" aria-label={t("rd.walletAria", { amount: money.format(user?.wallet_balance || 0, user?.wallet_currency || "USD") })} className="flex h-10 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50">
+    <Link to={`${base}?section=wallet`} aria-label={t("rd.walletAria", { amount: money.format(user?.wallet_balance || 0, user?.wallet_currency || "USD") })} className="flex h-10 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50">
       <WalletIcon className="h-4 w-4 text-nv-emerald" strokeWidth={1.5} aria-hidden="true" />
       <span className="hidden min-[390px]:inline">{money.format(user?.wallet_balance || 0, user?.wallet_currency || "USD")}</span>
     </Link>

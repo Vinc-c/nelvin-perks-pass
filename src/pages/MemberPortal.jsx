@@ -8,7 +8,6 @@ import WithdrawWalletModal from "@/components/WithdrawWalletModal";
 import PartnerMap from "@/components/map/PartnerMap";
 import OfferCard from "@/components/OfferCard";
 import OfferShelves from "@/components/OfferShelves";
-import CurrencySelect from "@/components/CurrencySelect";
 import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/lib/AuthContext";
 import { entities } from "@/api/entities";
@@ -20,7 +19,8 @@ import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
 import { usePlans } from "@/hooks/usePlans";
 import { walletEffect } from "@/pages/WalletActivity";
 import { txTitle, txChip } from "@/lib/txDisplay";
-import { ChevronRight, Crown, Plus, ArrowUpRight, Loader2, Search, Star, TrendingUp, Wallet } from "lucide-react";
+import { ChevronRight, Crown, Loader2, Search, Star, TrendingUp, Wallet } from "lucide-react";
+import WalletHero from "@/components/wallet/WalletHero";
 import MemberStories from "@/components/member/MemberStories";
 import MemberPromo from "@/components/member/MemberPromo";
 import MemberWelcomeBanner, { displayName } from "@/components/member/MemberWelcomeBanner";
@@ -134,24 +134,11 @@ export default function MemberPortal() {
             ))}
           </div>
         </motion.div>
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="flex flex-col justify-between rounded-[20px] border border-slate-200 bg-white p-5">
-          <div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-500">{t("rd.walletBalance")}</span>
-              <CurrencySelect value={currency} onChange={setCurrency} tone="light" />
-            </div>
-            <p className="mt-3 text-[40px] font-medium leading-none text-slate-900">{fmt(user?.wallet_balance)}</p>
-            <p className="mt-2 text-sm text-slate-500">{t("rd.available")}</p>
-          </div>
-          <div className="mt-5 grid grid-cols-2 gap-3">
-            <button onClick={() => setRechargeOpen(true)} className="flex h-11 items-center justify-center gap-1.5 rounded-xl bg-nv-emerald text-sm font-medium text-white transition hover:bg-nv-deep active:scale-95">
-              <Plus className="h-4 w-4" strokeWidth={1.5} /> {t("wallet.recharge")}
-            </button>
-            <button onClick={() => setWithdrawOpen(true)} className="flex h-11 items-center justify-center gap-1.5 rounded-xl border border-slate-300 text-sm font-medium text-slate-800 transition hover:bg-slate-50 active:scale-95">
-              <ArrowUpRight className="h-4 w-4" strokeWidth={1.5} /> {t("wallet.withdraw")}
-            </button>
-          </div>
-        </motion.div>
+        <WalletHero
+          balance={user?.wallet_balance} fmt={fmt} currency={currency} onCurrency={setCurrency}
+          onRecharge={() => setRechargeOpen(true)} onWithdraw={() => setWithdrawOpen(true)}
+          recent={recentTxs.slice(0, 4).map((tx) => ({ id: tx.id, title: txTitle(tx, t, planByCode), date: new Date(tx.created_date).toLocaleDateString(locale), amount: walletEffect(tx) }))}
+        />
       </div>
 
       <SavingsPanel total={totalSaved} month={monthSaved} passCost={passCost} next={passCost > 0 ? nextPlan : null} fmt={fmt} />

@@ -7,7 +7,6 @@ import PortalLayout from "@/components/PortalLayout";
 import QrRedemption from "@/components/QrRedemption";
 import OfferCard from "@/components/OfferCard";
 import OfferShelves from "@/components/OfferShelves";
-import CurrencySelect from "@/components/CurrencySelect";
 import WithdrawWalletModal from "@/components/WithdrawWalletModal";
 import { useI18n } from "@/i18n/I18nContext";
 import { useAuth } from "@/lib/AuthContext";
@@ -18,10 +17,12 @@ import { useCategories } from "@/hooks/useCategories";
 import { useCurrencies } from "@/hooks/useCurrencies";
 import { useDisplayCurrency } from "@/hooks/useDisplayCurrency";
 import { useRewards } from "@/hooks/useRewards";
-import { Wallet, Gift, QrCode, TrendingUp, Loader2, Award, ArrowUpRight } from "lucide-react";
-import RoleWelcomeHeader from "@/components/RoleWelcomeHeader";
-import StatCard from "@/components/dashboard/StatCard";
+import { Gift, QrCode, Loader2, Award } from "lucide-react";
+import MemberWelcomeBanner from "@/components/member/MemberWelcomeBanner";
+import MemberStories from "@/components/member/MemberStories";
+import WalletHero from "@/components/wallet/WalletHero";
 import SectionCard from "@/components/dashboard/SectionCard";
+import { walletEffect } from "@/pages/WalletActivity";
 import { EmptyState, ErrorState } from "@/components/UiFeedback";
 import AccessGate from "@/components/AccessGate";
 
@@ -73,21 +74,19 @@ export default function EmployeePortal() {
   return (
     <PortalLayout title={t("portal.employee.title")} theme="light">
       <AccessGate>
-      <RoleWelcomeHeader />
+      {section === "overview" && <MemberWelcomeBanner />}
+      {section === "overview" && !catalog.loading && <MemberStories offers={offers} meta={meta} onOpen={setSelectedOffer} />}
       <div className="[&>*:first-child]:mt-0">
-      {show("wallet") && (<>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard icon={Wallet} label={t("hr.e.balance")} value={fmt(user?.wallet_balance)} tone="emerald" />
-        <StatCard icon={TrendingUp} label={t("hr.e.cashback")} value={fmt(cashback)} tone="emerald" delay={0.05} />
-        <StatCard icon={QrCode} label={t("hr.e.used")} value={redeemedCount} tone="amber" delay={0.1} />
-        <StatCard icon={Gift} label={t("hr.e.points")} value={rewards.points ?? "…"} tone="rose" delay={0.15} hint={rewards.tier ? t("mb.rw.level", { tier: rewards.tier.label }) : undefined} />
-      </div>
-      <div className="mt-3 flex flex-wrap items-center gap-2">
-        <CurrencySelect value={currency} onChange={setCurrency} />
-        <button onClick={() => setWithdrawOpen(true)} className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"><ArrowUpRight className="h-4 w-4" /> {t("hr.e.withdraw")}</button>
-        <Link to="/wallet-activity" className="text-sm font-medium text-emerald-600 hover:underline">{t("hr.e.walletHistory")}</Link>
-      </div>
-
+      {section === "wallet" && (<>
+      <WalletHero
+        balance={user?.wallet_balance} fmt={fmt} currency={currency} onCurrency={setCurrency} onWithdraw={() => setWithdrawOpen(true)}
+        stats={[
+          { label: t("hr.e.cashback"), value: fmt(cashback) },
+          { label: t("hr.e.used"), value: String(redeemedCount) },
+          { label: t("hr.e.points"), value: String(rewards.points ?? "…") },
+        ]}
+        recent={(data?.txs || []).filter((x) => x.status === "COMPLETED").slice(0, 4).map((x) => ({ id: x.id, title: x.description || x.type, date: new Date(x.created_date).toLocaleDateString(locale), amount: walletEffect(x) }))}
+      />
       <SectionCard title={t("hr.e.allowTitle")} className="mt-4" icon={Gift}>
         {loading ? (
           <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
@@ -114,7 +113,7 @@ export default function EmployeePortal() {
       </SectionCard>
       </>)}
 
-      {show("badges") && (
+      {section === "badges" && (
       <SectionCard title={t("hr.e.badges")} className="mt-6" icon={Award} action={<Link to="/my-rewards" className="text-sm font-medium text-emerald-600 hover:underline">{t("hr.e.seeAll")}</Link>}>
         {!rewards.ready ? <Loader2 className="h-5 w-5 animate-spin text-slate-400" /> : (
           <div className="flex flex-wrap gap-3">
@@ -130,7 +129,8 @@ export default function EmployeePortal() {
       </SectionCard>
       )}
 
-      {show("offers") && (
+      {section === "overview" && !catalog.loading && <div className="mt-2"><OfferShelves offers={offers} meta={meta} format={fmt} onRedeem={setSelectedOffer} ctaLabel={t("cta.redeem")} /></div>}
+      {section === "offers" && (
       <div className="mt-6">
         {!catalog.loading && <OfferShelves offers={offers} meta={meta} format={fmt} onRedeem={setSelectedOffer} ctaLabel={t("cta.redeem")} />}
         <h2 className="mb-4 mt-6 flex items-center gap-2 font-semibold text-slate-900"><QrCode className="h-5 w-5 text-emerald-600" /> {t("offers.title")}</h2>
@@ -146,7 +146,7 @@ export default function EmployeePortal() {
       </div>
       )}
 
-      {show("history") && (
+      {section === "history" && (
       <SectionCard title={t("hr.e.recent")} className="mt-6">
         {loading ? (
           <div className="flex justify-center py-6"><Loader2 className="h-5 w-5 animate-spin text-slate-400" /></div>

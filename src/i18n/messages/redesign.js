@@ -63,4 +63,6 @@ export default [
   ["rv.customerPlaceholder", "How was this customer? (optional)", "Comment s'est passé ce client ? (facultatif)"],
   ["rv.cancel", "Cancel", "Annuler"],
   ["rv.privateNote", "Private: only the Nelvin team sees this rating, after review.", "Privé : seule l'équipe Nelvin voit cette note, après vérification."],
+  ["rd.wallet.recent", "Recent activity", "Activité récente"],
+  ["rd.tab.wallet.aria", "Wallet", "Wallet"],
 ];
