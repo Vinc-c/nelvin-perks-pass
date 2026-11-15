@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { useI18n } from "@/i18n/I18nContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Image } from "@/components/ui/image";
@@ -19,6 +19,7 @@ import HowItWorks from "@/components/landing/HowItWorks";
 import NelvinLogo from "@/components/NelvinLogo";
 import { useAuth } from "@/lib/AuthContext";
 import { usePublicContent, imageByKey, heroImages, copyByKey } from "@/hooks/usePublicContent";
+import Reveal from "@/components/landing/Reveal";
 import HeroSlides from "@/components/landing/HeroSlides";
 import { useCatalog } from "@/hooks/useCatalog";
 import { useAsync } from "@/hooks/useAsync";
@@ -29,6 +30,14 @@ const SAVANNA = "/images/savanna.webp";
 
 export default function Landing() {
   const { t } = useI18n();
+  const heroRef = React.useRef(null);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroBgY = useTransform(heroProgress, [0, 1], ["0%", "18%"]);
+  const heroBgScale = useTransform(heroProgress, [0, 1], [1, 1.18]);
+  const heroTextY = useTransform(heroProgress, [0, 1], ["0%", "-12%"]);
+  const heroTextOpacity = useTransform(heroProgress, [0, 0.9], [1, 0.6]);
+  const heroCardsY = useTransform(heroProgress, [0, 1], ["0%", "-22%"]);
   const ANNOUNCE = t("land.announce");
   const [menuOpen, setMenuOpen] = useState(false);
   const { isAuthenticated } = useAuth();
@@ -129,15 +138,15 @@ export default function Landing() {
 
       <main id="contenu">
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        {/* African landscape background */}
-        <div className="absolute inset-0">
+      <section ref={heroRef} className="relative overflow-hidden">
+        {/* African landscape background: parallax + slow zoom while scrolling */}
+        <motion.div className="absolute inset-0 will-change-transform" style={reduceMotion ? undefined : { y: heroBgY, scale: heroBgScale }}>
           <HeroSlides images={heroSlides} />
           <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/50 to-white/25" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#F2EBDA_0%,_transparent_70%)]" />
-        </div>
+        </motion.div>
         <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:py-20">
-          <motion.div className="min-w-0" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+          <motion.div className="min-w-0" style={reduceMotion ? undefined : { y: heroTextY, opacity: heroTextOpacity }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 py-1.5 pl-1.5 pr-4 text-sm font-medium text-brand">
               <span className="h-5 w-8 overflow-hidden rounded-full"><KenteBand height={20} /></span> {heroBadge}
             </span>
@@ -158,7 +167,7 @@ export default function Landing() {
           </motion.div>
 
           {/* Falling category cards (continuous top-to-bottom) */}
-          <motion.div className="min-w-0" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.2 }}>
+          <motion.div className="min-w-0" style={reduceMotion ? undefined : { y: heroCardsY }} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.2 }}>
             <HeroFallingCards counts={counts} />
           </motion.div>
         </div>
@@ -176,13 +185,13 @@ export default function Landing() {
       <PartnerLogos merchants={merchants} />
 
       {/* The digital card and the three passes */}
-      <PassShowcase />
+      <Reveal><PassShowcase /></Reveal>
 
       {/* Built for Africa */}
-      <AfricaPillars />
+      <Reveal><AfricaPillars /></Reveal>
 
       {/* How it works */}
-      <HowItWorks />
+      <Reveal><HowItWorks /></Reveal>
 
       {/* African landscape band (ken-burns video feel) */}
       <section className="relative mt-20 h-64 overflow-hidden sm:h-80">
