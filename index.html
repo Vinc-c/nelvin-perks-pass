@@ -58,9 +58,17 @@
       "url": "__SITE_URL__/"
     }
     </script>
-  </head>
+  <style>
+.nv-splash{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#fff}
+.nv-ring{position:relative;width:96px;height:96px;display:flex;align-items:center;justify-content:center}
+.nv-ring::before{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid #f1f5f9;border-top-color:#0f4a38;animation:nvspin 1s linear infinite}
+.nv-ring img{width:72px;height:72px;border-radius:16px;object-fit:contain}
+@keyframes nvspin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.nv-ring::before{animation:none}}
+</style>
+</head>
   <body>
-    <div id="root"></div>
+    <div id="root"><div class="nv-splash" role="status" aria-label="Loading"><div class="nv-ring"><img src="/images/nelvin-icon-192.png" alt="" width="72" height="72" /></div></div></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

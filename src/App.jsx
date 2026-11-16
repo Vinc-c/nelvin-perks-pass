@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react';
+import SplashLoader from '@/components/SplashLoader';
 import { Toaster } from "@/components/ui/toaster"
 import ErrorBoundary from "@/components/ErrorBoundary"
 import useModalEscape from "@/hooks/useModalEscape"
@@ -63,11 +64,7 @@ const RefundPolicy = lazy(() => import('@/pages/RefundPolicy'));
 const PaymentReturn = lazy(() => import('@/pages/PaymentReturn'));
 const PullRequests = lazy(() => import('@/pages/PullRequests'));
 
-const PageFallback = () => (
-  <div className="fixed inset-0 flex items-center justify-center">
-    <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
-  </div>
-);
+const PageFallback = () => <SplashLoader />;
 
 // Resets the error screen when the user navigates elsewhere.
 const RoutedBoundary = ({ children }) => {
@@ -81,11 +78,7 @@ const AuthenticatedApp = () => {
 
   // Show a spinner only while the very first session check runs.
   if (isLoadingAuth && !authChecked) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
-      </div>
-    );
+    return <SplashLoader />;
   }
 
   // Render the main app
