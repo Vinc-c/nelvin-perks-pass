@@ -67,4 +67,6 @@ export default [
   ["rd.tab.wallet.aria", "Wallet", "Wallet"],
   ["nav.demo", "Live demo", "Démo"],
   ["nav.blog", "Blog", "Blog"],
+  ["rd.sponsored", "Sponsored", "Sponsorisé"],
+  ["rd.visitPartner", "Visit partner", "Voir le partenaire"],
 ];

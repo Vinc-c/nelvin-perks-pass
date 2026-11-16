@@ -22,7 +22,7 @@ import { txTitle, txChip } from "@/lib/txDisplay";
 import { ChevronRight, Crown, Loader2, Search, Star, TrendingUp, Wallet } from "lucide-react";
 import WalletHero from "@/components/wallet/WalletHero";
 import SiteBanner from "@/components/marketing/SiteBanner";
-import MemberStories from "@/components/member/MemberStories";
+import SponsoredReel from "@/components/member/SponsoredReel";
 import MemberPromo from "@/components/member/MemberPromo";
 import MemberWelcomeBanner, { displayName } from "@/components/member/MemberWelcomeBanner";
 import SectionCard from "@/components/dashboard/SectionCard";
@@ -121,7 +121,7 @@ export default function MemberPortal() {
       <AccessGate>
       {section === "overview" && <MemberWelcomeBanner />}
       {section === "overview" && <SiteBanner placement="MEMBER_HOME" className="mb-4" />}
-      {section === "overview" && !catalog.loading && <MemberStories offers={homeOffers} meta={meta} onOpen={setSelectedOffer} />}
+      {section === "overview" && !catalog.loading && <SponsoredReel offers={homeOffers} meta={meta} />}
       <div className="[&>*:first-child]:mt-0">
       {section === "wallet" && (<>
       <div className="grid gap-4 lg:grid-cols-2">

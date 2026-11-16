@@ -21,7 +21,7 @@ function Editor({ offer, onClose, onSaved }) {
     cashback_rate: offer.cashback_rate ?? 0, perk_label: offer.perk_label || "", required_plan: offer.required_plan || "",
     booking_required: !!offer.booking_required, is_featured: !!offer.is_featured,
     expires_at: offer.expires_at ? offer.expires_at.slice(0, 10) : "",
-    slug: offer.slug || "", seo_title: offer.seo_title || "", seo_description: offer.seo_description || "",
+    video_url: offer.video_url || "", slug: offer.slug || "", seo_title: offer.seo_title || "", seo_description: offer.seo_description || "",
   });
   const [saving, setSaving] = useState(false);
   const save = async () => {
@@ -36,7 +36,7 @@ function Editor({ offer, onClose, onSaved }) {
         perk_label: f.discount_type === "PERK" ? f.perk_label.trim() : null, required_plan: f.required_plan || null,
         booking_required: f.booking_required, is_featured: f.is_featured,
         expires_at: f.expires_at ? new Date(f.expires_at + "T23:59:59").toISOString() : null,
-        slug: f.slug || "", seo_title: f.seo_title.trim() || null, seo_description: f.seo_description.trim() || null,
+        video_url: f.video_url.trim() || null, slug: f.slug || "", seo_title: f.seo_title.trim() || null, seo_description: f.seo_description.trim() || null,
       });
       onSaved({ ...offer, ...updated });
       toast({ title: "Offer updated" });
@@ -68,9 +68,10 @@ function Editor({ offer, onClose, onSaved }) {
         </select></label>
       <div className="flex flex-wrap items-end gap-4">
         <label className="block text-sm"><span className="text-slate-500">Expires on</span><input type="date" value={f.expires_at} onChange={(e) => setF({ ...f, expires_at: e.target.value })} className={input} /></label>
-        <label className="flex items-center gap-2 pb-2 text-sm text-slate-600"><input type="checkbox" checked={f.is_featured} onChange={(e) => setF({ ...f, is_featured: e.target.checked })} className="h-4 w-4 accent-amber-500" /> Featured</label>
+        <label className="flex items-center gap-2 pb-2 text-sm text-slate-600"><input type="checkbox" checked={f.is_featured} onChange={(e) => setF({ ...f, is_featured: e.target.checked })} className="h-4 w-4 accent-amber-500" /> Sponsored (shown in the Home reel)</label>
         <label className="flex items-center gap-2 pb-2 text-sm text-slate-600"><input type="checkbox" checked={f.booking_required} onChange={(e) => setF({ ...f, booking_required: e.target.checked })} className="h-4 w-4 accent-emerald-500" /> WhatsApp booking</label>
       </div>
+      <label className="block text-sm"><span className="text-slate-500">Reel video URL (optional, short MP4, muted loop)</span><input value={f.video_url} onChange={(e) => setF({ ...f, video_url: e.target.value })} placeholder="https://…/clip.mp4" className={input} /></label>
       <SeoFields value={f} onChange={(v) => setF({ ...f, ...v })} fallbackTitle={f.title} fallbackDescription={f.description} basePath="/offre/" />
       <div className="flex gap-2">
         <button onClick={onClose} className="flex items-center gap-1 rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-white"><X className="h-4 w-4" /> Cancel</button>
