@@ -4,6 +4,7 @@ import ErrorBoundary from "@/components/ErrorBoundary"
 import useModalEscape from "@/hooks/useModalEscape"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
+import SeoManager from '@/components/marketing/SeoManager';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
@@ -19,6 +20,8 @@ const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
 import Landing from '@/pages/Landing';
 const Pricing = lazy(() => import('@/pages/Pricing'));
 const Demo = lazy(() => import('@/pages/Demo'));
+const Blog = lazy(() => import('@/pages/Blog'));
+const BlogPost = lazy(() => import('@/pages/BlogPost'));
 const EmployeePortal = lazy(() => import('@/pages/EmployeePortal'));
 const MemberPortal = lazy(() => import('@/pages/MemberPortal'));
 const HRPortal = lazy(() => import('@/pages/HRPortal'));
@@ -88,6 +91,8 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Suspense fallback={<PageFallback />}>
+    <>
+    <SeoManager />
     <Routes>
       {/* Public */}
       <Route path="/" element={<Landing />} />
@@ -98,6 +103,8 @@ const AuthenticatedApp = () => {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/demo" element={<Demo />} />
+      <Route path="/blog" element={<Blog />} />
+      <Route path="/blog/:slug" element={<BlogPost />} />
       <Route path="/merchant" element={<BecomePartner />} />
       <Route path="/merchant-directory" element={<MerchantDirectory />} />
       <Route path="/merchant-map" element={<MerchantMap />} />
@@ -182,6 +189,7 @@ const AuthenticatedApp = () => {
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
+    </>
     </Suspense>
   );
 };

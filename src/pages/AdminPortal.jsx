@@ -10,6 +10,7 @@ import AdminCmsCopy from "@/components/admin/AdminCmsCopy";
 import AdminCmsCategories from "@/components/admin/AdminCmsCategories";
 import AdminCompanyManagement from "@/components/admin/AdminCompanyManagement";
 import AdminMerchantVetting from "@/components/admin/AdminMerchantVetting";
+import AdminMarketing from "@/components/admin/AdminMarketing";
 import AdminBranding from "@/components/admin/AdminBranding";
 import AdminReviews from "@/components/admin/AdminReviews";
 import AdminOffers from "@/components/admin/AdminOffers";
@@ -35,6 +36,7 @@ const SECTIONS = {
   offers: AdminOffers,
   reviews: AdminReviews,
   branding: AdminBranding,
+  marketing: AdminMarketing,
   sales: AdminSalesCodes,
   staff: AdminStaffManagement,
   psp: AdminPspSettings,

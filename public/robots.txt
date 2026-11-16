@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /hr
+Disallow: /member
+Disallow: /employee
+Disallow: /merchant-dashboard
+Disallow: /wallet-activity
+Disallow: /settings
+Disallow: /billing-settings
+Disallow: /security-settings
+Disallow: /login
+Disallow: /register

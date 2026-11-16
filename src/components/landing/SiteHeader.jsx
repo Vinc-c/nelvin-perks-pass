@@ -15,6 +15,7 @@ export default function SiteHeader() {
     { to: "/merchant-map", label: t("nav.map") },
     { to: "/pricing", label: t("nav.pricing") },
     { to: "/merchant", label: t("nav.merchants") },
+    { to: "/blog", label: t("nav.blog") },
     { to: "/demo", label: t("nav.demo") },
   ];
 

@@ -123,6 +123,7 @@ const NAV = {
       { to: "/admin", section: "kyc", label: "Merchant vetting", icon: Shield },
       { to: "/admin", section: "offers", label: "Offers & SEO", icon: Tag },
       { to: "/admin", section: "reviews", label: "Reviews", icon: Star },
+      { to: "/admin", section: "marketing", label: "Marketing & SEO", icon: Palette },
       { to: "/admin", section: "branding", label: "Company branding", icon: Palette },
       { to: "/admin", section: "sales", label: "Sales codes", icon: Ticket },
       { to: "/merchant-directory", label: "Merchant directory", icon: Store },

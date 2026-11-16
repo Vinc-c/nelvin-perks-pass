@@ -66,4 +66,5 @@ export default [
   ["rd.wallet.recent", "Recent activity", "Activité récente"],
   ["rd.tab.wallet.aria", "Wallet", "Wallet"],
   ["nav.demo", "Live demo", "Démo"],
+  ["nav.blog", "Blog", "Blog"],
 ];

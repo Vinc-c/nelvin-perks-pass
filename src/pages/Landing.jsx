@@ -19,6 +19,7 @@ import HowItWorks from "@/components/landing/HowItWorks";
 import NelvinLogo from "@/components/NelvinLogo";
 import { useAuth } from "@/lib/AuthContext";
 import { usePublicContent, imageByKey, heroImages, copyByKey } from "@/hooks/usePublicContent";
+import SiteBanner from "@/components/marketing/SiteBanner";
 import Reveal from "@/components/landing/Reveal";
 import HeroSlides from "@/components/landing/HeroSlides";
 import { useCatalog } from "@/hooks/useCatalog";
@@ -137,6 +138,7 @@ export default function Landing() {
       </header>
 
       <main id="contenu">
+      <div className="mx-auto max-w-7xl px-4 pt-3 sm:px-6 empty:hidden"><SiteBanner placement="HOME_TOP" /></div>
       {/* Hero */}
       <section ref={heroRef} className="relative overflow-hidden">
         {/* African landscape background: parallax + slow zoom while scrolling */}
@@ -183,6 +185,7 @@ export default function Landing() {
 
       {/* Partner logos marquee — right below the hero */}
       <PartnerLogos merchants={merchants} />
+      <div className="mx-auto max-w-7xl px-4 sm:px-6"><SiteBanner placement="HOME_MID" /></div>
 
       {/* The digital card and the three passes */}
       <Reveal><PassShowcase /></Reveal>

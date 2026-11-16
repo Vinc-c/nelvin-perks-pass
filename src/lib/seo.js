@@ -10,7 +10,7 @@ export const slugify = (text) =>
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
 
-const setMeta = (attr, key, content) => {
+export const setMeta = (attr, key, content) => {
   let el = document.head.querySelector(`meta[${attr}="${key}"]`);
   if (!content) { if (el) el.remove(); return; }
   if (!el) { el = document.createElement("meta"); el.setAttribute(attr, key); document.head.appendChild(el); }

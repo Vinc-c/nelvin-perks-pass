@@ -21,6 +21,7 @@ import { walletEffect } from "@/pages/WalletActivity";
 import { txTitle, txChip } from "@/lib/txDisplay";
 import { ChevronRight, Crown, Loader2, Search, Star, TrendingUp, Wallet } from "lucide-react";
 import WalletHero from "@/components/wallet/WalletHero";
+import SiteBanner from "@/components/marketing/SiteBanner";
 import MemberStories from "@/components/member/MemberStories";
 import MemberPromo from "@/components/member/MemberPromo";
 import MemberWelcomeBanner, { displayName } from "@/components/member/MemberWelcomeBanner";
@@ -119,6 +120,7 @@ export default function MemberPortal() {
     <PortalLayout title={t("portal.member.title")} theme="light">
       <AccessGate>
       {section === "overview" && <MemberWelcomeBanner />}
+      {section === "overview" && <SiteBanner placement="MEMBER_HOME" className="mb-4" />}
       {section === "overview" && !catalog.loading && <MemberStories offers={homeOffers} meta={meta} onOpen={setSelectedOffer} />}
       <div className="[&>*:first-child]:mt-0">
       {section === "wallet" && (<>
