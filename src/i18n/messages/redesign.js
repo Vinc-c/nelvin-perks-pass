@@ -98,4 +98,12 @@ export default [
   ["pr.st.CANCELLED", "Cancelled", "Annulée"],
   ["rd.sponsored", "Sponsored", "Sponsorisé"],
   ["rd.visitPartner", "Visit partner", "Voir le partenaire"],
+  ["land.stats.partners", "Verified partners", "Partenaires vérifiés"],
+  ["land.stats.offers", "Live offers", "Offres en cours"],
+  ["land.stats.cities", "Cities covered", "Villes couvertes"],
+  ["land.stats.categories", "Categories", "Catégories"],
+  ["land.ind.kicker", "Industries", "Secteurs"],
+  ["land.ind.title", "Perks in every part of your day", "Des avantages dans chaque moment de votre journée"],
+  ["land.ind.offers", "{n} live offers", "{n} offres en cours"],
+  ["foot.top", "Back to top", "Haut de page"],
 ];

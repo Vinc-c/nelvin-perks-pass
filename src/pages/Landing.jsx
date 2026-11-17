@@ -15,6 +15,9 @@ import SiteFooter from "@/components/landing/SiteFooter";
 import PassShowcase from "@/components/landing/PassShowcase";
 import AfricaPillars from "@/components/landing/AfricaPillars";
 import HowItWorks from "@/components/landing/HowItWorks";
+import LiveStats from "@/components/landing/LiveStats";
+import IndustriesGrid from "@/components/landing/IndustriesGrid";
+import { ScrollProgress, WordReveal } from "@/components/landing/motion";
 import SiteHeader from "@/components/landing/SiteHeader";
 import { usePublicContent, imageByKey, heroImages, copyByKey } from "@/hooks/usePublicContent";
 import SiteBanner from "@/components/marketing/SiteBanner";
@@ -70,6 +73,7 @@ export default function Landing() {
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_#F2EBDA_0%,_#FAF6EC_45%,_#ffffff_100%)] font-body text-nv-ink">
       <a href="#contenu" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">{t("nav.skip")}</a>
       {/* Nav */}
+      <ScrollProgress />
       <SiteHeader />
       {/* Slim announcement band with gold scrolling text */}
         <div className="overflow-hidden bg-nv-deep">
@@ -128,6 +132,7 @@ export default function Landing() {
 
       {/* Partner logos marquee — right below the hero */}
       <PartnerLogos merchants={merchants} />
+      <LiveStats merchants={merchants} offers={offers} />
       <div className="mx-auto max-w-7xl px-4 sm:px-6"><SiteBanner placement="HOME_MID" /></div>
 
       {/* The digital card and the three passes */}
@@ -135,6 +140,9 @@ export default function Landing() {
 
       {/* Built for Africa */}
       <Reveal><AfricaPillars /></Reveal>
+
+      {/* Categories */}
+      <IndustriesGrid counts={counts} />
 
       {/* How it works */}
       <Reveal><HowItWorks /></Reveal>
@@ -147,7 +155,7 @@ export default function Landing() {
           <div className="mx-auto w-full max-w-7xl px-6">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <p className="text-sm font-semibold text-brand">{t("land.band.kicker")}</p>
-              <h2 className="mt-2 max-w-xl text-3xl font-bold text-nv-ink sm:text-4xl">{t("land.band.title")}</h2>
+              <WordReveal text={t("land.band.title")} className="mt-2 max-w-xl text-3xl font-bold text-nv-ink sm:text-4xl" />
             </motion.div>
           </div>
         </div>
