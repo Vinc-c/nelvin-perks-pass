@@ -66,8 +66,7 @@ export default function SiteFooter() {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/15 pt-6 sm:flex-row">
           <p className="text-sm text-white/60">
-            © {new Date().getFullYear()} {t("foot.copy")}{" "}
-            <a href="https://liafrik.com" target="_blank" rel="noopener noreferrer" className="font-medium text-white/70 hover:text-nv-gold-light">liafrik.com</a>
+            © {new Date().getFullYear()} {t("foot.rights")}
           </p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/60">
             <Link to="/terms" className="hover:text-nv-gold-light">{t("foot.termsShort")}</Link>
