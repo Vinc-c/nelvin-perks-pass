@@ -10,12 +10,15 @@ export default function TopBar() {
   const { isAuthenticated } = useAuth();
   const { t } = useI18n();
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 sm:px-6">
+    <>
+    <header className="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 sm:px-6">
       <Link to="/" className="flex items-center"><NelvinLogo className="h-8" /></Link>
       <div className="flex items-center gap-2">
         <LanguageSwitcher compact variant="light" />
         {isAuthenticated && <Link to="/app" className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white">{t("nav.mySpace")}</Link>}
       </div>
     </header>
+    <div aria-hidden className="h-16" />
+    </>
   );
 }

@@ -103,7 +103,7 @@ export default function PortalLayout({ children, title }) {
       </aside>
 
       {/* Mobile top bar */}
-      <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 md:hidden">
+      <header className="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 pt-[env(safe-area-inset-top)] md:hidden">
         <Logo to={items[0].to} brandLogo={brand?.logo_url} />
         <div className="flex items-center gap-2">
           <div className="hidden min-[430px]:block"><InstallAppButton compact /></div>
@@ -114,6 +114,7 @@ export default function PortalLayout({ children, title }) {
           </button>
         </div>
       </header>
+      <div aria-hidden className="h-16 md:hidden" />
 
       {/* Mobile nav drawer */}
       <AnimatePresence>

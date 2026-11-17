@@ -71,7 +71,7 @@ export default function Landing() {
     );
 
   return (
-    <div className="min-h-screen overflow-x-clip bg-[radial-gradient(ellipse_at_top,_#F2EBDA_0%,_#FAF6EC_45%,_#ffffff_100%)] font-body text-nv-ink">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_#F2EBDA_0%,_#FAF6EC_45%,_#ffffff_100%)] font-body text-nv-ink">
       <a href="#contenu" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">{t("nav.skip")}</a>
       {/* Nav */}
       <header className="sticky top-0 z-40 border-b border-nv-line bg-white/70 backdrop-blur-lg">
