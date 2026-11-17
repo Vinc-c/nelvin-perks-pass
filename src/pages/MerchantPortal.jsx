@@ -23,6 +23,7 @@ import StatCard from "@/components/dashboard/StatCard";
 import SectionCard from "@/components/dashboard/SectionCard";
 import { useToast } from "@/components/ui/use-toast";
 import { EmptyState } from "@/components/UiFeedback";
+import PromoteOffers from "@/components/merchant/PromoteOffers";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { ScanLine, Tag, Wallet, TrendingUp, Plus, Check, Loader2, Star, Banknote, X } from "lucide-react";
 
@@ -261,6 +262,7 @@ export default function MerchantPortal() {
         </div>
         )}
 
+        {section === "promote" && <PromoteOffers />}
         {show("offers") && merchant && (
           <>
             <div className="mt-6"><MerchantLocationCard key={merchant.id} merchant={merchant} onSaved={(u) => u && setMerchant(u)} /></div>

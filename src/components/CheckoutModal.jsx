@@ -21,6 +21,7 @@ const QUICK_USD = [10, 25, 50, 100];
 const TITLES = {
   RECHARGE: "mb.co.title.RECHARGE",
   COMPANY_TOPUP: "mb.co.title.COMPANY_TOPUP",
+  PROMOTION: "pr.checkoutTitle",
   SUBSCRIPTION: "mb.co.title.SUBSCRIPTION",
   GIFT: "mb.co.title.GIFT",
 };
@@ -31,7 +32,7 @@ const TITLES = {
  * - purpose SUBSCRIPTION: fixed plan price; can also be paid from the wallet
  *   (member wallet, or company wallet for an HR plan).
  */
-export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", plan = null, cycle = "MONTHLY", gift = null, onPaid }) {
+export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", plan = null, cycle = "MONTHLY", gift = null, promo = null, onPaid }) {
   const { user, refreshUser } = useAuth();
   const { t, locale } = useI18n();
   const { toast } = useToast();
@@ -46,7 +47,7 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
   useEffect(() => {
     if (!open) return;
     setDone(null);
-    setCurrency(user?.wallet_currency || "USD");
+    setCurrency(purpose === "PROMOTION" ? "XAF" : user?.wallet_currency || "USD");
     callRpc("available_payment_methods")
       .then((m) => {
         setAvailable(m || []);
@@ -57,8 +58,10 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
 
   const isGift = purpose === "GIFT" && plan;
   const isPlan = (purpose === "SUBSCRIPTION" || isGift) && plan;
+  const isPromo = purpose === "PROMOTION" && !!promo;
+  const isFixed = isPlan || isPromo;
   const priceUsd = isPlan ? Number(cycle === "ANNUAL" ? plan.price_annual : plan.price_monthly) : 0;
-  const payAmount = isPlan ? money.fromUsd(priceUsd, currency) : Number(amount);
+  const payAmount = isPlan ? money.fromUsd(priceUsd, currency) : isPromo ? money.fromUsd(Number(promo.price_usd), currency) : Number(amount);
   const companyPlan = isPlan && plan.audience === "B2B";
   const walletLabel = companyPlan ? t("mb.co.companyWallet") : t("mb.co.myWallet");
 
@@ -73,7 +76,8 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
     try {
       const res = await invokeFunction("create-checkout", {
         purpose,
-        amount: isPlan ? undefined : payAmount,
+        amount: isFixed ? undefined : payAmount,
+        promo_order_id: isPromo ? promo.id : undefined,
         currency,
         method,
         country: user?.country || "",
@@ -113,7 +117,7 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={close} role="dialog" aria-modal="true" data-modal-overlay className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
           <motion.div initial={{ scale: 0.95, y: 12 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 12 }} onClick={(e) => e.stopPropagation()} className="max-h-[92vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl" role="dialog" aria-modal="true">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-900">{isPlan ? `${t(isGift ? TITLES.GIFT : TITLES.SUBSCRIPTION)} · ${plan.name}` : t(TITLES[purpose])}</h3>
+              <h3 className="text-lg font-bold text-slate-900">{isPlan ? `${t(isGift ? TITLES.GIFT : TITLES.SUBSCRIPTION)} · ${plan.name}` : isPromo ? `${t("pr.checkoutTitle")} · ${promo.title}` : t(TITLES[purpose])}</h3>
               <button onClick={close} aria-label={t("mb.common.close")} className="rounded-full p-1 text-slate-400 hover:bg-slate-100"><X className="h-5 w-5" /></button>
             </div>
 
@@ -129,7 +133,7 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
                 <div className="flex items-end justify-between gap-3">
                   <div className="flex-1">
                     <label className="text-sm font-medium text-slate-700" htmlFor="checkout-amount">{t("mb.wd.amount")}</label>
-                    {isPlan ? (
+                    {isFixed ? (
                       <p id="checkout-amount" className="mt-2 text-2xl font-bold text-slate-900">{money.formatIn(payAmount, currency)}</p>
                     ) : (
                       <input id="checkout-amount" type="number" min="1" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0" className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-lg font-semibold text-slate-900 outline-none focus:border-emerald-500" />
@@ -137,7 +141,7 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
                   </div>
                   <CurrencySelect value={currency} onChange={setCurrency} />
                 </div>
-                {!isPlan && (
+                {!isFixed && (
                   <div className="mt-3 grid grid-cols-4 gap-2">
                     {QUICK_USD.map((q) => {
                       const v = Math.round(money.fromUsd(q, currency));

@@ -13,6 +13,7 @@ import AdminMerchantVetting from "@/components/admin/AdminMerchantVetting";
 import AdminMarketing from "@/components/admin/AdminMarketing";
 import AdminBranding from "@/components/admin/AdminBranding";
 import AdminReviews from "@/components/admin/AdminReviews";
+import AdminPromotions from "@/components/admin/AdminPromotions";
 import AdminOffers from "@/components/admin/AdminOffers";
 import AdminSalesCodes from "@/components/admin/AdminSalesCodes";
 import AdminStaffManagement from "@/components/admin/AdminStaffManagement";
@@ -35,6 +36,7 @@ const SECTIONS = {
   kyc: AdminMerchantVetting,
   offers: AdminOffers,
   reviews: AdminReviews,
+  promotions: AdminPromotions,
   branding: AdminBranding,
   marketing: AdminMarketing,
   sales: AdminSalesCodes,

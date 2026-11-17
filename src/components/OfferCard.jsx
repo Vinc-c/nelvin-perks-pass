@@ -27,9 +27,9 @@ export default function OfferCard({ offer, meta, format, onRedeem, index = 0, ct
             {offer.required_plan === "PASS_VIP" ? "VIP Gold" : "Premium"}
           </span>
         )}
-        {offer.is_featured && !badge && (
+        {(offer.is_featured || offer.sponsored) && !badge && (
           <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-nv-gold px-2.5 py-1 text-xs font-bold text-nv-deep shadow">
-            <NvIcon name="STAR_MARK" className="h-3.5 w-3.5" /> {t("offer.featured")}
+            <NvIcon name="STAR_MARK" className="h-3.5 w-3.5" /> {offer.sponsored ? t("rd.sponsored") : t("offer.featured")}
           </span>
         )}
         {badge && (

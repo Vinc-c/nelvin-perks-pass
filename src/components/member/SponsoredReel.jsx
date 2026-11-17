@@ -15,7 +15,7 @@ const INTERVAL = 5000;
  */
 export default function SponsoredReel({ offers, meta }) {
   const { t } = useI18n();
-  const items = offers.filter((o) => o.is_featured && o.merchant?.slug).slice(0, 8);
+  const items = offers.filter((o) => o.sponsored_reel && o.merchant?.slug).slice(0, 8);
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const scroller = useRef(null);

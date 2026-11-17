@@ -13,19 +13,21 @@ const CACHE_KEY = "nelvin_catalog_v1";
 export function useCatalog() {
   const { data, loading, error, reload } = useAsync(async () => {
     try {
-      const [merchants, offers, stats] = await Promise.all([
+      const [merchants, offers, stats, promos] = await Promise.all([
         entities.Merchant.filterAll({ verified_status: "VERIFIED" }, "name"),
         entities.Offer.filterAll({}, "-created_date"),
         // Ratings and usage counts feed the shelves; the catalogue still works without them.
         supabase.rpc("offer_public_stats").then(({ data: rows }) => rows || [], () => []),
+        // Paid promotions running right now (offer id + placement).
+        supabase.rpc("public_promoted_offers").then(({ data: rows }) => rows || [], () => []),
       ]);
-      try { localStorage.setItem(CACHE_KEY, JSON.stringify({ merchants, offers, stats, at: Date.now() })); } catch { /* storage full or blocked */ }
-      return { merchants, offers, stats };
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify({ merchants, offers, stats, promos, at: Date.now() })); } catch { /* storage full or blocked */ }
+      return { merchants, offers, stats, promos };
     } catch (e) {
       // Weak or no connection: show the last catalogue seen on this phone.
       try {
         const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
-        if (cached?.offers) return { merchants: cached.merchants || [], offers: cached.offers, stats: cached.stats || [], offline: true, cachedAt: cached.at };
+        if (cached?.offers) return { merchants: cached.merchants || [], offers: cached.offers, stats: cached.stats || [], promos: cached.promos || [], offline: true, cachedAt: cached.at };
       } catch { /* corrupted cache */ }
       throw e;
     }
@@ -34,6 +36,9 @@ export function useCatalog() {
   const value = useMemo(() => {
     const merchantById = new Map((data?.merchants || []).map((m) => [m.id, m]));
     const now = Date.now();
+    const promoted = (code) => new Set((data?.promos || []).filter((r) => r.placement === code).map((r) => r.offer_id));
+    const promoReel = promoted("HOME_REEL");
+    const promoTop = promoted("TOP_OF_OFFERS");
     const statById = new Map((data?.stats || []).map((r) => [r.offer_id, r]));
     const offers = (data?.offers || [])
       .filter((o) => merchantById.has(o.merchant_id))
@@ -43,6 +48,8 @@ export function useCatalog() {
         return {
           ...o,
           merchant: m,
+          sponsored_reel: !!o.is_featured || promoReel.has(o.id),
+          sponsored: promoReel.has(o.id) || promoTop.has(o.id),
           merchant_name: m?.name || "Partner",
           city: m?.city || "",
           country: m?.country || "",

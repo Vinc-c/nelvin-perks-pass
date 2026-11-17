@@ -14,6 +14,7 @@ const SUCCESS = {
   SUBSCRIPTION: { text: "mb.ret.subscription.text", to: "/billing-settings", cta: "mb.ret.subscription.cta" },
   COMPANY_TOPUP: { text: "mb.ret.topup.text", to: "/hr?section=benefits", cta: "mb.ret.topup.cta" },
   GIFT: { text: "mb.ret.gift.text", to: "/billing-settings", cta: "mb.ret.gift.cta" },
+  PROMOTION: { text: "pr.ret.text", to: "/merchant-dashboard?section=promote", cta: "pr.ret.cta" },
 };
 
 export default function PaymentReturn() {

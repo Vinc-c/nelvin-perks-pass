@@ -89,7 +89,7 @@ export default function MemberPortal() {
       .filter((o) => o.target_audience !== "B2B_ONLY" || user?.company_id)
       .filter((o) => category === "ALL" || o.category === category)
       .filter((o) => !q || o.title.toLowerCase().includes(q) || o.merchant_name.toLowerCase().includes(q) || (o.city || "").toLowerCase().includes(q))
-      .sort((a, b) => Number(b.is_featured) - Number(a.is_featured));
+      .sort((a, b) => Number(b.sponsored || b.is_featured) - Number(a.sponsored || a.is_featured));
   }, [catalog.offers, category, query, user?.company_id]);
 
   // Nearby partners: the city with the most mapped partners, so the map opens zoomed in on one place.

@@ -96,6 +96,7 @@ const NAV = {
       { to: "/merchant-dashboard", section: "scan", label: "Validation des codes", icon: ScanLine },
       { to: "/merchant-dashboard", section: "redemptions", label: "Redemptions", icon: History },
       { to: "/merchant-dashboard", section: "offers", label: "Offres & campagnes", icon: Tag },
+      { to: "/merchant-dashboard", section: "promote", label: "Promouvoir", icon: Megaphone },
       { to: "/merchant-dashboard", section: "payout", label: "Revenus & paiements", icon: Banknote },
     ]),
     ...group("Gestion", [
@@ -123,6 +124,7 @@ const NAV = {
       { to: "/admin", section: "kyc", label: "Merchant vetting", icon: Shield },
       { to: "/admin", section: "offers", label: "Offers & SEO", icon: Tag },
       { to: "/admin", section: "reviews", label: "Reviews", icon: Star },
+      { to: "/admin", section: "promotions", label: "Promotions", icon: Megaphone },
       { to: "/admin", section: "marketing", label: "Marketing & SEO", icon: Palette },
       { to: "/admin", section: "branding", label: "Company branding", icon: Palette },
       { to: "/admin", section: "sales", label: "Sales codes", icon: Ticket },

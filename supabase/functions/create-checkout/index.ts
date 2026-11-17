@@ -3,12 +3,13 @@
 //   SUBSCRIPTION   — membership (B2C), company plan (HR) or merchant plan
 //   COMPANY_TOPUP  — HR funds the company benefits wallet
 //   GIFT           — a B2C membership bought for someone else (gift code issued once paid)
+//   PROMOTION      — a merchant buys visibility for one offer (promo_orders row created by create_promo_order)
 // A PENDING transaction is recorded first; verify-payment completes it.
 import { adminClient, errorMessage, getCaller, json, readJson, serve } from "../_shared/http.ts";
 import { initPayment, PspContext, routePayment, ZERO_DECIMAL } from "../_shared/paymentRouter.ts";
 
 const VALID_METHODS = ["CARD", "MOBILE_MONEY", "BANK_TRANSFER", "APPLE_PAY", "GOOGLE_PAY"];
-const PURPOSES = ["RECHARGE", "SUBSCRIPTION", "COMPANY_TOPUP", "GIFT"];
+const PURPOSES = ["RECHARGE", "SUBSCRIPTION", "COMPANY_TOPUP", "GIFT", "PROMOTION"];
 
 function genRef(pspId: string) {
   const rand = crypto.randomUUID().replace(/-/g, "").slice(0, 10);
@@ -56,6 +57,7 @@ serve(async (req) => {
   let cycle: string | null = null;
   let description = "";
   let companyId: string | null = profile.company_id;
+  let promoOrderId: string | null = null;
 
   if (purpose === "RECHARGE") {
     amount = Math.round(Number(body.amount) * 100) / 100;
@@ -71,6 +73,18 @@ serve(async (req) => {
     if (!Number.isFinite(amount) || amount <= 0 || amount / rate > 1000000) return json({ error: "Montant invalide" }, 400);
     audience = "B2B";
     description = "Budget avantages entreprise";
+  } else if (purpose === "PROMOTION") {
+    // The price comes from the order (computed in the database from the admin's tariff), never from the client.
+    if (!profile.merchant_id) return json({ error: "Compte marchand requis" }, 403);
+    const { data: order } = await admin.from("promo_orders").select("*, offers(title)")
+      .eq("id", String(body.promo_order_id || "")).eq("merchant_id", profile.merchant_id).maybeSingle();
+    if (!order) return json({ error: "Promotion introuvable" }, 404);
+    if (order.status !== "PENDING_PAYMENT") return json({ error: "Cette promotion n'est plus en attente de paiement" }, 400);
+    amount = Math.round(Number(order.price_usd) * rate * 100) / 100;
+    audience = "B2B";
+    companyId = null;
+    promoOrderId = order.id;
+    description = `Promotion : ${order.offers?.title || "offre"} (${order.days} j, ${order.placement})`.slice(0, 200);
   } else if (purpose === "GIFT") {
     planCode = String(body.plan_code || "");
     cycle = String(body.billing_cycle || "MONTHLY").toUpperCase();
@@ -137,6 +151,15 @@ serve(async (req) => {
     .select("id")
     .single();
   if (error) throw error;
+
+  if (promoOrderId) {
+    const { error: linkError } = await admin.from("promo_orders").update({ transaction_id: tx.id, updated_at: new Date().toISOString() })
+      .eq("id", promoOrderId).eq("status", "PENDING_PAYMENT");
+    if (linkError) {
+      await admin.from("transactions").update({ status: "FAILED", admin_note: linkError.message.slice(0, 300) }).eq("id", tx.id);
+      return json({ error: linkError.message }, 400);
+    }
+  }
 
   if (purpose === "GIFT") {
     const { error: giftError } = await admin.rpc("create_pending_gift", {

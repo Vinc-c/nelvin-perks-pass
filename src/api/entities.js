@@ -115,6 +115,8 @@ export const entities = {
   GiftCard: createEntity("gift_cards"),
   OfferReview: createEntity("offer_reviews"),
   MemberReview: createEntity("member_reviews"),
+  PromoPlacement: createEntity("promo_placements", { pk: "code" }),
+  PromoOrder: createEntity("promo_orders"),
   CompanyBranding: createEntity("company_branding"),
   BlogPost: createEntity("blog_posts"),
   SiteBanner: createEntity("site_banners"),
