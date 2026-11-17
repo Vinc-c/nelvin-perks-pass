@@ -68,6 +68,7 @@ export default [
   ["nav.demo", "Live demo", "Démo"],
   ["nav.blog", "Blog", "Blog"],
   ["foot.rights", "Nelvin Benefits. All rights reserved.", "Nelvin Benefits. Tous droits réservés."],
+  ["lg.credit", "Platform designed and developed by", "Plateforme conçue et développée par"],
   ["rd.sponsored", "Sponsored", "Sponsorisé"],
   ["rd.visitPartner", "Visit partner", "Voir le partenaire"],
 ];

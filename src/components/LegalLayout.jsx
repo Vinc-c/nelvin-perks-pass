@@ -36,6 +36,10 @@ export default function LegalLayout({ title, updated, intro, children }) {
       </header>
       <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
         <div className="space-y-8">{children}</div>
+        <p className="mt-12 border-t border-slate-100 pt-4 text-xs text-slate-400">
+          {t("lg.credit")}{" "}
+          <a href="https://liafrik.com" target="_blank" rel="noopener" className="text-slate-500 hover:underline">Liafrik (liafrik.com)</a>.
+        </p>
       </main>
     </div>
   );
