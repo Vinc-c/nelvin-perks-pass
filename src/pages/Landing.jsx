@@ -1,10 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { useI18n } from "@/i18n/I18nContext";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Image } from "@/components/ui/image";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import MembershipCoverage from "@/components/landing/MembershipCoverage";
 import PartnerLogos from "@/components/landing/PartnerLogos";
 import Testimonials from "@/components/landing/Testimonials";
@@ -16,8 +15,7 @@ import SiteFooter from "@/components/landing/SiteFooter";
 import PassShowcase from "@/components/landing/PassShowcase";
 import AfricaPillars from "@/components/landing/AfricaPillars";
 import HowItWorks from "@/components/landing/HowItWorks";
-import NelvinLogo from "@/components/NelvinLogo";
-import { useAuth } from "@/lib/AuthContext";
+import SiteHeader from "@/components/landing/SiteHeader";
 import { usePublicContent, imageByKey, heroImages, copyByKey } from "@/hooks/usePublicContent";
 import SiteBanner from "@/components/marketing/SiteBanner";
 import Reveal from "@/components/landing/Reveal";
@@ -40,8 +38,6 @@ export default function Landing() {
   const heroTextOpacity = useTransform(heroProgress, [0, 0.9], [1, 0.6]);
   const heroCardsY = useTransform(heroProgress, [0, 1], ["0%", "-22%"]);
   const ANNOUNCE = t("land.announce");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const { isAuthenticated } = useAuth();
   const content = usePublicContent();
   const heroSlides = useMemo(() => { const l = heroImages(content?.images); return l.length ? l : [SAVANNA]; }, [content?.images]);
   const savannaBand = imageByKey(content?.images, "savanna_band", SAVANNA);
@@ -74,68 +70,15 @@ export default function Landing() {
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_#F2EBDA_0%,_#FAF6EC_45%,_#ffffff_100%)] font-body text-nv-ink">
       <a href="#contenu" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">{t("nav.skip")}</a>
       {/* Nav */}
-      <header className="sticky top-0 z-40 border-b border-nv-line bg-white/70 backdrop-blur-lg">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-          <div className="flex items-center gap-2">
-            <NelvinLogo className="h-12" />
-          </div>
-          <nav className="hidden items-center gap-7 text-sm font-medium text-nv-muted lg:flex">
-            <Link to="/merchant-directory" className="hover:text-brand">{t("nav.offers")}</Link>
-            <Link to="/merchant-map" className="hover:text-brand">{t("nav.map")}</Link>
-            <Link to="/pricing" className="hover:text-brand">{t("nav.pricing")}</Link>
-            <Link to="/merchant" className="hover:text-brand">{t("nav.merchants")}</Link>
-          </nav>
-          <div className="flex items-center gap-2">
-            <div className="hidden lg:block"><LanguageSwitcher compact variant="light" /></div>
-            {isAuthenticated ? (
-              <Link to="/app" className="hidden rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-brand/30 transition hover:bg-brand/90 sm:inline-flex">
-                {t("nav.mySpace")}
-              </Link>
-            ) : (
-              <>
-                <Link to="/login" className="hidden rounded-full px-4 py-2 text-sm font-semibold text-nv-ink transition hover:bg-nv-ivory-2 sm:inline-flex">
-                  {t("cta.login")}
-                </Link>
-                <Link to="/register" className="hidden rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-brand/30 transition hover:bg-brand/90 sm:inline-flex">
-                  {t("cta.getStarted")}
-                </Link>
-              </>
-            )}
-            <button onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? t("nav.closeMenu") : t("nav.openMenu")} aria-expanded={menuOpen} className="rounded-full p-2 text-nv-ink hover:bg-nv-ivory-2 lg:hidden">
-              {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
-          </div>
-        </div>
-        {menuOpen && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="border-t border-nv-line bg-white px-4 py-4 lg:hidden">
-            <div className="mb-3 flex items-center justify-between rounded-full border border-nv-line px-3 py-1.5">
-              <span className="text-xs font-medium text-nv-muted">{t("nav.language")}</span>
-              <LanguageSwitcher variant="light" />
-            </div>
-            <nav className="flex flex-col gap-1 text-sm font-medium text-nv-ink">
-              <Link to="/merchant-directory" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-nv-ivory-2">{t("nav.offers")}</Link>
-              <Link to="/merchant-map" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-nv-ivory-2">{t("nav.map")}</Link>
-              <Link to="/pricing" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-nv-ivory-2">{t("nav.pricing")}</Link>
-              <Link to="/merchant" onClick={() => setMenuOpen(false)} className="rounded-full px-4 py-2.5 hover:bg-nv-ivory-2">{t("nav.merchants")}</Link>
-              {isAuthenticated ? (
-                <Link to="/app" onClick={() => setMenuOpen(false)} className="mt-2 rounded-full bg-brand px-4 py-2.5 text-center font-semibold text-white">{t("nav.mySpace")}</Link>
-              ) : (
-                <>
-                  <Link to="/login" onClick={() => setMenuOpen(false)} className="mt-2 rounded-full border border-nv-line px-4 py-2.5 text-center font-semibold text-nv-ink">{t("cta.login")}</Link>
-                  <Link to="/register" onClick={() => setMenuOpen(false)} className="rounded-full bg-brand px-4 py-2.5 text-center font-semibold text-white">{t("cta.getStarted")}</Link>
-                </>
-              )}
-            </nav>
-          </motion.div>
-        )}
-        {/* Slim black announcement band with gold scrolling text */}
+      <SiteHeader />
+      {/* Slim announcement band with gold scrolling text */}
         <div className="overflow-hidden bg-nv-deep">
           <div className="flex w-max animate-marquee whitespace-nowrap py-1 text-xs font-medium text-nv-gold-light">
             <span className="px-8">{ANNOUNCE}</span>
             <span className="px-8" aria-hidden="true">{ANNOUNCE}</span>
           </div>
         </div>
-      </header>
+
 
       <main id="contenu">
       <div className="mx-auto max-w-7xl px-4 pt-3 sm:px-6 empty:hidden"><SiteBanner placement="HOME_TOP" /></div>

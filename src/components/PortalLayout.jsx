@@ -1,3 +1,4 @@
+import SiteHeader from "@/components/landing/SiteHeader";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -19,12 +20,12 @@ import { useBranding, hexToTriplet } from "@/hooks/useBranding";
 
 const Logo = ({ to, brandLogo }) => (
   <Link to={to} className="flex items-center gap-2">
-    {brandLogo ? <img src={brandLogo} alt="" className="h-8 max-w-[140px] object-contain" /> : <NelvinLogo className="h-8" />}
+    {brandLogo ? <img src={brandLogo} alt="" className="h-8 max-w-[140px] object-contain" /> : <NelvinLogo className="h-10" />}
   </Link>
 );
 
 export default function PortalLayout({ children, title }) {
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const { t, dir } = useI18n();
   const location = useLocation();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -66,22 +67,7 @@ export default function PortalLayout({ children, title }) {
   if (!user) {
     return (
       <div className="min-h-screen bg-white text-slate-900 md:bg-slate-50">
-        <header className="sticky top-0 z-30 border-b border-slate-200 bg-white">
-          <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-            <Logo to="/" />
-            <div className="flex items-center gap-2">
-              <LanguageSwitcher compact variant="light" />
-              {isAuthenticated ? (
-                <Link to="/app" className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white">{t("nav.mySpace")}</Link>
-              ) : (
-                <>
-                  <Link to="/login" className="hidden rounded-full px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 sm:inline-flex">{t("cta.login")}</Link>
-                  <Link to="/register" className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white">{t("cta.getStarted")}</Link>
-                </>
-              )}
-            </div>
-          </div>
-        </header>
+        <SiteHeader />
         <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 md:py-10">
           {title && <h1 className="mb-4 text-2xl font-bold text-slate-900">{title}</h1>}
           {children}
@@ -103,7 +89,7 @@ export default function PortalLayout({ children, title }) {
       </aside>
 
       {/* Mobile top bar */}
-      <header className="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 pt-[env(safe-area-inset-top)] md:hidden">
+      <header className="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white/90 px-4 backdrop-blur-lg pt-[env(safe-area-inset-top)] md:hidden">
         <Logo to={items[0].to} brandLogo={brand?.logo_url} />
         <div className="flex items-center gap-2">
           <div className="hidden min-[430px]:block"><InstallAppButton compact /></div>
