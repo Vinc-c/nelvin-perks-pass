@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { useI18n } from "@/i18n/I18nContext";
 import { usePublicContent } from "@/hooks/usePublicContent";
 
@@ -19,33 +20,47 @@ export default function PartnerLogos({ merchants = [] }) {
     .map((m) => ({ name: m.name, sub: m.city || "", logo: https(m.logo_url) }));
   const list = [...cms, ...fromCatalog].slice(0, 40);
   if (list.length === 0) return null;
-  const loop = list.length >= 6 ? [...list, ...list] : list;
+  // Repeat short lists so each row always fills the screen, then double it for a seamless loop.
+  const base = Array.from({ length: Math.max(1, Math.ceil(12 / list.length)) }, () => list).flat();
+  const rowA = base;
+  const rowB = [...base.slice(Math.floor(base.length / 2)), ...base.slice(0, Math.floor(base.length / 2))];
+  const fade = { maskImage: "linear-gradient(to right, transparent, #000 10%, #000 90%, transparent)", WebkitMaskImage: "linear-gradient(to right, transparent, #000 10%, #000 90%, transparent)" };
+
+  const Card = ({ p, hidden }) => (
+    <li aria-hidden={hidden || undefined} className="flex h-[76px] w-60 flex-shrink-0 items-center gap-3 rounded-2xl border border-slate-200/80 bg-white px-3.5 shadow-[0_1px_2px_rgba(8,38,29,0.04)] transition hover:-translate-y-0.5 hover:border-nv-gold/60 hover:shadow-md">
+      {p.logo ? (
+        <img src={p.logo} alt="" loading="lazy" className="h-12 w-12 shrink-0 rounded-xl border border-slate-100 bg-white object-contain p-1" />
+      ) : (
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#08261D] text-sm font-medium text-[#C8A24A]">{initials(p.name)}</span>
+      )}
+      <span className="min-w-0 flex-1">
+        <span title={p.name} className="block truncate text-sm font-medium text-nv-ink">{p.name}</span>
+        {p.sub && <span className="block truncate text-xs text-slate-500">{p.sub}</span>}
+        <span className="mt-0.5 inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />{t("land.partners.verified")}</span>
+      </span>
+    </li>
+  );
+  const Row = ({ items, reverse, seconds }) => (
+    <div className="overflow-hidden py-1.5" style={fade}>
+      <ul className={`flex w-max gap-3 motion-reduce:animate-none ${reverse ? "animate-marquee-reverse" : "animate-marquee"}`} style={{ animationDuration: `${seconds}s` }}>
+        {[...items, ...items].map((p, i) => <Card key={`${p.name}-${i}`} p={p} hidden={i >= items.length} />)}
+      </ul>
+    </div>
+  );
 
   return (
-    <section className="bg-white/60 py-10">
-      <h2 className="px-4 text-center text-2xl font-bold text-nv-ink sm:px-6 sm:text-3xl">{t("land.partners.title")}</h2>
+    <section className="py-14 sm:py-16">
+      <h2 className="px-4 text-center text-2xl font-medium tracking-tight text-nv-ink sm:px-6 sm:text-4xl">{t("land.partners.title")}</h2>
       <p className="mt-2 px-4 text-center text-nv-muted">
         {merchants.length > 1 ? t("land.partners.count", { n: merchants.length }) : merchants.length === 1 ? t("land.partners.count1") : t("land.partners.generic")}
       </p>
-      <div className="relative mt-8 overflow-hidden">
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-white to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-white to-transparent" />
-        <ul className={`flex gap-4 ${loop.length > list.length ? "w-max animate-marquee" : "flex-wrap justify-center px-4"}`}>
-          {loop.map((p, i) => (
-            <li key={`${p.name}-${i}`} aria-hidden={i >= list.length || undefined} className="flex min-h-20 w-64 flex-shrink-0 items-center gap-3 px-4 py-2">
-              {p.logo ? (
-                <img src={p.logo} alt="" loading="lazy" className="h-12 w-12 rounded-xl bg-white object-contain" />
-              ) : (
-                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#08261D] text-sm font-bold text-[#C8A24A]">{initials(p.name)}</span>
-              )}
-              <span className="min-w-0 flex-1">
-                <span title={p.name} className="block break-words text-sm font-semibold leading-snug text-nv-ink [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden">{p.name}</span>
-                {p.sub && <span className="block truncate text-xs text-slate-400">{p.sub}</span>}
-              </span>
-            </li>
-          ))}
-        </ul>
+      <div className="mt-8 space-y-1">
+        <Row items={rowA} seconds={45} />
+        <Row items={rowB} reverse seconds={55} />
       </div>
+      <p className="mt-6 text-center text-sm text-slate-500">
+        {t("land.partners.cta")} <Link to="/merchant" className="font-medium text-nv-emerald underline-offset-4 hover:underline">{t("land.partners.ctaLink")}</Link>
+      </p>
     </section>
   );
 }

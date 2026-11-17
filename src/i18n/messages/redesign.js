@@ -69,6 +69,9 @@ export default [
   ["nav.blog", "Blog", "Blog"],
   ["foot.rights", "Nelvin Benefits. All rights reserved.", "Nelvin Benefits. Tous droits réservés."],
   ["lg.credit", "Platform designed and developed by", "Plateforme conçue et développée par"],
+  ["land.partners.verified", "Verified", "Vérifié"],
+  ["land.partners.cta", "Run a business?", "Vous avez une entreprise ?"],
+  ["land.partners.ctaLink", "Become a partner →", "Devenir partenaire →"],
   ["rd.sponsored", "Sponsored", "Sponsorisé"],
   ["rd.visitPartner", "Visit partner", "Voir le partenaire"],
 ];
