@@ -17,7 +17,6 @@ import AfricaPillars from "@/components/landing/AfricaPillars";
 import HowItWorks from "@/components/landing/HowItWorks";
 import { HeroHeadline, HeroOrbs, Magnetic, Tilt, ScrollCue } from "@/components/landing/HeroMotion";
 import { Counter } from "@/components/landing/motion";
-import LiveStats from "@/components/landing/LiveStats";
 import IndustriesGrid from "@/components/landing/IndustriesGrid";
 import { ScrollProgress, WordReveal } from "@/components/landing/motion";
 import SiteHeader from "@/components/landing/SiteHeader";
@@ -140,7 +139,6 @@ export default function Landing() {
 
       {/* Partner logos marquee — right below the hero */}
       <PartnerLogos merchants={merchants} />
-      <LiveStats merchants={merchants} offers={offers} />
       <div className="mx-auto max-w-7xl px-4 sm:px-6"><SiteBanner placement="HOME_MID" /></div>
 
       {/* The digital card and the three passes */}

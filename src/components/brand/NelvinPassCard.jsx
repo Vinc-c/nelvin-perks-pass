@@ -1,4 +1,5 @@
 import React from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { QRCodeSVG } from "qrcode.react";
 import { NelvinMark } from "@/components/NelvinLogo";
 import KenteBand from "@/components/brand/KenteBand";
@@ -26,7 +27,7 @@ export const CARD_COLORS = {
  * Digital membership card. `illustration` shows a placeholder holder so the
  * marketing version never looks like a real person's card.
  */
-export default function NelvinPassCard({ tier = "PASS_PREMIUM", name, code, qrValue, showQr = true, illustration = false, color = null, variant = "default", className = "" }) {
+export default function NelvinPassCard({ tier = "PASS_PREMIUM", name, code, qrValue, showQr = true, illustration = false, shine = false, color = null, variant = "default", className = "" }) {
   const { t: tr } = useI18n();
   const t = TIERS[tier] || TIERS.PASS_FREE;
   if (variant === "member") {
@@ -53,39 +54,69 @@ export default function NelvinPassCard({ tier = "PASS_PREMIUM", name, code, qrVa
   }
   const bg = (color && CARD_COLORS[color]?.bg) || t.bg;
   const holder = name || tr(illustration ? "pass.yourName" : "pass.member");
-  const shown = code || (illustration ? "NLV · 0000 0000" : "");
+  const shown = code || (illustration ? "NLV 0000 0000 0000" : "");
   return (
     <div
-      className={`relative aspect-[1.586/1] w-full overflow-hidden rounded-[1.6rem] bg-gradient-to-br ${bg} p-5 text-white shadow-2xl shadow-nv-deep/40 ring-1 ${t.ring} ${className}`}
+      className={`relative aspect-[1.586/1] w-full overflow-hidden rounded-[18px] bg-gradient-to-br ${bg} p-4 text-white shadow-2xl shadow-nv-deep/40 ring-1 ring-inset ${t.ring} sm:p-5 ${className}`}
       role="img"
       aria-label={tr("pass.aria", { tier: `${t.label}${illustration ? ` (${tr("pass.illustration")})` : ""}` })}
     >
-      <NvIcon name="AFRICA" tone="dark" className="pointer-events-none absolute -right-6 -top-6 h-44 w-44 text-nv-gold" faint={0.15} strokeWidth={0.5} />
+      <NvIcon name="AFRICA" tone="dark" className="pointer-events-none absolute -right-6 -top-6 h-44 w-44 text-nv-gold" faint={0.12} strokeWidth={0.5} />
+      {/* fine diagonal guilloche texture, like printed security patterns */}
+      <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.07] [background:repeating-linear-gradient(135deg,#fff_0_1px,transparent_1px_7px)]" />
+      {/* top edge highlight */}
+      <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent" />
       <div className="relative flex items-start justify-between">
         <div className="flex items-center gap-2">
-          <NelvinMark className="h-9 w-9" />
+          <NelvinMark className="h-8 w-8 sm:h-9 sm:w-9" />
           <span className="text-sm font-bold tracking-wide">Nelvin</span>
         </div>
         <span className="flex items-center gap-1.5 rounded-full bg-white/10 py-1 pl-2 pr-3 text-[11px] font-semibold text-nv-gold-light ring-1 ring-white/15">
           <NvIcon name={t.glyph} tone="dark" className="h-4 w-4 text-nv-gold-light" /> {t.label}
         </span>
       </div>
-      <div className="relative mt-4 flex items-end justify-between gap-3">
+      {/* EMV chip + contactless */}
+      <div className="relative mt-3 flex items-center gap-3 sm:mt-4">
+        <span aria-hidden="true" className="relative block h-[26px] w-9 overflow-hidden rounded-[6px] bg-gradient-to-br from-[#F6E3A3] via-[#D9B25A] to-[#B58A2E] ring-1 ring-black/25 sm:h-[30px] sm:w-[42px]">
+          <span className="absolute inset-x-0 top-1/2 h-px bg-black/25" />
+          <span className="absolute inset-y-0 left-1/3 w-px bg-black/25" />
+          <span className="absolute inset-y-0 left-2/3 w-px bg-black/25" />
+          <span className="absolute inset-[5px] rounded-[3px] border border-black/20" />
+        </span>
+        <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6 text-white/70" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+          <path d="M8 6c2.5 3.5 2.5 8.5 0 12" /><path d="M12 4c3.7 4.8 3.7 11.2 0 16" /><path d="M16 2c4.8 6 4.8 14 0 20" />
+        </svg>
+      </div>
+      {shown && <p className="relative mt-2 font-mono text-[13px] font-medium tracking-[0.18em] text-white/95 [text-shadow:0_1px_0_rgba(0,0,0,0.45),0_-1px_0_rgba(255,255,255,0.15)] sm:mt-3 sm:text-base">{shown}</p>}
+      <div className="absolute inset-x-4 bottom-4 flex items-end justify-between gap-3 sm:inset-x-5 sm:bottom-5">
         <div className="min-w-0">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-white/60">{tr("pass.holder")}</p>
-          <p className="truncate text-lg font-bold tracking-wide">{holder}</p>
-          {shown && <p className="mt-1 font-mono text-xs tracking-widest text-nv-gold-light">{shown}</p>}
-          <p className="mt-3 flex items-center gap-1.5 text-[11px] text-white/70">
-            <NvIcon name="VERIFIED" tone="dark" className="h-4 w-4 text-nv-gold-light" /> {tr("pass.valid")}
+          <p className="text-[9px] uppercase tracking-[0.2em] text-white/60">{tr("pass.holder")}</p>
+          <p className="truncate text-sm font-bold uppercase tracking-wider sm:text-base">{holder}</p>
+          <p className="mt-1 flex items-center gap-1.5 text-[10px] text-white/70">
+            <NvIcon name="VERIFIED" tone="dark" className="h-3.5 w-3.5 text-nv-gold-light" /> {tr("pass.valid")}
           </p>
         </div>
         {showQr && (
-          <div className="shrink-0 rounded-xl bg-white p-1.5">
-            <QRCodeSVG value={qrValue || "https://nelvin.app"} size={64} level="M" fgColor="#1A2060" aria-hidden="true" />
+          <div className="shrink-0 rounded-lg bg-white p-1">
+            <QRCodeSVG value={qrValue || "https://nelvin.app"} size={52} level="M" fgColor="#1A2060" aria-hidden="true" />
           </div>
         )}
       </div>
-      <div className="absolute inset-x-0 bottom-0 opacity-90"><KenteBand height={8} /></div>
+      <div className="absolute inset-x-0 bottom-0 opacity-90"><KenteBand height={6} /></div>
+      {/* holographic sheen (static) */}
+      <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,transparent_30%,rgba(255,255,255,0.10)_45%,transparent_60%)]" />
+      {/* pointer glare: follows --mx/--my set by a parent with class "group" */}
+      <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 [background:radial-gradient(circle_at_var(--mx,50%)_var(--my,0%),rgba(255,255,255,0.34),transparent_55%)] group-hover:opacity-100" />
+      {shine && <CardShine />}
     </div>
+  );
+}
+
+function CardShine() {
+  const reduced = useReducedMotion();
+  if (reduced) return null;
+  return (
+    <motion.span aria-hidden="true" className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/3 skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/25 to-transparent"
+      animate={{ x: ["0%", "520%"] }} transition={{ duration: 1.8, repeat: Infinity, repeatDelay: 4.5, ease: "easeInOut" }} />
   );
 }
