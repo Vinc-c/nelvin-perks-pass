@@ -108,4 +108,5 @@ export default [
   ["foot.top", "Back to top", "Haut de page"],
   ["land.hero.live", "verified partners ready to welcome you", "partenaires vérifiés prêts à vous accueillir"],
   ["land.hero.scroll", "Scroll", "Défiler"],
+  ["land.hero.rotate", "in Douala|in Dakar|in Nairobi|in Lagos|in Abidjan", "à Douala|à Dakar|à Nairobi|à Lagos|à Abidjan"],
 ];

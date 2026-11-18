@@ -33,7 +33,7 @@ import KenteBand from "@/components/brand/KenteBand";
 const SAVANNA = "/images/savanna.webp";
 
 export default function Landing() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const heroRef = React.useRef(null);
   const reduceMotion = useReducedMotion();
   const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
@@ -62,9 +62,11 @@ export default function Landing() {
       const m = merchantById.get(r.merchant_id);
       return { ...r, author: r.author_name || t("land.reviews.member"), where: [m.name, m.city].filter(Boolean).join(", ") };
     });
-  const heroSegments = /\*[^*]+\*/.test(heroTitle)
+  const rotateExtra = useMemo(() => (["en", "fr"].includes(lang) ? t("land.hero.rotate").split("|").map((x) => x.trim()).filter(Boolean) : []), [t, lang]);
+  const heroSegments = (/\*[^*]+\*/.test(heroTitle)
     ? heroTitle.split(/\*([^*]+)\*/).map((text, i) => ({ text, accent: i % 2 === 1 }))
-    : heroTitle.split(/(across Africa|\d[\d,]*\+\s*brands)/i).map((text) => ({ text, accent: /across Africa|\d[\d,]*\+\s*brands/i.test(text) }));
+    : heroTitle.split(/(across Africa|\d[\d,]*\+\s*brands)/i).map((text) => ({ text, accent: /across Africa|\d[\d,]*\+\s*brands/i.test(text) }))
+  ).map((seg, i, all) => (seg.accent && all.findIndex((x) => x.accent) === i ? { ...seg, rotate: [seg.text, ...rotateExtra] } : seg));
 
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_#F1F2FA_0%,_#FBFBFE_45%,_#ffffff_100%)] font-body text-nv-ink">
@@ -93,7 +95,7 @@ export default function Landing() {
         </motion.div>
         <HeroOrbs />
         <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:py-20">
-          <motion.div className="min-w-0" style={reduceMotion ? undefined : { y: heroTextY, opacity: heroTextOpacity }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+          <motion.div className="min-w-0 rounded-[32px] bg-white/60 p-5 shadow-[0_8px_40px_-12px_rgba(26,32,96,0.18)] ring-1 ring-white/70 backdrop-blur-md sm:p-8 lg:-ms-8" style={reduceMotion ? undefined : { y: heroTextY, opacity: heroTextOpacity }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 py-1.5 pl-1.5 pr-4 text-sm font-medium text-brand">
               <span className="h-5 w-8 overflow-hidden rounded-full"><KenteBand height={20} /></span> {heroBadge}
             </span>

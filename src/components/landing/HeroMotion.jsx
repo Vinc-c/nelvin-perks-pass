@@ -1,7 +1,31 @@
-import React, { useRef } from "react";
-import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
 
 const EASE = [0.22, 1, 0.36, 1];
+
+const ACCENT = "bg-gradient-to-r from-nv-bronze to-nv-gold bg-clip-text text-transparent";
+
+/** Accent phrase that swaps to the next one every few seconds (slide + fade). words[0] is the title's own phrase. */
+function RotatingAccent({ words, startDelay }) {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    let iv;
+    const t0 = setTimeout(() => {
+      iv = setInterval(() => { if (!document.hidden) setI((n) => (n + 1) % words.length); }, 3200);
+    }, startDelay);
+    return () => { clearTimeout(t0); clearInterval(iv); };
+  }, [words.length, startDelay]);
+  return (
+    <span className="relative inline-grid align-bottom">
+      {/* invisible copies keep the width of the longest phrase so the layout never jumps */}
+      {words.map((w) => <span key={w} aria-hidden="true" className="invisible col-start-1 row-start-1 whitespace-nowrap">{w}</span>)}
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span key={words[i]} className={`col-start-1 row-start-1 whitespace-nowrap ${ACCENT}`}
+          initial={{ y: "60%", opacity: 0, filter: "blur(6px)" }} animate={{ y: 0, opacity: 1, filter: "blur(0px)" }} exit={{ y: "-60%", opacity: 0, filter: "blur(6px)" }} transition={{ duration: 0.45, ease: EASE }}>{words[i]}</motion.span>
+      </AnimatePresence>
+    </span>
+  );
+}
 
 /** Headline: each word slides up from a mask, accent segments keep their colour. segments = [{ text, accent }] */
 export function HeroHeadline({ segments, className = "" }) {
@@ -10,11 +34,15 @@ export function HeroHeadline({ segments, className = "" }) {
   return (
     <h1 className={className}>
       {segments.map((seg, si) =>
-        String(seg.text).split(/(\s+)/).map((w, wi) => {
+        seg.rotate && seg.rotate.length > 1 && !reduced ? (
+          <motion.span key={si} className="inline-block" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.6, ease: EASE }}>
+            <RotatingAccent words={seg.rotate} startDelay={1500} />
+          </motion.span>
+        ) : String(seg.text).split(/(\s+)/).map((w, wi) => {
           if (!w) return null;
           if (/^\s+$/.test(w)) return " ";
           const i = n++;
-          const word = <span className={seg.accent ? "bg-gradient-to-r from-nv-bronze to-nv-gold bg-clip-text text-transparent" : undefined}>{w}</span>;
+          const word = <span className={seg.accent ? ACCENT : undefined}>{w}</span>;
           if (reduced) return <span key={`${si}-${wi}`}>{word}</span>;
           return (
             <span key={`${si}-${wi}`} className="inline-block overflow-hidden pb-[0.12em] align-bottom">
