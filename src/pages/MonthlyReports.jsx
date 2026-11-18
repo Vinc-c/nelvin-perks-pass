@@ -83,7 +83,7 @@ export default function MonthlyReports() {
               <div className="flex justify-between"><dt className="text-slate-500">{t("hr.m.offers")}</dt><dd className="font-semibold text-slate-900">{active.redemptions}</dd></div>
               <div className="flex justify-between"><dt className="text-slate-500">{t("hr.m.adoption")}</dt><dd className="font-semibold text-slate-900">{active.rate}%</dd></div>
             </dl>
-            <button onClick={() => generate(active)} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-2.5 text-sm font-medium text-white hover:bg-emerald-600"><Download className="h-4 w-4" /> {t("hr.m.download")}</button>
+            <button onClick={() => generate(active)} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-nv-emerald py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90"><Download className="h-4 w-4" /> {t("hr.m.download")}</button>
           </SectionCard>
           <SectionCard icon={TrendingUp} title={t("hr.m.chart", { currency })} className="lg:col-span-2">
             <div className="h-56">
@@ -104,7 +104,7 @@ export default function MonthlyReports() {
       <SectionCard title={t("hr.m.history")} className="mt-6">
         <div className="space-y-2">
           {reports.map((r) => (
-            <div key={r.key} className={`flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-3 ${active?.key === r.key ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white"}`}>
+            <div key={r.key} className={`flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-3 ${active?.key === r.key ? "border-nv-emerald bg-emerald-50" : "border-slate-200 bg-white"}`}>
               <button onClick={() => setActiveKey(r.key)} className="text-left">
                 <p className="font-medium capitalize text-slate-900">{r.label}</p>
                 <p className="text-xs text-slate-500">{t("hr.m.line", { n: r.redemptions, amount: money.format(r.saved, currency) })}</p>

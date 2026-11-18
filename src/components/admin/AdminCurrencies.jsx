@@ -92,7 +92,7 @@ export default function AdminCurrencies() {
         <input required value={draft.symbol} onChange={(e) => setDraft({ ...draft, symbol: e.target.value })} placeholder="Symbol" className="w-24 rounded-md border border-slate-200 px-2 py-1.5 text-sm" />
         <input required type="number" step="any" min="0" value={draft.rate_per_usd} onChange={(e) => setDraft({ ...draft, rate_per_usd: e.target.value })} placeholder="Per 1 USD" className="w-32 rounded-md border border-slate-200 px-2 py-1.5 text-sm" />
         <input value={draft.region} onChange={(e) => setDraft({ ...draft, region: e.target.value })} placeholder="Region" className="w-40 rounded-md border border-slate-200 px-2 py-1.5 text-sm" />
-        <button type="submit" className="flex items-center gap-1 rounded-lg bg-emerald-500 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-600"><Plus className="h-4 w-4" /> Add</button>
+        <button type="submit" className="flex items-center gap-1 rounded-lg bg-nv-emerald px-3 py-2 text-sm font-medium text-white hover:bg-nv-emerald/90"><Plus className="h-4 w-4" /> Add</button>
       </form>
     </div>
   );

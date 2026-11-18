@@ -83,7 +83,7 @@ export default function Notifications() {
 
       <div className="mt-4 flex flex-wrap gap-2">
         {filters.map((f) => (
-          <button key={f.id} onClick={() => setFilter(f.id)} className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${filter === f.id ? "bg-emerald-500 text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>{f.label}</button>
+          <button key={f.id} onClick={() => setFilter(f.id)} className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${filter === f.id ? "bg-nv-emerald text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>{f.label}</button>
         ))}
       </div>
 
@@ -120,7 +120,7 @@ export default function Notifications() {
                   )}
                   <button onClick={() => remove(n.id)} title="Delete" className="not-pill rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-500"><Trash2 className="h-4 w-4" /></button>
                 </div>
-                {!n.read && <span className="mt-1 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-emerald-500" />}
+                {!n.read && <span className="mt-1 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-nv-emerald" />}
               </motion.div>
             );
           })

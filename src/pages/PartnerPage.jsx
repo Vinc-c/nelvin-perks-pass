@@ -72,7 +72,7 @@ export default function PartnerPage() {
             <h2 className="mt-8 text-lg font-bold">{t("mc.pp.offers")}</h2>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               {data.offers.map((o) => (
-                <Link key={o.id} to={offerPath(o)} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:border-emerald-300">
+                <Link key={o.id} to={offerPath(o)} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:border-nv-emerald">
                   <p className="flex items-center gap-1.5 font-semibold"><Tag className="h-4 w-4 text-emerald-600" /> {o.title}</p>
                   <p className="mt-1 text-sm font-bold text-emerald-600">{offerBadge(o, (v) => money.format(v, currency))}</p>
                 </Link>

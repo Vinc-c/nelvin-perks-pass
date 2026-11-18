@@ -77,7 +77,7 @@ export default function WithdrawWalletModal({ open, onClose }) {
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-100"><Clock className="h-7 w-7 text-amber-600" /></div>
                 <p className="mt-3 text-lg font-bold text-slate-900">{t("mb.wd.done")}</p>
                 <p className="mt-1 text-sm text-slate-500">{t("mb.wd.doneSub", { amount: money.formatIn(done.amt, done.currency) })}</p>
-                <button onClick={close} className="mt-5 w-full rounded-full bg-emerald-500 py-2.5 text-sm font-medium text-white hover:bg-emerald-600">{t("mb.pin.finish")}</button>
+                <button onClick={close} className="mt-5 w-full rounded-full bg-nv-emerald py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90">{t("mb.pin.finish")}</button>
               </div>
             ) : (
               <>
@@ -88,7 +88,7 @@ export default function WithdrawWalletModal({ open, onClose }) {
                 <div className="flex items-end gap-3">
                   <div className="flex-1">
                     <label className="text-sm font-medium text-slate-700" htmlFor="withdraw-amount">{t("mb.wd.amount")}</label>
-                    <input id="withdraw-amount" type="number" min="1" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0" className={`mt-2 w-full rounded-xl border px-3 py-2.5 text-lg font-semibold text-slate-900 outline-none ${tooMuch ? "border-rose-400" : "border-slate-200 focus:border-emerald-500"}`} />
+                    <input id="withdraw-amount" type="number" min="1" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0" className={`mt-2 w-full rounded-xl border px-3 py-2.5 text-lg font-semibold text-slate-900 outline-none ${tooMuch ? "border-rose-400" : "border-slate-200 focus:border-nv-emerald"}`} />
                   </div>
                   <CurrencySelect value={currency} onChange={setCurrency} />
                 </div>
@@ -101,7 +101,7 @@ export default function WithdrawWalletModal({ open, onClose }) {
                     const Icon = m.icon;
                     const active = method === m.v;
                     return (
-                      <button key={m.v} onClick={() => setMethod(m.v)} className={`not-pill flex flex-col items-center gap-1 rounded-xl border-2 py-3 text-xs font-medium ${active ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
+                      <button key={m.v} onClick={() => setMethod(m.v)} className={`not-pill flex flex-col items-center gap-1 rounded-xl border-2 py-3 text-xs font-medium ${active ? "border-nv-emerald bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
                         <Icon className="h-5 w-5" /> {m.l.startsWith("mb.") ? t(m.l) : m.l}
                       </button>
                     );
@@ -109,9 +109,9 @@ export default function WithdrawWalletModal({ open, onClose }) {
                 </div>
 
                 <label className="mt-4 block text-sm font-medium text-slate-700" htmlFor="withdraw-dest">{method === "MOBILE_MONEY" ? t("mb.wd.momoNumber") : t("mb.wd.bankNumber")}</label>
-                <input id="withdraw-dest" value={destination} onChange={(e) => setDestination(e.target.value)} placeholder={t(activeMethod.placeholder)} className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-emerald-500" />
+                <input id="withdraw-dest" value={destination} onChange={(e) => setDestination(e.target.value)} placeholder={t(activeMethod.placeholder)} className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-nv-emerald" />
 
-                <button onClick={submit} disabled={loading || !amt || amt <= 0 || tooMuch || destination.trim().length < 6} className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-emerald-500 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600 disabled:opacity-50 active:scale-95">
+                <button onClick={submit} disabled={loading || !amt || amt <= 0 || tooMuch || destination.trim().length < 6} className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-nv-emerald py-3 text-sm font-semibold text-white transition hover:bg-nv-emerald/90 disabled:opacity-50 active:scale-95">
                   {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("mb.wd.processing")}</> : <><Check className="h-4 w-4" /> {t("mb.wd.submit")}</>}
                 </button>
               </>

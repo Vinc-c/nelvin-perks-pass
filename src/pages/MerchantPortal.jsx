@@ -167,7 +167,7 @@ export default function MerchantPortal() {
         )}
 
         {show("payout") && (
-        <SectionCard className="mt-6" title={t("dash.merchant.week")} icon={TrendingUp} action={shareHref && <a href={shareHref} target="_blank" rel="noreferrer" className="rounded-full bg-emerald-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-600">{t("dash.merchant.share")}</a>}>
+        <SectionCard className="mt-6" title={t("dash.merchant.week")} icon={TrendingUp} action={shareHref && <a href={shareHref} target="_blank" rel="noreferrer" className="rounded-full bg-nv-emerald px-3 py-1.5 text-xs font-medium text-white hover:bg-nv-emerald/90">{t("dash.merchant.share")}</a>}>
           <div className="h-40">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={week} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
@@ -187,12 +187,12 @@ export default function MerchantPortal() {
             <form onSubmit={validateCode} className="space-y-3">
               <label className="block text-sm text-slate-600">
                 {t("mc.scan.codeLabel")}
-                <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="NEL-XXXXXX" className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 font-mono text-sm text-slate-900 outline-none focus:border-emerald-500" />
+                <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="NEL-XXXXXX" className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 font-mono text-sm text-slate-900 outline-none focus:border-nv-emerald" />
               </label>
               <div className="flex items-end gap-2">
                 <label className="block flex-1 text-sm text-slate-600">
                   {t("mc.scan.billLabel")}
-                  <input type="number" min="0" step="0.01" inputMode="decimal" value={bill} onChange={(e) => setBill(e.target.value)} placeholder="0" className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
+                  <input type="number" min="0" step="0.01" inputMode="decimal" value={bill} onChange={(e) => setBill(e.target.value)} placeholder="0" className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-nv-emerald" />
                 </label>
                 <CurrencySelect value={billCurrency} onChange={setBillCurrency} />
               </div>
@@ -200,7 +200,7 @@ export default function MerchantPortal() {
                 <input type="checkbox" checked={payWallet} onChange={(e) => setPayWallet(e.target.checked)} className="mt-0.5 h-4 w-4 accent-emerald-500" />
                 {t("mc.scan.walletCheck")}
               </label>
-              <button type="submit" disabled={validating || !code.trim() || !(Number(bill) > 0)} className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">
+              <button type="submit" disabled={validating || !code.trim() || !(Number(bill) > 0)} className="flex w-full items-center justify-center gap-2 rounded-lg bg-nv-emerald px-4 py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
                 {validating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />} {t("mc.scan.submit")}
               </button>
             </form>
@@ -276,12 +276,12 @@ export default function MerchantPortal() {
 
         {show("offers") && (
         <SectionCard className="mt-6" title={t("mc.offers.title")} action={
-          <Link to="/campaign-editor" className="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-2 text-sm font-medium text-white transition hover:bg-emerald-600 active:scale-95">
+          <Link to="/campaign-editor" className="flex items-center gap-1.5 rounded-lg bg-nv-emerald px-3 py-2 text-sm font-medium text-white transition hover:bg-nv-emerald/90 active:scale-95">
             <Plus className="h-4 w-4" /> {t("mc.offers.new")}
           </Link>
         }>
           {offers.length === 0 ? (
-            <EmptyState icon={Tag} title={t("mc.offers.emptyTitle")} description={t("mc.offers.emptyDesc")} action={<Link to="/campaign-editor" className="not-pill rounded-full bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600">{t("mc.offers.create")}</Link>} />
+            <EmptyState icon={Tag} title={t("mc.offers.emptyTitle")} description={t("mc.offers.emptyDesc")} action={<Link to="/campaign-editor" className="not-pill rounded-full bg-nv-emerald px-4 py-2 text-sm font-medium text-white hover:bg-nv-emerald/90">{t("mc.offers.create")}</Link>} />
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {offers.map((c) => {
@@ -294,7 +294,7 @@ export default function MerchantPortal() {
                       {c.image_url ? <img src={c.image_url} alt={c.title} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-slate-300"><Tag className="h-5 w-5" /></div>}
                       <span className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-medium text-slate-700">{cmeta.label}</span>
                       {c.is_featured && <span className="absolute right-2 top-2 rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-bold text-white"><Star className="inline h-2.5 w-2.5" /></span>}
-                      <span className={`absolute bottom-2 right-2 rounded-full px-2 py-0.5 text-[10px] font-medium text-white ${active ? "bg-emerald-500" : "bg-slate-500"}`}>{active ? t("mc.offers.active") : t("mc.offers.expired")}</span>
+                      <span className={`absolute bottom-2 right-2 rounded-full px-2 py-0.5 text-[10px] font-medium text-white ${active ? "bg-nv-emerald" : "bg-slate-500"}`}>{active ? t("mc.offers.active") : t("mc.offers.expired")}</span>
                     </div>
                     <div className="p-3">
                       <p className="truncate font-medium text-slate-900">{c.title}</p>
@@ -313,7 +313,7 @@ export default function MerchantPortal() {
         <SectionCard className="mt-6" icon={Banknote} title={t("mc.payouts.title")} action={
           <div className="flex items-center gap-2">
             <CurrencySelect value={currency} onChange={setCurrency} />
-            <button onClick={() => setPayoutOpen(true)} disabled={payoutBalance <= 0} className="rounded-full bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">{t("mc.payouts.request")}</button>
+            <button onClick={() => setPayoutOpen(true)} disabled={payoutBalance <= 0} className="rounded-full bg-nv-emerald px-4 py-2 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">{t("mc.payouts.request")}</button>
           </div>
         }>
           <p className="text-sm text-slate-600">{t("mc.payouts.balanceLabel")} <span className="font-semibold text-slate-900">{money.format(payoutBalance, currency)}</span> {t("mc.payouts.balanceNote")}</p>
@@ -342,13 +342,13 @@ export default function MerchantPortal() {
                 <button type="button" onClick={() => setPayoutOpen(false)} aria-label={t("mc.payouts.close")}><X className="h-5 w-5 text-slate-400" /></button>
               </div>
               <p className="text-sm text-slate-500">{t("mc.payouts.available", { amount: money.format(payoutBalance, currency) })}</p>
-              <input type="number" min="1" step="0.01" required value={payout.amount} onChange={(e) => setPayout({ ...payout, amount: e.target.value })} placeholder={t("mc.payouts.amountPlaceholder", { currency })} aria-label={t("mc.payouts.amount")} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-emerald-500" />
+              <input type="number" min="1" step="0.01" required value={payout.amount} onChange={(e) => setPayout({ ...payout, amount: e.target.value })} placeholder={t("mc.payouts.amountPlaceholder", { currency })} aria-label={t("mc.payouts.amount")} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-nv-emerald" />
               <select value={payout.method} onChange={(e) => setPayout({ ...payout, method: e.target.value })} aria-label={t("mc.payouts.method")} className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
                 <option value="MOBILE_MONEY">Mobile Money</option>
                 <option value="BANK_TRANSFER">{t("mc.payouts.bankTransfer")}</option>
               </select>
-              <input required minLength={6} value={payout.destination} onChange={(e) => setPayout({ ...payout, destination: e.target.value })} placeholder={payout.method === "MOBILE_MONEY" ? t("mc.payouts.momoNumber") : t("mc.payouts.ibanPlaceholder")} aria-label={t("mc.payouts.destination")} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-emerald-500" />
-              <button type="submit" disabled={payoutBusy || money.toUsd(Number(payout.amount), currency) > payoutBalance + 1e-6} className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-2.5 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">
+              <input required minLength={6} value={payout.destination} onChange={(e) => setPayout({ ...payout, destination: e.target.value })} placeholder={payout.method === "MOBILE_MONEY" ? t("mc.payouts.momoNumber") : t("mc.payouts.ibanPlaceholder")} aria-label={t("mc.payouts.destination")} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-nv-emerald" />
+              <button type="submit" disabled={payoutBusy || money.toUsd(Number(payout.amount), currency) > payoutBalance + 1e-6} className="flex w-full items-center justify-center gap-2 rounded-xl bg-nv-emerald py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
                 {payoutBusy && <Loader2 className="h-4 w-4 animate-spin" />} {t("mc.payouts.send")}
               </button>
             </motion.form>

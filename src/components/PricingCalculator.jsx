@@ -35,8 +35,8 @@ export default function PricingCalculator() {
           ))}
         </div>
         <div className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white p-1 shadow-sm">
-          <button onClick={() => setBilling("MONTHLY")} className={`rounded-full px-6 py-2 text-sm font-semibold ${billing === "MONTHLY" ? "bg-emerald-500 text-white" : "text-slate-600"}`}>{t("pr.monthly")}</button>
-          <button onClick={() => setBilling("ANNUAL")} className={`flex items-center gap-2 rounded-full px-6 py-2 text-sm font-semibold ${billing === "ANNUAL" ? "bg-emerald-500 text-white" : "text-slate-600"}`}>
+          <button onClick={() => setBilling("MONTHLY")} className={`rounded-full px-6 py-2 text-sm font-semibold ${billing === "MONTHLY" ? "bg-nv-emerald text-white" : "text-slate-600"}`}>{t("pr.monthly")}</button>
+          <button onClick={() => setBilling("ANNUAL")} className={`flex items-center gap-2 rounded-full px-6 py-2 text-sm font-semibold ${billing === "ANNUAL" ? "bg-nv-emerald text-white" : "text-slate-600"}`}>
             {t("pr.annual")} {saving > 0 && <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700">-{saving}%</span>}
           </button>
         </div>
@@ -58,8 +58,8 @@ export default function PricingCalculator() {
           const price = billing === "ANNUAL" ? p.price_annual : p.price_monthly;
           const highlight = recommended ? recommended.code === p.code : p.popular;
           return (
-            <motion.div key={p.code} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className={`relative flex flex-col rounded-3xl border bg-white p-6 shadow-sm ${highlight ? "border-emerald-500/60 ring-2 ring-emerald-500/30" : "border-slate-200"}`}>
-              {highlight && <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white">{recommended ? t("pr.recommended") : t("pr.popular")}</span>}
+            <motion.div key={p.code} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className={`relative flex flex-col rounded-3xl border bg-white p-6 shadow-sm ${highlight ? "border-nv-emerald/60 ring-2 ring-nv-emerald/30" : "border-slate-200"}`}>
+              {highlight && <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-nv-emerald px-3 py-1 text-xs font-bold text-white">{recommended ? t("pr.recommended") : t("pr.popular")}</span>}
               <h3 className="text-xl font-bold text-slate-900">{p.name}</h3>
               <p className="mt-1 text-sm text-slate-500">{p.tagline}</p>
               <div className="mt-4 flex items-end gap-1">
@@ -70,7 +70,7 @@ export default function PricingCalculator() {
               <ul className="mt-5 flex-1 space-y-2.5 text-sm text-slate-600">
                 {(p.features || []).map((f) => <li key={f} className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-emerald-600" /> {f}</li>)}
               </ul>
-              <Link to={CTA[view]} className={`mt-6 block rounded-full py-3 text-center text-sm font-bold ${highlight ? "bg-emerald-500 text-white hover:bg-emerald-600" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}>{t(`pr.cta.${view}`)}</Link>
+              <Link to={CTA[view]} className={`mt-6 block rounded-full py-3 text-center text-sm font-bold ${highlight ? "bg-nv-emerald text-white hover:bg-nv-emerald/90" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}>{t(`pr.cta.${view}`)}</Link>
             </motion.div>
           );
         })}

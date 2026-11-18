@@ -70,7 +70,7 @@ function SecretField({ provider, field, hint, onSaved }) {
         <div className="relative flex-1">
           <input type={show ? "text" : "password"} value={value} onChange={(e) => setValue(e.target.value)} autoComplete="off" spellCheck={false}
             placeholder={hint ? "Replace key…" : field.placeholder || "Paste the key"} aria-label={`${provider} ${field.label}`}
-            className="w-full rounded-lg border border-slate-200 bg-white py-1.5 pl-2.5 pr-8 font-mono text-xs text-slate-900 outline-none focus:border-emerald-500" />
+            className="w-full rounded-lg border border-slate-200 bg-white py-1.5 pl-2.5 pr-8 font-mono text-xs text-slate-900 outline-none focus:border-nv-emerald" />
           <button type="button" onClick={() => setShow((s) => !s)} className="absolute right-2 top-1.5 text-slate-400" aria-label={show ? "Hide" : "Show"}>
             {show ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
           </button>
@@ -120,7 +120,7 @@ function ProviderCard({ p, onChange }) {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className={`rounded-2xl border bg-white p-5 shadow-sm ${p.enabled ? "border-emerald-300" : "border-slate-200"}`}>
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className={`rounded-2xl border bg-white p-5 shadow-sm ${p.enabled ? "border-nv-emerald" : "border-slate-200"}`}>
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="font-semibold text-slate-900">{p.display_name}</p>
@@ -132,7 +132,7 @@ function ProviderCard({ p, onChange }) {
         <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-slate-600">
           <span>{p.enabled ? "Active" : "Inactive"}</span>
           <button type="button" role="switch" aria-checked={p.enabled} onClick={() => patch({ enabled: !p.enabled })}
-            className={`relative h-6 w-11 rounded-full transition ${p.enabled ? "bg-emerald-500" : "bg-slate-300"}`} title={!hasSecret ? "No key in the Vault: the server's environment secrets will be used" : ""}>
+            className={`relative h-6 w-11 rounded-full transition ${p.enabled ? "bg-nv-emerald" : "bg-slate-300"}`} title={!hasSecret ? "No key in the Vault: the server's environment secrets will be used" : ""}>
             <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition ${p.enabled ? "left-5" : "left-0.5"}`} />
           </button>
         </label>
@@ -165,7 +165,7 @@ function ProviderCard({ p, onChange }) {
         {PUBLIC_KEY_HINT[p.id] !== "" && (
           <div>
             <span className="text-xs font-medium text-slate-600">Public key (not secret)</span>
-            <input value={publicKey} onChange={(e) => setPublicKey(e.target.value)} onBlur={() => publicKey !== (p.public_key || "") && patch({ public_key: publicKey.trim() || null })} placeholder={PUBLIC_KEY_HINT[p.id]} aria-label={`${p.display_name} public key`} className="mt-1 w-full rounded-lg border border-slate-200 px-2.5 py-1.5 font-mono text-xs outline-none focus:border-emerald-500" />
+            <input value={publicKey} onChange={(e) => setPublicKey(e.target.value)} onBlur={() => publicKey !== (p.public_key || "") && patch({ public_key: publicKey.trim() || null })} placeholder={PUBLIC_KEY_HINT[p.id]} aria-label={`${p.display_name} public key`} className="mt-1 w-full rounded-lg border border-slate-200 px-2.5 py-1.5 font-mono text-xs outline-none focus:border-nv-emerald" />
           </div>
         )}
       </div>

@@ -6,11 +6,11 @@ import { currentPortal } from "@/lib/portalNav";
 import { Wallet, Gift, Users, Store, ShieldCheck } from "lucide-react";
 
 const PROFILES = {
-  MEMBER: { gradient: "from-emerald-500 to-emerald-700", icon: Wallet, labelKey: "welcome.member.label", taglineKey: "welcome.member.tagline" },
-  user: { gradient: "from-emerald-500 to-emerald-700", icon: Wallet, labelKey: "welcome.member.label", taglineKey: "welcome.member.tagline" },
+  MEMBER: { gradient: "from-nv-emerald to-nv-emerald", icon: Wallet, labelKey: "welcome.member.label", taglineKey: "welcome.member.tagline" },
+  user: { gradient: "from-nv-emerald to-nv-emerald", icon: Wallet, labelKey: "welcome.member.label", taglineKey: "welcome.member.tagline" },
   EMPLOYEE: { gradient: "from-blue-500 to-blue-700", icon: Gift, labelKey: "welcome.employee.label", taglineKey: "welcome.employee.tagline" },
   HR_ADMIN: { gradient: "from-amber-500 to-amber-700", icon: Users, labelKey: "welcome.hr.label", taglineKey: "welcome.hr.tagline" },
-  MERCHANT: { gradient: "from-teal-500 to-emerald-700", icon: Store, labelKey: "welcome.merchant.label", taglineKey: "welcome.merchant.tagline" },
+  MERCHANT: { gradient: "from-teal-500 to-nv-emerald", icon: Store, labelKey: "welcome.merchant.label", taglineKey: "welcome.merchant.tagline" },
   SUPER_ADMIN: { gradient: "from-brand to-brand/70", icon: ShieldCheck, labelKey: "welcome.admin.label", taglineKey: "welcome.admin.tagline" },
   admin: { gradient: "from-brand to-brand/70", icon: ShieldCheck, labelKey: "welcome.admin.label", taglineKey: "welcome.admin.tagline" },
 };

@@ -61,7 +61,7 @@ function Documents({ merchantId }) {
           {d.review_note && <span className="text-slate-400">“{d.review_note}”</span>}
           <span className="ml-auto flex gap-1">
             <button onClick={() => open(d)} className="flex items-center gap-1 rounded bg-white px-2 py-1 ring-1 ring-slate-200 hover:bg-slate-100"><ExternalLink className="h-3 w-3" /> Open</button>
-            {d.status !== "APPROVED" && <button onClick={() => review(d, "APPROVED")} className="rounded bg-emerald-500 px-2 py-1 text-white hover:bg-emerald-600">Approve</button>}
+            {d.status !== "APPROVED" && <button onClick={() => review(d, "APPROVED")} className="rounded bg-nv-emerald px-2 py-1 text-white hover:bg-nv-emerald/90">Approve</button>}
             {d.status !== "REJECTED" && <button onClick={() => review(d, "REJECTED")} className="rounded bg-rose-100 px-2 py-1 text-rose-600 hover:bg-rose-200">Reject</button>}
           </span>
         </li>

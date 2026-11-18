@@ -52,7 +52,7 @@ function ReviewRow({ r, who, about, onSave }) {
         {busy && <Loader2 className="h-4 w-4 animate-spin text-slate-400" />}
         {!editing && <button onClick={() => setEditing(true)} className="flex items-center gap-1 rounded-lg px-3 py-1.5 text-slate-600 hover:bg-slate-100"><Pencil className="h-3.5 w-3.5" /> Correct</button>}
         {r.status !== "REJECTED" && <button disabled={busy} onClick={() => act({ status: "REJECTED" })} className="flex items-center gap-1 rounded-lg px-3 py-1.5 text-rose-600 hover:bg-rose-50"><X className="h-3.5 w-3.5" /> Reject</button>}
-        {r.status !== "APPROVED" && <button disabled={busy} onClick={() => act({ status: "APPROVED" })} className="flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1.5 text-white hover:bg-emerald-700"><Check className="h-3.5 w-3.5" /> Approve</button>}
+        {r.status !== "APPROVED" && <button disabled={busy} onClick={() => act({ status: "APPROVED" })} className="flex items-center gap-1 rounded-lg bg-nv-emerald px-3 py-1.5 text-white hover:bg-nv-emerald/90"><Check className="h-3.5 w-3.5" /> Approve</button>}
       </div>
     </li>
   );

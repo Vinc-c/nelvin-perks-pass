@@ -133,7 +133,7 @@ export default function AdminPromotions() {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS[st]}`}>{st.replace("_", " ")}</span>
-                    {o.status === "IN_REVIEW" && <button disabled={busyId === o.id} onClick={() => act(o, "APPROVE")} className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50">Approve</button>}
+                    {o.status === "IN_REVIEW" && <button disabled={busyId === o.id} onClick={() => act(o, "APPROVE")} className="rounded-lg bg-nv-emerald px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50">Approve</button>}
                     {["IN_REVIEW", "ACTIVE"].includes(o.status) && st !== "ENDED" && <button disabled={busyId === o.id} onClick={() => act(o, o.status === "ACTIVE" ? "STOP" : "REJECT")} className="rounded-lg border border-rose-300 px-3 py-1.5 text-xs font-medium text-rose-700 disabled:opacity-50">{o.status === "ACTIVE" ? "Stop" : "Reject"}</button>}
                   </div>
                 </li>

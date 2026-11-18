@@ -171,7 +171,7 @@ export default function CampaignEditor() {
           <h1 className="text-xl font-bold text-slate-900">{t("mc.camp.heading")}</h1>
           <p className="text-sm text-slate-500">{t("mc.camp.subheading")}</p>
         </div>
-        <button onClick={openNew} className="flex items-center gap-1.5 not-pill rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-emerald-600 active:scale-95">
+        <button onClick={openNew} className="flex items-center gap-1.5 not-pill rounded-xl bg-nv-emerald px-4 py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90 active:scale-95">
           <Plus className="h-4 w-4" /> {t("mc.camp.new")}
         </button>
       </div>
@@ -181,7 +181,7 @@ export default function CampaignEditor() {
       ) : offers.length === 0 ? (
         <div className="mt-6">
           <EmptyState icon={Tag} title={t("mc.camp.emptyTitle")} description={t("mc.camp.emptyDesc")} action={
-            <button onClick={openNew} className="not-pill rounded-full bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600">{t("mc.camp.create")}</button>
+            <button onClick={openNew} className="not-pill rounded-full bg-nv-emerald px-4 py-2 text-sm font-medium text-white hover:bg-nv-emerald/90">{t("mc.camp.create")}</button>
           } />
         </div>
       ) : (
@@ -201,7 +201,7 @@ export default function CampaignEditor() {
                   )}
                   <span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-slate-700">{cmeta.label}</span>
                   {o.is_featured && <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-amber-500 px-2 py-0.5 text-xs font-bold text-white"><Star className="h-3 w-3" /> {t("mc.camp.featured")}</span>}
-                  <span className={`absolute bottom-3 right-3 rounded-full px-2 py-0.5 text-xs font-medium ${active ? "bg-emerald-500 text-white" : "bg-slate-500 text-white"}`}>{active ? t("mc.camp.active") : t("mc.camp.expired")}</span>
+                  <span className={`absolute bottom-3 right-3 rounded-full px-2 py-0.5 text-xs font-medium ${active ? "bg-nv-emerald text-white" : "bg-slate-500 text-white"}`}>{active ? t("mc.camp.active") : t("mc.camp.expired")}</span>
                 </div>
                 <div className="p-4">
                   <h3 className="font-semibold text-slate-900">{o.title}</h3>
@@ -253,7 +253,7 @@ export default function CampaignEditor() {
                         <button onClick={() => setForm((f) => ({ ...f, image_url: "" }))} aria-label={t("mc.camp.removeImage")} className="not-pill absolute right-2 top-2 rounded-full bg-black/50 p-1 text-white"><X className="h-4 w-4" /></button>
                       </div>
                     ) : (
-                      <label className="flex h-36 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 hover:border-emerald-400">
+                      <label className="flex h-36 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 hover:border-nv-emerald">
                         {uploading ? <Loader2 className="h-6 w-6 animate-spin text-emerald-500" /> : <Upload className="h-6 w-6 text-slate-400" />}
                         <span className="mt-2 text-sm text-slate-500">{uploading ? t("mc.camp.uploading") : t("mc.camp.uploadClick")}</span>
                         <input type="file" accept="image/*" className="hidden" onChange={(e) => onUpload(e.target.files?.[0])} />
@@ -264,12 +264,12 @@ export default function CampaignEditor() {
 
                 <label className="block text-sm">
                   <span className="text-slate-500">{t("mc.camp.fieldTitle")}</span>
-                  <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder={t("mc.camp.titlePlaceholder")} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-emerald-500" />
+                  <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder={t("mc.camp.titlePlaceholder")} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-nv-emerald" />
                 </label>
 
                 <label className="block text-sm">
                   <span className="text-slate-500">{t("mc.camp.fieldDesc")}</span>
-                  <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} placeholder={t("mc.camp.descPlaceholder")} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-emerald-500" />
+                  <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} placeholder={t("mc.camp.descPlaceholder")} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-nv-emerald" />
                 </label>
 
                 {/* Category */}
@@ -277,7 +277,7 @@ export default function CampaignEditor() {
                   <span className="text-sm text-slate-500">{t("mc.camp.category")}</span>
                   <div className="mt-1.5 flex flex-wrap gap-2">
                     {categories.map((c) => (
-                      <button key={c.value} type="button" onClick={() => setForm({ ...form, category: c.value })} className={`not-pill rounded-full px-3 py-1.5 text-xs font-medium transition ${form.category === c.value ? "bg-emerald-500 text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
+                      <button key={c.value} type="button" onClick={() => setForm({ ...form, category: c.value })} className={`not-pill rounded-full px-3 py-1.5 text-xs font-medium transition ${form.category === c.value ? "bg-nv-emerald text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
                         {c.label}
                       </button>
                     ))}
@@ -294,14 +294,14 @@ export default function CampaignEditor() {
                   </label>
                   <label className="block text-sm">
                     <span className="text-slate-500">{form.discount_type === "FIXED" ? t("mc.camp.valueFixed") : form.discount_type === "PERK" ? t("mc.camp.valuePerk") : dType?.suffix ? t("mc.camp.valueSuffix", { suffix: dType.suffix }) : t("mc.camp.value")}</span>
-                    <input type="number" min={0} value={form.discount_value} onChange={(e) => setForm({ ...form, discount_value: Number(e.target.value) })} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-emerald-500" />
+                    <input type="number" min={0} value={form.discount_value} onChange={(e) => setForm({ ...form, discount_value: Number(e.target.value) })} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-nv-emerald" />
                   </label>
                 </div>
 
                 {form.discount_type === "PERK" && (
                   <label className="block text-sm">
                     <span className="text-slate-500">{t("mc.camp.perkLabel")}</span>
-                    <input value={form.perk_label} maxLength={120} onChange={(e) => setForm({ ...form, perk_label: e.target.value })} placeholder={t("mc.camp.perkPlaceholder")} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-emerald-500" />
+                    <input value={form.perk_label} maxLength={120} onChange={(e) => setForm({ ...form, perk_label: e.target.value })} placeholder={t("mc.camp.perkPlaceholder")} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-nv-emerald" />
                   </label>
                 )}
                 <label className="flex items-start gap-2 text-sm text-slate-600">
@@ -312,7 +312,7 @@ export default function CampaignEditor() {
                 <div className="grid grid-cols-2 gap-3">
                   <label className="block text-sm">
                     <span className="text-slate-500">{t("mc.camp.cashbackRate")}</span>
-                    <input type="number" min={0} max={100} value={form.cashback_rate} onChange={(e) => setForm({ ...form, cashback_rate: Number(e.target.value) })} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-emerald-500" />
+                    <input type="number" min={0} max={100} value={form.cashback_rate} onChange={(e) => setForm({ ...form, cashback_rate: Number(e.target.value) })} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-nv-emerald" />
                   </label>
                   <label className="block text-sm">
                     <span className="text-slate-500">{t("mc.camp.audience")}</span>
@@ -334,7 +334,7 @@ export default function CampaignEditor() {
                 <div className="grid grid-cols-2 gap-3">
                   <label className="block text-sm">
                     <span className="text-slate-500">{t("mc.camp.usageLimit")}</span>
-                    <input type="number" min={1} max={1000} value={form.usage_limit} onChange={(e) => setForm({ ...form, usage_limit: e.target.value })} placeholder={form.discount_type === "PERK" ? t("mc.camp.usageRecommended") : t("mc.camp.unlimited")} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-emerald-500" />
+                    <input type="number" min={1} max={1000} value={form.usage_limit} onChange={(e) => setForm({ ...form, usage_limit: e.target.value })} placeholder={form.discount_type === "PERK" ? t("mc.camp.usageRecommended") : t("mc.camp.unlimited")} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-nv-emerald" />
                   </label>
                   <label className="block text-sm">
                     <span className="text-slate-500">{t("mc.camp.period")}</span>
@@ -351,7 +351,7 @@ export default function CampaignEditor() {
                 <div className="grid grid-cols-2 gap-3">
                   <label className="block text-sm">
                     <span className="text-slate-500">{t("mc.camp.expires")}</span>
-                    <input type="date" value={form.expires_at} onChange={(e) => setForm({ ...form, expires_at: e.target.value })} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-emerald-500" />
+                    <input type="date" value={form.expires_at} onChange={(e) => setForm({ ...form, expires_at: e.target.value })} className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900 outline-none focus:border-nv-emerald" />
                   </label>
                   {isAdmin(user) ? (
                     <label className="flex items-end gap-2 pb-2 text-sm text-slate-600">
@@ -373,7 +373,7 @@ export default function CampaignEditor() {
 
               <div className="mt-6 flex gap-2">
                 <button onClick={() => setEditing(null)} className="not-pill flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50">{t("mc.camp.cancel")}</button>
-                <button onClick={save} disabled={saving} className="not-pill flex-1 rounded-xl bg-emerald-500 py-2.5 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">
+                <button onClick={save} disabled={saving} className="not-pill flex-1 rounded-xl bg-nv-emerald py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
                   {saving ? <Loader2 className="mx-auto h-4 w-4 animate-spin" /> : t("mc.camp.publish")}
                 </button>
               </div>

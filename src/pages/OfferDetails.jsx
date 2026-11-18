@@ -163,7 +163,7 @@ export default function OfferDetails() {
               )}
               {user ? (
                 <>
-                  <button onClick={() => setRedeem(true)} disabled={!canRedeem} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white transition hover:bg-emerald-600 disabled:opacity-50">
+                  <button onClick={() => setRedeem(true)} disabled={!canRedeem} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-nv-emerald py-3 font-medium text-white transition hover:bg-nv-emerald/90 disabled:opacity-50">
                     <Tag className="h-4 w-4" /> {planLocked ? t("offer.lockedPlan", { plan: planName }) : employeesOnly ? t("offer.lockedEmployees") : expired ? t("offer.expiredBtn") : limitReached ? t("offer.limitBtn") : t("offer.showCode")}
                   </button>
                   {canRedeem && (
@@ -173,7 +173,7 @@ export default function OfferDetails() {
                   )}
                 </>
               ) : (
-                <Link to="/register" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white hover:bg-emerald-600">{t("offer.signupCta")}</Link>
+                <Link to="/register" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-nv-emerald py-3 font-medium text-white hover:bg-nv-emerald/90">{t("offer.signupCta")}</Link>
               )}
               <ShareButton title={offer.title} path={offer.slug ? `/offre/${offer.slug}` : `/offer-details?id=${offer.id}`} />
               {offer.booking_required && merchant?.whatsapp && (

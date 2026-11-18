@@ -182,7 +182,7 @@ export default function MemberPortal() {
         </div>
         <div className="relative">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("mb.portal.searchPlaceholder")} aria-label={t("mb.portal.searchAria")} className="rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500" />
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("mb.portal.searchPlaceholder")} aria-label={t("mb.portal.searchAria")} className="rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-nv-emerald" />
         </div>
       </div>
 

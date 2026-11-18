@@ -129,7 +129,7 @@ export default function QrRedemption({ offer, onClose }) {
         {!started ? (
           <div className="space-y-4">
             <p className="text-sm text-slate-600">{t("mb.qr.intro")}</p>
-            <button onClick={start} className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white hover:bg-emerald-600">{t("mb.qr.generate")}</button>
+            <button onClick={start} className="flex w-full items-center justify-center gap-2 rounded-xl bg-nv-emerald py-3 font-medium text-white hover:bg-nv-emerald/90">{t("mb.qr.generate")}</button>
           </div>
         ) : (<>
         <div className="mb-4 flex flex-col items-center rounded-xl bg-slate-50 p-6">
@@ -166,14 +166,14 @@ export default function QrRedemption({ offer, onClose }) {
         {error ? (
           <button
             onClick={createRedemption}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white transition hover:bg-emerald-600 active:scale-95"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-nv-emerald py-3 font-medium text-white transition hover:bg-nv-emerald/90 active:scale-95"
           >
             <RefreshCw className="h-4 w-4" /> {t("mb.qr.retry")}
           </button>
         ) : expired ? (
           <button
             onClick={createRedemption}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white transition hover:bg-emerald-600 active:scale-95"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-nv-emerald py-3 font-medium text-white transition hover:bg-nv-emerald/90 active:scale-95"
           >
             <RefreshCw className="h-4 w-4" /> {t("mb.qr.regenerate")}
           </button>
@@ -181,7 +181,7 @@ export default function QrRedemption({ offer, onClose }) {
           <button
             onClick={copyCode}
             disabled={loading || !code}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white transition hover:bg-emerald-600 active:scale-95 disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-nv-emerald py-3 font-medium text-white transition hover:bg-nv-emerald/90 active:scale-95 disabled:opacity-50"
           >
             {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
             {copied ? t("mb.qr.copied") : t("mb.qr.copy")}

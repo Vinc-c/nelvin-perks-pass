@@ -130,7 +130,7 @@ export default function BenefitsBuilder() {
         <div className={`rounded-2xl border p-5 ${totalUsd > balance ? "border-rose-200 bg-rose-50" : "border-slate-200 bg-white"}`}>
           <p className="text-sm text-slate-500">{t("hr.b.total", { period })}</p>
           <p className="mt-2 text-2xl font-bold text-slate-900">{money.format(totalUsd, currency)}</p>
-          <button onClick={distribute} disabled={distributing || alreadyRun || totalUsd <= 0 || totalUsd > balance} className="mt-2 flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">
+          <button onClick={distribute} disabled={distributing || alreadyRun || totalUsd <= 0 || totalUsd > balance} className="mt-2 flex items-center gap-1.5 rounded-lg bg-nv-emerald px-3 py-1.5 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
             {distributing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />} {alreadyRun ? t("hr.b.already") : t("hr.b.pay")}
           </button>
           {totalUsd > balance && !alreadyRun && <p className="mt-1 text-xs text-rose-600">{t("hr.b.noFunds")}</p>}
@@ -163,7 +163,7 @@ export default function BenefitsBuilder() {
           </div>
         )}
         <div className="mt-4 flex justify-end">
-          <button onClick={save} disabled={saving} className="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">
+          <button onClick={save} disabled={saving} className="flex items-center gap-1.5 rounded-lg bg-nv-emerald px-4 py-2 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {t("hr.b.savePolicy")}
           </button>
         </div>

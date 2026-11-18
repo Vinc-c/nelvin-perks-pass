@@ -104,7 +104,7 @@ export default function PinRedemption({ offer, merchantName, onClose, onDone }) 
               <input type="checkbox" checked={payWithWallet} onChange={(e) => setPayWithWallet(e.target.checked)} className="mt-0.5 accent-emerald-500" />
               <span><Wallet className="mr-1 inline h-4 w-4" /> {t("mb.pin.payWallet", { balance: money.format(user?.wallet_balance || 0, currency) })}</span>
             </label>
-            <button type="submit" disabled={!(Number(bill) > 0)} className="w-full rounded-xl bg-emerald-500 py-3 font-medium text-white hover:bg-emerald-600 disabled:opacity-50">{t("mb.pin.continue")}</button>
+            <button type="submit" disabled={!(Number(bill) > 0)} className="w-full rounded-xl bg-nv-emerald py-3 font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">{t("mb.pin.continue")}</button>
           </form>
         )}
 
@@ -121,7 +121,7 @@ export default function PinRedemption({ offer, merchantName, onClose, onDone }) 
             <p className="text-xs text-slate-400">{t("mb.pin.digits")}</p>
             <div className="flex gap-2">
               <button onClick={() => { setStep("bill"); setPin(""); }} className="rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-600">{t("mb.pin.back")}</button>
-              <button onClick={() => submit()} disabled={busy || pin.length < 4} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 font-medium text-white hover:bg-emerald-600 disabled:opacity-50">
+              <button onClick={() => submit()} disabled={busy || pin.length < 4} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-nv-emerald py-3 font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
                 {busy && <Loader2 className="h-4 w-4 animate-spin" />} {t("mb.pin.validate")}
               </button>
             </div>

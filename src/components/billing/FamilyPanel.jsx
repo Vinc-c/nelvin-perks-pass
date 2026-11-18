@@ -51,7 +51,7 @@ export default function FamilyPanel({ onChange }) {
             <div key={inv.id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-emerald-50 p-3 text-sm">
               <span className="text-emerald-900"><Heart className="mr-1 inline h-4 w-4" /> {t("bl.fam.invites", { name: inv.owner_name }).split(/<\/?b>/).map((s, i) => (i % 2 ? <strong key={i}>{s}</strong> : s))}</span>
               <span className="flex gap-2">
-                <button disabled={busy} onClick={() => run(() => callRpc("family_accept", { p_id: inv.id }), t("bl.fam.welcome"))} className="flex items-center gap-1 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-medium text-white"><Check className="h-3.5 w-3.5" /> {t("bl.fam.accept")}</button>
+                <button disabled={busy} onClick={() => run(() => callRpc("family_accept", { p_id: inv.id }), t("bl.fam.welcome"))} className="flex items-center gap-1 rounded-lg bg-nv-emerald px-3 py-1.5 text-xs font-medium text-white"><Check className="h-3.5 w-3.5" /> {t("bl.fam.accept")}</button>
                 <button disabled={busy} onClick={() => run(() => callRpc("family_remove", { p_id: inv.id }), t("bl.fam.declined"))} className="rounded-lg border border-emerald-200 px-3 py-1.5 text-xs text-emerald-800">{t("bl.fam.decline")}</button>
               </span>
             </div>

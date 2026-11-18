@@ -56,7 +56,7 @@ export default function NelvinSupportWidget() {
         ) : (
           <>
             <Image src={NELVIN_ICON} alt="Nelvin AI" fittingType="fit" className="h-9 w-9 drop-shadow" />
-            <span className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full border-2 border-white bg-emerald-500" />
+            <span className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full border-2 border-white bg-nv-emerald" />
           </>
         )}
       </button>
@@ -76,7 +76,7 @@ export default function NelvinSupportWidget() {
               <div className="flex-1">
                 <p className="text-sm font-bold tracking-tight">Nelvin AI Assistant</p>
                 <p className="flex items-center gap-1.5 text-xs text-amber-300/90">
-                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" /> {t("sp.w.online")}
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-nv-emerald" /> {t("sp.w.online")}
                 </p>
               </div>
             </div>

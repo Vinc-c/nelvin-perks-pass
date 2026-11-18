@@ -127,7 +127,7 @@ export default function AdminPayments() {
             <p className="text-xs text-slate-400">{who(t.user_id)} · {new Date(t.created_date).toLocaleString("en-US")}</p>
           </div>
           <div className="flex gap-2">
-            <button onClick={() => withdrawal(t, true)} disabled={busy === t.id} className="flex items-center gap-1 rounded-lg bg-emerald-500 px-3 py-2 text-sm font-medium text-white disabled:opacity-50"><Check className="h-4 w-4" /> Paid</button>
+            <button onClick={() => withdrawal(t, true)} disabled={busy === t.id} className="flex items-center gap-1 rounded-lg bg-nv-emerald px-3 py-2 text-sm font-medium text-white disabled:opacity-50"><Check className="h-4 w-4" /> Paid</button>
             <button onClick={() => withdrawal(t, false)} disabled={busy === t.id} className="flex items-center gap-1 rounded-lg border border-rose-200 px-3 py-2 text-sm text-rose-600 disabled:opacity-50"><X className="h-4 w-4" /> Reject</button>
           </div>
         </div>
@@ -141,7 +141,7 @@ export default function AdminPayments() {
             <p className="text-xs text-slate-400">{who(p.requested_by)} · {new Date(p.created_date).toLocaleString("en-US")}</p>
           </div>
           <div className="flex gap-2">
-            <button onClick={() => payout(p, true)} disabled={busy === p.id} className="flex items-center gap-1 rounded-lg bg-emerald-500 px-3 py-2 text-sm font-medium text-white disabled:opacity-50"><Check className="h-4 w-4" /> Sent</button>
+            <button onClick={() => payout(p, true)} disabled={busy === p.id} className="flex items-center gap-1 rounded-lg bg-nv-emerald px-3 py-2 text-sm font-medium text-white disabled:opacity-50"><Check className="h-4 w-4" /> Sent</button>
             <button onClick={() => payout(p, false)} disabled={busy === p.id} className="flex items-center gap-1 rounded-lg border border-rose-200 px-3 py-2 text-sm text-rose-600 disabled:opacity-50"><X className="h-4 w-4" /> Reject</button>
           </div>
         </div>

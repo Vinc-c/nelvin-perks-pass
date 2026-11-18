@@ -5,7 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import SeoFields from "@/components/seo/SeoFields";
 import { useI18n } from "@/i18n/I18nContext";
 
-const input = "mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500";
+const input = "mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-nv-emerald";
 
 /**
  * Public profile of a partner: description, headline, contacts and SEO.
@@ -80,7 +80,7 @@ export default function MerchantProfileEditor({ merchant, onSaved }) {
         fallbackDescription={f.description}
         basePath="/partenaire/"
       />
-      <button onClick={save} disabled={saving} className="flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">
+      <button onClick={save} disabled={saving} className="flex items-center gap-2 rounded-xl bg-nv-emerald px-4 py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
         {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {t("mc.pe.save")}
       </button>
     </div>

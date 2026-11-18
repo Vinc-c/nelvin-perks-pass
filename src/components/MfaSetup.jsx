@@ -48,7 +48,7 @@ export function RecoveryCodes({ codes, onDone, doneLabel }) {
         <input type="checkbox" checked={saved} onChange={(e) => setSaved(e.target.checked)} className="accent-emerald-500" />
         {t("ac.mfa.safeCheck")}
       </label>
-      <button type="button" onClick={onDone} disabled={!saved} className={`${btn} w-full bg-emerald-500 text-white hover:bg-emerald-600`}>{doneLabel || t("ac.mfa.savedBtn")}</button>
+      <button type="button" onClick={onDone} disabled={!saved} className={`${btn} w-full bg-nv-emerald text-white hover:bg-nv-emerald/90`}>{doneLabel || t("ac.mfa.savedBtn")}</button>
     </div>
   );
 }
@@ -132,7 +132,7 @@ export default function MfaSetup({ onDone, onCancel }) {
             </InputOTP>
           </div>
           <div className="flex gap-2">
-            <button type="button" onClick={() => confirm()} disabled={busy || code.length < 6} className={`${btn} flex-1 bg-emerald-500 text-white hover:bg-emerald-600`}>
+            <button type="button" onClick={() => confirm()} disabled={busy || code.length < 6} className={`${btn} flex-1 bg-nv-emerald text-white hover:bg-nv-emerald/90`}>
               {busy && <Loader2 className="h-4 w-4 animate-spin" />} {t("ac.common.confirm")}
             </button>
             {onCancel && <button type="button" onClick={onCancel} className={`${btn} border border-slate-200 text-slate-600`}>{t("ac.common.cancel")}</button>}

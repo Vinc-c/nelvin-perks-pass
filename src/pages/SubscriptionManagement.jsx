@@ -101,7 +101,7 @@ export default function SubscriptionManagement() {
 
         <SectionCard className="lg:col-span-2" title={t("bl.sub.manage")}>
           <div className="flex flex-wrap gap-2">
-            <Link to="/membership-plans" className="rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-600">{current ? t("bl.sub.changePlan") : t("bl.sub.choosePlan")}</Link>
+            <Link to="/membership-plans" className="rounded-full bg-nv-emerald px-5 py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90">{current ? t("bl.sub.changePlan") : t("bl.sub.choosePlan")}</Link>
             {current && plan && (
               <button onClick={() => setRenew(plan)} className="rounded-full border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50">{t("bl.sub.extend")}</button>
             )}

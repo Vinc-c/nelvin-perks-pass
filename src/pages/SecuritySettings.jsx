@@ -12,7 +12,7 @@ import {
 import { Shield, Lock, KeyRound, LogOut, Check, Loader2, Smartphone, ShieldCheck, ShieldOff, LifeBuoy } from "lucide-react";
 import { isAdmin } from "@/lib/roles";
 
-const input = "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500";
+const input = "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-nv-emerald";
 
 function TwoFactor() {
   const { t } = useI18n();
@@ -158,7 +158,7 @@ export default function SecuritySettings() {
               <input type="password" autoComplete="current-password" value={pwd.current} onChange={(e) => setPwd({ ...pwd, current: e.target.value })} placeholder={t("ac.sec.currentPw")} aria-label={t("ac.sec.currentPw")} className={input} />
               <input type="password" autoComplete="new-password" value={pwd.next} onChange={(e) => setPwd({ ...pwd, next: e.target.value })} placeholder={t("ac.sec.newPwPh")} aria-label={t("ac.sec.newPw")} className={input} />
               <input type="password" autoComplete="new-password" value={pwd.confirm} onChange={(e) => setPwd({ ...pwd, confirm: e.target.value })} placeholder={t("ac.sec.confirmPwPh")} aria-label={t("ac.sec.confirmPwPh")} className={input} />
-              <button onClick={savePwd} disabled={pwdBusy} className="flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">
+              <button onClick={savePwd} disabled={pwdBusy} className="flex items-center gap-2 rounded-lg bg-nv-emerald px-4 py-2 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
                 {pwdBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />} {t("ac.sec.update")}
               </button>
               {pwdError && <p className="text-sm text-rose-600">{pwdError}</p>}

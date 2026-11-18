@@ -65,9 +65,9 @@ export default function AdminCompanyManagement() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative max-w-xs flex-1">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search companies…" className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500" />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search companies…" className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-nv-emerald" />
         </div>
-        <button onClick={() => setShowAdd(!showAdd)} className="flex items-center gap-2 rounded-full bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600">
+        <button onClick={() => setShowAdd(!showAdd)} className="flex items-center gap-2 rounded-full bg-nv-emerald px-4 py-2 text-sm font-medium text-white hover:bg-nv-emerald/90">
           {showAdd ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />} {showAdd ? "Cancel" : "New company"}
         </button>
       </div>
@@ -83,7 +83,7 @@ export default function AdminCompanyManagement() {
               { k: "contact_email", l: "Contact email", ph: "hr@acme.com" },
             ].map((f) => (
               <label key={f.k} className="text-xs text-slate-500">{f.l}
-                <input value={draft[f.k]} onChange={(e) => setDraft({ ...draft, [f.k]: e.target.value })} placeholder={f.ph} className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
+                <input value={draft[f.k]} onChange={(e) => setDraft({ ...draft, [f.k]: e.target.value })} placeholder={f.ph} className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-nv-emerald" />
               </label>
             ))}
             <label className="text-xs text-slate-500">Plan
@@ -100,7 +100,7 @@ export default function AdminCompanyManagement() {
               <input type="number" value={draft.max_employees} onChange={(e) => setDraft({ ...draft, max_employees: Number(e.target.value) })} className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none" />
             </label>
           </div>
-          <button onClick={create} className="mt-4 flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-2 text-sm font-medium text-white hover:bg-emerald-700"><Save className="h-4 w-4" /> Create company</button>
+          <button onClick={create} className="mt-4 flex items-center gap-2 rounded-full bg-nv-emerald px-5 py-2 text-sm font-medium text-white hover:bg-nv-emerald/90"><Save className="h-4 w-4" /> Create company</button>
         </motion.div>
       )}
 

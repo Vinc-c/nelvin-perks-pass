@@ -20,7 +20,7 @@ const CATEGORIES = [
 
 function Toggle({ on, onChange, disabled }) {
   return (
-    <button type="button" role="switch" aria-checked={on} disabled={disabled} onClick={() => onChange(!on)} className={`relative h-6 w-11 shrink-0 rounded-full transition disabled:opacity-60 ${on ? "bg-emerald-500" : "bg-slate-300"}`}>
+    <button type="button" role="switch" aria-checked={on} disabled={disabled} onClick={() => onChange(!on)} className={`relative h-6 w-11 shrink-0 rounded-full transition disabled:opacity-60 ${on ? "bg-nv-emerald" : "bg-slate-300"}`}>
       <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition ${on ? "left-5" : "left-0.5"}`} />
     </button>
   );
@@ -79,7 +79,7 @@ export default function NotificationSettings() {
           </div>
         </SectionCard>
       </div>
-      <button onClick={save} disabled={saving} className="mt-6 flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">
+      <button onClick={save} disabled={saving} className="mt-6 flex items-center gap-2 rounded-xl bg-nv-emerald px-5 py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
         {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {t("ac.common.save")}
       </button>
     </PortalLayout>

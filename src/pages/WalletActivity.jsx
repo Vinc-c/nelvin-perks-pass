@@ -155,7 +155,7 @@ export default function WalletActivity() {
   return (
     <PortalLayout title={txOnly ? tr("nav.l.transactions") : tr("mb.wallet.title")} theme="light">
       {!txOnly && (<>
-      <div className="flex flex-col gap-4 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 p-6 text-white shadow-lg sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 rounded-2xl bg-gradient-to-br from-nv-emerald to-nv-emerald p-6 text-white shadow-lg sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="flex items-center gap-2 text-sm text-emerald-50"><Wallet className="h-4 w-4" /> {tr("mb.wallet.available")}</p>
           <p className="mt-2 text-4xl font-bold">{money.format(user?.wallet_balance, currency)}</p>
@@ -179,7 +179,7 @@ export default function WalletActivity() {
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-2">
           {FILTERS.map((f) => (
-            <button key={f.id} onClick={() => setFilter(f.id)} className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${filter === f.id ? "bg-emerald-500 text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
+            <button key={f.id} onClick={() => setFilter(f.id)} className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${filter === f.id ? "bg-nv-emerald text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>
               {tr(f.label)}
             </button>
           ))}
@@ -187,7 +187,7 @@ export default function WalletActivity() {
         <div className="flex w-full gap-2 sm:w-auto">
           <div className="relative min-w-0 flex-1">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={tr("mb.wallet.search")} aria-label={tr("mb.wallet.searchAria")} className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-900 outline-none focus:border-emerald-500" />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={tr("mb.wallet.search")} aria-label={tr("mb.wallet.searchAria")} className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-900 outline-none focus:border-nv-emerald" />
           </div>
           <button onClick={exportCsv} disabled={!rows.length} className="flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-40"><Download className="h-4 w-4" /> CSV</button>
         </div>

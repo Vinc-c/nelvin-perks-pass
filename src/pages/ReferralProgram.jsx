@@ -53,7 +53,7 @@ export default function ReferralProgram() {
 
   return (
     <PortalLayout title={t("mb.ref.title")} theme="light">
-      <div className="rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-600 p-6 text-white shadow-lg">
+      <div className="rounded-3xl bg-gradient-to-br from-nv-emerald to-teal-600 p-6 text-white shadow-lg">
         <h1 className="text-2xl font-bold">{t("mb.ref.hero", { bonus: bonusText })}</h1>
         <p className="mt-1 max-w-xl text-sm text-emerald-50">
           {t("mb.ref.heroSub", { bonus: bonusText })}

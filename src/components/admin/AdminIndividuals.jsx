@@ -126,7 +126,7 @@ export default function AdminIndividuals() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative max-w-xs flex-1">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Name, email, country…" aria-label="Search individuals" className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500" />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Name, email, country…" aria-label="Search individuals" className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-nv-emerald" />
         </div>
         <div className="flex flex-wrap gap-1.5">
           {[["all", "All"], ["paying", "Subscribers"], ["nosub", "No subscription"], ["issues", "Issues"]].map(([k, l]) => (

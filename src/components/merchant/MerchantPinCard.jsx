@@ -38,7 +38,7 @@ export default function MerchantPinCard({ merchantId }) {
     }
   };
 
-  const input = "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-center font-mono text-lg tracking-[0.4em] outline-none focus:border-emerald-500";
+  const input = "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-center font-mono text-lg tracking-[0.4em] outline-none focus:border-nv-emerald";
   return (
     <SectionCard title={t("mc.pin.title")} icon={KeyRound}>
       <p className="text-sm text-slate-600">

@@ -36,7 +36,7 @@ export default function PartnerLogos({ merchants = [] }) {
       <span className="min-w-0 flex-1">
         <span title={p.name} className="block truncate text-sm font-medium text-nv-ink">{p.name}</span>
         {p.sub && <span className="block truncate text-xs text-slate-500">{p.sub}</span>}
-        <span className="mt-0.5 inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />{t("land.partners.verified")}</span>
+        <span className="mt-0.5 inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700"><span className="h-1.5 w-1.5 rounded-full bg-nv-emerald" />{t("land.partners.verified")}</span>
       </span>
     </li>
   );

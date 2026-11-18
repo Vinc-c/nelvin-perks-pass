@@ -12,7 +12,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { roleLabel } from "@/lib/roles";
 import { User, Globe, Shield, Bell, Mail, Save, Loader2, Building2, ChevronRight } from "lucide-react";
 
-const input = "mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500";
+const input = "mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-nv-emerald";
 
 export default function Settings() {
   const { t, lang, setLang, languages } = useI18n();
@@ -90,7 +90,7 @@ export default function Settings() {
           <p className="text-sm text-slate-500">{t("ac.set.appLang")}</p>
           <div className="mt-2 grid grid-cols-2 gap-2">
             {languages.map((l) => (
-              <button key={l.code} onClick={() => setLang(l.code)} className={`flex items-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium transition ${lang === l.code ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+              <button key={l.code} onClick={() => setLang(l.code)} className={`flex items-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium transition ${lang === l.code ? "border-nv-emerald bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
                 <span className="text-lg">{l.flag}</span> {l.label}
               </button>
             ))}
@@ -121,7 +121,7 @@ export default function Settings() {
         </SectionCard>
       </div>
 
-      <button onClick={save} disabled={saving} className="mt-6 flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">
+      <button onClick={save} disabled={saving} className="mt-6 flex items-center gap-2 rounded-xl bg-nv-emerald px-5 py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
         {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {t("ac.common.save")}
       </button>
     </PortalLayout>

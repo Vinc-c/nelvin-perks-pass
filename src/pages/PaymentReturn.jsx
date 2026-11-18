@@ -80,7 +80,7 @@ export default function PaymentReturn() {
             </div>
             <p className="mt-4 text-xl font-bold text-slate-900">{t("mb.ret.confirmed")}</p>
             <p className="mt-1 text-sm text-slate-500">{SUCCESS[kind]?.text ? t(SUCCESS[kind].text) : ""}</p>
-            <Link to={SUCCESS[kind]?.to || "/wallet-activity"} className="mt-6 inline-block rounded-full bg-emerald-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-600">
+            <Link to={SUCCESS[kind]?.to || "/wallet-activity"} className="mt-6 inline-block rounded-full bg-nv-emerald px-6 py-2.5 text-sm font-semibold text-white hover:bg-nv-emerald/90">
               {t(SUCCESS[kind]?.cta || "mb.ret.recharge.cta")}
             </Link>
           </motion.div>

@@ -117,7 +117,7 @@ export default function KycVerification() {
             </select>
           </label>
           <input ref={fileRef} type="file" accept="application/pdf,image/png,image/jpeg,image/webp" className="hidden" onChange={onFile} />
-          <button onClick={() => fileRef.current?.click()} disabled={uploading} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 py-6 text-sm font-medium text-slate-600 hover:border-emerald-400 hover:text-emerald-700 disabled:opacity-50">
+          <button onClick={() => fileRef.current?.click()} disabled={uploading} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 py-6 text-sm font-medium text-slate-600 hover:border-nv-emerald hover:text-emerald-700 disabled:opacity-50">
             {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Upload className="h-5 w-5" />} {t("mb.kyc.fileHint")}
           </button>
           <p className="mt-3 flex items-start gap-1.5 text-xs text-slate-400"><Lock className="mt-0.5 h-3 w-3 shrink-0" /> {t("mb.kyc.private")}</p>

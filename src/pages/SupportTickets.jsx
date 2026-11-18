@@ -65,7 +65,7 @@ export default function SupportTickets() {
     <PortalLayout title={tr("sp.tk.title")} theme="light">
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-3">
-          <button onClick={() => { setCreating(true); select(null); }} className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-2.5 text-sm font-medium text-white hover:bg-emerald-600">
+          <button onClick={() => { setCreating(true); select(null); }} className="flex w-full items-center justify-center gap-2 rounded-xl bg-nv-emerald py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90">
             <Plus className="h-4 w-4" /> {tr("sp.tk.new")}
           </button>
           {loading ? (
@@ -74,7 +74,7 @@ export default function SupportTickets() {
             <EmptyState icon={LifeBuoy} title={tr("sp.tk.none")} description={tr("sp.tk.noneD")} />
           ) : (
             tickets.map((t) => (
-              <button key={t.id} onClick={() => { setCreating(false); select(t.id); }} className={`w-full rounded-xl border p-3 text-left transition ${selectedId === t.id ? "border-emerald-400 bg-emerald-50" : "border-slate-200 bg-white hover:bg-slate-50"}`}>
+              <button key={t.id} onClick={() => { setCreating(false); select(t.id); }} className={`w-full rounded-xl border p-3 text-left transition ${selectedId === t.id ? "border-nv-emerald bg-emerald-50" : "border-slate-200 bg-white hover:bg-slate-50"}`}>
                 <div className="flex items-center justify-between gap-2">
                   <p className="truncate text-sm font-medium text-slate-900">{t.subject}</p>
                   <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] ${TICKET_STATUS[t.status]?.tone}`}>{TICKET_STATUS[t.status]?.label}</span>
@@ -89,12 +89,12 @@ export default function SupportTickets() {
           {creating ? (
             <SectionCard icon={MessageSquare} title={tr("sp.tk.new")} action={<button onClick={() => setCreating(false)} aria-label={tr("sp.tk.close")}><X className="h-4 w-4 text-slate-400" /></button>}>
               <form onSubmit={create} className="space-y-3">
-                <input value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} required minLength={3} maxLength={160} placeholder={tr("sp.tk.subject")} aria-label={tr("sp.tk.subject")} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
+                <input value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} required minLength={3} maxLength={160} placeholder={tr("sp.tk.subject")} aria-label={tr("sp.tk.subject")} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none focus:border-nv-emerald" />
                 <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} aria-label={tr("sp.tk.category")} className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none">
                   {Object.entries(TICKET_CATEGORIES).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                 </select>
-                <textarea value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} required rows={6} maxLength={5000} placeholder={tr("sp.tk.bodyPh")} aria-label={tr("sp.tk.body")} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
-                <button type="submit" disabled={busy || form.subject.trim().length < 3 || !form.body.trim()} className="flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">
+                <textarea value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} required rows={6} maxLength={5000} placeholder={tr("sp.tk.bodyPh")} aria-label={tr("sp.tk.body")} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none focus:border-nv-emerald" />
+                <button type="submit" disabled={busy || form.subject.trim().length < 3 || !form.body.trim()} className="flex items-center gap-2 rounded-xl bg-nv-emerald px-5 py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
                   {busy && <Loader2 className="h-4 w-4 animate-spin" />} {tr("sp.tk.send")}
                 </button>
               </form>

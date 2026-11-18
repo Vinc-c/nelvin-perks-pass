@@ -50,7 +50,7 @@ export default function AdminBranding() {
                     <input value={v.welcome_text || ""} onChange={(e) => setEdits((x) => ({ ...x, [r.company_id]: { ...(x[r.company_id] || {}), welcome_text: e.target.value } }))} className="rounded-lg border border-slate-300 p-2 text-sm" aria-label="Welcome message" />
                     <input value={note[r.company_id] || ""} onChange={(e) => setNote((x) => ({ ...x, [r.company_id]: e.target.value }))} placeholder="Note to the company (shown on rejection)" className="rounded-lg border border-slate-300 p-2 text-sm sm:col-span-2" />
                     <div className="flex gap-2 sm:col-span-2">
-                      <button onClick={() => act(r, "approve")} className="flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1.5 text-sm text-white"><Check className="h-4 w-4" /> Approve & publish</button>
+                      <button onClick={() => act(r, "approve")} className="flex items-center gap-1 rounded-lg bg-nv-emerald px-3 py-1.5 text-sm text-white"><Check className="h-4 w-4" /> Approve & publish</button>
                       <button onClick={() => act(r, "reject")} className="flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm text-rose-600 hover:bg-rose-50"><X className="h-4 w-4" /> Reject</button>
                     </div>
                   </div>

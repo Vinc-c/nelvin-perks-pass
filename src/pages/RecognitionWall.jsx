@@ -98,7 +98,7 @@ export default function RecognitionWall() {
                 <p className="text-sm text-slate-600">{t("hr.w.value")}</p>
                 <div className="mt-1 grid grid-cols-2 gap-2">
                   {Object.entries(RECOGNITION_BADGES).map(([id, b]) => (
-                    <button type="button" key={id} onClick={() => setBadge(id)} className={`not-pill flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-xs font-medium ${badge === id ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-600"}`}>
+                    <button type="button" key={id} onClick={() => setBadge(id)} className={`not-pill flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-xs font-medium ${badge === id ? "border-nv-emerald bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-600"}`}>
                       <NvIcon name={b.glyph} className="h-4 w-4" />{t(`hr.w.b.${id}`)}
                     </button>
                   ))}
@@ -106,9 +106,9 @@ export default function RecognitionWall() {
               </div>
               <label className="block text-sm text-slate-600">
                 {t("hr.w.message")}
-                <textarea value={message} onChange={(e) => setMessage(e.target.value)} maxLength={500} rows={3} required placeholder={t("hr.w.messagePh")} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
+                <textarea value={message} onChange={(e) => setMessage(e.target.value)} maxLength={500} rows={3} required placeholder={t("hr.w.messagePh")} className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 outline-none focus:border-nv-emerald" />
               </label>
-              <button type="submit" disabled={sending || !to || message.trim().length < 3} className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-2.5 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">
+              <button type="submit" disabled={sending || !to || message.trim().length < 3} className="flex w-full items-center justify-center gap-2 rounded-xl bg-nv-emerald py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
                 {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Heart className="h-4 w-4" />} {t("hr.w.send")}
               </button>
               {colleagues.length === 0 && !loading && <p className="text-xs text-slate-400">{t("hr.w.noColleagues")}</p>}

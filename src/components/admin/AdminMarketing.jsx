@@ -41,7 +41,7 @@ function BlogEditor({ post, onDone }) {
       </div>
       <div className="flex flex-wrap gap-2">
         <button disabled={busy} onClick={() => save("DRAFT")} className="flex items-center gap-1 rounded-lg border border-slate-300 px-4 py-2 text-sm"><Save className="h-4 w-4" /> Save draft</button>
-        <button disabled={busy} onClick={() => save("PUBLISHED")} className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white">Publish</button>
+        <button disabled={busy} onClick={() => save("PUBLISHED")} className="rounded-lg bg-nv-emerald px-4 py-2 text-sm font-medium text-white">Publish</button>
         <button onClick={onDone} className="rounded-lg px-4 py-2 text-sm text-slate-600 hover:bg-slate-100">Cancel</button>
       </div>
     </div>

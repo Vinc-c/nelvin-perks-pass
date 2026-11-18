@@ -198,7 +198,7 @@ export default function HRPortal() {
       <SectionCard title={t("hr.p.staff")} className="mt-6" action={
         <div className="relative w-36 sm:w-56">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("common.search")} aria-label={t("hr.p.searchAria")} className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500" />
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("common.search")} aria-label={t("hr.p.searchAria")} className="w-full rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-nv-emerald" />
         </div>
       }>
         {filtered.length === 0 ? (
@@ -226,7 +226,7 @@ export default function HRPortal() {
                         <p className="text-xs text-slate-400">{e.email}</p>
                       </td>
                       <td className="py-3">
-                        <input defaultValue={e.department || ""} onBlur={(ev) => setDepartment(e, ev.target.value)} placeholder="—" aria-label={t("hr.p.colDept")} className="w-32 rounded-md border border-transparent bg-transparent px-2 py-1 text-sm hover:border-slate-200 focus:border-emerald-500 focus:bg-white focus:outline-none" />
+                        <input defaultValue={e.department || ""} onBlur={(ev) => setDepartment(e, ev.target.value)} placeholder="—" aria-label={t("hr.p.colDept")} className="w-32 rounded-md border border-transparent bg-transparent px-2 py-1 text-sm hover:border-slate-200 focus:border-nv-emerald focus:bg-white focus:outline-none" />
                       </td>
                       <td className="py-3 text-slate-600">{e.role === "HR_ADMIN" ? t("hr.p.roleHr") : t("hr.p.roleEmp")}</td>
                       <td className="py-3 text-slate-700">{fmt(stats?.saved || 0)}</td>

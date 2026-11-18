@@ -42,7 +42,7 @@ export default function RewardHistory() {
 
       <div className="mt-6 flex flex-wrap gap-2">
         {FILTERS.map((id) => (
-          <button key={id} onClick={() => setFilter(id)} className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${filter === id ? "bg-emerald-500 text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>{t(`mb.rh.f.${id}`)}</button>
+          <button key={id} onClick={() => setFilter(id)} className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${filter === id ? "bg-nv-emerald text-white shadow" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}>{t(`mb.rh.f.${id}`)}</button>
         ))}
       </div>
 

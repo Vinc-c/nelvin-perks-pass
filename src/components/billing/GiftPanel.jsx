@@ -102,7 +102,7 @@ export default function GiftPanel({ initialCode = "", onRedeemed }) {
             <textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} maxLength={500} rows={2} placeholder={t("bl.gift.msgPh")} aria-label={t("bl.gift.msgAria")} className={input} />
             <p className="text-xs text-slate-500">{t("bl.gift.rules")}</p>
             <div className="flex flex-col gap-2 sm:flex-row">
-              <button onClick={buyWithWallet} disabled={busy} className="flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-emerald-500 bg-emerald-50 py-2.5 text-sm font-semibold text-emerald-800 disabled:opacity-50">
+              <button onClick={buyWithWallet} disabled={busy} className="flex flex-1 items-center justify-center gap-2 rounded-xl border-2 border-nv-emerald bg-emerald-50 py-2.5 text-sm font-semibold text-emerald-800 disabled:opacity-50">
                 {busy && <Loader2 className="h-4 w-4 animate-spin" />} {t("bl.gift.wallet", { amount: money.format(price, "USD") })}
               </button>
               <button onClick={() => setCheckout(true)} disabled={busy} className="flex-1 rounded-xl bg-slate-900 py-2.5 text-sm font-semibold text-white disabled:opacity-50">{t("bl.gift.payOnline")}</button>
@@ -140,7 +140,7 @@ export default function GiftPanel({ initialCode = "", onRedeemed }) {
         ))}
         <form onSubmit={(e) => { e.preventDefault(); redeem(); }} className="flex gap-2">
           <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="GIFT-XXXX-XXXX-XXXX" aria-label={t("bl.gift.codeAria")} className="flex-1 rounded-lg border border-slate-200 px-3 py-2 font-mono text-sm" />
-          <button type="submit" disabled={busy || code.length < 10} className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white disabled:opacity-50">{t("bl.gift.activate")}</button>
+          <button type="submit" disabled={busy || code.length < 10} className="rounded-lg bg-nv-emerald px-4 py-2 text-sm font-medium text-white disabled:opacity-50">{t("bl.gift.activate")}</button>
         </form>
         <p className="mt-2 text-xs text-slate-500">{t("bl.gift.stack")}</p>
       </SectionCard>

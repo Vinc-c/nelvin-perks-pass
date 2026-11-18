@@ -71,12 +71,12 @@ export default function SupportCenter() {
           </div>
           <div className="relative">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Subject, email, name" aria-label="Search" className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500" />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Subject, email, name" aria-label="Search" className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-nv-emerald" />
           </div>
           {loading ? <ListSkeleton rows={4} /> : filtered.length === 0 ? (
             <EmptyState icon={Headphones} title="Nothing to handle" description="No tickets match this filter." />
           ) : filtered.map((t) => (
-            <button key={t.id} onClick={() => setSelectedId(t.id)} className={`w-full rounded-xl border p-3 text-left ${selectedId === t.id ? "border-emerald-400 bg-emerald-50" : "border-slate-200 bg-white hover:bg-slate-50"}`}>
+            <button key={t.id} onClick={() => setSelectedId(t.id)} className={`w-full rounded-xl border p-3 text-left ${selectedId === t.id ? "border-nv-emerald bg-emerald-50" : "border-slate-200 bg-white hover:bg-slate-50"}`}>
               <div className="flex items-center justify-between gap-2">
                 <p className="truncate text-sm font-medium text-slate-900">{t.subject}</p>
                 <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] ${TICKET_STATUS[t.status]?.tone}`}>{TICKET_STATUS[t.status]?.label}</span>

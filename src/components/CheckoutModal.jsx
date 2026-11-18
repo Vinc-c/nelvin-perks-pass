@@ -126,7 +126,7 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100"><Check className="h-7 w-7 text-emerald-600" /></div>
                 <p className="mt-3 text-lg font-bold text-slate-900">{t("mb.co.activated")}</p>
                 {done.expires_at && <p className="mt-1 text-sm text-slate-500">{t("mb.co.validUntil", { date: new Date(done.expires_at).toLocaleDateString(locale) })}</p>}
-                <button onClick={close} className="mt-5 w-full rounded-full bg-emerald-500 py-2.5 text-sm font-medium text-white hover:bg-emerald-600">{t("mb.pin.finish")}</button>
+                <button onClick={close} className="mt-5 w-full rounded-full bg-nv-emerald py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90">{t("mb.pin.finish")}</button>
               </div>
             ) : (
               <>
@@ -136,7 +136,7 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
                     {isFixed ? (
                       <p id="checkout-amount" className="mt-2 text-2xl font-bold text-slate-900">{money.formatIn(payAmount, currency)}</p>
                     ) : (
-                      <input id="checkout-amount" type="number" min="1" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0" className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-lg font-semibold text-slate-900 outline-none focus:border-emerald-500" />
+                      <input id="checkout-amount" type="number" min="1" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0" className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-lg font-semibold text-slate-900 outline-none focus:border-nv-emerald" />
                     )}
                   </div>
                   <CurrencySelect value={currency} onChange={setCurrency} />
@@ -146,7 +146,7 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
                     {QUICK_USD.map((q) => {
                       const v = Math.round(money.fromUsd(q, currency));
                       return (
-                        <button key={q} onClick={() => setAmount(String(v))} className="not-pill rounded-lg border border-slate-200 py-2 text-sm font-medium text-slate-700 hover:border-emerald-400 hover:text-emerald-700">
+                        <button key={q} onClick={() => setAmount(String(v))} className="not-pill rounded-lg border border-slate-200 py-2 text-sm font-medium text-slate-700 hover:border-nv-emerald hover:text-emerald-700">
                           {v.toLocaleString(locale)}
                         </button>
                       );
@@ -158,7 +158,7 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
                 )}
 
                 {isPlan && !isGift && (
-                  <button onClick={payWithWallet} disabled={loading} className="mt-5 flex w-full items-center justify-between rounded-xl border-2 border-emerald-500 bg-emerald-50 px-4 py-3 text-left text-sm font-semibold text-emerald-800 hover:bg-emerald-100 disabled:opacity-50">
+                  <button onClick={payWithWallet} disabled={loading} className="mt-5 flex w-full items-center justify-between rounded-xl border-2 border-nv-emerald bg-emerald-50 px-4 py-3 text-left text-sm font-semibold text-emerald-800 hover:bg-emerald-100 disabled:opacity-50">
                     <span className="flex items-center gap-2"><Wallet className="h-4 w-4" /> {t("mb.co.payWith", { wallet: walletLabel })}</span>
                     <span>{money.format(priceUsd, "USD")}</span>
                   </button>
@@ -175,7 +175,7 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
                       const Icon = m.icon;
                       const active = method === m.v;
                       return (
-                        <button key={m.v} onClick={() => setMethod(m.v)} className={`not-pill flex flex-col items-center gap-1 rounded-xl border-2 py-3 text-xs font-medium ${active ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
+                        <button key={m.v} onClick={() => setMethod(m.v)} className={`not-pill flex flex-col items-center gap-1 rounded-xl border-2 py-3 text-xs font-medium ${active ? "border-nv-emerald bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
                           <Icon className="h-5 w-5" /> {m.l.startsWith("mb.") ? t(m.l) : m.l}
                         </button>
                       );

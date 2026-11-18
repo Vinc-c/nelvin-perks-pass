@@ -82,12 +82,12 @@ export default function HelpCenter() {
       <motion.form onSubmit={submit} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="flex items-center gap-2 font-semibold text-slate-900"><LifeBuoy className="h-5 w-5 text-emerald-600" /> {t("sp.h.contact")}</h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t("sp.h.name")} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
-          <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder={t("sp.h.email")} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
+          <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t("sp.h.name")} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-nv-emerald" />
+          <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder={t("sp.h.email")} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-nv-emerald" />
         </div>
-        <input value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder={t("sp.h.subject")} className="mt-3 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
-        <textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder={t("sp.h.message")} rows={4} className="mt-3 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
-        <button type="submit" className="mt-4 flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-600">
+        <input value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder={t("sp.h.subject")} className="mt-3 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-nv-emerald" />
+        <textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder={t("sp.h.message")} rows={4} className="mt-3 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-nv-emerald" />
+        <button type="submit" className="mt-4 flex items-center gap-2 rounded-xl bg-nv-emerald px-5 py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90">
           <Send className="h-4 w-4" /> {t("sp.h.send")}
         </button>
         {sent && <p className="mt-3 flex items-center gap-1 text-sm text-emerald-600"><Check className="h-4 w-4" /> {t("sp.h.sent")}</p>}

@@ -73,9 +73,9 @@ export default function MerchantDirectory() {
         <div className="flex flex-col gap-3 sm:flex-row">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("dir.search")} aria-label={t("dir.search")} className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-900 outline-none focus:border-emerald-500" />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("dir.search")} aria-label={t("dir.search")} className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-900 outline-none focus:border-nv-emerald" />
           </div>
-          <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder={t("dir.cityOrCountry")} aria-label={t("dir.cityOrCountry")} className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
+          <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder={t("dir.cityOrCountry")} aria-label={t("dir.cityOrCountry")} className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-nv-emerald" />
         </div>
         {topCities.length > 0 && (
           <div className="mt-3 flex flex-wrap items-center gap-2" aria-label={t("dir.cities")}>

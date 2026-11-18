@@ -20,7 +20,7 @@ export default function DeviceLimitGate() {
         <p className="mt-3 text-sm text-slate-600">{t("dev.desc", { n: deviceBlock?.limit || 4 })}</p>
         <div className="mt-4"><DevicesPanel devices={deviceBlock?.devices || []} onChanged={recheckDevice} /></div>
         <div className="mt-5 flex gap-2">
-          <button onClick={recheckDevice} className="flex-1 rounded-xl bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700">{t("dev.retry")}</button>
+          <button onClick={recheckDevice} className="flex-1 rounded-xl bg-nv-emerald py-2.5 text-sm font-semibold text-white hover:bg-nv-emerald/90">{t("dev.retry")}</button>
           <button onClick={() => logout()} className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50">{t("dev.signOut")}</button>
         </div>
       </div>

@@ -107,7 +107,7 @@ export default function EmployeePortal() {
                 <p className="mt-3 text-sm text-slate-500">{a.label}</p>
                 <p className="text-xl font-bold text-slate-900">{fmt(Math.max(a.base - a.spent, 0))} <span className="text-sm font-normal text-slate-400">/ {fmt(a.base)}</span></p>
                 {!a.received && <p className="mt-1 text-xs text-amber-600">{t("hr.e.notYet")}</p>}
-                <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full bg-emerald-500" style={{ width: `${a.pct}%` }} /></div>
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full bg-nv-emerald" style={{ width: `${a.pct}%` }} /></div>
               </div>
             ))}
           </div>

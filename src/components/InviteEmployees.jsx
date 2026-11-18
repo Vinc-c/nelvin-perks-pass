@@ -79,14 +79,14 @@ export default function InviteEmployees() {
       <p className="mt-1 text-sm text-slate-500">{t("hr.i.desc", { path: "/join" })}</p>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("hr.i.namePh")} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
-        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder={t("hr.i.emailPh")} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500" />
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("hr.i.namePh")} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-nv-emerald" />
+        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder={t("hr.i.emailPh")} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-nv-emerald" />
         <select value={role} onChange={(e) => setRole(e.target.value)} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none">
           <option value="EMPLOYEE">{t("hr.i.roleEmp")}</option>
           <option value="HR_ADMIN">{t("hr.i.roleHr")}</option>
         </select>
       </div>
-      <button onClick={generate} disabled={loading} className="mt-3 flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">
+      <button onClick={generate} disabled={loading} className="mt-3 flex items-center gap-2 rounded-xl bg-nv-emerald px-5 py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />} {t("hr.i.generate")}
       </button>
 

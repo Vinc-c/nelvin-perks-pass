@@ -2,7 +2,7 @@ import React from "react";
 import { slugify } from "@/lib/seo";
 import { useI18n } from "@/i18n/I18nContext";
 
-const input = "mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500";
+const input = "mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-nv-emerald";
 
 /**
  * Editable SEO block (slug, title, description) with a search-result preview.

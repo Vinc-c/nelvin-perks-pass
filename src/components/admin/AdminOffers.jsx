@@ -11,7 +11,7 @@ import SeoFields from "@/components/seo/SeoFields";
 import SectionCard from "@/components/dashboard/SectionCard";
 import { EmptyState, Spinner } from "@/components/UiFeedback";
 
-const input = "mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-500";
+const input = "mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-nv-emerald";
 
 function Editor({ offer, onClose, onSaved }) {
   const { toast } = useToast();
@@ -75,7 +75,7 @@ function Editor({ offer, onClose, onSaved }) {
       <SeoFields value={f} onChange={(v) => setF({ ...f, ...v })} fallbackTitle={f.title} fallbackDescription={f.description} basePath="/offre/" />
       <div className="flex gap-2">
         <button onClick={onClose} className="flex items-center gap-1 rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-white"><X className="h-4 w-4" /> Cancel</button>
-        <button onClick={save} disabled={saving} className="flex items-center gap-1 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 disabled:opacity-50">
+        <button onClick={save} disabled={saving} className="flex items-center gap-1 rounded-lg bg-nv-emerald px-4 py-2 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save
         </button>
       </div>
