@@ -1,8 +1,8 @@
 // Nelvin icon glyphs: 24x24, 1.6 stroke, duotone (currentColor + gold accent).
 // Hand-drawn for the platform so category, tier and feature icons are ours,
 // not a generic icon pack. `A` marks the accent colour.
-const A = 'stroke="var(--nv-accent,#B58A2A)"';
-const AF = 'fill="var(--nv-accent,#B58A2A)" stroke="none"';
+const A = 'stroke="var(--nv-accent,#FF5A5C)"';
+const AF = 'fill="var(--nv-accent,#FF5A5C)" stroke="none"';
 
 export const GLYPHS = {
   // Categories

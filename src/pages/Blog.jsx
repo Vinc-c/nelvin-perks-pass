@@ -12,7 +12,7 @@ export default function Blog() {
   useSeo({ title: "Nelvin Blog — savings, benefits and partners across Africa", description: "News, guides and stories about employee benefits, cashback and local partners with Nelvin Benefits.", path: "/blog" });
   const { data: posts, loading } = useAsync(() => entities.BlogPost.filter({ status: "PUBLISHED" }, "-published_at", 50), [], { initial: [] });
   return (
-    <div className="min-h-screen bg-white md:bg-[#FAF6EC]">
+    <div className="min-h-screen bg-white md:bg-[#FBFBFE]">
       <SiteHeader />
       <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
         <h1 className="text-4xl font-semibold text-slate-900">Blog</h1>

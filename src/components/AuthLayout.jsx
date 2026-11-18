@@ -12,12 +12,12 @@ const BEAUTY = "/images/categories/beauty-care.webp";
 export default function AuthLayout({ title, subtitle, footer, children }) {
   const { t } = useI18n();
   return (
-    <div className="relative flex min-h-screen items-stretch justify-center bg-[radial-gradient(ellipse_at_top,_#F2EBDA_0%,_#FAF6EC_45%,_#ffffff_100%)]">
+    <div className="relative flex min-h-screen items-stretch justify-center bg-[radial-gradient(ellipse_at_top,_#F1F2FA_0%,_#FBFBFE_45%,_#ffffff_100%)]">
       <div className="grid w-full max-w-6xl min-h-screen lg:grid-cols-2">
         {/* Image panel — desktop only */}
         <div className="relative hidden overflow-hidden lg:block">
           <Image src={SAVANNA} fittingType="fill" className="absolute inset-0 h-full w-full animate-kenburns" />
-          <div className="absolute inset-0 bg-gradient-to-br from-brand/75 via-brand/45 to-[#08261D]/80" />
+          <div className="absolute inset-0 bg-gradient-to-br from-brand/75 via-brand/45 to-[#1A2060]/80" />
           <div className="relative flex h-full flex-col justify-between p-10">
             <div className="flex justify-center">
               <NelvinLogo className="h-12" />

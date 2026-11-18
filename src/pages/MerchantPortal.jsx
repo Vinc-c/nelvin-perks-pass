@@ -172,8 +172,8 @@ export default function MerchantPortal() {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={week} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
                 <XAxis dataKey="label" tickLine={false} axisLine={false} fontSize={11} />
-                <Tooltip formatter={(v) => [`${v} ${currency}`, ""]} cursor={{ fill: "rgba(200,162,74,0.12)" }} />
-                <Bar dataKey="sales" fill="#0F4A38" radius={[6, 6, 0, 0]} />
+                <Tooltip formatter={(v) => [`${v} ${currency}`, ""]} cursor={{ fill: "rgba(232,43,44,0.12)" }} />
+                <Bar dataKey="sales" fill="#E82B2C" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

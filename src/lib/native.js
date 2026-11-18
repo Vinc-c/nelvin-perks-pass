@@ -15,7 +15,7 @@ export async function initNative() {
       import("@capacitor/app"),
     ]);
     await StatusBar.setStyle({ style: Style.Dark }).catch(() => {});
-    if (Capacitor.getPlatform() === "android") await StatusBar.setBackgroundColor({ color: "#08261D" }).catch(() => {});
+    if (Capacitor.getPlatform() === "android") await StatusBar.setBackgroundColor({ color: "#1A2060" }).catch(() => {});
     await SplashScreen.hide().catch(() => {});
 
     // Android back button: navigate back, exit only from the root screen.

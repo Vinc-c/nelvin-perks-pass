@@ -107,7 +107,7 @@ function MHome({ brand }) {
       <p className="text-2xl font-medium text-slate-900">Amina</p>
       <div className="-mx-4 mt-3 flex gap-2 overflow-hidden px-4">
         {OFFERS.map((o) => (
-          <div key={o.name} className="relative h-32 w-20 shrink-0 overflow-hidden rounded-2xl border-2 border-[#0F4A38]">
+          <div key={o.name} className="relative h-32 w-20 shrink-0 overflow-hidden rounded-2xl border-2 border-[#E82B2C]">
             <img src={o.img} alt="" className="h-full w-full object-cover" />
             <span className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
             <span className="absolute inset-x-1 bottom-1 text-[8px] font-medium leading-tight text-white">{o.title}</span>
@@ -135,7 +135,7 @@ function MOffer() {
         <p className="text-[11px] text-slate-500">{o.name} · {o.city}</p>
         <div className="mt-2 flex items-center gap-1"><Stars /> <span className="text-[10px] text-slate-500">4.8 · 126 reviews</span></div>
         <p className="mt-3 text-[11px] text-slate-600">Show your code at the table before paying. Valid every day, once per visit.</p>
-        <div className="mt-4 rounded-xl bg-[#0F4A38] py-3 text-center text-xs font-medium text-white">Redeem offer</div>
+        <div className="mt-4 rounded-xl bg-[#E82B2C] py-3 text-center text-xs font-medium text-white">Redeem offer</div>
       </div>
     </div>
   );
@@ -161,7 +161,7 @@ function MWallet() {
         <div className="flex justify-between"><span className="text-[10px] text-slate-500">Wallet balance</span><Chip>USD</Chip></div>
         <p className="mt-2 text-3xl font-medium text-slate-900">$27.40</p>
         <p className="text-[10px] text-slate-500">Available to spend</p>
-        <div className="mt-3 grid grid-cols-2 gap-2"><span className="rounded-lg bg-[#0F4A38] py-2 text-center text-[11px] font-medium text-white">+ Recharge</span><span className="rounded-lg border border-slate-300 py-2 text-center text-[11px] font-medium text-slate-700">Withdraw</span></div>
+        <div className="mt-3 grid grid-cols-2 gap-2"><span className="rounded-lg bg-[#E82B2C] py-2 text-center text-[11px] font-medium text-white">+ Recharge</span><span className="rounded-lg border border-slate-300 py-2 text-center text-[11px] font-medium text-slate-700">Withdraw</span></div>
       </Card>
       <p className="mb-1 mt-4 text-xs font-medium text-slate-900">Recent activity</p>
       {rows.map(([a, b, pos]) => <div key={a} className="flex justify-between border-b border-slate-100 py-2 text-[11px]"><span className="text-slate-700">{a}</span><span className={pos ? "font-medium text-emerald-600" : "font-medium text-slate-900"}>{b}</span></div>)}
@@ -188,7 +188,7 @@ function EAllow() {
       {a.map(([n, used, tot]) => (
         <Card key={n} className="mb-2 p-3">
           <div className="flex justify-between text-[11px]"><span className="text-slate-600">{n}</span><span className="font-medium text-slate-900">{money(tot - used)} <span className="font-normal text-slate-400">/ {money(tot)}</span></span></div>
-          <div className="mt-2 h-1.5 rounded-full bg-slate-100"><div className="h-full rounded-full bg-[#0F4A38]" style={{ width: `${(used / tot) * 100}%` }} /></div>
+          <div className="mt-2 h-1.5 rounded-full bg-slate-100"><div className="h-full rounded-full bg-[#E82B2C]" style={{ width: `${(used / tot) * 100}%` }} /></div>
         </Card>
       ))}
     </div>
@@ -197,7 +197,7 @@ function EAllow() {
 
 /* -------------------------- Laptop screens -------------------------- */
 const Kpi = ({ label, value, hint }) => <Card className="p-3"><p className="text-[10px] text-slate-500">{label}</p><p className="text-lg font-medium text-slate-900">{value}</p>{hint && <p className="text-[10px] text-emerald-600">{hint}</p>}</Card>;
-const Bars = ({ data, color = "#0F4A38" }) => (
+const Bars = ({ data, color = "#E82B2C" }) => (
   <div className="flex h-24 items-end gap-2">{data.map((v, i) => <div key={i} className="flex-1 rounded-t" style={{ height: `${v}%`, backgroundColor: color, opacity: 0.35 + i * 0.1 }} />)}</div>
 );
 function HDash() {
@@ -220,7 +220,7 @@ function HBenefits() {
     </div>
   );
 }
-const SWATCHES = ["#0F4A38", "#1D4ED8", "#7C3AED", "#B91C1C", "#0F766E"];
+const SWATCHES = ["#E82B2C", "#1D4ED8", "#7C3AED", "#B91C1C", "#0F766E"];
 function HBrand({ color, setColor }) {
   return (
     <div className="grid gap-3 p-4 sm:grid-cols-2">
@@ -253,7 +253,7 @@ function PStats() {
     <div className="space-y-3 p-4">
       <p className="text-sm font-medium text-slate-900">Savanna Grill · this month</p>
       <div className="grid grid-cols-3 gap-2"><Kpi label="New customers" value="64" /><Kpi label="Revenue via Nelvin" value="$2,310" /><Kpi label="Rating" value="4.8 ★" /></div>
-      <Card className="p-3"><Bars data={[30, 45, 40, 60, 72, 85]} color="#C8A24A" /></Card>
+      <Card className="p-3"><Bars data={[30, 45, 40, 60, 72, 85]} color="#FF5A5C" /></Card>
     </div>
   );
 }
@@ -334,17 +334,17 @@ export default function Demo() {
   const Frame = role.device === "phone" ? PhoneFrame : LaptopFrame;
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 md:bg-[#FAF6EC]">
+    <div className="min-h-screen bg-white text-slate-900 md:bg-[#FBFBFE]">
       <SiteHeader />
       <main>
-        <section className="bg-[#08261D] px-4 pb-10 pt-12 text-white sm:px-6">
+        <section className="bg-[#1A2060] px-4 pb-10 pt-12 text-white sm:px-6">
           <div className="mx-auto max-w-5xl text-center">
-            <span className="inline-block rounded-full border border-[#C8A24A] px-3 py-1 text-xs text-[#E6CF8B]">Interactive demo · demo data, nothing is real</span>
+            <span className="inline-block rounded-full border border-[#FF5A5C] px-3 py-1 text-xs text-[#FFB3B4]">Interactive demo · demo data, nothing is real</span>
             <h1 className="mt-4 text-3xl font-medium leading-tight sm:text-5xl">Understand Nelvin in 30 seconds</h1>
             <p className="mx-auto mt-3 max-w-2xl text-base text-white/75">Nelvin connects <b className="font-medium text-white">people and companies</b> with <b className="font-medium text-white">local partners</b>: discounts, cashback and employee benefits in one app. No login needed. Pick who you are below.</p>
             <div className="mx-auto mt-8 grid max-w-3xl gap-3 text-left sm:grid-cols-3">
               {[[Users, "People", "save money and earn cashback every day"], [Building2, "Companies", "give flexible benefits to their teams"], [Store, "Partners", "win new customers and get paid per sale"]].map(([I, h, p]) => (
-                <div key={h} className="rounded-2xl bg-white/10 p-4"><I className="h-5 w-5 text-[#E6CF8B]" strokeWidth={1.5} /><p className="mt-2 text-sm font-medium">{h}</p><p className="text-xs text-white/70">{p}</p></div>
+                <div key={h} className="rounded-2xl bg-white/10 p-4"><I className="h-5 w-5 text-[#FFB3B4]" strokeWidth={1.5} /><p className="mt-2 text-sm font-medium">{h}</p><p className="text-xs text-white/70">{p}</p></div>
               ))}
             </div>
           </div>
@@ -356,13 +356,13 @@ export default function Demo() {
               {ROLES.map((r) => {
                 const I = r.icon;
                 return (
-                  <button key={r.id} role="tab" aria-selected={roleId === r.id} onClick={() => { setAuto(false); setRoleId(r.id); }} className={`flex h-11 items-center gap-2 rounded-full px-4 text-sm font-medium transition ${roleId === r.id ? "bg-[#0F4A38] text-white" : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"}`}>
+                  <button key={r.id} role="tab" aria-selected={roleId === r.id} onClick={() => { setAuto(false); setRoleId(r.id); }} className={`flex h-11 items-center gap-2 rounded-full px-4 text-sm font-medium transition ${roleId === r.id ? "bg-[#E82B2C] text-white" : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"}`}>
                     <I className="h-4 w-4" strokeWidth={1.5} /> {r.label}
                   </button>
                 );
               })}
             </div>
-            <button onClick={() => setAuto((a) => !a)} className="flex h-11 items-center gap-2 rounded-full border border-[#C8A24A] bg-white px-4 text-sm font-medium text-[#84631A]">
+            <button onClick={() => setAuto((a) => !a)} className="flex h-11 items-center gap-2 rounded-full border border-[#FF5A5C] bg-white px-4 text-sm font-medium text-[#C41E20]">
               {auto ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />} {auto ? "Stop presentation" : "Presentation mode"}
             </button>
           </div>
@@ -373,8 +373,8 @@ export default function Demo() {
             <ol className="space-y-2">
               {role.steps.map((s, i) => (
                 <li key={s.screen + i}>
-                  <button onClick={() => { setAuto(false); setStep(i); }} aria-current={i === step ? "step" : undefined} className={`flex w-full items-start gap-3 rounded-2xl border p-4 text-start transition ${i === step ? "border-[#0F4A38] bg-white shadow-sm" : "border-slate-200 bg-white/60 hover:bg-white"}`}>
-                    <span className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-medium ${i === step ? "bg-[#0F4A38] text-white" : "bg-slate-100 text-slate-500"}`}>{i + 1}</span>
+                  <button onClick={() => { setAuto(false); setStep(i); }} aria-current={i === step ? "step" : undefined} className={`flex w-full items-start gap-3 rounded-2xl border p-4 text-start transition ${i === step ? "border-[#E82B2C] bg-white shadow-sm" : "border-slate-200 bg-white/60 hover:bg-white"}`}>
+                    <span className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-medium ${i === step ? "bg-[#E82B2C] text-white" : "bg-slate-100 text-slate-500"}`}>{i + 1}</span>
                     <span><span className="block text-sm font-medium text-slate-900">{s.title}</span>{i === step && <span className="mt-1 block text-sm text-slate-600">{s.why}</span>}</span>
                   </button>
                 </li>
@@ -400,11 +400,11 @@ export default function Demo() {
         </section>
 
         <section className="px-4 pb-16 sm:px-6">
-          <div className="mx-auto max-w-5xl rounded-[24px] bg-[#0F4A38] p-8 text-center text-white">
+          <div className="mx-auto max-w-5xl rounded-[24px] bg-[#E82B2C] p-8 text-center text-white">
             <NelvinLogo className="mx-auto h-8" />
             <h2 className="mt-3 text-2xl font-medium">Ready to try it for real?</h2>
             <div className="mt-5 flex flex-wrap justify-center gap-3">
-              <Link to="/register" className="inline-flex h-12 items-center gap-2 rounded-xl bg-white px-6 text-sm font-medium text-[#0F4A38]">Create a free account <ArrowRight className="h-4 w-4" /></Link>
+              <Link to="/register" className="inline-flex h-12 items-center gap-2 rounded-xl bg-white px-6 text-sm font-medium text-[#E82B2C]">Create a free account <ArrowRight className="h-4 w-4" /></Link>
               <Link to="/pricing" className="inline-flex h-12 items-center rounded-xl border border-white/30 px-6 text-sm font-medium">See plans for companies</Link>
               <Link to="/merchant" className="inline-flex h-12 items-center rounded-xl border border-white/30 px-6 text-sm font-medium">Become a partner</Link>
             </div>

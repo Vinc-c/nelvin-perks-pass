@@ -19,7 +19,7 @@ export default function HowItWorks() {
       <p className="text-center text-sm font-semibold text-nv-bronze">{t("land.how.kicker")}</p>
       <WordReveal text={t("land.how.title")} className="mx-auto mt-2 max-w-2xl text-center text-3xl font-bold text-nv-ink sm:text-4xl" />
       <ol className="relative mt-12 grid gap-6 md:grid-cols-3">
-        <motion.div aria-hidden="true" initial={reduced ? false : { scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 1.2, ease: "easeOut" }} style={{ transformOrigin: "left" }} className="absolute left-[16%] right-[16%] top-8 hidden h-px bg-[repeating-linear-gradient(90deg,#C8A24A_0_8px,transparent_8px_16px)] md:block" />
+        <motion.div aria-hidden="true" initial={reduced ? false : { scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 1.2, ease: "easeOut" }} style={{ transformOrigin: "left" }} className="absolute left-[16%] right-[16%] top-8 hidden h-px bg-[repeating-linear-gradient(90deg,#FF5A5C_0_8px,transparent_8px_16px)] md:block" />
         {STEPS.map((s, i) => (
           <motion.li
             key={s.id}

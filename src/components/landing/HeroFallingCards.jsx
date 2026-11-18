@@ -14,7 +14,7 @@ function MiniCard({ k, count, hidden }) {
       to={`/merchant-directory?category=${k}`}
       tabIndex={hidden ? -1 : undefined}
       aria-hidden={hidden || undefined}
-      className="block w-full flex-shrink-0 overflow-hidden rounded-2xl bg-white shadow-lg shadow-slate-300/40 ring-1 ring-nv-line transition hover:ring-[#C8A24A]"
+      className="block w-full flex-shrink-0 overflow-hidden rounded-2xl bg-white shadow-lg shadow-slate-300/40 ring-1 ring-nv-line transition hover:ring-[#FF5A5C]"
     >
       <div className="relative h-24 w-full">
         <Image src={CATEGORY_IMAGES[k]} fittingType="fill" className="h-full w-full" />

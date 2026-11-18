@@ -17,7 +17,7 @@ export default function NvIcon({ name, className = "h-6 w-6", tone = "light", la
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
-      style={{ ...(tone === "dark" ? { "--nv-accent": "#E6CF8B" } : {}), ...(faint ? { opacity: faint } : {}) }}
+      style={{ ...(tone === "dark" ? { "--nv-accent": "#FFB3B4" } : {}), ...(faint ? { opacity: faint } : {}) }}
       role={label ? "img" : undefined}
       aria-label={label}
       aria-hidden={label ? undefined : true}

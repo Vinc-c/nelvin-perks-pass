@@ -29,5 +29,5 @@ export function contrastOn(hex) {
   const t = hexToTriplet(hex);
   if (!t) return "#fff";
   const [r, g, b] = t.split(" ").map(Number);
-  return (r * 299 + g * 587 + b * 114) / 1000 > 150 ? "#08261D" : "#fff";
+  return (r * 299 + g * 587 + b * 114) / 1000 > 150 ? "#1A2060" : "#fff";
 }

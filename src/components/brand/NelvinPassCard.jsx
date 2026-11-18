@@ -9,14 +9,14 @@ const TIERS = {
   PASS_FREE: { label: "Member", glyph: "PASS_FREE", bg: "from-nv-emerald via-nv-emerald to-nv-deep", ring: "ring-white/10" },
   PASS_BASIC: { label: "Pass Basic", glyph: "PASS_FREE", bg: "from-nv-emerald via-nv-emerald to-nv-deep", ring: "ring-white/10" },
   PASS_PREMIUM: { label: "Pass Premium", glyph: "PASS_PREMIUM", bg: "from-nv-deep via-nv-emerald to-nv-deep", ring: "ring-nv-gold/60" },
-  PASS_VIP: { label: "VIP Gold", glyph: "PASS_VIP", bg: "from-[#0B1612] via-[#14201B] to-nv-deep", ring: "ring-nv-gold" },
+  PASS_VIP: { label: "VIP Gold", glyph: "PASS_VIP", bg: "from-[#12163F] via-[#1A1B2E] to-nv-deep", ring: "ring-nv-gold" },
 };
 
 /** Member-selectable card colours (the tier's own look is the default). */
 export const CARD_COLORS = {
-  emerald: { bg: "from-nv-emerald via-nv-emerald to-nv-deep", swatch: "#1F6B50" },
+  emerald: { bg: "from-nv-emerald via-nv-emerald to-nv-deep", swatch: "#F0575A" },
   midnight: { bg: "from-[#0B1B3A] via-[#12285A] to-[#0A1530]", swatch: "#12285A" },
-  gold: { bg: "from-[#B8893A] via-[#9A6F25] to-[#6E4D14]", swatch: "#B8893A" },
+  gold: { bg: "from-[#FF5A5C] via-[#9A6F25] to-[#6E4D14]", swatch: "#FF5A5C" },
   royal: { bg: "from-[#4B2A8A] via-[#38207A] to-[#241450]", swatch: "#4B2A8A" },
   burgundy: { bg: "from-[#8A1F3A] via-[#6E1830] to-[#47101F]", swatch: "#8A1F3A" },
   graphite: { bg: "from-[#2B2F36] via-[#1B1E24] to-[#0E1013]", swatch: "#2B2F36" },
@@ -81,7 +81,7 @@ export default function NelvinPassCard({ tier = "PASS_PREMIUM", name, code, qrVa
         </div>
         {showQr && (
           <div className="shrink-0 rounded-xl bg-white p-1.5">
-            <QRCodeSVG value={qrValue || "https://nelvin.app"} size={64} level="M" fgColor="#08261D" aria-hidden="true" />
+            <QRCodeSVG value={qrValue || "https://nelvin.app"} size={64} level="M" fgColor="#1A2060" aria-hidden="true" />
           </div>
         )}
       </div>

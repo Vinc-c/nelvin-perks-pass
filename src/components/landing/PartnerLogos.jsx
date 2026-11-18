@@ -31,7 +31,7 @@ export default function PartnerLogos({ merchants = [] }) {
       {p.logo ? (
         <img src={p.logo} alt="" loading="lazy" className="h-12 w-12 shrink-0 rounded-xl border border-slate-100 bg-white object-contain p-1" />
       ) : (
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#08261D] text-sm font-medium text-[#C8A24A]">{initials(p.name)}</span>
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#1A2060] text-sm font-medium text-[#FF5A5C]">{initials(p.name)}</span>
       )}
       <span className="min-w-0 flex-1">
         <span title={p.name} className="block truncate text-sm font-medium text-nv-ink">{p.name}</span>

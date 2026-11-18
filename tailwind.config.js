@@ -51,17 +51,17 @@ module.exports = {
   				DEFAULT: 'hsl(var(--accent))',
   				foreground: 'hsl(var(--accent-foreground))'
   			},
-  			'nv-deep': '#08261D',
-  			'nv-emerald': 'rgb(var(--nv-emerald, 15 74 56) / <alpha-value>)',
-  			'nv-gold': 'rgb(var(--nv-gold, 200 162 74) / <alpha-value>)',
-  			'nv-gold-light': '#E6CF8B',
-  			'nv-bronze': '#84631A',
-  			'nv-terracotta': '#A8472A',
-  			'nv-ivory': '#FAF6EC',
-  			'nv-ivory-2': '#F2EBDA',
-  			'nv-line': '#E4DAC3',
-  			'nv-ink': '#14201B',
-  			'nv-muted': '#55625B',
+  			'nv-deep': '#1A2060',
+  			'nv-emerald': 'rgb(var(--nv-emerald, 232 43 44) / <alpha-value>)',
+  			'nv-gold': 'rgb(var(--nv-gold, 255 90 92) / <alpha-value>)',
+  			'nv-gold-light': '#FFB3B4',
+  			'nv-bronze': '#C41E20',
+  			'nv-terracotta': '#A3151A',
+  			'nv-ivory': '#FBFBFE',
+  			'nv-ivory-2': '#F1F2FA',
+  			'nv-line': '#E1E3F0',
+  			'nv-ink': '#1A1B2E',
+  			'nv-muted': '#5B5F77',
   			gold: {
   				DEFAULT: 'hsl(var(--gold))',
   				foreground: 'hsl(var(--gold-foreground))'
@@ -72,15 +72,15 @@ module.exports = {
   			},
   			slate: {
   				50: '#FBF8F0', 100: '#F4EEDF', 200: '#E8DFCB', 300: '#D3C7AC', 400: '#8E968F',
-  				500: '#5F6B64', 600: '#4A564F', 700: '#35413B', 800: '#1F2E27', 900: '#14201B', 950: '#0B1612'
+  				500: '#5F6B64', 600: '#4A564F', 700: '#35413B', 800: '#1F2E27', 900: '#1A1B2E', 950: '#12163F'
   			},
   			emerald: {
   				50: '#EAF3EE', 100: '#D2E7DC', 200: '#A8CFBB', 300: '#74B096', 400: '#3F8F72',
-  				500: '#0F4A38', 600: '#0B3A2C', 700: '#08261D', 800: '#061C15', 900: '#04130E'
+  				500: '#E82B2C', 600: '#0B3A2C', 700: '#1A2060', 800: '#061C15', 900: '#04130E'
   			},
   			amber: {
-  				50: '#FBF5E3', 100: '#F4E8C3', 200: '#EBD79A', 300: '#E6CF8B', 400: '#C8A24A',
-  				500: '#84631A', 600: '#6F5314', 700: '#5A430F', 800: '#43320B', 900: '#2E2208'
+  				50: '#FBF5E3', 100: '#F4E8C3', 200: '#EBD79A', 300: '#FFB3B4', 400: '#FF5A5C',
+  				500: '#C41E20', 600: '#6F5314', 700: '#5A430F', 800: '#43320B', 900: '#2E2208'
   			},
   			blue: {
   				500: '#14B8D2',

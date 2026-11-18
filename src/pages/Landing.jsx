@@ -67,7 +67,7 @@ export default function Landing() {
     : heroTitle.split(/(across Africa|\d[\d,]*\+\s*brands)/i).map((text) => ({ text, accent: /across Africa|\d[\d,]*\+\s*brands/i.test(text) }));
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_#F2EBDA_0%,_#FAF6EC_45%,_#ffffff_100%)] font-body text-nv-ink">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_#F1F2FA_0%,_#FBFBFE_45%,_#ffffff_100%)] font-body text-nv-ink">
       <a href="#contenu" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">{t("nav.skip")}</a>
       {/* Nav */}
       <ScrollProgress />
@@ -88,8 +88,8 @@ export default function Landing() {
         {/* African landscape background: parallax + slow zoom while scrolling */}
         <motion.div className="absolute inset-0 will-change-transform" style={reduceMotion ? undefined : { y: heroBgY, scale: heroBgScale }}>
           <HeroSlides images={heroSlides} />
-          <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/50 to-white/25" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#F2EBDA_0%,_transparent_70%)]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-white/90 via-white/70 to-white/40" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#F1F2FA_0%,_transparent_70%)]" />
         </motion.div>
         <HeroOrbs />
         <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:py-20">

@@ -48,7 +48,7 @@ export const categoryImage = (value) =>
 
 // Woven-motif colours per category (brand palette), used instead of emoji on
 // the landing page and the map.
-export const NV = { night: "#08261D", gold: "#C8A24A", indigo: "#14201B", malachite: "#0F4A38", mist: "#F2EBDA", clay: "#A8472A", emerald: "#0F4A38", ink: "#14201B", terracotta: "#A8472A" };
+export const NV = { night: "#1A2060", gold: "#FF5A5C", indigo: "#1A1B2E", malachite: "#E82B2C", mist: "#F1F2FA", clay: "#A3151A", emerald: "#E82B2C", ink: "#1A1B2E", terracotta: "#A3151A" };
 const HUES = {
   FOOD_DINING: [NV.gold, NV.terracotta], TRAVEL_HOLIDAYS: [NV.emerald, NV.gold], HOTELS_HOSPITALITY: [NV.ink, NV.gold],
   FITNESS_SPORTS: [NV.emerald, NV.terracotta], WELLNESS_MENTAL: [NV.emerald, NV.gold], HEALTHCARE: [NV.ink, NV.emerald],

@@ -3,7 +3,7 @@ import { useBranding, contrastOn } from "@/hooks/useBranding";
 
 export function BannerView({ live }) {
   if (!live || (!live.banner_url && !live.welcome_title && !live.welcome_text)) return null;
-  const bg = live.primary_color || "#0F4A38";
+  const bg = live.primary_color || "#E82B2C";
   const fg = contrastOn(bg);
   return (
     <section className="relative mb-5 overflow-hidden rounded-[20px]" style={{ backgroundColor: bg, color: fg }}>

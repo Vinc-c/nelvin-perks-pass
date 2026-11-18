@@ -4,8 +4,8 @@
 // mail apps common on entry-level Android phones. No web fonts, no JS.
 
 export const BRAND = {
-  deep: "#08261D", emerald: "#0F4A38", gold: "#C8A24A", goldLight: "#E6CF8B",
-  ivory: "#FAF6EC", ivory2: "#F2EBDA", line: "#E4DAC3", ink: "#14201B", muted: "#55625B",
+  deep: "#1A2060", emerald: "#E82B2C", gold: "#FF5A5C", goldLight: "#FFB3B4",
+  ivory: "#FBFBFE", ivory2: "#F1F2FA", line: "#E1E3F0", ink: "#1A1B2E", muted: "#5B5F77",
   site: "https://nelvinbenefits.com",
 };
 

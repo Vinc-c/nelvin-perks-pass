@@ -18,7 +18,7 @@ export default function BlogPost() {
     jsonLd: post && { "@context": "https://schema.org", "@type": "Article", headline: post.title, description: post.seo_description || post.excerpt, image: post.cover_url, datePublished: post.published_at, author: { "@type": "Organization", name: post.author || "Nelvin Benefits" }, publisher: { "@type": "Organization", name: "Nelvin Benefits" } },
   });
   return (
-    <div className="min-h-screen bg-white md:bg-[#FAF6EC]">
+    <div className="min-h-screen bg-white md:bg-[#FBFBFE]">
       <SiteHeader />
       <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
         <Link to="/blog" className="text-sm font-medium text-emerald-700 hover:underline">← Blog</Link>
@@ -28,9 +28,9 @@ export default function BlogPost() {
             <p className="mt-2 text-sm text-slate-500">{post.published_at ? new Date(post.published_at).toLocaleDateString() : ""}{post.author ? ` · ${post.author}` : ""}</p>
             {post.cover_url && <img src={post.cover_url} alt="" className="mt-6 w-full rounded-2xl object-cover" />}
             <RichText text={post.body} className="mt-8" />
-            <div className="mt-12 rounded-2xl bg-[#0F4A38] p-6 text-center text-white">
+            <div className="mt-12 rounded-2xl bg-[#E82B2C] p-6 text-center text-white">
               <p className="text-lg font-medium">Save every day with Nelvin</p>
-              <Link to="/pricing" className="mt-3 inline-flex h-11 items-center rounded-xl bg-white px-6 text-sm font-medium text-[#0F4A38]">See plans</Link>
+              <Link to="/pricing" className="mt-3 inline-flex h-11 items-center rounded-xl bg-white px-6 text-sm font-medium text-[#E82B2C]">See plans</Link>
             </div>
           </article>
         )}

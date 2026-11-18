@@ -15,7 +15,7 @@ const STATUS_STYLE = {
 };
 const STATUS_LABEL = { NONE: "Not customised", PENDING: "Awaiting approval", APPROVED: "Live", REJECTED: "Changes requested" };
 
-const EMPTY = { primary_color: "#0F4A38", accent_color: "#C8A24A", logo_url: "", banner_url: "", welcome_title: "", welcome_text: "" };
+const EMPTY = { primary_color: "#E82B2C", accent_color: "#FF5A5C", logo_url: "", banner_url: "", welcome_title: "", welcome_text: "" };
 
 /** HR: customise the company dashboard (Growth & Enterprise). Changes go live after the Nelvin marketing team approves them. */
 export default function CompanyBrandingPanel() {
@@ -69,13 +69,13 @@ export default function CompanyBrandingPanel() {
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="text-sm font-medium text-slate-700">Brand colour
           <div className="mt-1.5 flex items-center gap-2">
-            <input type="color" value={form.primary_color || "#0F4A38"} onChange={set("primary_color")} className="h-10 w-12 cursor-pointer rounded-lg border border-slate-200 bg-white p-1" aria-label="Brand colour" />
+            <input type="color" value={form.primary_color || "#E82B2C"} onChange={set("primary_color")} className="h-10 w-12 cursor-pointer rounded-lg border border-slate-200 bg-white p-1" aria-label="Brand colour" />
             <input value={form.primary_color || ""} onChange={set("primary_color")} maxLength={7} className="h-10 w-28 rounded-lg border border-slate-300 px-2 font-mono text-sm" aria-label="Brand colour hex" />
           </div>
         </label>
         <label className="text-sm font-medium text-slate-700">Accent colour
           <div className="mt-1.5 flex items-center gap-2">
-            <input type="color" value={form.accent_color || "#C8A24A"} onChange={set("accent_color")} className="h-10 w-12 cursor-pointer rounded-lg border border-slate-200 bg-white p-1" aria-label="Accent colour" />
+            <input type="color" value={form.accent_color || "#FF5A5C"} onChange={set("accent_color")} className="h-10 w-12 cursor-pointer rounded-lg border border-slate-200 bg-white p-1" aria-label="Accent colour" />
             <input value={form.accent_color || ""} onChange={set("accent_color")} maxLength={7} className="h-10 w-28 rounded-lg border border-slate-300 px-2 font-mono text-sm" aria-label="Accent colour hex" />
           </div>
         </label>

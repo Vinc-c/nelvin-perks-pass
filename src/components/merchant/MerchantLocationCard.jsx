@@ -65,10 +65,10 @@ export default function MerchantLocationCard({ merchant, onSaved }) {
         <LocationPicker value={loc} onChange={setLoc} />
       </div>
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <button onClick={save} disabled={saving} className="inline-flex items-center gap-2 rounded-lg bg-[#08261D] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#0F4A38] disabled:opacity-60">
+        <button onClick={save} disabled={saving} className="inline-flex items-center gap-2 rounded-lg bg-[#1A2060] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#E82B2C] disabled:opacity-60">
           {saving && <Loader2 className="h-4 w-4 animate-spin" />} {t("mc.loc.save")}
         </button>
-        {onMap && <Link to={`/merchant-map?m=${merchant.id}`} className="text-sm font-medium text-[#08261D] underline underline-offset-4">{t("mc.loc.viewPublic")}</Link>}
+        {onMap && <Link to={`/merchant-map?m=${merchant.id}`} className="text-sm font-medium text-[#1A2060] underline underline-offset-4">{t("mc.loc.viewPublic")}</Link>}
       </div>
     </section>
   );

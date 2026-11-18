@@ -25,7 +25,7 @@ export default function AppDownloadCta() {
     <section className="relative mt-8 md:mt-[184px] lg:mt-[192px]">
       <div className="absolute inset-0 overflow-hidden">
         <Image src={SAVANNA} fittingType="fill" className="h-full w-full animate-kenburns" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#F2EBDA]/95 via-[#F2EBDA]/85 to-[#F2EBDA]/60" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#F1F2FA]/95 via-[#F1F2FA]/85 to-[#F1F2FA]/60" />
       </div>
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-8 sm:px-6 md:min-h-[276px] md:grid-cols-2 lg:min-h-[288px] lg:py-10">
@@ -39,7 +39,7 @@ export default function AppDownloadCta() {
           </p>
           <div className="mt-5 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <div className="rounded-2xl bg-white p-2 shadow-lg ring-1 ring-nv-line" title={t("land.app.qrTitle")}>
-              <QRCodeSVG value={appUrl} size={80} level="M" fgColor="#08261D" aria-label={t("land.app.qrTitle")} />
+              <QRCodeSVG value={appUrl} size={80} level="M" fgColor="#1A2060" aria-label={t("land.app.qrTitle")} />
             </div>
             <InstallAppButton />
           </div>

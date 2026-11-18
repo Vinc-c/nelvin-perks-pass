@@ -10,10 +10,10 @@ export default function Pricing() {
   const { t } = useI18n();
   useEffect(() => { document.title = t("pr.pageTitle"); }, [t]);
   return (
-    <div className="nv-body min-h-screen bg-slate-50 text-[#08261D]">
+    <div className="nv-body min-h-screen bg-slate-50 text-[#1A2060]">
       <SiteHeader />
       <main>
-        <section className="bg-[#08261D] text-white">
+        <section className="bg-[#1A2060] text-white">
           <div className="mx-auto max-w-7xl px-4 pb-12 pt-14 sm:px-6">
             <h1 className="nv-display max-w-[18ch] text-4xl font-semibold leading-tight sm:text-5xl">{t("pr.h1")}</h1>
             <p className="mt-4 max-w-xl text-lg text-white/80">{t("pr.lead")}</p>

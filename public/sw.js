@@ -38,7 +38,7 @@ const offlinePage = (acceptLanguage = "") => {
   const lang = OFFLINE[code] ? code : "en";
   return new Response(
     `<!doctype html><html lang="${lang}" dir="${lang === "ar" ? "rtl" : "ltr"}"><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>${title}</title>` +
-      "<body style='font-family:system-ui;display:grid;place-items:center;height:100vh;margin:0;background:#08261D;color:#fff;text-align:center'>" +
+      "<body style='font-family:system-ui;display:grid;place-items:center;height:100vh;margin:0;background:#1A2060;color:#fff;text-align:center'>" +
       `<div><h1>${title}</h1><p>${text}</p></div>`,
     { status: 503, headers: { "Content-Type": "text/html; charset=utf-8" } }
   );
