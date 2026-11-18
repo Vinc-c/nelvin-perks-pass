@@ -2,15 +2,24 @@ import React from "react";
 import NelvinLogo from "@/components/NelvinLogo";
 import { Image } from "@/components/ui/image";
 import { useI18n } from "@/i18n/I18nContext";
+import { usePublicContent, imageByKey } from "@/hooks/usePublicContent";
+import { useCategories } from "@/hooks/useCategories";
 
 // Lifestyle imagery reused from the public hero assets (no generation needed).
-const SAVANNA = "/images/savanna.webp";
-const FOOD = "/images/categories/food-dining.webp";
-const FITNESS = "/images/categories/fitness-sports.webp";
-const BEAUTY = "/images/categories/beauty-care.webp";
+const SAVANNA_DEFAULT = "/images/savanna.webp";
+const FOOD_DEFAULT = "/images/categories/food-dining.webp";
+const FITNESS_DEFAULT = "/images/categories/fitness-sports.webp";
+const BEAUTY_DEFAULT = "/images/categories/beauty-care.webp";
 
 export default function AuthLayout({ title, subtitle, footer, children }) {
   const { t } = useI18n();
+  const content = usePublicContent();
+  const { categories } = useCategories();
+  const cat = (v, fb) => categories.find((c) => c.value === v)?.image_url || fb;
+  const SAVANNA = imageByKey(content?.images, "auth_background", SAVANNA_DEFAULT);
+  const FOOD = cat("FOOD_DINING", FOOD_DEFAULT);
+  const FITNESS = cat("FITNESS_SPORTS", FITNESS_DEFAULT);
+  const BEAUTY = cat("BEAUTY_CARE", BEAUTY_DEFAULT);
   return (
     <div className="relative flex min-h-screen items-stretch justify-center bg-[radial-gradient(ellipse_at_top,_#F1F2FA_0%,_#FBFBFE_45%,_#ffffff_100%)]">
       <div className="grid w-full max-w-6xl min-h-screen lg:grid-cols-2">

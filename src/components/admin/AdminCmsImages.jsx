@@ -13,6 +13,9 @@ const PRESETS = [
   { key: "hero_background", section: "HERO", hint: "Hero — add SEVERAL images with this key: they play as a slideshow" },
   { key: "savanna_band", section: "LANDING", hint: "Landscape band" },
   { key: "app_phone_mockup", section: "APP", hint: "Phone mockup (app section)" },
+  { key: "site_logo", section: "LANDING", hint: "Full logo, used in every header, footer and sign-in page" },
+  { key: "site_icon", section: "LANDING", hint: "Logo mark (cards, dark backgrounds)" },
+  { key: "auth_background", section: "LANDING", hint: "Large image on the login / register pages" },
 ];
 
 export default function AdminCmsImages() {

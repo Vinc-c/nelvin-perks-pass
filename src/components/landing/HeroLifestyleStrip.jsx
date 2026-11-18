@@ -2,8 +2,9 @@ import React, { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { useI18n } from "@/i18n/I18nContext";
 import { Image } from "@/components/ui/image";
+import { useCategories } from "@/hooks/useCategories";
 
-const LIFESTYLE = [
+const BASE = [
   { src: "/images/categories/food-dining.webp", cat: "FOOD_DINING" },
   { src: "/images/categories/hotels-hospitality.webp", cat: "HOTELS_HOSPITALITY" },
   { src: "/images/categories/wellness-mental.webp", cat: "WELLNESS_MENTAL" },
@@ -31,6 +32,9 @@ function Card({ it, t }) {
 export default function HeroLifestyleStrip() {
   const { t } = useI18n();
   const reduce = useReducedMotion();
+  const { categories } = useCategories();
+  // Photos come from Super admin > Marketing > Categories when set; the bundled photo is the fallback.
+  const LIFESTYLE = BASE.map((b) => ({ ...b, src: categories.find((c) => c.value === b.cat)?.image_url || b.src }));
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const x1 = useTransform(scrollYProgress, [0, 1], ["0%", "-22%"]);
