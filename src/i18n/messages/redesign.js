@@ -106,4 +106,6 @@ export default [
   ["land.ind.title", "Perks in every part of your day", "Des avantages dans chaque moment de votre journée"],
   ["land.ind.offers", "{n} live offers", "{n} offres en cours"],
   ["foot.top", "Back to top", "Haut de page"],
+  ["land.hero.live", "verified partners ready to welcome you", "partenaires vérifiés prêts à vous accueillir"],
+  ["land.hero.scroll", "Scroll", "Défiler"],
 ];

@@ -15,6 +15,8 @@ import SiteFooter from "@/components/landing/SiteFooter";
 import PassShowcase from "@/components/landing/PassShowcase";
 import AfricaPillars from "@/components/landing/AfricaPillars";
 import HowItWorks from "@/components/landing/HowItWorks";
+import { HeroHeadline, HeroOrbs, Magnetic, Tilt, ScrollCue } from "@/components/landing/HeroMotion";
+import { Counter } from "@/components/landing/motion";
 import LiveStats from "@/components/landing/LiveStats";
 import IndustriesGrid from "@/components/landing/IndustriesGrid";
 import { ScrollProgress, WordReveal } from "@/components/landing/motion";
@@ -60,14 +62,9 @@ export default function Landing() {
       const m = merchantById.get(r.merchant_id);
       return { ...r, author: r.author_name || t("land.reviews.member"), where: [m.name, m.city].filter(Boolean).join(", ") };
     });
-  const renderHeroTitle = () =>
-    /\*[^*]+\*/.test(heroTitle)
-      ? heroTitle.split(/\*([^*]+)\*/).map((part, i) => (i % 2 ? <span key={i} className="text-nv-bronze">{part}</span> : part))
-      : heroTitle.split(/(across Africa|\d[\d,]*\+\s*brands)/i).map((part, i) =>
-      /across Africa|\d[\d,]*\+\s*brands/i.test(part)
-        ? <span key={i} className="text-nv-bronze">{part}</span>
-        : part
-    );
+  const heroSegments = /\*[^*]+\*/.test(heroTitle)
+    ? heroTitle.split(/\*([^*]+)\*/).map((text, i) => ({ text, accent: i % 2 === 1 }))
+    : heroTitle.split(/(across Africa|\d[\d,]*\+\s*brands)/i).map((text) => ({ text, accent: /across Africa|\d[\d,]*\+\s*brands/i.test(text) }));
 
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_#F2EBDA_0%,_#FAF6EC_45%,_#ffffff_100%)] font-body text-nv-ink">
@@ -94,33 +91,42 @@ export default function Landing() {
           <div className="absolute inset-0 bg-gradient-to-br from-white/80 via-white/50 to-white/25" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#F2EBDA_0%,_transparent_70%)]" />
         </motion.div>
+        <HeroOrbs />
         <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:py-20">
           <motion.div className="min-w-0" style={reduceMotion ? undefined : { y: heroTextY, opacity: heroTextOpacity }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 py-1.5 pl-1.5 pr-4 text-sm font-medium text-brand">
               <span className="h-5 w-8 overflow-hidden rounded-full"><KenteBand height={20} /></span> {heroBadge}
             </span>
-            <h1 className="mt-5 text-4xl font-bold leading-[1.1] tracking-tight text-nv-ink sm:text-5xl lg:text-6xl">
-              {renderHeroTitle()}
-            </h1>
-            <p className="mt-5 max-w-xl text-lg text-nv-muted">
+            <HeroHeadline segments={heroSegments} className="mt-5 text-4xl font-bold leading-[1.1] tracking-tight text-nv-ink sm:text-5xl lg:text-6xl" />
+            <motion.p className="mt-5 max-w-xl text-lg text-nv-muted" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9, duration: 0.6 }}>
               {heroSubtitle}
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link to="/pricing" className="flex items-center justify-center gap-2 rounded-full bg-brand px-7 py-3.5 font-semibold text-white shadow-lg shadow-brand/30 transition hover:bg-brand/90">
-                {t("land.hero.cta")} <ArrowRight className="h-4 w-4" />
+            </motion.p>
+            <motion.div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.05, duration: 0.6 }}>
+              <Magnetic>
+              <Link to="/pricing" className="group flex items-center justify-center gap-2 rounded-full bg-brand px-7 py-3.5 font-semibold text-white shadow-lg shadow-brand/30 transition hover:bg-brand/90">
+                {t("land.hero.cta")} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
               </Link>
+              </Magnetic>
               <a href="#app-download" className="flex items-center justify-center gap-2 rounded-full border border-nv-line bg-white px-7 py-3.5 font-semibold text-nv-ink transition hover:bg-nv-ivory-2">
                 {t("land.hero.app")}
               </a>
-            </div>
+            </motion.div>
+            {merchants.length > 0 && (
+              <motion.p className="mt-6 flex items-center gap-2 text-sm text-nv-muted" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3, duration: 0.6 }}>
+                <span className="relative flex h-2.5 w-2.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-nv-emerald/60" /><span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-nv-emerald" /></span>
+                <span><Counter value={merchants.length} className="font-semibold text-nv-ink" /> {t("land.hero.live")}</span>
+              </motion.p>
+            )}
           </motion.div>
 
           {/* Falling category cards (continuous top-to-bottom) */}
           <motion.div className="min-w-0" style={reduceMotion ? undefined : { y: heroCardsY }} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.2 }}>
-            <HeroFallingCards counts={counts} />
+            <Tilt><HeroFallingCards counts={counts} /></Tilt>
           </motion.div>
         </div>
+        <div className="relative pb-4"><ScrollCue label={t("land.hero.scroll")} /></div>
       </section>
+      <span id="contenu-suite" />
 
       {/* Lifestyle collections marquee — image-rich hero extension */}
       <section className="relative py-10">
