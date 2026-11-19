@@ -1,3 +1,4 @@
+import BlogBodyEditor from "@/components/admin/BlogBodyEditor";
 import React, { useState } from "react";
 import { Plus, Trash2, Save, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -34,7 +35,7 @@ function BlogEditor({ post, onDone }) {
       <label className="block text-sm font-medium text-slate-700">URL slug<input value={f.slug} onChange={set("slug")} placeholder={slugify(f.title)} className={inp} /></label>
       <label className="block text-sm font-medium text-slate-700">Excerpt <Count v={f.excerpt || ""} max={300} /><textarea rows={2} value={f.excerpt || ""} onChange={set("excerpt")} className={inp} /></label>
       <ImageUploader label="Cover image" value={f.cover_url} onChange={set("cover_url")} />
-      <label className="block text-sm font-medium text-slate-700">Body <span className="font-normal text-slate-400">(## heading, - list, [text](https://link))</span><textarea rows={12} value={f.body} onChange={set("body")} className={`${inp} font-mono`} /></label>
+      <div><p className="text-sm font-medium text-slate-700">Body <span className="font-normal text-slate-400">— select text, then press the link button to turn it into a link</span></p><div className="mt-1"><BlogBodyEditor value={f.body || ""} onChange={(v) => setF((x) => ({ ...x, body: v }))} /></div></div>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block text-sm font-medium text-slate-700">SEO title <Count v={f.seo_title || ""} max={70} /><input value={f.seo_title || ""} onChange={set("seo_title")} maxLength={70} className={inp} /></label>
         <label className="block text-sm font-medium text-slate-700">SEO description <Count v={f.seo_description || ""} max={170} /><input value={f.seo_description || ""} onChange={set("seo_description")} maxLength={170} className={inp} /></label>
