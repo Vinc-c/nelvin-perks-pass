@@ -126,6 +126,7 @@ export const entities = {
   PayoutRequest: createEntity("payout_requests"),
   Plan: createEntity("plans", { pk: "code" }),
   PlatformAdmin: createEntity("platform_admins", { pk: "email" }),
+  StaffMember: createEntity("staff_members", { pk: "email" }),
   PlatformSetting: createEntity("platform_settings", { pk: "key" }),
   PspProvider: createEntity("psp_providers"),
   Recognition: createEntity("recognitions"),

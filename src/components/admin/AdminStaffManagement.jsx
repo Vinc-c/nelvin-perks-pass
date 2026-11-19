@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { useAsync } from "@/hooks/useAsync";
 import { useToast } from "@/components/ui/use-toast";
 import { Spinner } from "@/components/UiFeedback";
+import AdminStaffAgents from "@/components/admin/AdminStaffAgents";
 import { Shield, UserPlus, Trash2, Crown, Mail, Clock } from "lucide-react";
 
 const MIN_ADMINS = 2;
@@ -149,6 +150,7 @@ export default function AdminStaffManagement() {
           </table>
         )}
       </div>
+      <AdminStaffAgents />
     </motion.div>
   );
 }

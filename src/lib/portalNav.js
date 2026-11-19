@@ -6,7 +6,7 @@ import {
   Users, UserPlus, SlidersHorizontal, ScanLine, Tag, Banknote, QrCode, Share2,
   Gem, Headphones, PiggyBank, TrendingUp, GitPullRequest, KeyRound, ScrollText, Palette,
 } from "lucide-react";
-import { isAdmin } from "@/lib/roles";
+import { isAdmin, isStaff, staffSections, staffCanOpen } from "@/lib/roles";
 
 const group = (name, items) => items.map((item) => ({ ...item, group: name }));
 
@@ -184,6 +184,7 @@ const PORTAL_BY_PREFIX = [
 // on a portal-specific page or a shared page opened with `?portal=` from
 // that portal's sidebar (preview mode).
 export function currentPortal(user, pathname = "", search = "") {
+  if (isStaff(user)) return "ADMIN";
   if (!isAdmin(user)) return NAV[user?.role] ? user.role : "MEMBER";
   const fromPath = PORTAL_BY_PREFIX.find(([p]) => pathname === p || pathname.startsWith(`${p}/`))?.[1];
   if (fromPath) return fromPath;
@@ -193,6 +194,11 @@ export function currentPortal(user, pathname = "", search = "") {
 
 export function navFor(user, pathname = "", search = "") {
   const portal = currentPortal(user, pathname, search);
+  if (isStaff(user)) {
+    const allowed = staffSections(user);
+    const BLOCKED = ["/analytics", "/pull-requests", "/merchant-directory", "/support-center", "/support-tickets"];
+    return NAV.ADMIN.filter((i) => (i.section ? allowed.includes(i.section) : !BLOCKED.includes(i.to) || staffCanOpen(user, i.to)));
+  }
   if (!isAdmin(user) || portal === "ADMIN") return NAV[portal];
   return NAV[portal].map((item) => ({ ...item, portal }));
 }

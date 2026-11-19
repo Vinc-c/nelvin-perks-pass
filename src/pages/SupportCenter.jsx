@@ -5,7 +5,7 @@ import SectionCard from "@/components/dashboard/SectionCard";
 import StatCard from "@/components/dashboard/StatCard";
 import TicketThread, { TICKET_STATUS, TICKET_CATEGORIES, TICKET_PRIORITIES } from "@/components/support/TicketThread";
 import { useAuth } from "@/lib/AuthContext";
-import { isAdmin } from "@/lib/roles";
+import { canHelpDesk } from "@/lib/roles";
 import { entities } from "@/api/entities";
 import { useAsync } from "@/hooks/useAsync";
 import { useToast } from "@/components/ui/use-toast";
@@ -29,7 +29,7 @@ export default function SupportCenter() {
     ]);
     const byId = new Map(profiles.map((p) => [p.id, p]));
     return tickets.map((t) => ({ ...t, requester: byId.get(t.user_id) }));
-  }, [], { initial: [], enabled: isAdmin(user) });
+  }, [], { initial: [], enabled: canHelpDesk(user) });
 
   const tickets = data || [];
   const filtered = useMemo(() => {
@@ -40,7 +40,7 @@ export default function SupportCenter() {
   }, [tickets, status, query]);
   const selected = tickets.find((t) => t.id === selectedId) || null;
 
-  if (!isAdmin(user)) return <Navigate to="/support-tickets" replace />;
+  if (!canHelpDesk(user)) return <Navigate to="/support-tickets" replace />;
 
   const update = async (patch) => {
     try {

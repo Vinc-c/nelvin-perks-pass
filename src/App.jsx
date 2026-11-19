@@ -148,8 +148,10 @@ const AuthenticatedApp = () => {
         </Route>
 
         {/* Super admin only */}
-        <Route element={<RoleRoute allow={[]} />}>
+        <Route element={<RoleRoute allow={["STAFF"]} />}>
           <Route path="/admin" element={<AdminPortal />} />
+        </Route>
+        <Route element={<RoleRoute allow={[]} />}>
           <Route path="/pull-requests" element={<PullRequests />} />
         </Route>
 

@@ -53,6 +53,7 @@ export default [
   ["role.EMPLOYEE", "Employee", "Employé", "Mfanyakazi", "موظف", "Òṣìṣẹ́"],
   ["role.MERCHANT", "Merchant", "Marchand", "Mfanyabiashara", "تاجر", "Oníṣòwò"],
   ["role.HR_ADMIN", "Company / HR", "Entreprise / RH", "Kampuni / Rasilimali Watu", "شركة / موارد بشرية", "Ilé-iṣẹ́ / HR"],
+  ["role.STAFF", "Nelvin agent", "Agent Nelvin", "Wakala wa Nelvin", "وكيل نيلفن", "Aṣojú Nelvin"],
   ["role.SUPER_ADMIN", "Super Admin", "Super Admin", "Msimamizi Mkuu", "مشرف عام", "Olùṣàkóso àgbà"],
   ["ui.notifications", "Notifications", "Notifications", "Arifa", "الإشعارات", "Àwọn ìkìlọ̀"],
   ["ui.signOut", "Log out", "Se déconnecter", "Toka", "تسجيل الخروج", "Jáde"],

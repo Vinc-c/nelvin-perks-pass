@@ -1,5 +1,7 @@
 import React from "react";
-import { useSearchParams } from "react-router-dom";
+import { Navigate, useSearchParams } from "react-router-dom";
+import { useAuth } from "@/lib/AuthContext";
+import { homeFor, isStaff, staffSections } from "@/lib/roles";
 import PortalLayout from "@/components/PortalLayout";
 import { useI18n } from "@/i18n/I18nContext";
 import RoleWelcomeHeader from "@/components/RoleWelcomeHeader";
@@ -53,7 +55,11 @@ const SECTIONS = {
 export default function AdminPortal() {
   const { t } = useI18n();
   const [params] = useSearchParams();
-  const Section = SECTIONS[params.get("section")] || AdminOverview;
+  const { user } = useAuth();
+  const wanted = params.get("section");
+  // Agents only open the sections of their role (the database refuses the rest anyway).
+  if (isStaff(user) && !staffSections(user).includes(wanted)) return <Navigate to={homeFor(user)} replace />;
+  const Section = SECTIONS[wanted] || AdminOverview;
 
   return (
     <PortalLayout title={t("portal.admin.title")} theme="light">

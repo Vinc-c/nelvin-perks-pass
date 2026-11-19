@@ -26,8 +26,14 @@ export async function getCurrentUser() {
     // Should not happen (created by DB trigger) — degrade gracefully.
     profile = { id: authUser.id, role: "MEMBER", onboarded: false, wallet_balance: 0, wallet_currency: "USD" };
   }
+  let staff_role = null;
+  if (profile.role === "STAFF") {
+    const { data } = await supabase.rpc("my_staff_role");
+    staff_role = data || null;
+  }
   return {
     ...profile,
+    staff_role,
     id: authUser.id,
     email: profile.email || authUser.email,
     full_name: profile.full_name || authUser.user_metadata?.full_name || authUser.user_metadata?.name || null,
