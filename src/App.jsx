@@ -29,6 +29,7 @@ const HRPortal = lazy(() => import('@/pages/HRPortal'));
 const MerchantPortal = lazy(() => import('@/pages/MerchantPortal'));
 const BecomePartner = lazy(() => import('@/pages/BecomePartner'));
 const AdminPortal = lazy(() => import('@/pages/AdminPortal'));
+const CustomPageRoute = lazy(() => import('@/pages/CustomPageRoute'));
 const OfferDetails = lazy(() => import('@/pages/OfferDetails'));
 const PartnerPage = lazy(() => import('@/pages/PartnerPage'));
 const WalletActivity = lazy(() => import('@/pages/WalletActivity'));
@@ -182,6 +183,7 @@ const AuthenticatedApp = () => {
           </Route>
         </Route>
       </Route>
+      <Route path="/page/:slug" element={<CustomPageRoute />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </>

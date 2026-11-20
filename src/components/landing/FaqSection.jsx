@@ -8,7 +8,7 @@ const FAQ_IDS = [1, 2, 3, 4, 5];
 export default function FaqSection() {
   const { t } = useI18n();
   return (
-    <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
+    <section id="faq" className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
       <div className="grid gap-10 lg:grid-cols-5">
         <div className="lg:col-span-2">
           <h2 className="text-3xl font-bold text-nv-ink sm:text-4xl">{t("land.faq.title")}</h2>

@@ -1,8 +1,9 @@
 import React from "react";
+import { withLegalOverride } from "@/components/LegalDynamic";
 import LegalLayout, { LegalSection, rich, legalDate } from "@/components/LegalLayout";
 import { useI18n } from "@/i18n/I18nContext";
 
-export default function Terms() {
+function Terms() {
   const { t, locale } = useI18n();
   return (
     <LegalLayout
@@ -42,3 +43,5 @@ export default function Terms() {
     </LegalLayout>
   );
 }
+
+export default withLegalOverride("terms", Terms);

@@ -19,9 +19,8 @@ const columns = [
   {
     title: "foot.help",
     links: [
-      { label: "foot.faq", to: "/help-center" },
-      { label: "foot.rules", to: "/terms" },
       { label: "foot.helpCenter", to: "/help-center" },
+      { label: "foot.faq", to: "/#faq" },
     ],
   },
   {
@@ -74,10 +73,6 @@ export default function SiteFooter() {
           </p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/60">
             <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" })} className="inline-flex items-center gap-1 rounded-full border border-white/20 px-3 py-1 transition hover:border-nv-gold-light hover:text-nv-gold-light"><ArrowUp className="h-3.5 w-3.5" />{t("foot.top")}</button>
-            <Link to="/terms" className="hover:text-nv-gold-light">{t("foot.termsShort")}</Link>
-            <Link to="/privacy" className="hover:text-nv-gold-light">{t("foot.privacyShort")}</Link>
-            <Link to="/cookies" className="hover:text-nv-gold-light">{t("foot.cookiesShort")}</Link>
-            <Link to="/refund-policy" className="hover:text-nv-gold-light">{t("foot.refundShort")}</Link>
           </div>
         </div>
       </div>

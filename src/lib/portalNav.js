@@ -117,6 +117,7 @@ const NAV = {
       { to: "/admin", section: "cms_images", label: "CMS Images", icon: ImageIcon },
       { to: "/admin", section: "cms_copy", label: "CMS Marketing", icon: Type },
       { to: "/admin", section: "cms_categories", label: "CMS Categories", icon: Tag },
+      { to: "/admin", section: "legal", label: "Legal pages", icon: FileText },
     ]),
     ...group("Clients & partners", [
       { to: "/admin", section: "companies", label: "Companies", icon: Building2 },

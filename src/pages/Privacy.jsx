@@ -1,8 +1,9 @@
 import React from "react";
+import { withLegalOverride } from "@/components/LegalDynamic";
 import LegalLayout, { LegalSection, rich, legalDate } from "@/components/LegalLayout";
 import { useI18n } from "@/i18n/I18nContext";
 
-export default function Privacy() {
+function Privacy() {
   const { t, locale } = useI18n();
   return (
     <LegalLayout
@@ -40,3 +41,5 @@ export default function Privacy() {
     </LegalLayout>
   );
 }
+
+export default withLegalOverride("privacy", Privacy);

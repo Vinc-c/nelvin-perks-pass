@@ -1,8 +1,9 @@
 import React from "react";
+import { withLegalOverride } from "@/components/LegalDynamic";
 import LegalLayout, { LegalSection, rich, legalDate } from "@/components/LegalLayout";
 import { useI18n } from "@/i18n/I18nContext";
 
-export default function CookiePolicy() {
+function CookiePolicy() {
   const { t, locale } = useI18n();
   return (
     <LegalLayout
@@ -31,3 +32,5 @@ export default function CookiePolicy() {
     </LegalLayout>
   );
 }
+
+export default withLegalOverride("cookies", CookiePolicy);

@@ -1,8 +1,9 @@
 import React from "react";
+import { withLegalOverride } from "@/components/LegalDynamic";
 import LegalLayout, { LegalSection, rich, legalDate } from "@/components/LegalLayout";
 import { useI18n } from "@/i18n/I18nContext";
 
-export default function RefundPolicy() {
+function RefundPolicy() {
   const { t, locale } = useI18n();
   return (
     <LegalLayout
@@ -31,3 +32,5 @@ export default function RefundPolicy() {
     </LegalLayout>
   );
 }
+
+export default withLegalOverride("refund-policy", RefundPolicy);

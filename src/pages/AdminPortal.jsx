@@ -18,6 +18,7 @@ import AdminReviews from "@/components/admin/AdminReviews";
 import AdminPromotions from "@/components/admin/AdminPromotions";
 import AdminOffers from "@/components/admin/AdminOffers";
 import AdminSalesCodes from "@/components/admin/AdminSalesCodes";
+import AdminLegalPages from "@/components/admin/AdminLegalPages";
 import AdminStaffManagement from "@/components/admin/AdminStaffManagement";
 import AdminPspSettings from "@/components/admin/AdminPspSettings";
 import AdminCurrencies from "@/components/admin/AdminCurrencies";
@@ -33,6 +34,7 @@ const SECTIONS = {
   cms_images: AdminCmsImages,
   cms_copy: AdminCmsCopy,
   cms_categories: AdminCmsCategories,
+  legal: AdminLegalPages,
   companies: AdminCompanyManagement,
   individuals: AdminIndividuals,
   kyc: AdminMerchantVetting,
