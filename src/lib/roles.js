@@ -34,8 +34,8 @@ Object.keys(ROLE_KEYS).forEach((role) => {
 export const STAFF_ROLES = {
   MARKETING: { label: "Marketing", desc: "Images, texts, banners, categories, partner logos, blog and SEO", sections: ["cms_logos", "cms_images", "cms_copy", "cms_categories", "marketing"], home: "/admin?section=cms_images" },
   FINANCE: { label: "Finance", desc: "Partner payouts, withdrawals and the transaction ledger", sections: ["payments"], home: "/admin?section=payments" },
-  SUPPORT: { label: "Support", desc: "Help desk and support tickets", sections: [], home: "/support-tickets" },
-  SALES: { label: "Sales", desc: "Paid promotions review and sponsored placements", sections: ["promotions"], home: "/admin?section=promotions" },
+  SUPPORT: { label: "Support", desc: "Help desk, support tickets and contact requests", sections: ["leads"], home: "/support-tickets" },
+  SALES: { label: "Sales", desc: "Paid promotions review, sponsored placements and contact requests", sections: ["promotions", "leads"], home: "/admin?section=promotions" },
 };
 export const isStaff = (user) => !!user && user.role === "STAFF";
 export const staffSections = (user) => STAFF_ROLES[user?.staff_role]?.sections || [];

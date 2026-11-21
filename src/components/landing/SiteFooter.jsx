@@ -21,6 +21,7 @@ const columns = [
     links: [
       { label: "foot.helpCenter", to: "/help-center" },
       { label: "foot.faq", to: "/#faq" },
+      { label: "foot.contact", to: "/contact" },
     ],
   },
   {

@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Star, Image as ImageIcon, Type, Crown, Building2, Ticket,
   Activity, Globe, Bell, Lock, LifeBuoy, MessageSquare, History, ArrowLeftRight,
   Users, UserPlus, SlidersHorizontal, ScanLine, Tag, Banknote, QrCode, Share2,
-  Gem, Headphones, PiggyBank, TrendingUp, GitPullRequest, KeyRound, ScrollText, Palette,
+  Gem, Mail, Headphones, PiggyBank, TrendingUp, GitPullRequest, KeyRound, ScrollText, Palette,
 } from "lucide-react";
 import { isAdmin, isStaff, staffSections, staffCanOpen } from "@/lib/roles";
 
@@ -128,6 +128,7 @@ const NAV = {
       { to: "/admin", section: "promotions", label: "Promotions", icon: Megaphone },
       { to: "/admin", section: "marketing", label: "Marketing & SEO", icon: Palette },
       { to: "/admin", section: "branding", label: "Company branding", icon: Palette },
+      { to: "/admin", section: "leads", label: "Contact requests", icon: Mail },
       { to: "/admin", section: "sales", label: "Sales codes", icon: Ticket },
       { to: "/merchant-directory", label: "Merchant directory", icon: Store },
     ]),

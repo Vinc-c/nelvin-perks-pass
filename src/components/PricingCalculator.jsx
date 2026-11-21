@@ -7,7 +7,9 @@ import { usePlans, annualSaving } from "@/hooks/usePlans";
 import { useI18n } from "@/i18n/I18nContext";
 
 const VIEWS = ["B2B", "B2C", "MERCHANT"];
-const CTA = { B2B: "/register", B2C: "/register", MERCHANT: "/merchant" };
+const CTA = { B2C: "/register" };
+// Companies and merchants get a quote, not a public price.
+const CONTACT = { B2B: "company", MERCHANT: "merchant" };
 
 /** Pricing page: live plans with monthly/annual toggle and seat recommendation. */
 export default function PricingCalculator() {
@@ -24,6 +26,7 @@ export default function PricingCalculator() {
     return sorted.find((p) => p.max_employees == null || employees <= p.max_employees) || sorted[sorted.length - 1];
   }, [list, view, employees]);
 
+  const quote = view !== "B2C";
   const saving = Math.max(0, ...list.map(annualSaving));
 
   return (
@@ -34,12 +37,12 @@ export default function PricingCalculator() {
             <button key={v} onClick={() => setView(v)} className={`rounded-full px-5 py-2.5 text-sm font-semibold transition ${view === v ? "bg-slate-900 text-white" : "text-slate-600 hover:text-slate-900"}`}>{t(`pr.v.${v}`)}</button>
           ))}
         </div>
-        <div className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white p-1 shadow-sm">
+        {!quote && <div className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white p-1 shadow-sm">
           <button onClick={() => setBilling("MONTHLY")} className={`rounded-full px-6 py-2 text-sm font-semibold ${billing === "MONTHLY" ? "bg-nv-emerald text-white" : "text-slate-600"}`}>{t("pr.monthly")}</button>
           <button onClick={() => setBilling("ANNUAL")} className={`flex items-center gap-2 rounded-full px-6 py-2 text-sm font-semibold ${billing === "ANNUAL" ? "bg-nv-emerald text-white" : "text-slate-600"}`}>
             {t("pr.annual")} {saving > 0 && <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700">-{saving}%</span>}
           </button>
-        </div>
+        </div>}
       </div>
 
       {view === "B2B" && (
@@ -62,20 +65,26 @@ export default function PricingCalculator() {
               {highlight && <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-nv-emerald px-3 py-1 text-xs font-bold text-white">{recommended ? t("pr.recommended") : t("pr.popular")}</span>}
               <h3 className="text-xl font-bold text-slate-900">{p.name}</h3>
               <p className="mt-1 text-sm text-slate-500">{p.tagline}</p>
-              <div className="mt-4 flex items-end gap-1">
-                <span className="text-4xl font-extrabold text-slate-900">${price}</span>
-                <span className="mb-1.5 text-slate-400">{billing === "ANNUAL" ? t("pr.perYear") : t("pr.perMonth")}</span>
-              </div>
-              {billing === "ANNUAL" && <p className="mt-1 text-xs text-emerald-600">{t("pr.approx", { n: Math.round(p.price_annual / 12) })}</p>}
+              {quote ? (
+                <p className="mt-4 text-2xl font-extrabold text-slate-900">{t("pr.customPricing")}</p>
+              ) : (
+                <>
+                  <div className="mt-4 flex items-end gap-1">
+                    <span className="text-4xl font-extrabold text-slate-900">${price}</span>
+                    <span className="mb-1.5 text-slate-400">{billing === "ANNUAL" ? t("pr.perYear") : t("pr.perMonth")}</span>
+                  </div>
+                  {billing === "ANNUAL" && <p className="mt-1 text-xs text-emerald-600">{t("pr.approx", { n: Math.round(p.price_annual / 12) })}</p>}
+                </>
+              )}
               <ul className="mt-5 flex-1 space-y-2.5 text-sm text-slate-600">
                 {(p.features || []).map((f) => <li key={f} className="flex gap-2"><Check className="h-4 w-4 shrink-0 text-emerald-600" /> {f}</li>)}
               </ul>
-              <Link to={CTA[view]} className={`mt-6 block rounded-full py-3 text-center text-sm font-bold ${highlight ? "bg-nv-emerald text-white hover:bg-nv-emerald/90" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}>{t(`pr.cta.${view}`)}</Link>
+              <Link to={quote ? `/contact?type=${CONTACT[view]}&plan=${p.code}` : CTA[view]} className={`mt-6 block rounded-full py-3 text-center text-sm font-bold ${highlight ? "bg-nv-emerald text-white hover:bg-nv-emerald/90" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}>{quote ? t("pr.contactSales") : t(`pr.cta.${view}`)}</Link>
             </motion.div>
           );
         })}
       </div>
-      <p className="mt-6 text-center text-xs text-slate-400">{t("pr.note")}</p>
+      <p className="mt-6 text-center text-xs text-slate-400">{quote ? t("pr.customNote") : t("pr.note")}</p>
     </div>
   );
 }

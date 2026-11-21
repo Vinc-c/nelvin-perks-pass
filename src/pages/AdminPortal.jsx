@@ -27,6 +27,7 @@ import AdminPayments from "@/components/admin/AdminPayments";
 import AdminPlatformSettings from "@/components/admin/AdminPlatformSettings";
 import AdminAuditLog from "@/components/admin/AdminAuditLog";
 import AdminIndividuals from "@/components/admin/AdminIndividuals";
+import AdminContactRequests from "@/components/admin/AdminContactRequests";
 
 const SECTIONS = {
   overview: AdminOverview,
@@ -44,6 +45,7 @@ const SECTIONS = {
   branding: AdminBranding,
   marketing: AdminMarketing,
   sales: AdminSalesCodes,
+  leads: AdminContactRequests,
   staff: AdminStaffManagement,
   psp: AdminPspSettings,
   currency: AdminCurrencies,
