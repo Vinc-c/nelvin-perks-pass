@@ -1,7 +1,7 @@
 // Delivers queued emails (public.email_outbox) as branded HTML through Resend.
 // Triggered by a database trigger (pg_net) with a shared secret header; it also
 // drains older pending/failed rows, so a temporary outage self-heals.
-// Secrets: RESEND_API_KEY, EMAIL_FROM (default "Nelvin <no-reply@nelvinbenefits.com>"), APP_URL.
+// Key and sender come from the Integrations vault (Admin → Integrations); env RESEND_API_KEY / EMAIL_FROM stay as fallback. APP_URL from env.
 import { adminClient, json, readJson, serve, errorMessage } from "../_shared/http.ts";
 import { renderEmail, paragraph, esc, COPY, BRAND } from "../_shared/emailLayout.mjs";
 
@@ -99,10 +99,14 @@ serve(async (req) => {
   const { data: ok } = await admin.rpc("email_hook_ok", { p_secret: req.headers.get("x-email-secret") || "" });
   if (ok !== true) return json({ error: "Unauthorized" }, 401);
 
-  const apiKey = Deno.env.get("RESEND_API_KEY");
-  if (!apiKey) return json({ ok: true, skipped: "RESEND_API_KEY not configured: emails stay queued" });
+  // Vault first (Admin → Integrations), then env. A service switched off in the vault keeps emails queued.
+  const { data: rt } = await admin.rpc("get_integration_runtime", { p_id: "resend" });
+  const vaultKey = (rt?.secrets?.RESEND_API_KEY as string | undefined) || "";
+  if (vaultKey && rt?.enabled === false) return json({ ok: true, skipped: "Resend is switched off in Integrations: emails stay queued" });
+  const apiKey = vaultKey || Deno.env.get("RESEND_API_KEY");
+  if (!apiKey) return json({ ok: true, skipped: "Resend not configured: emails stay queued" });
 
-  const from = Deno.env.get("EMAIL_FROM") || "Nelvin <no-reply@nelvinbenefits.com>";
+  const from = (rt?.config?.EMAIL_FROM as string | undefined) || Deno.env.get("EMAIL_FROM") || "Nelvin <no-reply@nelvinbenefits.com>";
   const appUrl = (Deno.env.get("APP_URL") || BRAND.site).replace(/\/$/, "");
   const body = await readJson(req);
 

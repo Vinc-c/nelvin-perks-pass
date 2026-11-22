@@ -28,6 +28,7 @@ import AdminPlatformSettings from "@/components/admin/AdminPlatformSettings";
 import AdminAuditLog from "@/components/admin/AdminAuditLog";
 import AdminIndividuals from "@/components/admin/AdminIndividuals";
 import AdminContactRequests from "@/components/admin/AdminContactRequests";
+import AdminIntegrations from "@/components/admin/AdminIntegrations";
 
 const SECTIONS = {
   overview: AdminOverview,
@@ -48,6 +49,7 @@ const SECTIONS = {
   leads: AdminContactRequests,
   staff: AdminStaffManagement,
   psp: AdminPspSettings,
+  integrations: AdminIntegrations,
   currency: AdminCurrencies,
   plans: AdminPlans,
   payments: AdminPayments,

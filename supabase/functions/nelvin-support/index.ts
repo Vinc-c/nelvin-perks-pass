@@ -1,6 +1,6 @@
 // In-app AI support assistant.
-// Uses the Anthropic Messages API — set ANTHROPIC_API_KEY (and optionally
-// ANTHROPIC_MODEL) in the Edge Function secrets.
+// Uses Google Gemini or Anthropic Claude, whichever is connected in Admin → Integrations
+// (platform setting support_ai_provider picks the preferred one; env ANTHROPIC_API_KEY stays as fallback).
 import { adminClient, getCaller, json, readJson, serve } from "../_shared/http.ts";
 
 const ROLE_LABELS: Record<string, string> = {
@@ -34,8 +34,14 @@ serve(async (req) => {
     return json({ reply: "Vous avez atteint la limite quotidienne de messages avec l'assistant. Revenez demain ou consultez le Centre d'aide." });
   }
 
-  const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
-  if (!apiKey) {
+  // Providers connected in the vault (enabled + key). Preferred one first, the other as fallback.
+  const { data: prefRow } = await admin.from("platform_settings").select("value").eq("key", "support_ai_provider").maybeSingle();
+  const preferred = prefRow?.value === "anthropic" ? "anthropic" : "gemini";
+  const rt: Record<string, { enabled?: boolean; config?: Record<string, string>; secrets?: Record<string, string> }> = {};
+  for (const id of ["gemini", "anthropic"]) rt[id] = (await admin.rpc("get_integration_runtime", { p_id: id })).data || {};
+  const keyOf = (id: string) => (rt[id].enabled !== false ? rt[id].secrets?.[`${id.toUpperCase()}_API_KEY`] : "") || (id === "anthropic" ? Deno.env.get("ANTHROPIC_API_KEY") : "") || "";
+  const order = [preferred, preferred === "gemini" ? "anthropic" : "gemini"].filter((id) => keyOf(id));
+  if (!order.length) {
     return json({ reply: "L'assistant n'est pas encore configuré. Consultez le Centre d'aide ou contactez le support depuis votre tableau de bord." });
   }
 
@@ -57,29 +63,45 @@ serve(async (req) => {
   messages.push({ role: "user", content: message });
 
   const roleLabel = ROLE_LABELS[caller.profile.role] || "un utilisateur de la plateforme Nelvin";
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      model: Deno.env.get("ANTHROPIC_MODEL") || "claude-haiku-4-5-20251001",
-      max_tokens: 600,
-      system: `${SYSTEM_PROMPT}\n\nTu parles actuellement à ${roleLabel}.`,
-      messages,
-    }),
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    console.error("Anthropic error", res.status, data);
-    return json({ reply: "Désolé, je n'ai pas pu générer de réponse. Réessayez dans un instant." });
+  const system = `${SYSTEM_PROMPT}\n\nTu parles actuellement à ${roleLabel}.`;
+  const FALLBACK = "Désolé, je n'ai pas pu générer de réponse. Réessayez dans un instant.";
+
+  async function askGemini(): Promise<string> {
+    const model = rt.gemini.config?.GEMINI_MODEL || "gemini-2.5-flash";
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+      method: "POST",
+      headers: { "x-goog-api-key": keyOf("gemini"), "content-type": "application/json" },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: system }] },
+        contents: messages.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
+        generationConfig: { maxOutputTokens: 600 },
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(`Gemini ${res.status}`);
+    return (data.candidates?.[0]?.content?.parts || []).map((p: { text?: string }) => p.text || "").join("\n").trim();
   }
-  const reply = (data.content || [])
-    .filter((b: { type: string }) => b.type === "text")
-    .map((b: { text: string }) => b.text)
-    .join("\n")
-    .trim();
-  return json({ reply: reply || "Désolé, je n'ai pas pu générer de réponse. Réessayez." });
+  async function askAnthropic(): Promise<string> {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "x-api-key": keyOf("anthropic"), "anthropic-version": "2023-06-01", "content-type": "application/json" },
+      body: JSON.stringify({
+        model: rt.anthropic.config?.ANTHROPIC_MODEL || Deno.env.get("ANTHROPIC_MODEL") || "claude-haiku-4-5-20251001",
+        max_tokens: 600, system, messages,
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(`Anthropic ${res.status}`);
+    return (data.content || []).filter((b: { type: string }) => b.type === "text").map((b: { text: string }) => b.text).join("\n").trim();
+  }
+
+  for (const id of order) {
+    try {
+      const reply = id === "gemini" ? await askGemini() : await askAnthropic();
+      if (reply) return json({ reply });
+    } catch (e) {
+      console.error("AI provider failed", id, e instanceof Error ? e.message : e); // never log keys or prompts
+    }
+  }
+  return json({ reply: FALLBACK });
 });
