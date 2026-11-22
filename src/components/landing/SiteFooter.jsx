@@ -8,12 +8,13 @@ import { Stagger, StaggerItem } from "@/components/landing/motion";
 
 const columns = [
   {
-    title: "foot.company",
+    title: "foot.audiences",
     links: [
+      { label: "mm.ind.name", to: "/for-individuals" },
+      { label: "mm.hr.name", to: "/for-companies" },
+      { label: "mm.emp.name", to: "/for-employees" },
+      { label: "mm.mer.name", to: "/merchant" },
       { label: "foot.membership", to: "/pricing" },
-      { label: "foot.vipKey", to: "/member" },
-      { label: "foot.becomePartner", to: "/merchant" },
-      { label: "foot.hr", to: "/hr" },
     ],
   },
   {

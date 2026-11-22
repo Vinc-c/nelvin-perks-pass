@@ -14,7 +14,7 @@ export function ScrollProgress() {
 export function Counter({ value, suffix = "", className = "" }) {
   const ref = useRef(null);
   const reduced = useReducedMotion();
-  const inView = useInView(ref, { once: true, margin: "-10% 0px" });
+  const inView = useInView(ref, { once: true });
   const [n, setN] = useState(reduced ? value : 0);
   useEffect(() => {
     if (!inView) return undefined;
@@ -25,18 +25,23 @@ export function Counter({ value, suffix = "", className = "" }) {
   return <span ref={ref} className={className}>{n.toLocaleString()}{suffix}</span>;
 }
 
-/** Heading whose words rise into place one after the other. */
+/** Heading whose words rise into place one after the other. The heading itself is observed (the words start clipped, so they can never report "in view"). */
 export function WordReveal({ text, as: Tag = "h2", className = "" }) {
   const reduced = useReducedMotion();
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
   const words = String(text || "").split(" ");
   if (reduced) return <Tag className={className}>{text}</Tag>;
   return (
-    <Tag className={className} aria-label={text}>
+    <Tag ref={ref} className={className} aria-label={text}>
       {words.map((w, i) => (
-        <span key={i} aria-hidden="true" className="inline-block overflow-hidden pb-1 align-bottom">
-          <motion.span className="inline-block" initial={{ y: "110%" }} whileInView={{ y: 0 }} viewport={{ once: true, margin: "-10% 0px" }}
-            transition={{ duration: 0.6, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}>{w}{i < words.length - 1 ? " " : ""}</motion.span>
-        </span>
+        <React.Fragment key={i}>
+          <span aria-hidden="true" className="inline-block overflow-hidden pb-1 align-bottom">
+            <motion.span className="inline-block" initial={{ y: "110%" }} animate={{ y: inView ? 0 : "110%" }}
+              transition={{ duration: 0.6, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}>{w}</motion.span>
+          </span>
+          {i < words.length - 1 ? " " : null}
+        </React.Fragment>
       ))}
     </Tag>
   );

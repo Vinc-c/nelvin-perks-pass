@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import NelvinLogo from "@/components/NelvinLogo";
 import { Image } from "@/components/ui/image";
 import { useI18n } from "@/i18n/I18nContext";
@@ -29,7 +30,7 @@ export default function AuthLayout({ title, subtitle, footer, children }) {
           <div className="absolute inset-0 bg-gradient-to-br from-brand/75 via-brand/45 to-[#1A2060]/80" />
           <div className="relative flex h-full flex-col justify-between p-10">
             <div className="flex justify-center">
-              <NelvinLogo className="h-12" />
+              <Link to="/" aria-label={t("auth.backHome")} className="nv-focus rounded transition hover:opacity-90"><NelvinLogo className="h-12" /></Link>
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div className="overflow-hidden rounded-2xl shadow-xl ring-1 ring-white/30">
@@ -53,7 +54,7 @@ export default function AuthLayout({ title, subtitle, footer, children }) {
         <div className="flex items-center justify-center px-4 py-12">
           <div className="w-full max-w-md">
             <div className="mb-8 flex justify-center lg:hidden">
-              <NelvinLogo className="h-12" />
+              <Link to="/" aria-label={t("auth.backHome")} className="nv-focus rounded"><NelvinLogo className="h-12" /></Link>
             </div>
             <div className="mb-8 text-center">
               <h1 className="text-2xl font-bold tracking-tight text-foreground">{title}</h1>

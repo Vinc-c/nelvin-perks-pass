@@ -22,6 +22,7 @@ import Landing from '@/pages/Landing';
 const Pricing = lazy(() => import('@/pages/Pricing'));
 const Demo = lazy(() => import('@/pages/Demo'));
 const Contact = lazy(() => import('@/pages/Contact'));
+const AudiencePage = lazy(() => import('@/pages/AudiencePage'));
 const Blog = lazy(() => import('@/pages/Blog'));
 const BlogPost = lazy(() => import('@/pages/BlogPost'));
 const EmployeePortal = lazy(() => import('@/pages/EmployeePortal'));
@@ -99,6 +100,9 @@ const AuthenticatedApp = () => {
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/demo" element={<Demo />} />
       <Route path="/contact" element={<Contact />} />
+      <Route path="/for-individuals" element={<AudiencePage audience="ind" />} />
+      <Route path="/for-companies" element={<AudiencePage audience="hr" />} />
+      <Route path="/for-employees" element={<AudiencePage audience="emp" />} />
       <Route path="/blog" element={<Blog />} />
       <Route path="/blog/:slug" element={<BlogPost />} />
       <Route path="/merchant" element={<BecomePartner />} />

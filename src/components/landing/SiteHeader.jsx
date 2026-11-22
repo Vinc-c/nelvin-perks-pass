@@ -7,12 +7,12 @@ import NelvinLogo from "@/components/NelvinLogo";
 import { useAuth } from "@/lib/AuthContext";
 import { useI18n } from "@/i18n/I18nContext";
 
-// One entry per audience: where each call to action lands is decided here, once.
+// One entry per audience: each opens its own detailed page, where the account-creation buttons live.
 const AUDIENCES = [
-  { id: "ind", icon: User, cta: "/register?type=particulier" },
-  { id: "hr", icon: Building2, cta: "/register?type=entreprise", link: "/demo" },
-  { id: "emp", icon: Users, cta: "/join" },
-  { id: "mer", icon: Store, cta: "/merchant" },
+  { id: "ind", icon: User, page: "/for-individuals" },
+  { id: "hr", icon: Building2, page: "/for-companies" },
+  { id: "emp", icon: Users, page: "/for-employees" },
+  { id: "mer", icon: Store, page: "/merchant" },
 ];
 const DISCOVER = [
   { id: "offers", to: "/merchant-directory", icon: Tag },
@@ -37,19 +37,22 @@ export default function SiteHeader({ minimal = false }) {
   const [acc, setAcc] = useState("solutions");
   const wrap = useRef(null);
   const timer = useRef(null);
+  const pinned = useRef(null); // menu opened by click (stays open); hover-opened menus close on leave
   const isActive = (to) => pathname === to || pathname.startsWith(`${to}/`);
 
-  useEffect(() => { setOpen(null); setMenuOpen(false); }, [pathname]);
+  useEffect(() => { setOpen(null); pinned.current = null; setMenuOpen(false); }, [pathname]);
   useEffect(() => {
-    const onKey = (e) => { if (e.key === "Escape") { setOpen(null); setMenuOpen(false); } };
-    const onDown = (e) => { if (wrap.current && !wrap.current.contains(e.target)) setOpen(null); };
+    const onKey = (e) => { if (e.key === "Escape") { setOpen(null); pinned.current = null; setMenuOpen(false); } };
+    const onDown = (e) => { if (wrap.current && !wrap.current.contains(e.target)) { setOpen(null); pinned.current = null; } };
     document.addEventListener("keydown", onKey);
     document.addEventListener("pointerdown", onDown);
     return () => { document.removeEventListener("keydown", onKey); document.removeEventListener("pointerdown", onDown); };
   }, []);
 
-  const hoverOpen = (id) => (e) => { if (e.pointerType === "touch") return; clearTimeout(timer.current); setOpen(id); };
-  const hoverClose = (e) => { if (e.pointerType === "touch") return; clearTimeout(timer.current); timer.current = setTimeout(() => setOpen(null), 160); };
+  const hoverOpen = (id) => (e) => { if (e.pointerType === "touch") return; clearTimeout(timer.current); if (pinned.current !== id) pinned.current = null; setOpen(id); };
+  const hoverClose = (e) => { if (e.pointerType === "touch") return; clearTimeout(timer.current); timer.current = setTimeout(() => { if (!pinned.current) setOpen(null); }, 160); };
+  // A click opens the menu and pins it; clicking again closes it. Hover alone never "toggles".
+  const toggle = (id) => () => { if (open === id && pinned.current === id) { setOpen(null); pinned.current = null; } else { setOpen(id); pinned.current = id; } };
 
   const cta = "nv-focus inline-flex h-10 items-center whitespace-nowrap rounded-full px-5 text-sm font-medium transition";
   const topBtn = (id) => `nv-focus flex items-center gap-1 rounded-full px-3.5 py-2 transition ${open === id ? "bg-slate-100 text-slate-900" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"}`;
@@ -63,12 +66,12 @@ export default function SiteHeader({ minimal = false }) {
           {!minimal && (
             <nav ref={wrap} className="hidden items-center gap-1 text-sm font-medium lg:flex" aria-label="Main navigation" onPointerLeave={hoverClose} onPointerEnter={() => clearTimeout(timer.current)}>
               <button type="button" className={topBtn("solutions")} aria-expanded={open === "solutions"} aria-controls="mm-solutions"
-                onPointerEnter={hoverOpen("solutions")} onClick={() => setOpen(open === "solutions" ? null : "solutions")}>
+                onPointerEnter={hoverOpen("solutions")} onClick={toggle("solutions")}>
                 {t("mm.solutions")} <ChevronDown className={`h-4 w-4 transition-transform ${open === "solutions" ? "rotate-180" : ""}`} />
               </button>
               <div className="relative">
                 <button type="button" className={topBtn("discover")} aria-expanded={open === "discover"} aria-controls="mm-discover"
-                  onPointerEnter={hoverOpen("discover")} onClick={() => setOpen(open === "discover" ? null : "discover")}>
+                  onPointerEnter={hoverOpen("discover")} onClick={toggle("discover")}>
                   {t("mm.discover")} <ChevronDown className={`h-4 w-4 transition-transform ${open === "discover" ? "rotate-180" : ""}`} />
                 </button>
                 <AnimatePresence>
@@ -101,10 +104,9 @@ export default function SiteHeader({ minimal = false }) {
                             {[1, 2, 3].map((n) => <li key={n} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-nv-emerald" />{t(`mm.${a.id}.b${n}`)}</li>)}
                           </ul>
                           <div className="mt-auto flex flex-col gap-2 pt-5">
-                            <Link to={a.cta} className="nv-focus group inline-flex h-10 items-center justify-center gap-1.5 rounded-full bg-nv-emerald px-4 text-sm font-medium text-white hover:bg-nv-deep">
-                              {t(`mm.${a.id}.cta`)} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180" />
+                            <Link to={a.page} className="nv-focus group inline-flex h-10 items-center justify-center gap-1.5 rounded-full bg-nv-emerald px-4 text-sm font-medium text-white hover:bg-nv-deep">
+                              {t("mm.learn")} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180" />
                             </Link>
-                            {a.link && <Link to={a.link} className="nv-focus text-center text-sm font-medium text-nv-emerald hover:underline">{t(`mm.${a.id}.link`)}</Link>}
                           </div>
                         </motion.div>
                       ))}
@@ -151,8 +153,7 @@ export default function SiteHeader({ minimal = false }) {
                       {[1, 2, 3].map((n) => <li key={n} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-nv-emerald" />{t(`mm.${a.id}.b${n}`)}</li>)}
                     </ul>
                     <div className="mt-3 flex items-center justify-between gap-2">
-                      <Link to={a.cta} className="nv-focus inline-flex h-10 items-center rounded-full bg-nv-emerald px-4 text-sm font-medium text-white">{t(`mm.${a.id}.cta`)}</Link>
-                      {a.link && <Link to={a.link} className="nv-focus text-sm font-medium text-nv-emerald">{t(`mm.${a.id}.link`)}</Link>}
+                      <Link to={a.page} className="nv-focus inline-flex h-10 items-center rounded-full bg-nv-emerald px-4 text-sm font-medium text-white">{t("mm.learn")}</Link>
                     </div>
                   </div>
                 ))}
