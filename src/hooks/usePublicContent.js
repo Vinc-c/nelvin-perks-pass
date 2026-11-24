@@ -56,3 +56,10 @@ export function copyByKey(copy, key, fallback) {
   const c = (copy || []).find((x) => x.key === key);
   return c?.value || fallback;
 }
+/** Hero slides, oldest first: `{ type: "image" | "video", url, poster }`. */
+export function heroMedia(images) {
+  return (images || [])
+    .filter((i) => i.active !== false && i.image_url && (i.section === "HERO" || normKey(i.key).startsWith("hero_background")))
+    .sort((a, b) => new Date(a.created_date) - new Date(b.created_date))
+    .map((i) => ({ type: i.media_type === "video" ? "video" : "image", url: i.image_url, poster: i.poster_url || "" }));
+}

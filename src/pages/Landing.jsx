@@ -20,7 +20,7 @@ import { Counter } from "@/components/landing/motion";
 import IndustriesGrid from "@/components/landing/IndustriesGrid";
 import { ScrollProgress, WordReveal } from "@/components/landing/motion";
 import SiteHeader from "@/components/landing/SiteHeader";
-import { usePublicContent, imageByKey, heroImages, copyByKey } from "@/hooks/usePublicContent";
+import { usePublicContent, imageByKey, heroMedia, copyByKey } from "@/hooks/usePublicContent";
 import SiteBanner from "@/components/marketing/SiteBanner";
 import Reveal from "@/components/landing/Reveal";
 import HeroSlides from "@/components/landing/HeroSlides";
@@ -43,7 +43,7 @@ export default function Landing() {
   const heroCardsY = useTransform(heroProgress, [0, 1], ["0%", "-22%"]);
   const ANNOUNCE = t("land.announce");
   const content = usePublicContent();
-  const heroSlides = useMemo(() => { const l = heroImages(content?.images); return l.length ? l : [SAVANNA]; }, [content?.images]);
+  const heroSlides = useMemo(() => { const l = heroMedia(content?.images); return l.length ? l : [{ type: "image", url: SAVANNA }]; }, [content?.images]);
   const savannaBand = imageByKey(content?.images, "savanna_band", SAVANNA);
   const heroBadge = copyByKey(content?.copy, "hero.badge", t("land.hero.badge"));
   const heroTitle = copyByKey(content?.copy, "hero.title", t("land.hero.title"));
