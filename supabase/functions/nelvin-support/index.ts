@@ -67,7 +67,7 @@ serve(async (req) => {
   const FALLBACK = "Désolé, je n'ai pas pu générer de réponse. Réessayez dans un instant.";
 
   async function askGemini(): Promise<string> {
-    const model = rt.gemini.config?.GEMINI_MODEL || "gemini-2.5-flash";
+    const model = rt.gemini.config?.GEMINI_MODEL || "gemini-3.8-flash";
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
       method: "POST",
       headers: { "x-goog-api-key": keyOf("gemini"), "content-type": "application/json" },
@@ -78,7 +78,7 @@ serve(async (req) => {
       }),
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(`Gemini ${res.status}`);
+    if (!res.ok) throw new Error(`Gemini ${res.status} ${model}: ${String(data?.error?.message || "").slice(0, 160)}`); // status + model name only, never keys or prompts
     return (data.candidates?.[0]?.content?.parts || []).map((p: { text?: string }) => p.text || "").join("\n").trim();
   }
   async function askAnthropic(): Promise<string> {

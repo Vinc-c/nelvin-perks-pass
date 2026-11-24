@@ -21,7 +21,7 @@ const CATALOG = {
     purpose: "Powers the in-app Nelvin Support assistant.",
     link: "https://aistudio.google.com/apikey", linkLabel: "Get a key (Google AI Studio)",
     secrets: [{ key: "GEMINI_API_KEY", label: "API key", placeholder: "AIza…" }],
-    config: [{ key: "GEMINI_MODEL", label: "Model", placeholder: "gemini-2.5-flash", help: "Leave empty for the default." }],
+    config: [{ key: "GEMINI_MODEL", label: "Model", placeholder: "gemini-3.8-flash", help: "Default: gemini-3.8-flash. Others: gemini-3.6-flash, gemini-3.5-flash-lite, gemini-3.1-pro-preview. Older 2.5 models are closed to new keys." }],
     test: true,
   },
   anthropic: {

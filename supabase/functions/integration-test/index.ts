@@ -22,8 +22,13 @@ async function test(id: string, s: Record<string, string>, cfg: Record<string, s
   }
   if (id === "gemini") {
     if (!s.GEMINI_API_KEY) return { ok: false, message: "No Gemini key saved" };
-    const r = await t("https://generativelanguage.googleapis.com/v1beta/models?pageSize=1", { headers: { "x-goog-api-key": s.GEMINI_API_KEY } });
-    return r.ok ? { ok: true, message: `Key valid. Model in use: ${cfg.GEMINI_MODEL || "gemini-2.5-flash"}` } : { ok: false, message: `Gemini rejected the key (${r.status})` };
+    // Check the key AND that the chosen model is reachable with it (older models are closed to new keys).
+    const model = cfg.GEMINI_MODEL || "gemini-3.8-flash";
+    const r = await t(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}`, { headers: { "x-goog-api-key": s.GEMINI_API_KEY } });
+    if (r.ok) return { ok: true, message: `Key valid. Model ready: ${model}` };
+    const d = await r.json().catch(() => ({}));
+    if (r.status === 404) return { ok: false, message: `Key accepted, but model "${model}" is not available to this key. Pick another model (e.g. gemini-3.8-flash).` };
+    return { ok: false, message: `Gemini rejected the request (${r.status}): ${String(d?.error?.message || "").slice(0, 140)}` };
   }
   if (id === "anthropic") {
     if (!s.ANTHROPIC_API_KEY) return { ok: false, message: "No Anthropic key saved" };
