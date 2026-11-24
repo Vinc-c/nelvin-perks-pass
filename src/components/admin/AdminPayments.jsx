@@ -122,7 +122,7 @@ export default function AdminPayments() {
       {tab === "withdrawals" && (data.withdrawals.length === 0 ? <EmptyState icon={Check} title="No pending withdrawals" /> : data.withdrawals.map((t) => (
         <div key={t.id} className={row}>
           <div>
-            <p className="font-semibold text-slate-900">{money.formatIn(t.amount, t.currency)} <span className="text-xs font-normal text-slate-500">({money.format(t.amount_usd)})</span></p>
+            <p className="font-semibold text-slate-900">{money.formatIn(t.amount, t.currency)} <span className="text-xs font-normal text-slate-500">({money.format(t.amount_usd)}{Number(t.fee_usd) > 0 ? ` · fee ${money.format(t.fee_usd)} · send ${money.format(Number(t.amount_usd) - Number(t.fee_usd))}` : ""})</span></p>
             <p className="text-sm text-slate-600">{t.payment_method === "MOBILE_MONEY" ? "Mobile Money" : "Bank transfer"} → <span className="font-mono">{t.destination}</span></p>
             <p className="text-xs text-slate-400">{who(t.user_id)} · {new Date(t.created_date).toLocaleString("en-US")}</p>
           </div>
@@ -136,7 +136,7 @@ export default function AdminPayments() {
       {tab === "payouts" && (data.payouts.length === 0 ? <EmptyState icon={Check} title="No pending requests" /> : data.payouts.map((p) => (
         <div key={p.id} className={row}>
           <div>
-            <p className="font-semibold text-slate-900">{money.format(p.amount_usd)} — {data.merchants.get(p.merchant_id)?.name || "Partner"}</p>
+            <p className="font-semibold text-slate-900">{money.format(p.amount_usd)}{Number(p.fee_usd) > 0 ? ` (send ${money.format(Number(p.amount_usd) - Number(p.fee_usd))})` : ""} — {data.merchants.get(p.merchant_id)?.name || "Partner"}</p>
             <p className="text-sm text-slate-600">{p.method === "MOBILE_MONEY" ? "Mobile Money" : "Bank transfer"} → <span className="font-mono">{p.destination}</span></p>
             <p className="text-xs text-slate-400">{who(p.requested_by)} · {new Date(p.created_date).toLocaleString("en-US")}</p>
           </div>

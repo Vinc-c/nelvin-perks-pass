@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { invokeFunction } from "@/api/functions";
+import { supabase } from "@/api/supabaseClient";
 import { useAuth } from "@/lib/AuthContext";
 import { useCurrencies } from "@/hooks/useCurrencies";
 import { useToast } from "@/components/ui/use-toast";
@@ -37,10 +38,23 @@ export default function WithdrawWalletModal({ open, onClose }) {
     }
   }, [open]);
 
-  const balanceUsd = Number(user?.wallet_balance || 0);
   const amt = Number(amount);
   const amtUsd = money.toUsd(amt, currency);
+  const [quote, setQuote] = useState(null);
+  // Live quote from the server: withdrawable cash (bonus excluded), fees and net amount.
+  useEffect(() => {
+    if (!open) return undefined;
+    let alive = true;
+    const id = setTimeout(async () => {
+      const { data } = await supabase.rpc("withdrawal_quote", { p_amount_usd: amtUsd > 0 ? Math.round(amtUsd * 100) / 100 : null });
+      if (alive && data) setQuote(data);
+    }, 250);
+    return () => { alive = false; clearTimeout(id); };
+  }, [open, amtUsd]);
+  const balanceUsd = Number(quote?.withdrawable ?? user?.wallet_balance ?? 0);
   const tooMuch = amtUsd > balanceUsd + 1e-6;
+  const belowMin = quote && amtUsd > 0 && amtUsd < Number(quote.min);
+  const blocked = tooMuch || belowMin || (quote && amtUsd > 0 && quote.reason === "FEES");
 
   const submit = async () => {
     if (!amt || amt <= 0 || tooMuch) return;
@@ -83,6 +97,7 @@ export default function WithdrawWalletModal({ open, onClose }) {
               <>
                 <div className="mb-3 rounded-xl bg-slate-50 px-4 py-2.5 text-sm text-slate-600">
                   {t("mb.wd.balance")} <span className="font-semibold text-slate-900">{money.format(balanceUsd, currency)}</span>
+                  {quote && Number(quote.bonus) > 0 && <p className="mt-1 text-xs text-slate-500">{t("wd.bonusNote", { bonus: money.format(Number(quote.bonus), currency) })}</p>}
                 </div>
 
                 <div className="flex items-end gap-3">
@@ -94,6 +109,13 @@ export default function WithdrawWalletModal({ open, onClose }) {
                 </div>
                 <button onClick={() => setAmount(String(Math.floor(money.fromUsd(balanceUsd, currency) * 100) / 100))} className="mt-2 text-xs font-medium text-emerald-600 hover:underline">{t("mb.wd.all")}</button>
                 {tooMuch && <p className="mt-1 text-xs text-rose-600">{t("mb.wd.tooMuch")}</p>}
+                {belowMin && <p className="mt-1 text-xs text-rose-600">{t("wd.min", { min: money.format(Number(quote.min), currency) })}</p>}
+                {quote && amtUsd > 0 && !blocked && (
+                  <dl className="mt-3 space-y-1 rounded-xl bg-slate-50 p-3 text-xs text-slate-600" aria-live="polite">
+                    <div className="flex justify-between"><dt>{t("wd.fee", { pct: quote.platform_fee_pct })}</dt><dd>-{money.format(Number(quote.fee), currency)}</dd></div>
+                    <div className="flex justify-between text-sm font-semibold text-slate-900"><dt>{t("wd.net")}</dt><dd>{money.format(Number(quote.net), currency)}</dd></div>
+                  </dl>
+                )}
 
                 <p className="mt-4 text-sm font-medium text-slate-700">{t("mb.wd.method")}</p>
                 <div className="mt-2 grid grid-cols-2 gap-2">
@@ -111,7 +133,7 @@ export default function WithdrawWalletModal({ open, onClose }) {
                 <label className="mt-4 block text-sm font-medium text-slate-700" htmlFor="withdraw-dest">{method === "MOBILE_MONEY" ? t("mb.wd.momoNumber") : t("mb.wd.bankNumber")}</label>
                 <input id="withdraw-dest" value={destination} onChange={(e) => setDestination(e.target.value)} placeholder={t(activeMethod.placeholder)} className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-nv-emerald" />
 
-                <button onClick={submit} disabled={loading || !amt || amt <= 0 || tooMuch || destination.trim().length < 6} className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-nv-emerald py-3 text-sm font-semibold text-white transition hover:bg-nv-emerald/90 disabled:opacity-50 active:scale-95">
+                <button onClick={submit} disabled={loading || !amt || amt <= 0 || blocked || destination.trim().length < 6} className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-nv-emerald py-3 text-sm font-semibold text-white transition hover:bg-nv-emerald/90 disabled:opacity-50 active:scale-95">
                   {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("mb.wd.processing")}</> : <><Check className="h-4 w-4" /> {t("mb.wd.submit")}</>}
                 </button>
               </>

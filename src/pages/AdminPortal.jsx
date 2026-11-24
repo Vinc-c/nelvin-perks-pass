@@ -29,6 +29,7 @@ import AdminAuditLog from "@/components/admin/AdminAuditLog";
 import AdminIndividuals from "@/components/admin/AdminIndividuals";
 import AdminContactRequests from "@/components/admin/AdminContactRequests";
 import AdminIntegrations from "@/components/admin/AdminIntegrations";
+import AdminMoneyRules from "@/components/admin/AdminMoneyRules";
 
 const SECTIONS = {
   overview: AdminOverview,
@@ -50,6 +51,7 @@ const SECTIONS = {
   staff: AdminStaffManagement,
   psp: AdminPspSettings,
   integrations: AdminIntegrations,
+  money: AdminMoneyRules,
   currency: AdminCurrencies,
   plans: AdminPlans,
   payments: AdminPayments,

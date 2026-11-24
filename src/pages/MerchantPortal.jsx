@@ -2,6 +2,7 @@ import NvIcon from "@/components/brand/NvIcon";
 import { useAsync } from "@/hooks/useAsync";
 import RateMember from "@/components/merchant/RateMember";
 import React, { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/api/supabaseClient";
 import { motion } from "framer-motion";
 import { Link, useSearchParams } from "react-router-dom";
 import PortalLayout from "@/components/PortalLayout";
@@ -53,6 +54,8 @@ export default function MerchantPortal() {
   const [payoutOpen, setPayoutOpen] = useState(false);
   const [payout, setPayout] = useState({ amount: "", method: "MOBILE_MONEY", destination: "" });
   const [payoutBusy, setPayoutBusy] = useState(false);
+  const [rules, setRules] = useState(null);
+  useEffect(() => { if (payoutOpen) supabase.rpc("payout_rules").then(({ data }) => data && setRules(data)); }, [payoutOpen]);
   const [params] = useSearchParams();
   const section = params.get("section") || "overview";
   const show = (s) => section === "overview" || section === s;
@@ -342,13 +345,23 @@ export default function MerchantPortal() {
                 <button type="button" onClick={() => setPayoutOpen(false)} aria-label={t("mc.payouts.close")}><X className="h-5 w-5 text-slate-400" /></button>
               </div>
               <p className="text-sm text-slate-500">{t("mc.payouts.available", { amount: money.format(payoutBalance, currency) })}</p>
+              {rules && (
+                <ul className="space-y-1 rounded-lg bg-slate-50 p-3 text-xs text-slate-600">
+                  <li>{t("po.info", { pct: rules.commission_pct })}</li>
+                  <li>{t("po.min", { min: money.format(Number(rules.min), currency) })}</li>
+                  {Number(rules.monthly_limit) > 0 && <li>{t("po.limit", { used: rules.used_this_month, limit: rules.monthly_limit })}</li>}
+                  {Number(rules.fee_pct) > 0 && payout.amount > 0 && <li>{t("po.net", { pct: rules.fee_pct, net: money.format(money.toUsd(Number(payout.amount), currency) * (1 - Number(rules.fee_pct) / 100), currency) })}</li>}
+                  <li>{t("po.sla", { days: rules.sla_days })}</li>
+                  {!rules.enabled && <li className="font-medium text-rose-600">{t("po.closed")}</li>}
+                </ul>
+              )}
               <input type="number" min="1" step="0.01" required value={payout.amount} onChange={(e) => setPayout({ ...payout, amount: e.target.value })} placeholder={t("mc.payouts.amountPlaceholder", { currency })} aria-label={t("mc.payouts.amount")} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-nv-emerald" />
               <select value={payout.method} onChange={(e) => setPayout({ ...payout, method: e.target.value })} aria-label={t("mc.payouts.method")} className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm">
                 <option value="MOBILE_MONEY">Mobile Money</option>
                 <option value="BANK_TRANSFER">{t("mc.payouts.bankTransfer")}</option>
               </select>
               <input required minLength={6} value={payout.destination} onChange={(e) => setPayout({ ...payout, destination: e.target.value })} placeholder={payout.method === "MOBILE_MONEY" ? t("mc.payouts.momoNumber") : t("mc.payouts.ibanPlaceholder")} aria-label={t("mc.payouts.destination")} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-nv-emerald" />
-              <button type="submit" disabled={payoutBusy || money.toUsd(Number(payout.amount), currency) > payoutBalance + 1e-6} className="flex w-full items-center justify-center gap-2 rounded-xl bg-nv-emerald py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
+              <button type="submit" disabled={payoutBusy || (rules && !rules.enabled) || (rules && money.toUsd(Number(payout.amount), currency) < Number(rules.min) - 1e-6) || money.toUsd(Number(payout.amount), currency) > payoutBalance + 1e-6} className="flex w-full items-center justify-center gap-2 rounded-xl bg-nv-emerald py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
                 {payoutBusy && <Loader2 className="h-4 w-4 animate-spin" />} {t("mc.payouts.send")}
               </button>
             </motion.form>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { invokeFunction } from "@/api/functions";
 import { callRpc } from "@/api/rpc";
+import { supabase } from "@/api/supabaseClient";
 import { useAuth } from "@/lib/AuthContext";
 import { useCurrencies } from "@/hooks/useCurrencies";
 import { useToast } from "@/components/ui/use-toast";
@@ -39,6 +40,11 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
   const money = useCurrencies();
   const [currency, setCurrency] = useState(user?.wallet_currency || "USD");
   const [amount, setAmount] = useState("");
+  const [tiers, setTiers] = useState([]);
+  useEffect(() => {
+    if (!open || purpose !== "RECHARGE") return;
+    supabase.from("topup_bonus_tiers").select("min_usd,bonus_type,bonus_value").eq("active", true).order("min_usd").then(({ data }) => setTiers(data || []));
+  }, [open, purpose]);
   const [method, setMethod] = useState("CARD");
   const [available, setAvailable] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -141,6 +147,20 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
                   </div>
                   <CurrencySelect value={currency} onChange={setCurrency} />
                 </div>
+                {purpose === "RECHARGE" && tiers.length > 0 && (() => {
+                  const usdNow = money.toUsd(Number(amount) || 0, currency);
+                  const reached = [...tiers].reverse().find((x) => usdNow >= Number(x.min_usd));
+                  const next = tiers.find((x) => usdNow < Number(x.min_usd));
+                  const bonusOf = (x, base) => (x.bonus_type === "FIXED" ? Number(x.bonus_value) : Math.round(base * Number(x.bonus_value)) / 100);
+                  const tier = reached || next;
+                  if (!tier) return null;
+                  const base = reached ? usdNow : Number(tier.min_usd);
+                  return (
+                    <p className="mt-3 rounded-xl bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-800" aria-live="polite">
+                      {t("rc.bonusHint", { min: money.format(Number(tier.min_usd), currency), bonus: money.format(bonusOf(tier, base), currency) })}
+                    </p>
+                  );
+                })()}
                 {!isFixed && (
                   <div className="mt-3 grid grid-cols-4 gap-2">
                     {QUICK_USD.map((q) => {

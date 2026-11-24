@@ -11,3 +11,26 @@ Disallow: /billing-settings
 Disallow: /security-settings
 Disallow: /login
 Disallow: /register
+Disallow: /pull-requests
+Disallow: /analytics
+Disallow: /support-center
+Disallow: /support-tickets
+Disallow: /notifications
+Disallow: /notification-settings
+Disallow: /reward-history
+Disallow: /my-rewards
+Disallow: /currency-exchange
+Disallow: /hr-savings-report
+Disallow: /monthly-reports
+Disallow: /campaign-editor
+Disallow: /kyc-verification
+Disallow: /onboarding
+Disallow: /payment-return
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /app
+Disallow: /membership-plans
+Disallow: /referral-program
+Disallow: /recognition-wall
+
+Sitemap: https://nelvinbenefits.com/sitemap.xml

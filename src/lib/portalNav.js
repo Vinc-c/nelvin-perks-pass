@@ -1,4 +1,5 @@
 import {
+  Coins,
   Search, MapPin, Wallet, Gift, Settings, Award, BarChart3, FileText,
   CreditCard, Megaphone, BadgeCheck, Shield, Store,
   LayoutDashboard, Star, Image as ImageIcon, Type, Crown, Building2, Ticket,
@@ -134,6 +135,7 @@ const NAV = {
     ]),
     ...group("Payments", [
       { to: "/admin", section: "payments", label: "Payments & withdrawals", icon: Banknote },
+      { to: "/admin", section: "money", label: "Money rules", icon: Coins },
       { to: "/admin", section: "psp", label: "PSP keys & routing", icon: KeyRound },
       { to: "/admin", section: "integrations", label: "Integrations & keys", icon: PlugZap },
       { to: "/admin", section: "plans", label: "Plans & pricing", icon: Gem },
