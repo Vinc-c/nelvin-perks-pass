@@ -196,3 +196,10 @@ html.is-native body { padding-top: env(safe-area-inset-top); padding-left: env(s
 
 /* Clip sideways overflow on the page itself (not on a wrapper) so sticky/fixed headers keep working. */
 html, body { overflow-x: clip; }
+
+/* House motion curve (expo-out) and the loading shimmer shown behind images until they land. */
+:root { --ease-expo: cubic-bezier(0.16, 1, 0.3, 1); }
+.nv-shimmer { background: linear-gradient(110deg, #eceef7 30%, #f8f9fd 45%, #eceef7 60%) 0 0 / 220% 100%; animation: nv-shimmer 1.4s linear infinite; }
+@keyframes nv-shimmer { to { background-position: -220% 0; } }
+@media (prefers-reduced-motion: reduce) { .nv-shimmer { animation: none; } }
+.data-saver .nv-shimmer { animation: none; }

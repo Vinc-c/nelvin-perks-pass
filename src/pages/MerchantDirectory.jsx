@@ -1,7 +1,8 @@
 import { offerPath } from "@/lib/seo";
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { CursorBubble } from "@/components/landing/motion";
 import PortalLayout from "@/components/PortalLayout";
 import { Image } from "@/components/ui/image";
 import { useCategories } from "@/hooks/useCategories";
@@ -18,6 +19,7 @@ import { useI18n } from "@/i18n/I18nContext";
 
 export default function MerchantDirectory() {
   const { t, lang } = useI18n();
+  const reduceMotion = useReducedMotion();
   const { categories, meta } = useCategories();
   const { merchants, offers, loading, offline, cachedAt } = useCatalog();
   const money = useCurrencies();
@@ -122,13 +124,13 @@ export default function MerchantDirectory() {
             const list = offersByMerchant.get(m.id) || [];
             const best = (favOnly && list.find((o) => favoriteIds.has(o.id))) || list[0];
             return (
-              <motion.div key={m.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i, 9) * 0.04 }} className="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                <div className="relative h-36 overflow-hidden">
+              <motion.div key={m.id} initial={reduceMotion ? false : { opacity: 0, y: 48 }} animate={{ opacity: 1, y: 0 }} transition={{ opacity: { duration: 0.9, ease: "easeOut", delay: 0.1 + (i % 3) * 0.08 + Math.min(Math.floor(i / 3), 4) * 0.06 }, y: { duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.1 + (i % 3) * 0.08 + Math.min(Math.floor(i / 3), 4) * 0.06 } }} className="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <CursorBubble label={t("dir.bubble")} className="relative h-36 overflow-hidden">
                   <Image src={m.cover_image_url || meta(m.category).image_url || categoryImage(m.category)} alt={m.name} className="h-full w-full transition duration-500 hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent" />
                   <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-nv-ink backdrop-blur-sm"><CategoryIcon category={m.category} className="h-3.5 w-3.5 text-nv-emerald" /> {meta(m.category).label}</span>
                   {m.logo_url && <img src={m.logo_url} alt="" className="absolute bottom-3 left-3 h-10 w-10 rounded-lg bg-white object-contain p-1 shadow" />}
-                </div>
+                </CursorBubble>
                 <div className="flex flex-1 flex-col p-4">
                   <div className="flex items-center justify-between gap-2">
                     <h3 className="truncate font-semibold text-slate-900">{m.name}</h3>

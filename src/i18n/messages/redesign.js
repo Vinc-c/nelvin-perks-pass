@@ -265,4 +265,5 @@ export default [
   ["po.sla", "Paid within {days} business day(s) after approval.", "Versé sous {days} jour(s) ouvré(s) après validation."],
   ["po.info", "Your balance comes from customers paying with the Nelvin wallet, minus Nelvin's {pct}% commission.", "Votre solde provient des clients qui paient avec le wallet Nelvin, moins la commission Nelvin de {pct} %."],
   ["po.closed", "Payout requests are temporarily closed.", "Les demandes de paiement sont temporairement fermées."],
+  ["dir.bubble", "View", "Voir"],
 ];

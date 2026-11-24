@@ -5,7 +5,7 @@ import { ArrowRight, Building2, Check, User, Users } from "lucide-react";
 import SiteHeader from "@/components/landing/SiteHeader";
 import SiteFooter from "@/components/landing/SiteFooter";
 import KenteBand from "@/components/brand/KenteBand";
-import { Stagger, StaggerItem, WordReveal } from "@/components/landing/motion";
+import { Stagger, StaggerItem, WordReveal, ScrambleText } from "@/components/landing/motion";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { useI18n } from "@/i18n/I18nContext";
 
@@ -39,7 +39,7 @@ export default function AudiencePage({ audience }) {
         <section className="relative overflow-hidden bg-[#1A2060] text-white">
           <motion.div aria-hidden initial={reduced ? false : { opacity: 0, scale: 0.8 }} animate={{ opacity: 0.35, scale: 1 }} transition={{ duration: 1.2 }} className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-nv-emerald blur-3xl" />
           <div className="relative mx-auto max-w-5xl px-4 pb-16 pt-14 sm:px-6 sm:pb-20 sm:pt-20">
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-medium ring-1 ring-white/20"><a.icon className="h-4 w-4" /> {k("badge")}</span>
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-medium ring-1 ring-white/20"><a.icon className="h-4 w-4" /> <ScrambleText text={k("badge")} /></span>
             <WordReveal as="h1" text={k("h1")} className="nv-display mt-5 max-w-[20ch] text-4xl font-semibold leading-tight sm:text-6xl" />
             <p className="mt-5 max-w-2xl text-lg text-white/80">{k("lead")}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">

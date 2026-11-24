@@ -21,6 +21,7 @@ const Image = React.forwardRef(
       focalPointY: _focalPointY,
       quality: _quality,
       onError,
+      onLoad,
       className,
       loading = "lazy",
       ...props
@@ -28,6 +29,7 @@ const Image = React.forwardRef(
     ref
   ) => {
     const [failedSrc, setFailedSrc] = React.useState(null)
+    const [loadedSrc, setLoadedSrc] = React.useState(null)
     const broken = !src || failedSrc === src
     const fitClass = className && /\bobject-/.test(className)
       ? ""
@@ -39,7 +41,8 @@ const Image = React.forwardRef(
         src={broken ? FALLBACK_IMAGE_URL : src}
         loading={loading}
         decoding="async"
-        className={`${className || ""}${fitClass}`.trim()}
+        className={`${className || ""}${fitClass}${loadedSrc === src || broken ? "" : " nv-shimmer"}`.trim()}
+        onLoad={(event) => { setLoadedSrc(src); onLoad?.(event) }}
         onError={(event) => {
           if (broken) return
           setFailedSrc(src)

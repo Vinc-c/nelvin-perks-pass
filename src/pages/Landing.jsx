@@ -18,7 +18,7 @@ import HowItWorks from "@/components/landing/HowItWorks";
 import { HeroHeadline, HeroOrbs, Magnetic, Tilt, ScrollCue } from "@/components/landing/HeroMotion";
 import { Counter } from "@/components/landing/motion";
 import IndustriesGrid from "@/components/landing/IndustriesGrid";
-import { ScrollProgress, WordReveal } from "@/components/landing/motion";
+import { ScrollProgress, WordReveal, ScrambleText } from "@/components/landing/motion";
 import SiteHeader from "@/components/landing/SiteHeader";
 import { usePublicContent, imageByKey, heroMedia, copyByKey } from "@/hooks/usePublicContent";
 import SiteBanner from "@/components/marketing/SiteBanner";
@@ -96,7 +96,7 @@ export default function Landing() {
         <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:py-20">
           <motion.div className="min-w-0 rounded-[32px] bg-white/60 p-5 shadow-[0_8px_40px_-12px_rgba(26,32,96,0.18)] ring-1 ring-white/70 backdrop-blur-md sm:p-8 lg:-ms-8" style={reduceMotion ? undefined : { y: heroTextY, opacity: heroTextOpacity }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 py-1.5 pl-1.5 pr-4 text-sm font-medium text-brand">
-              <span className="h-5 w-8 overflow-hidden rounded-full"><KenteBand height={20} /></span> {heroBadge}
+              <span className="h-5 w-8 overflow-hidden rounded-full"><KenteBand height={20} /></span> <ScrambleText text={heroBadge} />
             </span>
             <HeroHeadline segments={heroSegments} className="mt-5 text-4xl font-bold leading-[1.1] tracking-tight text-nv-ink sm:text-5xl lg:text-6xl" />
             <motion.p className="mt-5 max-w-xl text-lg text-nv-muted" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9, duration: 0.6 }}>
@@ -132,7 +132,7 @@ export default function Landing() {
       {/* Lifestyle collections marquee — image-rich hero extension */}
       <section className="relative py-10">
         <div className="mx-auto mb-4 max-w-7xl px-4 sm:px-6">
-          <p className="text-sm font-semibold text-brand">{t("land.lifestyle")}</p>
+          <p className="text-sm font-semibold text-brand"><ScrambleText text={t("land.lifestyle")} /></p>
         </div>
         <HeroLifestyleStrip />
       </section>
