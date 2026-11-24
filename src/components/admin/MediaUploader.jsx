@@ -40,7 +40,7 @@ export default function MediaUploader({ value, onChange, label = "Image or video
           </div>
         )}
       </div>
-      <p className="mt-1 text-xs text-slate-500">Landscape 16:9. Video: MP4 (H.264) or WebM, up to 50 MB, ideally 10–20 s, no sound needed. Image: up to 10 MB.</p>
+      <p className="mt-1 text-xs text-slate-500">Landscape 16:9. Video: MP4 (H.264) or WebM, 5 MB max, up to 3 hero videos, ideally 5–10 s, no sound needed. Image: up to 10 MB.</p>
     </div>
   );
 }

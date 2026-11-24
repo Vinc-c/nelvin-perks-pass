@@ -34,6 +34,10 @@ export default function AdminCmsImages() {
   const add = async (e) => {
     e.preventDefault();
     if (!draft.key.trim() || !draft.image_url) return;
+    if (draft.media_type === "video" && items.filter((x) => x.media_type === "video" && (x.section === "HERO" || slug(x.key).startsWith("hero_background"))).length >= 3 && (draft.section === "HERO" || slug(draft.key).startsWith("hero_background"))) {
+      toast({ title: "3 hero videos maximum", description: "Delete or replace one of the existing hero videos first.", variant: "destructive" });
+      return;
+    }
     try {
       await entities.SiteImage.create({ ...draft, key: slug(draft.key), active: true });
     } catch (err) {
@@ -59,7 +63,7 @@ export default function AdminCmsImages() {
       <div>
         <h2 className="flex items-center gap-2 text-xl font-bold text-slate-900"><ImageIcon className="h-5 w-5 text-amber-500" /> Platform images</h2>
         <p className="text-sm text-slate-500">Manage the hero visual, landscape bands, marketing banners and the phone mockup. Known keys: <code>hero_background</code>, <code>savanna_band</code>, <code>app_phone_mockup</code>.</p>
-        <p className="mt-1 text-sm text-slate-500"><strong>Hero:</strong> add several images and/or landscape videos (MP4/WebM, 50 MB max) with the key <code>hero_background</code> (HERO section): they play as a slideshow on the home page, from oldest to newest. A video plays once, silently, then the next slide starts. Deactivate an image to remove it.</p>
+        <p className="mt-1 text-sm text-slate-500"><strong>Hero:</strong> add several images and/or landscape videos (MP4/WebM, 5 MB max each, 3 videos maximum) with the key <code>hero_background</code> (HERO section): they play as a slideshow on the home page, from oldest to newest. A video plays once, silently, then the next slide starts. Deactivate an image to remove it.</p>
       </div>
 
       <form onSubmit={add} className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:grid-cols-2 lg:grid-cols-4">

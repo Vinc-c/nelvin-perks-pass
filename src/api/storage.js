@@ -52,15 +52,15 @@ export async function removeKycFile(path) {
 }
 
 export const MEDIA_BUCKET = "nelvin-media";
-export const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
+export const MAX_VIDEO_BYTES = 5 * 1024 * 1024;
 const MEDIA_TYPES = ["video/mp4", "video/webm", "image/png", "image/jpeg", "image/webp", "image/avif"];
 
-/** Admin-only upload of a hero image or video (MP4 / WebM, 50 MB max). Returns `{ file_url, media_type }`. */
+/** Admin-only upload of a hero image or video (MP4 / WebM, 5 MB max). Returns `{ file_url, media_type }`. */
 export async function uploadMediaFile(file, folder = "hero") {
   if (!file) throw new Error(translate("err.noFile"));
   const isVideo = file.type.startsWith("video/");
   if (!MEDIA_TYPES.includes(file.type)) throw new Error("Use MP4 or WebM for videos, or JPG, PNG, WebP for images.");
-  if (isVideo ? file.size > MAX_VIDEO_BYTES : file.size > MAX_BYTES) throw new Error(isVideo ? "Video too large (50 MB max). Compress it or shorten it." : "Image too large (10 MB max)");
+  if (isVideo ? file.size > MAX_VIDEO_BYTES : file.size > MAX_BYTES) throw new Error(isVideo ? "Video too large (5 MB max). Shorten it or lower its resolution." : "Image too large (10 MB max)");
   const ext = (file.name?.split(".").pop() || (isVideo ? "mp4" : "jpg")).toLowerCase().replace(/[^a-z0-9]/g, "") || "bin";
   const path = `${folder}/${Date.now()}-${crypto.randomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(MEDIA_BUCKET).upload(path, file, { cacheControl: "31536000", upsert: false, contentType: file.type });

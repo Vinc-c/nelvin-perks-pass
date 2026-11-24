@@ -1,7 +1,7 @@
 import { offerPath } from "@/lib/seo";
 import React from "react";
 import { offerTitle } from "@/lib/offerTitle";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Image } from "@/components/ui/image";
@@ -13,11 +13,13 @@ import { useI18n } from "@/i18n/I18nContext";
 
 /** Offer tile used by the member and employee dashboards. */
 export default function OfferCard({ offer, meta, format, onRedeem, index = 0, ctaLabel = "Utiliser", badge = null }) {
+  const reduceMotion = useReducedMotion();
+  const cascade = 0.05 + (index % 3) * 0.08 + Math.min(Math.floor(index / 3), 4) * 0.06; // by column, then row
   const { t } = useI18n();
   const cat = meta(offer.category);
   const isPerk = offer.discount_type === "PERK";
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: Math.min(index, 9) * 0.04 }} className="group relative flex flex-col overflow-hidden rounded-2xl border border-nv-line bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+    <motion.div initial={reduceMotion ? false : { opacity: 0, y: 48 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "0px 0px -6% 0px" }} transition={{ opacity: { duration: 0.9, delay: cascade }, y: { duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: cascade } }} className="group relative flex flex-col overflow-hidden rounded-2xl border border-nv-line bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
       <Link to={offerPath(offer)} className="relative block h-32 overflow-hidden">
         <Image src={offer.image_url || offer.merchant?.cover_image_url || cat.image_url || categoryImage(offer.category)} alt={offerTitle(offer)} className="h-full w-full transition duration-500 group-hover:scale-105" />
         <div className="absolute inset-0 bg-gradient-to-t from-nv-deep/60 via-transparent to-transparent" />
