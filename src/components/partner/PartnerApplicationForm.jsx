@@ -39,7 +39,7 @@ function Field({ label, required, children, hint }) {
 }
 
 const inputCls =
-  "w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
+  "w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30";
 
 function FileDrop({ label, hint, file, onPick }) {
   const { t } = useI18n();
@@ -49,7 +49,7 @@ function FileDrop({ label, hint, file, onPick }) {
         {label} <span className="text-rose-500">*</span>
       </p>
       <p className="text-xs text-slate-400">{hint}</p>
-      <div className="mt-1.5 flex cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center transition hover:border-blue-400 hover:bg-blue-50/40">
+      <div className="mt-1.5 flex cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center transition hover:border-blue-400 hover:bg-primary/5/40">
         <input
           type="file"
           accept="image/png,image/jpeg,image/webp"
@@ -199,7 +199,7 @@ export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
         </p>
         {/* Plain links (full reload): the account just became a MERCHANT server-side. */}
         <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-          <a href="/kyc-verification" className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700">
+          <a href="/kyc-verification" className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary/90">
             {t("mc.pf.doneKyc")}
           </a>
           <a href="/merchant-dashboard" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">
@@ -248,7 +248,7 @@ export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
             {categories.map((c) => {
               const active = form.category === c.value;
               return (
-                <button type="button" key={c.value} onClick={() => set("category", c.value)} className={`not-pill rounded-lg border px-3.5 py-2.5 text-left text-sm font-medium transition ${active ? "border-blue-500 bg-blue-50 text-blue-700" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
+                <button type="button" key={c.value} onClick={() => set("category", c.value)} className={`not-pill rounded-lg border px-3.5 py-2.5 text-left text-sm font-medium transition ${active ? "border-primary bg-primary/5 text-primary" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
                   {c.label}
                 </button>
               );
@@ -304,7 +304,7 @@ export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
               {REDEEM.map((rv) => {
                 const active = form.offerRedeemable === rv;
                 return (
-                  <button type="button" key={rv} onClick={() => set("offerRedeemable", rv)} className={`not-pill rounded-lg border px-3 py-2.5 text-xs font-medium transition ${active ? "border-blue-500 bg-blue-50 text-blue-700" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
+                  <button type="button" key={rv} onClick={() => set("offerRedeemable", rv)} className={`not-pill rounded-lg border px-3 py-2.5 text-xs font-medium transition ${active ? "border-primary bg-primary/5 text-primary" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
                     {t(`mc.pf.red.${rv}`)}
                   </button>
                 );
@@ -334,7 +334,7 @@ export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
               <textarea rows={2} value={o.howToUse} onChange={(e) => setExtra(i, "howToUse", e.target.value)} placeholder={t("mc.pf.x.how")} className={`${inputCls} mt-3`} />
             </div>
           ))}
-          <button type="button" onClick={addOffer} className="flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-100">
+          <button type="button" onClick={addOffer} className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10">
             <Plus className="h-4 w-4" /> {t("mc.pf.x.add")}
           </button>
         </div>
@@ -367,7 +367,7 @@ export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
             { k: "better" },
           ].map((row) => (
             <label key={row.k} className="flex items-start gap-3 rounded-lg p-2 hover:bg-slate-50">
-              <input type="checkbox" checked={tc[row.k]} onChange={(e) => setTc((s) => ({ ...s, [row.k]: e.target.checked }))} className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+              <input type="checkbox" checked={tc[row.k]} onChange={(e) => setTc((s) => ({ ...s, [row.k]: e.target.checked }))} className="mt-1 h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary/30" />
               <span className="text-sm text-slate-700">{t(`mc.pf.t.${row.k}`)} <span className="text-rose-500">*</span></span>
             </label>
           ))}
@@ -389,7 +389,7 @@ export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
       <button
         type="submit"
         disabled={busy}
-        className="flex w-full items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition hover:bg-blue-700 disabled:opacity-70"
+        className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition hover:bg-primary/90 disabled:opacity-70"
       >
         {busy ? (
           <><Loader2 className="h-5 w-5 animate-spin" /> {uploading ? t("mc.pf.sending.files") : t("mc.pf.sending")}</>
@@ -399,7 +399,7 @@ export default function PartnerApplicationForm({ onSubmitted, defaults = {} }) {
       </button>
 
       <p className="text-center text-sm text-slate-400">
-        {t("mc.pf.help", { email: "partners@nelvinbenefits.com" }).split("partners@nelvinbenefits.com").flatMap((s, i, arr) => (i < arr.length - 1 ? [s, <a key={i} href="mailto:partners@nelvinbenefits.com" className="font-medium text-blue-600 hover:underline">partners@nelvinbenefits.com</a>] : [s]))}
+        {t("mc.pf.help", { email: "partners@nelvinbenefits.com" }).split("partners@nelvinbenefits.com").flatMap((s, i, arr) => (i < arr.length - 1 ? [s, <a key={i} href="mailto:partners@nelvinbenefits.com" className="font-medium text-primary hover:underline">partners@nelvinbenefits.com</a>] : [s]))}
       </p>
     </form>
   );

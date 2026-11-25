@@ -45,7 +45,7 @@ export function RecoveryCodes({ codes, onDone, doneLabel }) {
         </button>
       </div>
       <label className="flex items-center gap-2 text-slate-600">
-        <input type="checkbox" checked={saved} onChange={(e) => setSaved(e.target.checked)} className="accent-emerald-500" />
+        <input type="checkbox" checked={saved} onChange={(e) => setSaved(e.target.checked)} className="accent-primary" />
         {t("ac.mfa.safeCheck")}
       </label>
       <button type="button" onClick={onDone} disabled={!saved} className={`${btn} w-full bg-nv-emerald text-white hover:bg-nv-emerald/90`}>{doneLabel || t("ac.mfa.savedBtn")}</button>

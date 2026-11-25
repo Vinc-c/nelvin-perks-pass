@@ -148,11 +148,11 @@ export default function Join() {
           <div className="mb-8 flex items-center justify-between">
             {STEP_KEYS.map((s, i) => (
               <div key={s} className="flex flex-1 items-center">
-                <div className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold transition ${i <= step ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-500"}`}>
+                <div className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold transition ${i <= step ? "bg-primary text-white" : "bg-slate-200 text-slate-500"}`}>
                   {i < step ? <Check className="h-4 w-4" /> : i + 1}
                 </div>
                 <span className={`ml-2 text-xs font-medium ${i === step ? "text-slate-900" : "text-slate-400"}`}>{t(s)}</span>
-                {i < STEP_KEYS.length - 1 && <div className={`mx-2 h-0.5 flex-1 rounded ${i < step ? "bg-blue-600" : "bg-slate-200"}`} />}
+                {i < STEP_KEYS.length - 1 && <div className={`mx-2 h-0.5 flex-1 rounded ${i < step ? "bg-primary" : "bg-slate-200"}`} />}
               </div>
             ))}
           </div>
@@ -237,7 +237,7 @@ export default function Join() {
                   </Button>
                   <p className="mt-4 text-center text-sm text-slate-500">
                     {t("ac.join.noCode")}{" "}
-                    <button onClick={resend} className="font-medium text-blue-600 hover:underline">{t("ac.join.resend")}</button>
+                    <button onClick={resend} className="font-medium text-primary hover:underline">{t("ac.join.resend")}</button>
                   </p>
                 </motion.div>
               )}
@@ -251,7 +251,7 @@ export default function Join() {
 
           <p className="mt-6 text-center text-sm text-slate-500">
             {t("ac.join.haveAccount")}{" "}
-            <Link to="/login" className="font-medium text-blue-600 hover:underline">{t("ac.join.login")}</Link>
+            <Link to="/login" className="font-medium text-primary hover:underline">{t("ac.join.login")}</Link>
           </p>
         </div>
       </div>

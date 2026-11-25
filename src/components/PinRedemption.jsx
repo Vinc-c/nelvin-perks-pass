@@ -101,7 +101,7 @@ export default function PinRedemption({ offer, merchantName, onClose, onDone }) 
               </div>
             </label>
             <label className="flex items-start gap-2 text-sm text-slate-600">
-              <input type="checkbox" checked={payWithWallet} onChange={(e) => setPayWithWallet(e.target.checked)} className="mt-0.5 accent-emerald-500" />
+              <input type="checkbox" checked={payWithWallet} onChange={(e) => setPayWithWallet(e.target.checked)} className="mt-0.5 accent-primary" />
               <span><Wallet className="mr-1 inline h-4 w-4" /> {t("mb.pin.payWallet", { balance: money.format(user?.wallet_balance || 0, currency) })}</span>
             </label>
             <button type="submit" disabled={!(Number(bill) > 0)} className="w-full rounded-xl bg-nv-emerald py-3 font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">{t("mb.pin.continue")}</button>

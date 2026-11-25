@@ -66,7 +66,7 @@ export default function Contact() {
                   <legend className="text-sm font-medium text-slate-700">{t("ct.iAm")}</legend>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {AUDIENCES.map((a) => (
-                      <label key={a} className={`nv-focus cursor-pointer rounded-full border px-4 py-2 text-sm font-medium transition ${form.audience === a ? "border-nv-emerald bg-nv-emerald text-white" : "border-slate-300 text-slate-700 hover:bg-slate-50"}`}>
+                      <label key={a} className={`nv-focus cursor-pointer rounded-full border px-4 py-2 text-sm font-medium transition ${form.audience === a ? "border-primary bg-primary text-white" : "border-slate-300 text-slate-700 hover:bg-slate-50"}`}>
                         <input type="radio" name="audience" value={a} checked={form.audience === a} onChange={() => setForm((f) => ({ ...f, audience: a, plan_code: "" }))} className="sr-only" />
                         {t(`ct.a.${a}`)}
                       </label>
@@ -95,7 +95,7 @@ export default function Contact() {
                 {state === "error" && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{error || t("ct.err")}</p>}
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <p className="text-xs text-slate-500">{t("ct.privacy")}</p>
-                  <button type="submit" disabled={state === "sending"} className="nv-focus inline-flex h-11 items-center gap-2 rounded-full bg-nv-emerald px-6 text-sm font-medium text-white hover:bg-nv-deep disabled:opacity-60">
+                  <button type="submit" disabled={state === "sending"} className="nv-focus inline-flex h-11 items-center gap-2 rounded-full bg-primary px-6 text-sm font-medium text-white hover:bg-primary/90 disabled:opacity-60">
                     <Send className="h-4 w-4 rtl:-scale-x-100" /> {state === "sending" ? t("ct.sending") : t("ct.send")}
                   </button>
                 </div>

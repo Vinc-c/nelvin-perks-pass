@@ -7,7 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import ImageUploader from "./ImageUploader";
 import { Plus, Trash2, Loader2, GripVertical, Star, Upload } from "lucide-react";
 
-const inputCls = "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-amber-500";
+const inputCls = "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-primary";
 
 export default function AdminCmsLogos() {
   const { toast } = useToast();
@@ -80,7 +80,7 @@ export default function AdminCmsLogos() {
         <input className={inputCls} placeholder="Category" value={draft.category} onChange={(e) => setDraft({ ...draft, category: e.target.value })} />
         <input className={inputCls} placeholder="Domain (e.g. emirates.com)" value={draft.domain} onChange={(e) => setDraft({ ...draft, domain: e.target.value })} />
         <input type="number" className={inputCls} placeholder="Order" value={draft.sort_order} onChange={(e) => setDraft({ ...draft, sort_order: Number(e.target.value) })} />
-        <button type="submit" className="flex items-center justify-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600"><Plus className="h-4 w-4" /> Add</button>
+        <button type="submit" className="flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90"><Plus className="h-4 w-4" /> Add</button>
         <div className="sm:col-span-2 lg:col-span-5">
           <ImageUploader label="Logo (optional — otherwise Clearbit by domain)" value={draft.logo_url} onChange={(v) => setDraft({ ...draft, logo_url: v })} />
         </div>
@@ -89,7 +89,7 @@ export default function AdminCmsLogos() {
       <div className="rounded-2xl border border-dashed border-amber-300 bg-amber-50/60 p-5">
         <p className="text-sm font-semibold text-slate-800">Upload several logos at once</p>
         <p className="mt-1 text-xs text-slate-500">Select several images — each file becomes a partner (the name comes from the file name).</p>
-        <label className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600">
+        <label className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90">
           {bulkBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
           {bulkBusy ? `Uploading ${bulkDone}…` : "Choose images"}
           <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => bulkUpload(Array.from(e.target.files || []))} disabled={bulkBusy} />

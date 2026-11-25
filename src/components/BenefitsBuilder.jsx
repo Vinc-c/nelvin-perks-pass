@@ -156,7 +156,7 @@ export default function BenefitsBuilder() {
                   <input type="number" min="0" value={r.amount} onChange={(e) => setRows((list) => list.map((x, j) => (j === i ? { ...x, amount: e.target.value } : x)))} className="w-28 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-right text-sm" aria-label="Montant mensuel" />
                   <span className="text-xs text-slate-500">{t("hr.b.perMonth", { currency })}</span>
                 </div>
-                <label className="flex items-center gap-1 text-xs text-slate-500"><input type="checkbox" checked={r.active !== false} onChange={(e) => setRows((list) => list.map((x, j) => (j === i ? { ...x, active: e.target.checked } : x)))} className="accent-emerald-500" /> Active</label>
+                <label className="flex items-center gap-1 text-xs text-slate-500"><input type="checkbox" checked={r.active !== false} onChange={(e) => setRows((list) => list.map((x, j) => (j === i ? { ...x, active: e.target.checked } : x)))} className="accent-primary" /> Active</label>
                 <button onClick={() => setRows((list) => list.filter((_, j) => j !== i))} aria-label={t("hr.b.delete")} className="text-rose-500"><Trash2 className="h-4 w-4" /></button>
               </div>
             ))}

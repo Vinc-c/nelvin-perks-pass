@@ -159,7 +159,7 @@ export default function OfferDetails() {
 
             <div className="mt-6 flex flex-col gap-2 sm:flex-row">
               {planLocked && (
-                <Link to="/membership-plans" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-amber-500 py-3 font-medium text-white hover:bg-amber-600">{t("offer.upgrade", { plan: planName })}</Link>
+                <Link to="/membership-plans" className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary py-3 font-medium text-white hover:bg-primary/90">{t("offer.upgrade", { plan: planName })}</Link>
               )}
               {user ? (
                 <>

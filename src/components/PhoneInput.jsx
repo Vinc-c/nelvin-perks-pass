@@ -33,7 +33,7 @@ export default function PhoneInput({ value, onChange, placeholder = "6XX XXX XXX
 
   return (
     <div className={`relative ${className}`}>
-      <div className="flex h-12 items-stretch overflow-hidden rounded-lg border border-slate-200 bg-card transition focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100">
+      <div className="flex h-12 items-stretch overflow-hidden rounded-lg border border-slate-200 bg-card transition focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/30">
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
@@ -69,7 +69,7 @@ export default function PhoneInput({ value, onChange, placeholder = "6XX XXX XXX
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t("ac.ctry.search")}
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-8 pr-3 text-sm outline-none focus:border-blue-500"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-8 pr-3 text-sm outline-none focus:border-primary"
                 />
               </div>
             </div>

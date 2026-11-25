@@ -69,7 +69,7 @@ function Editor({ offer, onClose, onSaved }) {
       <div className="flex flex-wrap items-end gap-4">
         <label className="block text-sm"><span className="text-slate-500">Expires on</span><input type="date" value={f.expires_at} onChange={(e) => setF({ ...f, expires_at: e.target.value })} className={input} /></label>
         <label className="flex items-center gap-2 pb-2 text-sm text-slate-600"><input type="checkbox" checked={f.is_featured} onChange={(e) => setF({ ...f, is_featured: e.target.checked })} className="h-4 w-4 accent-amber-500" /> Sponsored (shown in the Home reel)</label>
-        <label className="flex items-center gap-2 pb-2 text-sm text-slate-600"><input type="checkbox" checked={f.booking_required} onChange={(e) => setF({ ...f, booking_required: e.target.checked })} className="h-4 w-4 accent-emerald-500" /> WhatsApp booking</label>
+        <label className="flex items-center gap-2 pb-2 text-sm text-slate-600"><input type="checkbox" checked={f.booking_required} onChange={(e) => setF({ ...f, booking_required: e.target.checked })} className="h-4 w-4 accent-primary" /> WhatsApp booking</label>
       </div>
       <label className="block text-sm"><span className="text-slate-500">Reel video URL (optional, short MP4, muted loop)</span><input value={f.video_url} onChange={(e) => setF({ ...f, video_url: e.target.value })} placeholder="https://…/clip.mp4" className={input} /></label>
       <SeoFields value={f} onChange={(v) => setF({ ...f, ...v })} fallbackTitle={f.title} fallbackDescription={f.description} basePath="/offre/" />

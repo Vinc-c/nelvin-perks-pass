@@ -65,7 +65,7 @@ function ApplicationSection() {
       <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">{actions}</div>
     </div>
   );
-  const primary = "inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700";
+  const primary = "inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary/90";
   const secondary = "inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50";
 
   if (!isAuthenticated) {
@@ -127,7 +127,7 @@ export default function BecomePartner() {
           <p className="mx-auto mt-4 max-w-xl text-base text-blue-50">
             {t("mc.bp.lead")}
           </p>
-          <a href="#apply" className="mt-7 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 font-semibold text-blue-700 transition hover:bg-blue-50">
+          <a href="#apply" className="mt-7 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 font-semibold text-primary transition hover:bg-primary/5">
             {t("mc.bp.start")} <ArrowRight className="h-4 w-4" />
           </a>
         </div>
@@ -152,7 +152,7 @@ export default function BecomePartner() {
         <div className="grid gap-4 sm:grid-cols-3">
           {BENEFITS.map(({ icon: Icon, k }) => (
             <div key={k} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-600"><Icon className="h-5 w-5" /></span>
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/5 text-primary"><Icon className="h-5 w-5" /></span>
               <h3 className="mt-3 font-semibold text-slate-900">{t(`mc.bp.${k}.t`)}</h3>
               <p className="mt-1 text-sm text-slate-500">{t(`mc.bp.${k}.d`)}</p>
             </div>
@@ -163,7 +163,7 @@ export default function BecomePartner() {
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
           {STEPS.map(({ icon: Icon, k }) => (
             <div key={k} className="rounded-2xl bg-white p-5 ring-1 ring-slate-200">
-              <Icon className="h-6 w-6 text-blue-600" />
+              <Icon className="h-6 w-6 text-primary" />
               <h3 className="mt-3 font-semibold text-slate-900">{t(`mc.bp.${k}.t`)}</h3>
               <p className="mt-1 text-sm text-slate-500">{t(`mc.bp.${k}.d`)}</p>
             </div>

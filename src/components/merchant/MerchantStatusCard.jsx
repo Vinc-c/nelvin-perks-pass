@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 
 const TONES = {
-  blue: "bg-blue-50 text-blue-600",
+  blue: "bg-primary/5 text-primary",
   amber: "bg-amber-50 text-amber-600",
   rose: "bg-rose-50 text-rose-600",
 };
@@ -20,7 +20,7 @@ export default function MerchantStatusCard({ icon: Icon, tone, title, text, cta 
       <h2 className="mt-5 text-2xl font-bold text-slate-900">{title}</h2>
       <p className="mt-2 text-sm text-slate-500">{text}</p>
       {cta && (
-        <a href={cta.href} className="mt-6 inline-flex items-center rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:bg-blue-700">
+        <a href={cta.href} className="mt-6 inline-flex items-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:bg-primary/90">
           {cta.label}
         </a>
       )}

@@ -114,7 +114,7 @@ export default function NelvinSupportWidget() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
                 placeholder={t("sp.w.ph")}
-                className="flex-1 rounded-full border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-amber-400"
+                className="flex-1 rounded-full border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-primary"
               />
               <button onClick={() => send()} disabled={loading || !input.trim()} className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500 text-white transition hover:bg-amber-600 disabled:opacity-50 active:scale-95">
                 <Send className="h-4 w-4" />

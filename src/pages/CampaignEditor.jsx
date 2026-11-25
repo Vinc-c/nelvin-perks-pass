@@ -305,7 +305,7 @@ export default function CampaignEditor() {
                   </label>
                 )}
                 <label className="flex items-start gap-2 text-sm text-slate-600">
-                  <input type="checkbox" checked={form.booking_required} onChange={(e) => setForm({ ...form, booking_required: e.target.checked })} className="mt-0.5 h-4 w-4 accent-emerald-500" />
+                  <input type="checkbox" checked={form.booking_required} onChange={(e) => setForm({ ...form, booking_required: e.target.checked })} className="mt-0.5 h-4 w-4 accent-primary" />
                   <span>{t("mc.camp.booking")}</span>
                 </label>
 

@@ -200,10 +200,10 @@ export default function MerchantPortal() {
                 <CurrencySelect value={billCurrency} onChange={setBillCurrency} />
               </div>
               <label className="flex items-start gap-2 text-sm text-slate-600">
-                <input type="checkbox" checked={payWallet} onChange={(e) => setPayWallet(e.target.checked)} className="mt-0.5 h-4 w-4 accent-emerald-500" />
+                <input type="checkbox" checked={payWallet} onChange={(e) => setPayWallet(e.target.checked)} className="mt-0.5 h-4 w-4 accent-primary" />
                 {t("mc.scan.walletCheck")}
               </label>
-              <button type="submit" disabled={validating || !code.trim() || !(Number(bill) > 0)} className="flex w-full items-center justify-center gap-2 rounded-lg bg-nv-emerald px-4 py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
+              <button type="submit" disabled={validating || !code.trim() || !(Number(bill) > 0)} className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary/90 disabled:opacity-50">
                 {validating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />} {t("mc.scan.submit")}
               </button>
             </form>
@@ -279,12 +279,12 @@ export default function MerchantPortal() {
 
         {show("offers") && (
         <SectionCard className="mt-6" title={t("mc.offers.title")} action={
-          <Link to="/campaign-editor" className="flex items-center gap-1.5 rounded-lg bg-nv-emerald px-3 py-2 text-sm font-medium text-white transition hover:bg-nv-emerald/90 active:scale-95">
+          <Link to="/campaign-editor" className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-white transition hover:bg-primary/90 active:scale-95">
             <Plus className="h-4 w-4" /> {t("mc.offers.new")}
           </Link>
         }>
           {offers.length === 0 ? (
-            <EmptyState icon={Tag} title={t("mc.offers.emptyTitle")} description={t("mc.offers.emptyDesc")} action={<Link to="/campaign-editor" className="not-pill rounded-full bg-nv-emerald px-4 py-2 text-sm font-medium text-white hover:bg-nv-emerald/90">{t("mc.offers.create")}</Link>} />
+            <EmptyState icon={Tag} title={t("mc.offers.emptyTitle")} description={t("mc.offers.emptyDesc")} action={<Link to="/campaign-editor" className="not-pill rounded-full bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90">{t("mc.offers.create")}</Link>} />
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {offers.map((c) => {
@@ -316,7 +316,7 @@ export default function MerchantPortal() {
         <SectionCard className="mt-6" icon={Banknote} title={t("mc.payouts.title")} action={
           <div className="flex items-center gap-2">
             <CurrencySelect value={currency} onChange={setCurrency} />
-            <button onClick={() => setPayoutOpen(true)} disabled={payoutBalance <= 0} className="rounded-full bg-nv-emerald px-4 py-2 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">{t("mc.payouts.request")}</button>
+            <button onClick={() => setPayoutOpen(true)} disabled={payoutBalance <= 0} className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 disabled:opacity-50">{t("mc.payouts.request")}</button>
           </div>
         }>
           <p className="text-sm text-slate-600">{t("mc.payouts.balanceLabel")} <span className="font-semibold text-slate-900">{money.format(payoutBalance, currency)}</span> {t("mc.payouts.balanceNote")}</p>
@@ -361,7 +361,7 @@ export default function MerchantPortal() {
                 <option value="BANK_TRANSFER">{t("mc.payouts.bankTransfer")}</option>
               </select>
               <input required minLength={6} value={payout.destination} onChange={(e) => setPayout({ ...payout, destination: e.target.value })} placeholder={payout.method === "MOBILE_MONEY" ? t("mc.payouts.momoNumber") : t("mc.payouts.ibanPlaceholder")} aria-label={t("mc.payouts.destination")} className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-nv-emerald" />
-              <button type="submit" disabled={payoutBusy || (rules && !rules.enabled) || (rules && money.toUsd(Number(payout.amount), currency) < Number(rules.min) - 1e-6) || money.toUsd(Number(payout.amount), currency) > payoutBalance + 1e-6} className="flex w-full items-center justify-center gap-2 rounded-xl bg-nv-emerald py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
+              <button type="submit" disabled={payoutBusy || (rules && !rules.enabled) || (rules && money.toUsd(Number(payout.amount), currency) < Number(rules.min) - 1e-6) || money.toUsd(Number(payout.amount), currency) > payoutBalance + 1e-6} className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-sm font-medium text-white hover:bg-primary/90 disabled:opacity-50">
                 {payoutBusy && <Loader2 className="h-4 w-4 animate-spin" />} {t("mc.payouts.send")}
               </button>
             </motion.form>

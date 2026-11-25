@@ -135,7 +135,7 @@ export default function GiftPanel({ initialCode = "", onRedeemed }) {
         {received.map((g) => (
           <div key={g.id} className="mb-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">
             <p className="flex items-center gap-2"><NvIcon name="PERK_GIFT" className="h-5 w-5 shrink-0" /> {g.message ? t("bl.gift.offeredMsg", { msg: g.message }) : t("bl.gift.offered")}</p>
-            <button onClick={() => redeem(g.code)} disabled={busy} className="mt-2 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-medium text-white">{t("bl.gift.activateMine")}</button>
+            <button onClick={() => redeem(g.code)} disabled={busy} className="mt-2 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-white">{t("bl.gift.activateMine")}</button>
           </div>
         ))}
         <form onSubmit={(e) => { e.preventDefault(); redeem(); }} className="flex gap-2">

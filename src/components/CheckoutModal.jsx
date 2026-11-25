@@ -132,7 +132,7 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100"><Check className="h-7 w-7 text-emerald-600" /></div>
                 <p className="mt-3 text-lg font-bold text-slate-900">{t("mb.co.activated")}</p>
                 {done.expires_at && <p className="mt-1 text-sm text-slate-500">{t("mb.co.validUntil", { date: new Date(done.expires_at).toLocaleDateString(locale) })}</p>}
-                <button onClick={close} className="mt-5 w-full rounded-full bg-nv-emerald py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90">{t("mb.pin.finish")}</button>
+                <button onClick={close} className="mt-5 w-full rounded-full bg-primary py-2.5 text-sm font-medium text-white hover:bg-primary/90">{t("mb.pin.finish")}</button>
               </div>
             ) : (
               <>
@@ -203,7 +203,7 @@ export default function CheckoutModal({ open, onClose, purpose = "RECHARGE", pla
                   </div>
                 )}
 
-                <button onClick={payOnline} disabled={loading || noPsp || !payAmount || payAmount <= 0} className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50 active:scale-95">
+                <button onClick={payOnline} disabled={loading || noPsp || !payAmount || payAmount <= 0} className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-50 active:scale-95">
                   {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("mb.wd.processing")}</> : <>{t("mb.co.pay", { amount: payAmount > 0 ? money.formatIn(payAmount, currency) : "" })}</>}
                 </button>
                 <p className="mt-2 text-center text-[11px] text-slate-400">{t("mb.co.secure")}</p>

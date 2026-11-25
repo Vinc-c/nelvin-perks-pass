@@ -5,7 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import MediaUploader from "./MediaUploader";
 import { Plus, Trash2, Loader2, ImageIcon } from "lucide-react";
 
-const inputCls = "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-amber-500";
+const inputCls = "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-primary";
 const SECTIONS = ["HERO", "LANDING", "MARKETING", "APP"];
 // Keys are matched without regard to case/spaces ("Hero Background" = hero_background).
 const slug = (k) => String(k || "").trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
@@ -76,7 +76,7 @@ export default function AdminCmsImages() {
         <select className={inputCls} value={draft.section} onChange={(e) => setDraft({ ...draft, section: e.target.value })}>
           {SECTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
-        <button type="submit" disabled={!draft.image_url} className="flex items-center justify-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600 disabled:opacity-50"><Plus className="h-4 w-4" /> Add</button>
+        <button type="submit" disabled={!draft.image_url} className="flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90 disabled:opacity-50"><Plus className="h-4 w-4" /> Add</button>
         <div className="sm:col-span-2 lg:col-span-4">
           <MediaUploader label="Image or video (required)" value={{ url: draft.image_url, media_type: draft.media_type, poster_url: draft.poster_url }} onChange={(v) => setDraft({ ...draft, image_url: v.url, media_type: v.media_type, poster_url: v.poster_url })} />
         </div>

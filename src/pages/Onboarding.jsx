@@ -73,7 +73,7 @@ export default function Onboarding() {
       <div className="min-h-screen bg-slate-50 pb-16 pt-10 font-body text-slate-900">
         <div className="mx-auto max-w-3xl px-4">
           <div className="mb-6 text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white">
               <Store className="h-6 w-6" />
             </div>
             <h1 className="mt-3 text-2xl font-bold text-slate-900">{t("mb.ob.partnerTitle")}</h1>

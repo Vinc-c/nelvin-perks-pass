@@ -27,9 +27,9 @@ export default function AfricanCountrySelect({ value, onChange }) {
       {value.length > 0 && (
         <div className="mb-3 flex flex-wrap gap-2">
           {value.map((c) => (
-            <span key={c} className="inline-flex items-center gap-1.5 rounded-full bg-blue-600 px-3 py-1.5 text-sm font-medium text-white">
+            <span key={c} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-sm font-medium text-white">
               {countryLabel(c, locale)}
-              <button type="button" onClick={() => toggle(c)} className="rounded-full hover:bg-blue-700">
+              <button type="button" onClick={() => toggle(c)} className="rounded-full hover:bg-primary/90">
                 <X className="h-3.5 w-3.5" />
               </button>
             </span>
@@ -44,7 +44,7 @@ export default function AfricanCountrySelect({ value, onChange }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t("ac.ctry.search")}
-          className="w-full rounded-full border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          className="w-full rounded-full border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
         />
       </div>
 
@@ -67,10 +67,10 @@ export default function AfricanCountrySelect({ value, onChange }) {
                     key={c}
                     onClick={() => toggle(c)}
                     className={`flex items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left text-sm transition ${
-                      active ? "border-blue-500 bg-blue-50 text-blue-700" : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
+                      active ? "border-primary bg-primary/5 text-primary" : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
                     }`}
                   >
-                    <span className={`flex h-4 w-4 items-center justify-center rounded border ${active ? "border-blue-600 bg-blue-600" : "border-slate-300"}`}>
+                    <span className={`flex h-4 w-4 items-center justify-center rounded border ${active ? "border-primary bg-primary" : "border-slate-300"}`}>
                       {active && <Check className="h-3 w-3 text-white" />}
                     </span>
                     {countryLabel(c, locale)}

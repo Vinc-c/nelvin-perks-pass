@@ -56,11 +56,11 @@ export default function AccessGate({ children }) {
         <p className="mt-2 text-sm text-slate-500">{desc}</p>
         <div className="mt-6">
           {isHr ? (
-            <Link to="/billing-settings" className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-amber-600">
+            <Link to="/billing-settings" className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary/90">
               <CreditCard className="h-4 w-4" /> {t("access.reactivate.sub")}
             </Link>
           ) : isMember ? (
-            <Link to="/membership-plans" className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-amber-600">
+            <Link to="/membership-plans" className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary/90">
               <CreditCard className="h-4 w-4" /> {t("access.reactivate.membership")}
             </Link>
           ) : (

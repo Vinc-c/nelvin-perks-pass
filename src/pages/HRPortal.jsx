@@ -254,7 +254,7 @@ export default function HRPortal() {
             <p className="font-semibold text-amber-900">{t("hr.p.planLine", { plan: plan?.name || a.company.plan_tier, used: a.company.seats_used, max: a.company.max_employees >= 100000 ? "∞" : a.company.max_employees, budget: fmt(a.company.wallet_balance) })}</p>
             <p className="text-sm text-amber-700">{a.company.subscription_status === "TRIAL" ? t("hr.p.trial") : a.company.subscription_status === "ACTIVE" ? t("hr.p.subActive") : t("hr.p.subRenew")}</p>
           </div>
-          <Link to="/billing-settings" className="rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600">{t("hr.p.manageSub")}</Link>
+          <Link to="/billing-settings" className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90">{t("hr.p.manageSub")}</Link>
         </div>
       )}
       </div>

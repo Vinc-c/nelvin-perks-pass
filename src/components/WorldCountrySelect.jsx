@@ -22,7 +22,7 @@ export default function WorldCountrySelect({ value, onChange, placeholder, class
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex h-12 w-full items-center gap-2 rounded-lg border border-slate-200 bg-card px-3 text-left text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+        className="flex h-12 w-full items-center gap-2 rounded-lg border border-slate-200 bg-card px-3 text-left text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
       >
         <Globe className="h-4 w-4 text-muted-foreground" />
         {selected ? (
@@ -48,7 +48,7 @@ export default function WorldCountrySelect({ value, onChange, placeholder, class
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t("ac.ctry.search")}
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-8 pr-3 text-sm outline-none focus:border-blue-500"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-8 pr-3 text-sm outline-none focus:border-primary"
                 />
               </div>
             </div>
@@ -63,7 +63,7 @@ export default function WorldCountrySelect({ value, onChange, placeholder, class
                 >
                   <span className="text-xl leading-none">{c.flag}</span>
                   <span className="flex-1 truncate text-slate-700">{countryLabel(c.name, locale)}</span>
-                  {value === c.name && <Check className="h-4 w-4 text-blue-600" />}
+                  {value === c.name && <Check className="h-4 w-4 text-primary" />}
                 </button>
               ))}
             </div>

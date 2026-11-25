@@ -4,7 +4,7 @@ import { entities } from "@/api/entities";
 import { useToast } from "@/components/ui/use-toast";
 import { Plus, Trash2, Loader2, Type } from "lucide-react";
 
-const inputCls = "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-amber-500";
+const inputCls = "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-primary";
 const SECTIONS = ["HERO", "STATS", "MARKETING", "GENERAL"];
 
 export default function AdminCmsCopy() {
@@ -51,7 +51,7 @@ export default function AdminCmsCopy() {
           {SECTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
         <input className={inputCls} placeholder="Value *" value={draft.value} onChange={(e) => setDraft({ ...draft, value: e.target.value })} required />
-        <button type="submit" className="flex items-center justify-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600"><Plus className="h-4 w-4" /> Add</button>
+        <button type="submit" className="flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90"><Plus className="h-4 w-4" /> Add</button>
       </form>
 
       {loading ? (

@@ -93,7 +93,7 @@ export default function AdminStaffManagement() {
           </button>
         </form>
         <label className="mt-2 flex items-center gap-2 text-xs text-slate-500">
-          <input type="checkbox" checked={invite} onChange={(e) => setInvite(e.target.checked)} className="accent-emerald-500" />
+          <input type="checkbox" checked={invite} onChange={(e) => setInvite(e.target.checked)} className="accent-primary" />
           Send an email invitation if the person doesn't have an account yet
         </label>
       </div>

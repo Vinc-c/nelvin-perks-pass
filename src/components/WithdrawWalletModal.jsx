@@ -91,7 +91,7 @@ export default function WithdrawWalletModal({ open, onClose }) {
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-100"><Clock className="h-7 w-7 text-amber-600" /></div>
                 <p className="mt-3 text-lg font-bold text-slate-900">{t("mb.wd.done")}</p>
                 <p className="mt-1 text-sm text-slate-500">{t("mb.wd.doneSub", { amount: money.formatIn(done.amt, done.currency) })}</p>
-                <button onClick={close} className="mt-5 w-full rounded-full bg-nv-emerald py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90">{t("mb.pin.finish")}</button>
+                <button onClick={close} className="mt-5 w-full rounded-full bg-primary py-2.5 text-sm font-medium text-white hover:bg-primary/90">{t("mb.pin.finish")}</button>
               </div>
             ) : (
               <>
@@ -133,7 +133,7 @@ export default function WithdrawWalletModal({ open, onClose }) {
                 <label className="mt-4 block text-sm font-medium text-slate-700" htmlFor="withdraw-dest">{method === "MOBILE_MONEY" ? t("mb.wd.momoNumber") : t("mb.wd.bankNumber")}</label>
                 <input id="withdraw-dest" value={destination} onChange={(e) => setDestination(e.target.value)} placeholder={t(activeMethod.placeholder)} className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-nv-emerald" />
 
-                <button onClick={submit} disabled={loading || !amt || amt <= 0 || blocked || destination.trim().length < 6} className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-nv-emerald py-3 text-sm font-semibold text-white transition hover:bg-nv-emerald/90 disabled:opacity-50 active:scale-95">
+                <button onClick={submit} disabled={loading || !amt || amt <= 0 || blocked || destination.trim().length < 6} className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-50 active:scale-95">
                   {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("mb.wd.processing")}</> : <><Check className="h-4 w-4" /> {t("mb.wd.submit")}</>}
                 </button>
               </>

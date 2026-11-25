@@ -42,7 +42,7 @@ function PlanRow({ plan, onSaved }) {
         <span className="font-mono text-xs text-slate-400">{plan.code}</span>
         <div className="flex items-center gap-3 text-xs text-slate-600">
           <label className="flex items-center gap-1"><input type="checkbox" checked={!!p.popular} onChange={(e) => setP({ ...p, popular: e.target.checked })} className="accent-amber-500" /> Featured</label>
-          <label className="flex items-center gap-1"><input type="checkbox" checked={!!p.active} onChange={(e) => setP({ ...p, active: e.target.checked })} className="accent-emerald-500" /> Active</label>
+          <label className="flex items-center gap-1"><input type="checkbox" checked={!!p.active} onChange={(e) => setP({ ...p, active: e.target.checked })} className="accent-primary" /> Active</label>
         </div>
       </div>
       <div className="mt-2 grid gap-2 sm:grid-cols-2">

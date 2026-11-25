@@ -86,7 +86,7 @@ export default function InviteEmployees() {
           <option value="HR_ADMIN">{t("hr.i.roleHr")}</option>
         </select>
       </div>
-      <button onClick={generate} disabled={loading} className="mt-3 flex items-center gap-2 rounded-xl bg-nv-emerald px-5 py-2.5 text-sm font-medium text-white hover:bg-nv-emerald/90 disabled:opacity-50">
+      <button onClick={generate} disabled={loading} className="mt-3 flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-white hover:bg-primary/90 disabled:opacity-50">
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />} {t("hr.i.generate")}
       </button>
 

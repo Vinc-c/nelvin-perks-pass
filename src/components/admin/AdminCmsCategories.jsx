@@ -6,7 +6,7 @@ import ImageUploader from "./ImageUploader";
 import { OFFER_CATEGORIES } from "@/data/offerCategories";
 import { Plus, Trash2, Loader2, Star, Sparkles, ImageOff } from "lucide-react";
 
-const inputCls = "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-amber-500";
+const inputCls = "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-primary";
 
 export default function AdminCmsCategories() {
   const { toast } = useToast();
@@ -88,7 +88,7 @@ export default function AdminCmsCategories() {
         <input className={`${inputCls} max-w-[80px]`} placeholder="Emoji" value={draft.emoji} onChange={(e) => setDraft({ ...draft, emoji: e.target.value })} />
         <input className={inputCls} placeholder="Description" value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} />
         <input type="number" className={inputCls} placeholder="Order" value={draft.sort_order} onChange={(e) => setDraft({ ...draft, sort_order: Number(e.target.value) })} />
-        <button type="submit" className="flex items-center justify-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600"><Plus className="h-4 w-4" /> Add</button>
+        <button type="submit" className="flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90"><Plus className="h-4 w-4" /> Add</button>
         <div className="sm:col-span-2 lg:col-span-6">
           <ImageUploader label="Category image (optional)" value={draft.image_url} onChange={(v) => setDraft({ ...draft, image_url: v })} />
         </div>

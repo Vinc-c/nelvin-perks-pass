@@ -131,7 +131,7 @@ export default function AdminMerchantRow({ merchant: m, onStatus, onChange }) {
         <div className="flex shrink-0 items-center gap-2">
           <span className={`rounded-full px-3 py-1 text-xs font-medium ${BADGE[m.verified_status] || BADGE.PENDING}`}>{STATUS_LABEL[m.verified_status] || m.verified_status}</span>
           {m.verified_status !== "VERIFIED" && (
-            <button disabled={!!busy} onClick={() => act("VERIFIED")} className="flex items-center gap-1 rounded-full bg-amber-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-600 disabled:opacity-60">
+            <button disabled={!!busy} onClick={() => act("VERIFIED")} className="flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-white hover:bg-primary/90 disabled:opacity-60">
               {busy === "VERIFIED" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />} Approve
             </button>
           )}

@@ -62,7 +62,7 @@ export default function AdminPlatformSettings() {
                       const list = Array.isArray(val) ? val : [];
                       return (
                         <label key={code} className="flex items-center gap-1 text-xs text-slate-600">
-                          <input type="checkbox" checked={list.includes(code)} className="accent-emerald-500"
+                          <input type="checkbox" checked={list.includes(code)} className="accent-primary"
                             onChange={(e) => setEdits((x) => ({ ...x, [r.key]: e.target.checked ? [...list, code] : list.filter((c) => c !== code) }))} />
                           {label}
                         </label>

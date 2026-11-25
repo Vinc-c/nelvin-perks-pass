@@ -74,7 +74,7 @@ export default function AdminCurrencies() {
                   <td className="p-3"><input value={v("symbol")} onChange={(ev) => set(c.code, "symbol", ev.target.value)} className="w-16 rounded-md border border-slate-200 px-2 py-1" /></td>
                   <td className="p-3"><input type="number" step="any" min="0" disabled={base} value={v("rate_per_usd")} onChange={(ev) => set(c.code, "rate_per_usd", ev.target.value)} className="w-28 rounded-md border border-slate-200 px-2 py-1 font-mono disabled:bg-slate-50" /></td>
                   <td className="p-3"><input value={v("region")} onChange={(ev) => set(c.code, "region", ev.target.value)} className="w-40 rounded-md border border-slate-200 px-2 py-1" /></td>
-                  <td className="p-3"><input type="checkbox" disabled={base} checked={!!v("active")} onChange={(ev) => set(c.code, "active", ev.target.checked)} className="accent-emerald-500" /></td>
+                  <td className="p-3"><input type="checkbox" disabled={base} checked={!!v("active")} onChange={(ev) => set(c.code, "active", ev.target.checked)} className="accent-primary" /></td>
                   <td className="p-3 text-xs text-slate-400">{c.updated_date ? new Date(c.updated_date).toLocaleDateString("en-US") : "—"}</td>
                   <td className="p-3 text-right">
                     <button onClick={() => save(c)} disabled={!edits[c.code]} className="inline-flex items-center gap-1 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-30"><Save className="h-3.5 w-3.5" /> Save</button>
