@@ -5,6 +5,7 @@ import { useI18n } from "@/i18n/I18nContext";
 import { useReducedMotion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 import { Stagger, StaggerItem } from "@/components/landing/motion";
+import SocialLinks from "@/components/landing/SocialLinks";
 
 const columns = [
   {
@@ -51,6 +52,7 @@ export default function SiteFooter() {
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/70">
               {t("foot.tagline")}
             </p>
+            <SocialLinks />
           </StaggerItem>
 
           {columns.map((col) => (

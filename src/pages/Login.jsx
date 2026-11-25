@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { signInWithPassword, signInWithGoogle } from "@/api/auth";
+import { signInWithPassword } from "@/api/auth";
+import SocialAuthButtons from "@/components/auth/SocialAuthButtons";
+import PhoneLogin from "@/components/auth/PhoneLogin";
+import { useAuthProviders } from "@/hooks/usePlatformSetting";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LogIn, Mail, Loader2 } from "lucide-react";
 import PasswordField from "@/components/auth/PasswordField";
 import AuthLayout from "@/components/AuthLayout";
-import GoogleIcon from "@/components/GoogleIcon";
 import { safeReturnTo } from "@/lib/authReturnTo";
 import { useI18n } from "@/i18n/I18nContext";
 
@@ -17,6 +19,8 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const providers = useAuthProviders();
+  const [mode, setMode] = useState("email");
   // Post-login destination (protected pages send users here with returnTo).
   // Same-origin paths only.
   const returnTo = safeReturnTo();
@@ -37,14 +41,6 @@ export default function Login() {
     }
   };
 
-  const handleGoogle = async () => {
-    setError("");
-    try {
-      await signInWithGoogle(returnTo !== "/" ? returnTo : "/app");
-    } catch (err) {
-      setError(err.message || t("auth.err.google"));
-    }
-  };
 
   return (
     <AuthLayout
@@ -63,14 +59,7 @@ export default function Login() {
         </>
       }
     >
-      <Button
-        variant="outline"
-        className="w-full h-12 text-sm font-medium mb-6"
-        onClick={handleGoogle}
-      >
-        <GoogleIcon className="w-5 h-5 me-2" />
-        {t("auth.google")}
-      </Button>
+      <SocialAuthButtons redirectPath={returnTo !== "/" ? returnTo : "/app"} onError={setError} />
 
       <div className="relative mb-6">
         <div className="absolute inset-0 flex items-center">
@@ -87,6 +76,17 @@ export default function Login() {
         </div>
       )}
 
+      {providers.phone && (
+        <div role="tablist" className="mb-5 grid grid-cols-2 rounded-xl bg-slate-100 p-1 text-sm font-medium">
+          {[["email", "auth.tab.email"], ["phone", "auth.tab.phone"]].map(([id, key]) => (
+            <button key={id} type="button" role="tab" aria-selected={mode === id} onClick={() => { setMode(id); setError(""); }}
+              className={`nv-focus rounded-lg py-2 transition ${mode === id ? "bg-white shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}>{t(key)}</button>
+          ))}
+        </div>
+      )}
+      {providers.phone && mode === "phone" ? (
+        <PhoneLogin redirectTo={returnTo !== "/" ? returnTo : "/app"} onError={setError} />
+      ) : (
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="email">{t("auth.email")}</Label>
@@ -125,6 +125,7 @@ export default function Login() {
           )}
         </Button>
       </form>
+      )}
 
       <p className="text-center text-sm text-muted-foreground mt-5">
         {t("auth.joining")}{" "}

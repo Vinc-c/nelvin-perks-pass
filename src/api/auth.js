@@ -98,6 +98,36 @@ export async function signInWithGoogle(redirectPath = "/app") {
   if (error) throw authError(error, "Connexion Google impossible");
 }
 
+/** Apple sign-in (needs the Apple provider enabled in Supabase Auth). */
+export async function signInWithApple(redirectPath = "/app") {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "apple",
+    options: { redirectTo: `${window.location.origin}${redirectPath}` },
+  });
+  if (error) throw authError(error, "Connexion Apple impossible");
+}
+
+/** "+237 612 345 678" -> "+237612345678". */
+export function toE164(phone) {
+  const d = String(phone || "").replace(/[^\d]/g, "");
+  return d ? `+${d}` : "";
+}
+
+/** Sends a one-time SMS code (creates the account on first use). */
+export async function sendPhoneOtp(phone) {
+  const { error } = await supabase.auth.signInWithOtp({ phone: toE164(phone), options: { channel: "sms", shouldCreateUser: true } });
+  if (error) {
+    if (/provider|not enabled|unsupported/i.test(error.message || "")) throw new Error(translate("auth.phone.disabled"));
+    throw authError(error, translate("auth.phone.sendFail"));
+  }
+}
+
+export async function verifyPhoneOtp(phone, token) {
+  const { data, error } = await supabase.auth.verifyOtp({ phone: toE164(phone), token: token.trim(), type: "sms" });
+  if (error) throw authError(error, translate("err.badCode"));
+  return data;
+}
+
 export async function requestPasswordReset(email) {
   const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
     redirectTo: `${window.location.origin}/reset-password`,
