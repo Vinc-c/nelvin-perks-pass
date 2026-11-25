@@ -328,4 +328,9 @@ export default [
   ["ct.copied", "Copied", "Copié"],
   ["ct.emailSent", "A confirmation was sent to {email}.", "Une confirmation a été envoyée à {email}."],
   ["ct.directEmail", "Prefer email?", "Vous préférez écrire ?"],
+  ["mc.bp.talk", "Talk to us first", "Parlons-en d'abord"],
+  ["mc.bp.b4.t", "Simple payouts", "Paiements simples"],
+  ["mc.bp.b4.d", "Track your sales and request your payout from your dashboard.", "Suivez vos ventes et demandez votre paiement depuis votre tableau de bord."],
+  ["mc.bp.q.t", "Not sure it fits your business?", "Pas sûr que ça convienne à votre activité ?"],
+  ["mc.bp.q.d", "Tell us about your business and we will answer within one business day.", "Parlez-nous de votre activité, nous répondons sous un jour ouvré."],
 ];
