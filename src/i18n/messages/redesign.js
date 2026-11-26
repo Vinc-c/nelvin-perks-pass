@@ -333,4 +333,8 @@ export default [
   ["mc.bp.b4.d", "Track your sales and request your payout from your dashboard.", "Suivez vos ventes et demandez votre paiement depuis votre tableau de bord."],
   ["mc.bp.q.t", "Not sure it fits your business?", "Pas sûr que ça convienne à votre activité ?"],
   ["mc.bp.q.d", "Tell us about your business and we will answer within one business day.", "Parlez-nous de votre activité, nous répondons sous un jour ouvré."],
+  ["push.title", "Notifications on this device", "Notifications sur cet appareil"],
+  ["push.desc", "Get alerts for your wallet, offers and payouts even when Nelvin is closed.", "Recevez les alertes de votre portefeuille, offres et paiements même quand Nelvin est fermé."],
+  ["push.denied", "Blocked in your browser settings. Allow notifications for this site to turn it on.", "Bloquées dans les réglages du navigateur. Autorisez les notifications pour ce site pour l'activer."],
+  ["push.unsupported", "This browser does not support push notifications (on iPhone, add Nelvin to the Home Screen first).", "Ce navigateur ne gère pas les notifications push (sur iPhone, ajoutez d'abord Nelvin à l'écran d'accueil)."],
 ];

@@ -5,7 +5,8 @@ import { useAuth } from "@/lib/AuthContext";
 import { updateMe } from "@/api/auth";
 import { useToast } from "@/components/ui/use-toast";
 import { useI18n } from "@/i18n/I18nContext";
-import { Bell, Mail, Smartphone, Save, Loader2 } from "lucide-react";
+import { Bell, BellRing, Mail, Smartphone, Save, Loader2 } from "lucide-react";
+import { currentPushState, disablePush, enablePush } from "@/api/push";
 
 // Notification categories map to notifications.type. In-app notifications
 // are always kept (they are the account history); these preferences control
@@ -33,6 +34,19 @@ export default function NotificationSettings() {
   const [push, setPush] = useState(true);
   const [prefs, setPrefs] = useState({});
   const [saving, setSaving] = useState(false);
+  const [device, setDevice] = useState("off"); // this browser: on | off | denied | unsupported
+  const [busy, setBusy] = useState(false);
+  useEffect(() => { currentPushState().then(setDevice); }, []);
+  const toggleDevice = async () => {
+    setBusy(true);
+    try {
+      if (device === "on") { await disablePush(); setDevice("off"); }
+      else { await enablePush(); setDevice("on"); }
+    } catch (e) {
+      toast({ title: t("ac.common.error"), description: e.message, variant: "destructive" });
+      setDevice(await currentPushState());
+    } finally { setBusy(false); }
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -63,6 +77,10 @@ export default function NotificationSettings() {
             <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
               <div className="flex items-center gap-3"><Smartphone className="h-4 w-4 text-slate-400" /><div><p className="text-sm font-medium text-slate-900">{t("ac.notif.realtime")}</p><p className="text-xs text-slate-500">{t("ac.notif.realtimeDesc")}</p></div></div>
               <Toggle on={push} onChange={setPush} />
+            </div>
+            <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+              <div className="flex items-center gap-3"><BellRing className="h-4 w-4 text-slate-400" /><div><p className="text-sm font-medium text-slate-900">{t("push.title")}</p><p className="text-xs text-slate-500">{device === "unsupported" ? t("push.unsupported") : device === "denied" ? t("push.denied") : t("push.desc")}</p></div></div>
+              <Toggle on={device === "on"} disabled={busy || device === "unsupported" || device === "denied"} onChange={toggleDevice} />
             </div>
             <p className="flex items-start gap-2 rounded-xl bg-slate-50 px-4 py-3 text-xs text-slate-500"><Mail className="mt-0.5 h-3.5 w-3.5 shrink-0" /> {t("ac.notif.transactional", { email: user?.email || "" })}</p>
           </div>

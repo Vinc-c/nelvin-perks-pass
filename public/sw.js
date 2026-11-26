@@ -5,7 +5,7 @@
 // from a stale cache, and a failure there must surface to the app as a normal
 // fetch error rather than a broken service-worker response.
 
-const CACHE_VERSION = "nelvin-v5";
+const CACHE_VERSION = "nelvin-v6";
 const APP_SHELL = ["/", "/index.html", "/manifest.json"];
 
 self.addEventListener("install", (event) => {
@@ -88,4 +88,32 @@ self.addEventListener("fetch", (event) => {
 
 self.addEventListener("message", (event) => {
   if (event.data === "SKIP_WAITING") self.skipWaiting();
+});
+
+// ---- Web Push -------------------------------------------------------------
+// Payload (from the send-push Edge Function): { title, body, url, tag }.
+self.addEventListener("push", (event) => {
+  let data = {};
+  try { data = event.data ? event.data.json() : {}; } catch { data = { title: "Nelvin", body: event.data ? event.data.text() : "" }; }
+  const title = String(data.title || "Nelvin").slice(0, 80);
+  event.waitUntil(self.registration.showNotification(title, {
+    body: String(data.body || "").slice(0, 180),
+    icon: "/images/nelvin-icon-192.png",
+    badge: "/images/nelvin-icon-192.png",
+    tag: data.tag || "nelvin",
+    data: { url: typeof data.url === "string" && data.url.startsWith("/") ? data.url : "/app" },
+  }));
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const target = new URL(event.notification.data?.url || "/app", self.location.origin).href;
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+      for (const c of list) {
+        if (c.url.startsWith(self.location.origin) && "focus" in c) { c.navigate(target).catch(() => {}); return c.focus(); }
+      }
+      return self.clients.openWindow(target);
+    })
+  );
 });
